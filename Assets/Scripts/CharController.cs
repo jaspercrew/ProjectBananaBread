@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,7 +9,19 @@ public class CharController: MonoBehaviour {
     private BoxCollider2D _collider;
     private float speed = 3.5f;
     private float jumpForce = 5f;
-    private bool movementEnabled = true;
+
+    private float attackRate = 2f;
+
+    private float nextAttackTime = 0f;
+    //private bool movementEnabled = true;
+    
+    [SerializeField]
+    private Transform attackPoint;
+    [SerializeField]
+    private float attackRange;
+
+    private int attackDamage = 10;
+    public LayerMask enemyLayers;
     
     private readonly HashSet<Collider2D> _colliding = new HashSet<Collider2D>();
     
@@ -25,7 +38,7 @@ public class CharController: MonoBehaviour {
     void FixedUpdate() {
         float move = Input.GetAxisRaw("Horizontal");
 
-        if (movementEnabled) {
+        if (isMovementEnabled()) {
             if (move > Mathf.Epsilon || move < -Mathf.Epsilon) {
                 _animator.SetInteger("AnimState", 2);
             }
@@ -52,14 +65,17 @@ public class CharController: MonoBehaviour {
     }
 
     void Update() {
+        if (Time.time >= nextAttackTime){ //attack rate limiting
+            if (Input.GetMouseButtonDown(0)) {
+                Attack();
+                nextAttackTime = Time.time + 1f / attackRate;
+            }
+        }
         if (IsGrounded()) {
             _animator.SetBool("Jump", false);
         }
-        if (Input.GetButtonDown("Jump") && IsGrounded() && movementEnabled) {
-            _rigidbody.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
-            //Debug.Log("fds");
-            _animator.SetTrigger("Jump");
-            _animator.SetBool("Grounded", false);
+        if (Input.GetButtonDown("Jump") && IsGrounded() && isMovementEnabled()) {
+            Jump();                     
         }
 
         //shortjump
@@ -71,6 +87,37 @@ public class CharController: MonoBehaviour {
     private bool IsGrounded() {
         return _colliding.Count > 0;
     }
+
+    private bool isMovementEnabled() {
+        if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Attack")) {
+            return false;
+        }
+        return true;
+    }
+
+    private void Jump() {
+        _rigidbody.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+        //Debug.Log("fds");
+        _animator.SetTrigger("Jump");
+        _animator.SetBool("Grounded", false);
+    }
+
+    private void Attack() {
+        _animator.SetTrigger("Attack");
+
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+        foreach (Collider2D enemy in hitEnemies) {
+            enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
+        }
+    }
+
+    private void OnDrawGizmosSelected() {
+        if (attackPoint == null) {
+            return;
+        }
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
+
 
     private void onLanding() {
         _animator.SetBool("Grounded", true);

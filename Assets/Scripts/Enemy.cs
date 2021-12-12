@@ -27,7 +27,7 @@ public class Enemy : MonoBehaviour
 
     private void Die() {
         _animator.SetTrigger("Death");
-        transform.GetComponent<BoxCollider2D>().enabled = false;
+        transform.GetComponent<CapsuleCollider2D>().enabled = false;
     }
 
     // Update is called once per frame

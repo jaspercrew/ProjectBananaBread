@@ -2,17 +2,21 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class CharController: MonoBehaviour {
     private Rigidbody2D _rigidbody;
     private Animator _animator;
     private BoxCollider2D _collider;
+    
     private float speed = 3.5f;
     private float jumpForce = 5f;
-
     private float attackRate = 2f;
 
     private float nextAttackTime = 0f;
+    private float lastAttackTime = 0f;
+    private float comboResetThreshold = 1f;
+    private int comboCounter = 0;
     //private bool movementEnabled = true;
     
     [SerializeField]
@@ -66,9 +70,29 @@ public class CharController: MonoBehaviour {
 
     void Update() {
         if (Time.time >= nextAttackTime){ //attack rate limiting
-            if (Input.GetMouseButtonDown(0)) {
-                Attack();
+            if (Input.GetMouseButtonDown(0) && Time.time < lastAttackTime + comboResetThreshold) {
+                //continue combo
+                Attack(comboCounter);
+                comboCounter++;
+                if (comboCounter == 4) {
+                    comboCounter = 0;
+                    nextAttackTime = Time.time + 2f / attackRate;
+                }
+                else {
+                    nextAttackTime = Time.time + 1f / attackRate;
+                }
+                
+                
+                lastAttackTime = Time.time;
+                
+            }
+            else if (Input.GetMouseButtonDown(0)){
+                //start new attack chain 
+                comboCounter = 0;
+                Attack(comboCounter);
+                
                 nextAttackTime = Time.time + 1f / attackRate;
+                lastAttackTime = Time.time;
             }
         }
         if (IsGrounded()) {
@@ -77,11 +101,27 @@ public class CharController: MonoBehaviour {
         if (Input.GetButtonDown("Jump") && IsGrounded() && isMovementEnabled()) {
             Jump();                     
         }
+        
+        if (Input.GetButtonDown("Fire1")) { //crouch
+            Crouch();
+        }
+
+        if (Input.GetButtonUp("Fire1")) { //uncrouch
+            UnCrouch();
+        }
 
         //shortjump
         if (Input.GetButtonUp("Jump") && !IsGrounded()) {
             _rigidbody.velocity = Vector2.Scale(_rigidbody.velocity, new Vector2(1f, 0.5f));
         }
+    }
+
+    private void Crouch() {
+        speed /= 2;
+    }
+
+    private void UnCrouch() {
+        speed *= 2;
     }
 
     private bool IsGrounded() {
@@ -102,14 +142,53 @@ public class CharController: MonoBehaviour {
         _animator.SetBool("Grounded", false);
     }
 
-    private void Attack() {
+    private void Attack(int comboCount) {
+        _animator.speed = 1;
+        Assert.IsTrue(comboCount < 4);
+        
+        Debug.Log("combo count: " + comboCount);
         _animator.SetTrigger("Attack");
+        if (comboCount == 3) { //heavy attack?
+            _animator.speed = .5f;
+        }
+        StartCoroutine(AttackCoroutine(comboCount == 3));
+    }
 
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
-        foreach (Collider2D enemy in hitEnemies) {
-            enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
+    private IEnumerator AttackCoroutine(bool HeavyAttack) {
+        if (!HeavyAttack) { //light attack
+            float beginAttackDelay = .15f;
+            float hitConfirmDelay = .15f;
+            yield return new WaitForSeconds(beginAttackDelay);
+            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+            if (hitEnemies.Length > 0) {
+                _animator.speed = 0;
+                yield return new WaitForSeconds(hitConfirmDelay);
+                _animator.speed = 1;
+            }
+
+            foreach (Collider2D enemy in hitEnemies) {
+                enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
+            }
+        }
+        else { //heavy attack
+            float beginAttackDelay = .15f;
+            float hitConfirmDelay = .25f;
+            yield return new WaitForSeconds(beginAttackDelay);
+            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+            if (hitEnemies.Length > 0) {
+                _animator.speed = 0;
+                yield return new WaitForSeconds(hitConfirmDelay);
+                _animator.speed = .5f;
+            }
+
+            foreach (Collider2D enemy in hitEnemies) {
+                enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
+            }
         }
     }
+
 
     private void OnDrawGizmosSelected() {
         if (attackPoint == null) {

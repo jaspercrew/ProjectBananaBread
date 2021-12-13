@@ -2,17 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LivingThing : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
+public abstract class LivingThing : MonoBehaviour {
+    protected int maxHealth;
+    protected int currentHealth;
+    protected Animator _animator;
+
+    public virtual void TakeDamage(int damage) {
+        currentHealth -= damage;
+        //damage animation
+        _animator.SetTrigger("Hurt");
         
+        if (currentHealth <= 0) {
+            Die();
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public virtual void Die() {
+        _animator.SetTrigger("Death");
     }
+    
+
 }

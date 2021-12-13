@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public class CharController: MonoBehaviour {
+public class CharController: LivingThing {
     private Rigidbody2D _rigidbody;
-    private Animator _animator;
     private BoxCollider2D _collider;
     
     private float speed = 3.5f;
     private float jumpForce = 5f;
     private float attackRate = 2f;
+    private float moveVector;
 
     private float nextAttackTime = 0f;
     private float lastAttackTime = 0f;
@@ -40,10 +40,10 @@ public class CharController: MonoBehaviour {
 
     // Update is called once per frame
     void FixedUpdate() {
-        float move = Input.GetAxisRaw("Horizontal");
+        moveVector = Input.GetAxisRaw("Horizontal");
 
         if (isMovementEnabled()) {
-            if (move > Mathf.Epsilon || move < -Mathf.Epsilon) {
+            if (moveVector > Mathf.Epsilon || moveVector < -Mathf.Epsilon) {
                 _animator.SetInteger("AnimState", 2);
             }
             else {
@@ -51,13 +51,13 @@ public class CharController: MonoBehaviour {
             }
             
             //actual moving
-            transform.position += new Vector3(move * speed * Time.deltaTime, 0, 0);
+            transform.position += new Vector3(moveVector * speed * Time.deltaTime, 0, 0);
             
             //direction switching
-            if (move > 0) {
+            if (moveVector > 0) {
                 transform.localScale = new Vector2(-1, transform.localScale.y);
             }
-            else if (move < 0) {
+            else if (moveVector < 0) {
                 transform.localScale = new Vector2(1, transform.localScale.y);
             }
             
@@ -72,32 +72,33 @@ public class CharController: MonoBehaviour {
         if (Time.time >= nextAttackTime){ //attack rate limiting
             if (Input.GetMouseButtonDown(0) && Time.time < lastAttackTime + comboResetThreshold) {
                 //continue combo
-                Attack(comboCounter);
                 comboCounter++;
-                if (comboCounter == 4) {
+                Attack(comboCounter);
+                
+                if (comboCounter >= 4) { //heavy
+                    Debug.Log("heavy attack");
                     comboCounter = 0;
                     nextAttackTime = Time.time + 2f / attackRate;
                 }
-                else {
+                else { //light
                     nextAttackTime = Time.time + 1f / attackRate;
                 }
-                
-                
                 lastAttackTime = Time.time;
-                
             }
             else if (Input.GetMouseButtonDown(0)){
                 //start new attack chain 
-                comboCounter = 0;
+                comboCounter = 1;
                 Attack(comboCounter);
                 
                 nextAttackTime = Time.time + 1f / attackRate;
                 lastAttackTime = Time.time;
             }
         }
+        
         if (IsGrounded()) {
             _animator.SetBool("Jump", false);
         }
+        
         if (Input.GetButtonDown("Jump") && IsGrounded() && isMovementEnabled()) {
             Jump();                     
         }
@@ -143,50 +144,89 @@ public class CharController: MonoBehaviour {
     }
 
     private void Attack(int comboCount) {
+        //_rigidbody.AddForce(new Vector2(Input.GetAxisRaw("Horizontal") * 5f, 0), ForceMode2D.Impulse);
+        //_rigidbody.velocity = new Vector2(Input.GetAxisRaw("Horizontal") * 3, 0);
         _animator.speed = 1;
-        Assert.IsTrue(comboCount < 4);
+        Assert.IsTrue(comboCount <= 4);
         
         Debug.Log("combo count: " + comboCount);
         _animator.SetTrigger("Attack");
-        if (comboCount == 3) { //heavy attack?
+        if (comboCount == 4) { //heavy attack?
             _animator.speed = .5f;
         }
-        StartCoroutine(AttackCoroutine(comboCount == 3));
+        StartCoroutine(AttackCoroutine(comboCount == 4));
     }
 
     private IEnumerator AttackCoroutine(bool HeavyAttack) {
+        
         if (!HeavyAttack) { //light attack
+            float attackBoost = 2;
             float beginAttackDelay = .15f;
             float hitConfirmDelay = .15f;
             yield return new WaitForSeconds(beginAttackDelay);
+            if (moveVector > Mathf.Epsilon) {
+                velocityDash(1, attackBoost);
+            }
+            else if (moveVector < Mathf.Epsilon) {
+                velocityDash(3, attackBoost);
+            }
             Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
             if (hitEnemies.Length > 0) {
-                _animator.speed = 0;
-                yield return new WaitForSeconds(hitConfirmDelay);
-                _animator.speed = 1;
+                pauseAnimator(hitConfirmDelay);
             }
-
             foreach (Collider2D enemy in hitEnemies) {
                 enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
             }
         }
         else { //heavy attack
-            float beginAttackDelay = .15f;
+            float attackBoost = 3;
+            float beginAttackDelay = .25f;
             float hitConfirmDelay = .25f;
             yield return new WaitForSeconds(beginAttackDelay);
+            if (moveVector > Mathf.Epsilon) {
+                velocityDash(1, attackBoost);
+            }
+            else if (moveVector < Mathf.Epsilon) {
+                velocityDash(3, attackBoost);
+            }
             Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
             if (hitEnemies.Length > 0) {
-                _animator.speed = 0;
-                yield return new WaitForSeconds(hitConfirmDelay);
-                _animator.speed = .5f;
+                pauseAnimator(hitConfirmDelay);
             }
 
             foreach (Collider2D enemy in hitEnemies) {
                 enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
             }
         }
+    }
+
+    private void velocityDash(int cardinalDirection, float dashSpeed) {
+        switch (cardinalDirection) {
+            case 0:
+                _rigidbody.velocity = new Vector2(0, dashSpeed);
+                break;
+            case 1:
+                _rigidbody.velocity = new Vector2(dashSpeed, 0);
+                break;
+            case 2:
+                _rigidbody.velocity = new Vector2(0, -dashSpeed);
+                break;
+            case 3:
+                _rigidbody.velocity = new Vector2(-dashSpeed, 0);
+                break;
+            default:
+                Debug.Log("invalid dash direction");
+                break;
+        }
+    }
+
+    private IEnumerator pauseAnimator(float pauseTime) {
+        float temp = _animator.speed;
+        _animator.speed = 0;
+        yield return new WaitForSeconds(pauseTime);
+        _animator.speed = temp;
     }
 
 

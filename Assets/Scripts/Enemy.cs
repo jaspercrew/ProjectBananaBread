@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class Enemy : MonoBehaviour
+public class Enemy : LivingThing
 {
     // Start is called before the first frame update
-    public int maxHealth = 100;
-    private int currentHealth;
-    private Animator _animator;
+    private float speed = 3f;
+    private float moveVector = 0f;
+
+    [SerializeField] 
+    private int moveState = 0;
     
     
     void Start() {
@@ -15,7 +18,7 @@ public class Enemy : MonoBehaviour
         _animator = transform.GetComponent<Animator>();
     }
 
-    public void TakeDamage(int damage) {
+    public override void TakeDamage(int damage) {
         currentHealth -= damage;
         //damage animation
         _animator.SetTrigger("Hurt");
@@ -25,14 +28,22 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void Die() {
+    public override void Die() {
         _animator.SetTrigger("Death");
         transform.GetComponent<CapsuleCollider2D>().enabled = false;
     }
+    
 
+    private bool isMovementEnabled() {
+        if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Attack")) {
+            return false;
+        }
+        return true;
+    }
     // Update is called once per frame
     void Update()
     {
+        transform.position += new Vector3(moveVector * speed * Time.deltaTime, 0, 0);
         
     }
 }

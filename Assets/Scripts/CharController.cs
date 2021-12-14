@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 public class CharController: LivingThing {
-    private Rigidbody2D _rigidbody;
     private BoxCollider2D _collider;
     private ParticleSystem _dust;
     
@@ -33,6 +32,7 @@ public class CharController: LivingThing {
     
     // Start is called before the first frame update
     void Start() {
+        currentHealth = maxHealth;
         _rigidbody = transform.GetComponent<Rigidbody2D>();
         _animator = transform.GetComponent<Animator>();
         _collider = transform.GetComponent<BoxCollider2D>();
@@ -58,7 +58,7 @@ public class CharController: LivingThing {
             
             if (Math.Abs(xDir - moveVector) > 0.01f && IsGrounded() && moveVector != 0) {
                 _dust.Play();
-                Debug.Log("dust play");
+                //Debug.Log("dust play");
             }
         
             xDir = moveVector;
@@ -112,7 +112,7 @@ public class CharController: LivingThing {
             Attack(comboCounter);
                 
             if (comboCounter >= 4) { //heavy
-                Debug.Log("heavy attack");
+                //Debug.Log("heavy attack");
                 comboCounter = 0;
                 nextAttackTime = Time.time + 2f / attackRate;
             }
@@ -149,6 +149,24 @@ public class CharController: LivingThing {
         }
         return true;
     }
+    
+    public void TakeDamage(int damage, float knockback, Vector2 point) {
+        //GameObject player = GameObject.FindWithTag("Player");
+        KnockAwayFromPoint(knockback, point);
+        currentHealth -= damage;
+        //damage animation
+        _animator.SetTrigger("Hurt");
+        
+        if (currentHealth <= 0) {
+            Die();
+        }
+    }
+    
+    protected override void Die() {
+        _animator.SetTrigger("Death");
+        transform.GetComponent<Collider>().enabled = false;
+        _rigidbody.gravityScale = 0;
+    }
 
     private void Jump() {
         _dust.Play();
@@ -164,7 +182,7 @@ public class CharController: LivingThing {
         _animator.speed = 1;
         Assert.IsTrue(comboCount <= 4);
         
-        Debug.Log("combo count: " + comboCount);
+        //Debug.Log("combo count: " + comboCount);
         _animator.SetTrigger("Attack");
         if (comboCount == 4) { //heavy attack?
             _animator.speed = .5f;
@@ -205,35 +223,7 @@ public class CharController: LivingThing {
             enemy.GetComponent<Enemy>().TakeDamage(attackDamage, heavyAttack ? 2f : 1f);
         }
     }
-
-    private void VelocityDash(int cardinalDirection, float dashSpeed) {
-        switch (cardinalDirection) {
-            case 0:
-                _rigidbody.velocity = new Vector2(0, dashSpeed);
-                break;
-            case 1:
-                _rigidbody.velocity = new Vector2(dashSpeed, _rigidbody.velocity.y);
-                break;
-            case 2:
-                _rigidbody.velocity = new Vector2(0, -dashSpeed);
-                break;
-            case 3:
-                _rigidbody.velocity = new Vector2(-dashSpeed, _rigidbody.velocity.y);
-                break;
-            default:
-                Debug.Log("invalid dash direction");
-                break;
-        }
-    }
-
-    private IEnumerator PauseAnimatorCoroutine(float pauseTime) {
-        float temp = _animator.speed;
-        _animator.speed = 0;
-        yield return new WaitForSeconds(pauseTime);
-        _animator.speed = temp;
-    }
-
-
+    
     private void OnDrawGizmosSelected() {
         if (attackPoint == null) {
             return;
@@ -242,7 +232,7 @@ public class CharController: LivingThing {
     }
 
 
-    private void onLanding() {
+    protected override void OnLanding() {
         _dust.Play();
         _animator.SetBool("Grounded", true);
         //Debug.Log("sus");
@@ -259,7 +249,7 @@ public class CharController: LivingThing {
         if (!col.isTrigger && Mathf.Abs(charX - colX) < Mathf.Abs(colW) + Mathf.Abs(charW) - 0.01f)
         {
             if (_colliding.Count == 0) {
-                onLanding();
+                OnLanding();
             }
             _colliding.Add(col);
 

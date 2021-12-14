@@ -7,6 +7,8 @@ public abstract class LivingThing : MonoBehaviour {
     protected int currentHealth;
     protected Animator _animator;
     protected Rigidbody2D _rigidbody;
+    protected bool isDashing = false;
+    
 
     public virtual void TakeDamage(int damage) {
         currentHealth -= damage;
@@ -18,8 +20,11 @@ public abstract class LivingThing : MonoBehaviour {
         }
     }
     
-    protected void VelocityDash(int cardinalDirection, float dashSpeed) {
-        switch (cardinalDirection) {
+    protected void VelocityDash(int cardinalDirection, float dashSpeed, float dashTime) {
+        isDashing = true;
+        StartCoroutine(DashCoroutine(dashTime));
+        
+        switch (cardinalDirection) { 
             case 0:
                 _rigidbody.velocity = new Vector2(0, dashSpeed);
                 break;
@@ -36,7 +41,16 @@ public abstract class LivingThing : MonoBehaviour {
                 Debug.Log("invalid dash direction");
                 break;
         }
+
+        
     }
+
+    protected IEnumerator DashCoroutine(float dashTime) {
+        yield return new WaitForSeconds(dashTime);
+        _rigidbody.velocity = new Vector2(0, _rigidbody.velocity.y);
+        isDashing = false;
+    }
+    
     protected virtual void OnLanding() {
         _animator.SetBool("Grounded", true);
         //Debug.Log("sus");
@@ -50,7 +64,7 @@ public abstract class LivingThing : MonoBehaviour {
     }
     
     protected void KnockAwayFromPoint(float vel, Vector3 point) {
-        Debug.Log(vel);
+        //Debug.Log(vel);
         //GameObject player = GameObject.FindWithTag("Player");
         _rigidbody.velocity = vel * (transform.position - point).normalized;
     }

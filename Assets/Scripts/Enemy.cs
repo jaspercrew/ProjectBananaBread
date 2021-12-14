@@ -19,6 +19,7 @@ public class Enemy : LivingThing
     [SerializeField] private LayerMask playerLayers;
 
     [SerializeField] private int moveState = 0;
+    private IEnumerator co;
     
     
     void Start() {
@@ -28,6 +29,7 @@ public class Enemy : LivingThing
     }
 
     public void TakeDamage(int damage, float knockback) {
+        Interrupt();
         GameObject player = GameObject.FindWithTag("Player");
         KnockAwayFromPoint(knockback, player.transform.position);
         currentHealth -= damage;
@@ -38,13 +40,17 @@ public class Enemy : LivingThing
             Die();
         }
     }
+
+    public void Interrupt() { //should stop all relevant coroutines
+        StopCoroutine(co); //interrupt attack if take damage
+    }
     
 
     private void Attack() {
         //_rigidbody.AddForce(new Vector2(Input.GetAxisRaw("Horizontal") * 5f, 0), ForceMode2D.Impulse);
         //_rigidbody.velocity = new Vector2(Input.GetAxisRaw("Horizontal") * 3, 0);
         _animator.SetTrigger("Attack");
-        StartCoroutine(AttackCoroutine());
+        StartCoroutine(co = AttackCoroutine());
     }
 
     private IEnumerator AttackCoroutine() {
@@ -55,12 +61,12 @@ public class Enemy : LivingThing
 
         yield return new WaitForSeconds(beginAttackDelay);
 
-        if (moveVector > .5) {
-            VelocityDash(1, attackBoost);
-        }
-        else if (moveVector < -.5) {
-            VelocityDash(3, attackBoost);
-        }
+        // if (moveVector > .5) {
+        //     VelocityDash(1, attackBoost);
+        // }
+        // else if (moveVector < -.5) {
+        //     VelocityDash(3, attackBoost);
+        // }
         
         Collider2D[] hits = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, playerLayers);
 

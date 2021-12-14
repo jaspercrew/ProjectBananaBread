@@ -9,15 +9,19 @@ public class CharController: LivingThing {
     private ParticleSystem _dust;
     
     private float speed = 3.5f;
-    private float jumpForce = 5f;
+    private float jumpForce = 6.3f;
     private float attackRate = 2f;
+    private float rollRate = 1f;
     private float moveVector;
     private float xDir = 2;
-
+    private int attackDamage = 10;
     private float nextAttackTime = 0f;
+    private float nextRollTime = 0f;
     private float lastAttackTime = 0f;
     private float comboResetThreshold = 1f;
     private int comboCounter = 0;
+
+    private bool isAttacking = false;
     //private bool movementEnabled = true;
     
     [SerializeField]
@@ -25,7 +29,7 @@ public class CharController: LivingThing {
     [SerializeField]
     private float attackRange;
 
-    private int attackDamage = 10;
+    
     public LayerMask enemyLayers;
     
     private readonly HashSet<Collider2D> _colliding = new HashSet<Collider2D>();
@@ -45,7 +49,7 @@ public class CharController: LivingThing {
     void FixedUpdate() {
         moveVector = Input.GetAxisRaw("Horizontal");
 
-        if (isMovementEnabled()) {
+        if (IsMovementEnabled()) {
             if (moveVector > Mathf.Epsilon || moveVector < -Mathf.Epsilon) {
                 _animator.SetInteger("AnimState", 2);
             }
@@ -79,15 +83,22 @@ public class CharController: LivingThing {
     }
 
     void Update() {
-        if (Time.time >= nextAttackTime){ //attack rate limiting
-            attemptAttack();
+        Debug.Log(isDashing);
+        if (Time.time >= nextAttackTime) {
+            AttemptAttack();
         }
         
+
         if (IsGrounded()) {
             _animator.SetBool("Jump", false);
         }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !isAttacking && !isDashing && Time.time >= nextRollTime) {
+            Roll();
+            nextRollTime = Time.time + 1f / rollRate;
+        }
         
-        if (Input.GetButtonDown("Jump") && IsGrounded() && isMovementEnabled()) {
+        if (Input.GetButtonDown("Jump") && IsGrounded() && IsMovementEnabled()) {
             Jump();                     
         }
         
@@ -105,29 +116,18 @@ public class CharController: LivingThing {
         }
     }
 
-    private void attemptAttack() {
-        if (Input.GetMouseButtonDown(0) && Time.time < lastAttackTime + comboResetThreshold) {
-            //continue combo
-            comboCounter++;
-            Attack(comboCounter);
-                
-            if (comboCounter >= 4) { //heavy
-                //Debug.Log("heavy attack");
-                comboCounter = 0;
-                nextAttackTime = Time.time + 2f / attackRate;
-            }
-            else { //light
-                nextAttackTime = Time.time + 1f / attackRate;
-            }
-            lastAttackTime = Time.time;
+
+
+    private void Roll() {
+        float rollSpeed = 9f;
+        float rollTime = .23f;
+        if (moveVector > .5) {
+            VelocityDash(1, rollSpeed, rollTime);
+            _dust.Play();
         }
-        else if (Input.GetMouseButtonDown(0)){
-            //start new attack chain 
-            comboCounter = 1;
-            Attack(comboCounter);
-                
-            nextAttackTime = Time.time + 1f / attackRate;
-            lastAttackTime = Time.time;
+        else if (moveVector < -.5) {
+            VelocityDash(3, rollSpeed, rollTime);
+            _dust.Play();
         }
     }
 
@@ -143,8 +143,11 @@ public class CharController: LivingThing {
         return _colliding.Count > 0;
     }
 
-    private bool isMovementEnabled() {
-        if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Attack")) {
+    private bool IsMovementEnabled() {
+        if (isAttacking) {
+            return false;
+        }
+        if (isDashing) {
             return false;
         }
         return true;
@@ -176,7 +179,34 @@ public class CharController: LivingThing {
         _animator.SetBool("Grounded", false);
     }
 
+    private void AttemptAttack() {
+        if (Input.GetMouseButtonDown(0) && Time.time < lastAttackTime + comboResetThreshold && !isDashing) {
+            //continue combo
+            comboCounter++;
+            Attack(comboCounter);
+                
+            if (comboCounter >= 4) { //heavy
+                //Debug.Log("heavy attack");
+                comboCounter = 0;
+                nextAttackTime = Time.time + 2f / attackRate;
+            }
+            else { //light
+                nextAttackTime = Time.time + 1f / attackRate;
+            }
+            lastAttackTime = Time.time;
+        }
+        else if (Input.GetMouseButtonDown(0) && !isDashing){
+            //start new attack chain 
+            comboCounter = 1;
+            Attack(comboCounter);
+                
+            nextAttackTime = Time.time + 1f / attackRate;
+            lastAttackTime = Time.time;
+        }
+    }
+    
     private void Attack(int comboCount) {
+        isAttacking = true;
         //_rigidbody.AddForce(new Vector2(Input.GetAxisRaw("Horizontal") * 5f, 0), ForceMode2D.Impulse);
         //_rigidbody.velocity = new Vector2(Input.GetAxisRaw("Horizontal") * 3, 0);
         _animator.speed = 1;
@@ -188,6 +218,7 @@ public class CharController: LivingThing {
             _animator.speed = .5f;
         }
         StartCoroutine(AttackCoroutine(comboCount == 4));
+        
     }
 
     private IEnumerator AttackCoroutine(bool heavyAttack) {
@@ -205,10 +236,10 @@ public class CharController: LivingThing {
         yield return new WaitForSeconds(beginAttackDelay);
         if (IsGrounded()) {
             if (moveVector > .5) {
-                VelocityDash(1, attackBoost);
+                VelocityDash(1, attackBoost, .2f);
             }
             else if (moveVector < -.5) {
-                VelocityDash(3, attackBoost);
+                VelocityDash(3, attackBoost, .5f);
             }
         }
             
@@ -222,6 +253,7 @@ public class CharController: LivingThing {
             //Debug.Log("hit");
             enemy.GetComponent<Enemy>().TakeDamage(attackDamage, heavyAttack ? 2f : 1f);
         }
+        isAttacking = false;
     }
     
     private void OnDrawGizmosSelected() {

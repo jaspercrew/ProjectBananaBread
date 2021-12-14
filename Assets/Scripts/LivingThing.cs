@@ -20,6 +20,7 @@ public abstract class LivingThing : MonoBehaviour {
         }
     }
     
+    //boosts the gameobject in a certain cardinal direction 
     protected void VelocityDash(int cardinalDirection, float dashSpeed, float dashTime) {
         isDashing = true;
         StartCoroutine(DashCoroutine(dashTime));
@@ -45,6 +46,7 @@ public abstract class LivingThing : MonoBehaviour {
         
     }
 
+    //dash coroutine handles stopping the dash
     protected IEnumerator DashCoroutine(float dashTime) {
         yield return new WaitForSeconds(dashTime);
         _rigidbody.velocity = new Vector2(0, _rigidbody.velocity.y);
@@ -56,6 +58,7 @@ public abstract class LivingThing : MonoBehaviour {
         //Debug.Log("sus");
     }
     
+    //pauses the animator for pausetime
     protected IEnumerator PauseAnimatorCoroutine(float pauseTime) {
         float temp = _animator.speed;
         _animator.speed = 0;
@@ -63,6 +66,7 @@ public abstract class LivingThing : MonoBehaviour {
         _animator.speed = temp;
     }
     
+    //knock this object away from point with velocity vel 
     protected void KnockAwayFromPoint(float vel, Vector3 point) {
         //Debug.Log(vel);
         //GameObject player = GameObject.FindWithTag("Player");

@@ -8,6 +8,7 @@ public class Enemy : LivingThing
     // Start is called before the first frame update
     private float speed = 3f;
     private float moveVector = 0f;
+    private Rigidbody2D _rigidbody;
 
     [SerializeField] 
     private int moveState = 0;
@@ -16,9 +17,11 @@ public class Enemy : LivingThing
     void Start() {
         currentHealth = maxHealth;
         _animator = transform.GetComponent<Animator>();
+        _rigidbody = transform.GetComponent<Rigidbody2D>();
     }
 
-    public override void TakeDamage(int damage) {
+    public void TakeDamage(int damage, float knockback) {
+        KnockAwayFromPlayer(knockback);
         currentHealth -= damage;
         //damage animation
         _animator.SetTrigger("Hurt");
@@ -31,6 +34,12 @@ public class Enemy : LivingThing
     public override void Die() {
         _animator.SetTrigger("Death");
         transform.GetComponent<CapsuleCollider2D>().enabled = false;
+    }
+
+    public void KnockAwayFromPlayer(float vel) {
+        Debug.Log(vel);
+        GameObject player = GameObject.FindWithTag("Player");
+        _rigidbody.velocity = vel * (transform.position - player.transform.position).normalized;
     }
     
 

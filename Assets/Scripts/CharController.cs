@@ -172,13 +172,13 @@ public class CharController: LivingThing {
         StartCoroutine(AttackCoroutine(comboCount == 4));
     }
 
-    private IEnumerator AttackCoroutine(bool HeavyAttack) {
+    private IEnumerator AttackCoroutine(bool heavyAttack) {
         //light attack modifiers
         float attackBoost = 1.5f;
         float beginAttackDelay = .15f;
         float hitConfirmDelay = .20f;
         
-        if (HeavyAttack) { //heavy attack modifiers
+        if (heavyAttack) { //heavy attack modifiers
             attackBoost = 2.5f;
             beginAttackDelay = .25f;
             hitConfirmDelay = .30f;
@@ -201,7 +201,8 @@ public class CharController: LivingThing {
         }
 
         foreach (Collider2D enemy in hitEnemies) {
-            enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
+            //Debug.Log("hit");
+            enemy.GetComponent<Enemy>().TakeDamage(attackDamage, heavyAttack ? 2f : 1f);
         }
     }
 

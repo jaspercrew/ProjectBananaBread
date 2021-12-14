@@ -7,11 +7,13 @@ using UnityEngine.Assertions;
 public class CharController: LivingThing {
     private Rigidbody2D _rigidbody;
     private BoxCollider2D _collider;
+    private ParticleSystem _dust;
     
     private float speed = 3.5f;
     private float jumpForce = 5f;
     private float attackRate = 2f;
     private float moveVector;
+    private float xDir = 2;
 
     private float nextAttackTime = 0f;
     private float lastAttackTime = 0f;
@@ -34,6 +36,7 @@ public class CharController: LivingThing {
         _rigidbody = transform.GetComponent<Rigidbody2D>();
         _animator = transform.GetComponent<Animator>();
         _collider = transform.GetComponent<BoxCollider2D>();
+        _dust = transform.GetComponentInChildren<ParticleSystem>();
         
 
     }
@@ -53,6 +56,13 @@ public class CharController: LivingThing {
             //actual moving
             transform.position += new Vector3(moveVector * speed * Time.deltaTime, 0, 0);
             
+            if (Math.Abs(xDir - moveVector) > 0.01f && IsGrounded() && moveVector != 0) {
+                _dust.Play();
+                Debug.Log("dust play");
+            }
+        
+            xDir = moveVector;
+            
             //direction switching
             if (moveVector > 0) {
                 transform.localScale = new Vector2(-1, transform.localScale.y);
@@ -70,29 +80,7 @@ public class CharController: LivingThing {
 
     void Update() {
         if (Time.time >= nextAttackTime){ //attack rate limiting
-            if (Input.GetMouseButtonDown(0) && Time.time < lastAttackTime + comboResetThreshold) {
-                //continue combo
-                comboCounter++;
-                Attack(comboCounter);
-                
-                if (comboCounter >= 4) { //heavy
-                    Debug.Log("heavy attack");
-                    comboCounter = 0;
-                    nextAttackTime = Time.time + 2f / attackRate;
-                }
-                else { //light
-                    nextAttackTime = Time.time + 1f / attackRate;
-                }
-                lastAttackTime = Time.time;
-            }
-            else if (Input.GetMouseButtonDown(0)){
-                //start new attack chain 
-                comboCounter = 1;
-                Attack(comboCounter);
-                
-                nextAttackTime = Time.time + 1f / attackRate;
-                lastAttackTime = Time.time;
-            }
+            attemptAttack();
         }
         
         if (IsGrounded()) {
@@ -117,6 +105,32 @@ public class CharController: LivingThing {
         }
     }
 
+    private void attemptAttack() {
+        if (Input.GetMouseButtonDown(0) && Time.time < lastAttackTime + comboResetThreshold) {
+            //continue combo
+            comboCounter++;
+            Attack(comboCounter);
+                
+            if (comboCounter >= 4) { //heavy
+                Debug.Log("heavy attack");
+                comboCounter = 0;
+                nextAttackTime = Time.time + 2f / attackRate;
+            }
+            else { //light
+                nextAttackTime = Time.time + 1f / attackRate;
+            }
+            lastAttackTime = Time.time;
+        }
+        else if (Input.GetMouseButtonDown(0)){
+            //start new attack chain 
+            comboCounter = 1;
+            Attack(comboCounter);
+                
+            nextAttackTime = Time.time + 1f / attackRate;
+            lastAttackTime = Time.time;
+        }
+    }
+
     private void Crouch() {
         speed /= 2;
     }
@@ -137,6 +151,7 @@ public class CharController: LivingThing {
     }
 
     private void Jump() {
+        _dust.Play();
         _rigidbody.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
         //Debug.Log("fds");
         _animator.SetTrigger("Jump");
@@ -158,63 +173,51 @@ public class CharController: LivingThing {
     }
 
     private IEnumerator AttackCoroutine(bool HeavyAttack) {
+        //light attack modifiers
+        float attackBoost = 1.5f;
+        float beginAttackDelay = .15f;
+        float hitConfirmDelay = .20f;
         
-        if (!HeavyAttack) { //light attack
-            float attackBoost = 2;
-            float beginAttackDelay = .15f;
-            float hitConfirmDelay = .15f;
-            yield return new WaitForSeconds(beginAttackDelay);
-            if (moveVector > Mathf.Epsilon) {
-                velocityDash(1, attackBoost);
+        if (HeavyAttack) { //heavy attack modifiers
+            attackBoost = 2.5f;
+            beginAttackDelay = .25f;
+            hitConfirmDelay = .30f;
+        }
+    
+        yield return new WaitForSeconds(beginAttackDelay);
+        if (IsGrounded()) {
+            if (moveVector > .5) {
+                VelocityDash(1, attackBoost);
             }
-            else if (moveVector < Mathf.Epsilon) {
-                velocityDash(3, attackBoost);
-            }
-            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
-
-            if (hitEnemies.Length > 0) {
-                pauseAnimator(hitConfirmDelay);
-            }
-            foreach (Collider2D enemy in hitEnemies) {
-                enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
+            else if (moveVector < -.5) {
+                VelocityDash(3, attackBoost);
             }
         }
-        else { //heavy attack
-            float attackBoost = 3;
-            float beginAttackDelay = .25f;
-            float hitConfirmDelay = .25f;
-            yield return new WaitForSeconds(beginAttackDelay);
-            if (moveVector > Mathf.Epsilon) {
-                velocityDash(1, attackBoost);
-            }
-            else if (moveVector < Mathf.Epsilon) {
-                velocityDash(3, attackBoost);
-            }
-            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+            
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
-            if (hitEnemies.Length > 0) {
-                pauseAnimator(hitConfirmDelay);
-            }
+        if (hitEnemies.Length > 0) {
+            StartCoroutine(PauseAnimatorCoroutine(hitConfirmDelay)); //pause swing animation if an enemy is hit
+        }
 
-            foreach (Collider2D enemy in hitEnemies) {
-                enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
-            }
+        foreach (Collider2D enemy in hitEnemies) {
+            enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
         }
     }
 
-    private void velocityDash(int cardinalDirection, float dashSpeed) {
+    private void VelocityDash(int cardinalDirection, float dashSpeed) {
         switch (cardinalDirection) {
             case 0:
                 _rigidbody.velocity = new Vector2(0, dashSpeed);
                 break;
             case 1:
-                _rigidbody.velocity = new Vector2(dashSpeed, 0);
+                _rigidbody.velocity = new Vector2(dashSpeed, _rigidbody.velocity.y);
                 break;
             case 2:
                 _rigidbody.velocity = new Vector2(0, -dashSpeed);
                 break;
             case 3:
-                _rigidbody.velocity = new Vector2(-dashSpeed, 0);
+                _rigidbody.velocity = new Vector2(-dashSpeed, _rigidbody.velocity.y);
                 break;
             default:
                 Debug.Log("invalid dash direction");
@@ -222,7 +225,7 @@ public class CharController: LivingThing {
         }
     }
 
-    private IEnumerator pauseAnimator(float pauseTime) {
+    private IEnumerator PauseAnimatorCoroutine(float pauseTime) {
         float temp = _animator.speed;
         _animator.speed = 0;
         yield return new WaitForSeconds(pauseTime);
@@ -239,6 +242,7 @@ public class CharController: LivingThing {
 
 
     private void onLanding() {
+        _dust.Play();
         _animator.SetBool("Grounded", true);
         //Debug.Log("sus");
     }

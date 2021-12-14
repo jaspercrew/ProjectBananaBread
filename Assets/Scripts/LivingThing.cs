@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class LivingThing : MonoBehaviour {
-    protected int maxHealth;
+    protected int maxHealth = 100;
     protected int currentHealth;
     protected Animator _animator;
 

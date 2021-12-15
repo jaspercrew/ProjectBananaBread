@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class LivingThing : MonoBehaviour {
+    //Configurable values 
     protected int maxHealth = 100;
+    //Trackers
     protected int currentHealth;
     protected Animator _animator;
     protected Rigidbody2D _rigidbody;
@@ -80,6 +82,12 @@ public abstract class LivingThing : MonoBehaviour {
         transform.GetComponent<Collider>().enabled = false;
         _rigidbody.gravityScale = 0;
     }
-    
+
+    protected void Stun(float stunTime) {
+        
+    }
+
+
+
 
 }

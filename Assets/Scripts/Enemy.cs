@@ -29,7 +29,7 @@ public class Enemy : LivingThing
         _rigidbody = transform.GetComponent<Rigidbody2D>();
     }
 
-    public void TakeDamage(int damage, float knockback) {
+    public void TakeDamage(int damage, float knockback) { //assumes damage is taken from PLAYER
         Interrupt();
         GameObject player = GameObject.FindWithTag("Player");
         KnockAwayFromPoint(knockback, player.transform.position);
@@ -73,8 +73,13 @@ public class Enemy : LivingThing
         if (hits.Length > 0) {
             StartCoroutine(PauseAnimatorCoroutine(hitConfirmDelay)); //pause swing animation if an enemy is hit
         }
-        foreach (Collider2D enemy in hits) {
-            enemy.GetComponent<CharController>().TakeDamage(attackDamage, knockbackVal, transform.position);
+        foreach (Collider2D p in hits) {
+            CharController player = p.GetComponent<CharController>();
+            if (player.isParrying) {
+                player.Counterstrike(GetComponent<Enemy>());
+                break;
+            }
+            player.TakeDamage(attackDamage, knockbackVal, transform.position);
         }
     }
     

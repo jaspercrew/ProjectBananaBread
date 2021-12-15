@@ -13,6 +13,7 @@ public class CharController: LivingThing {
     private float speed = 3.5f;
     private float jumpForce = 6.3f;
     private float attackRate = 2f;
+    private float parryRate = 1f;
     private float rollRate = 1f;
     private int attackDamage = 10;
     private float comboResetThreshold = 1f;
@@ -21,6 +22,8 @@ public class CharController: LivingThing {
     [SerializeField] private float attackRange;
     
     //Trackers
+    private float nextParryTime = 0f;
+    public bool isParrying = false;
     private float nextAttackTime = 0f;
     private float nextRollTime = 0f;
     private float lastAttackTime = 0f;
@@ -44,7 +47,7 @@ public class CharController: LivingThing {
     void FixedUpdate() {
         moveVector = Input.GetAxisRaw("Horizontal");
 
-        if (IsMovementEnabled()) {
+        if (AbleToMove()) {
             //movement animations
             if (moveVector > Mathf.Epsilon || moveVector < -Mathf.Epsilon) {
                 _animator.SetInteger("AnimState", 2);
@@ -77,6 +80,13 @@ public class CharController: LivingThing {
         
     }
 
+    private bool AbleToAct() {
+        if (isDashing || isAttacking || isParrying) {
+            return false;
+        }
+        return true;
+    }
+
     void Update() {
         if (Time.time >= nextAttackTime) {
             AttemptAttack();
@@ -91,7 +101,12 @@ public class CharController: LivingThing {
             nextRollTime = Time.time + 1f / rollRate;
         }
         
-        if (Input.GetButtonDown("Jump") && IsGrounded() && IsMovementEnabled()) {
+        if (Input.GetMouseButtonDown(1) && AbleToAct() && Time.time >= nextParryTime) {
+            Parry();
+            nextParryTime = Time.time + 1f / parryRate;
+        }
+        
+        if (Input.GetButtonDown("Jump") && IsGrounded() && AbleToMove()) {
             Jump();                     
         }
         
@@ -107,6 +122,23 @@ public class CharController: LivingThing {
         if (Input.GetButtonUp("Jump") && !IsGrounded()) {
             _rigidbody.velocity = Vector2.Scale(_rigidbody.velocity, new Vector2(1f, 0.5f));
         }
+    }
+
+    private void Parry() {
+        //start parry animation
+        isParrying = true;
+        StartCoroutine(ParryCoroutine());
+    }
+
+    private IEnumerator ParryCoroutine() {
+        float parryTime = .5f;
+        yield return new WaitForSeconds(parryTime);
+        isParrying = false;
+    }
+
+    public void Counterstrike(Enemy enemy) {
+        //start counter animation
+        enemy.TakeDamage(20, 2);
     }
 
 
@@ -136,7 +168,7 @@ public class CharController: LivingThing {
         return _colliding.Count > 0;
     }
 
-    private bool IsMovementEnabled() {
+    private bool AbleToMove() {
         if (isAttacking) {
             return false;
         }

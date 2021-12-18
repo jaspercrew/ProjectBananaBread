@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class LivingThing : MonoBehaviour {
+public abstract class LivingThing : Entity {
     //Configurable values 
     protected int maxHealth = 100;
     //Trackers
@@ -26,8 +27,7 @@ public abstract class LivingThing : MonoBehaviour {
     protected void VelocityDash(int cardinalDirection, float dashSpeed, float dashTime) {
         isDashing = true;
         StartCoroutine(DashCoroutine(dashTime));
-        
-        switch (cardinalDirection) { 
+        switch (cardinalDirection) {
             case 0:
                 _rigidbody.velocity = new Vector2(0, dashSpeed);
                 break;
@@ -44,8 +44,6 @@ public abstract class LivingThing : MonoBehaviour {
                 Debug.Log("invalid dash direction");
                 break;
         }
-
-        
     }
 
     //dash coroutine handles stopping the dash
@@ -70,8 +68,6 @@ public abstract class LivingThing : MonoBehaviour {
     
     //knock this object away from point with velocity vel 
     protected void KnockAwayFromPoint(float vel, Vector3 point) {
-        //Debug.Log(vel);
-        //GameObject player = GameObject.FindWithTag("Player");
         _rigidbody.velocity = vel * (transform.position - point).normalized;
     }
     

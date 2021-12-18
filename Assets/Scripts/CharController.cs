@@ -96,7 +96,7 @@ public class CharController: LivingThing {
             _animator.SetBool("Jump", false);
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && !isAttacking && !isDashing && Time.time >= nextRollTime) {
+        if (Input.GetKeyDown(KeyCode.LeftShift) && AbleToAct() && Time.time >= nextRollTime) {
             Roll();
             nextRollTime = Time.time + 1f / rollRate;
         }
@@ -126,6 +126,7 @@ public class CharController: LivingThing {
 
     private void Parry() {
         //start parry animation
+        transform.GetComponent<SpriteRenderer>().flipY = true;
         isParrying = true;
         StartCoroutine(ParryCoroutine());
     }
@@ -134,6 +135,7 @@ public class CharController: LivingThing {
         float parryTime = .5f;
         yield return new WaitForSeconds(parryTime);
         isParrying = false;
+        transform.GetComponent<SpriteRenderer>().flipY = false;
     }
 
     public void Counterstrike(Enemy enemy) {

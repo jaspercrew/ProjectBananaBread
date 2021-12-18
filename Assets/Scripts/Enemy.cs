@@ -18,7 +18,7 @@ public class Enemy : LivingThing
     //Trackers
     private float moveVector = 0f;
     private float nextAttackTime = 0f;
-    private IEnumerator co;
+    private IEnumerator attackCo;
     
     
     
@@ -43,14 +43,14 @@ public class Enemy : LivingThing
     }
 
     public void Interrupt() { //should stop all relevant coroutines
-        StopCoroutine(co); //interrupt attack if take damage
+        StopCoroutine(attackCo); //interrupt attack if take damage
         _rigidbody.velocity = Vector2.zero;
     }
     
 
     private void Attack() {
         _animator.SetTrigger("Attack");
-        StartCoroutine(co = AttackCoroutine());
+        StartCoroutine(attackCo = AttackCoroutine());
     }
 
     private IEnumerator AttackCoroutine() {

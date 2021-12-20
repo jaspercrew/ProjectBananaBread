@@ -76,6 +76,7 @@ public class Enemy : LivingThing
         foreach (Collider2D p in hits) {
             CharController player = p.GetComponent<CharController>();
             if (player.isParrying) {
+                //StartCoroutine(PauseAnimatorCoroutine(.2f));
                 player.Counterstrike(GetComponent<Enemy>());
                 break;
             }

@@ -22,6 +22,7 @@ public class CharController: LivingThing {
     [SerializeField] private float attackRange;
     
     //Trackers
+    private bool isInvincible = false;
     private float nextParryTime = 0f;
     public bool isParrying = false;
     private float nextAttackTime = 0f;
@@ -139,8 +140,17 @@ public class CharController: LivingThing {
     }
 
     public void Counterstrike(Enemy enemy) {
+        isAttacking = true;
         //start counter animation
+        StartCoroutine(CounterCoroutine(enemy));
+
+    }
+
+    protected IEnumerator CounterCoroutine(Enemy enemy) {
+        float counterTime = .2f;
+        yield return new WaitForSeconds(counterTime);
         enemy.TakeDamage(20, 2);
+        isAttacking = false;
     }
 
 
@@ -179,9 +189,17 @@ public class CharController: LivingThing {
         }
         return true;
     }
+
+    protected bool AbleToBeDamaged() {
+        return !isInvincible;
+    }
     
     //Take damage, knock away from point
     public void TakeDamage(int damage, float knockback, Vector2 point) {
+        if (!AbleToBeDamaged()) {
+            return;
+        }
+        StartCoroutine(TakeDamageCoroutine());
         KnockAwayFromPoint(knockback, point);
         currentHealth -= damage;
         //damage animation
@@ -190,6 +208,13 @@ public class CharController: LivingThing {
         if (currentHealth <= 0) {
             Die();
         }
+    }
+
+    protected IEnumerator TakeDamageCoroutine() {
+        isInvincible = true;
+        float invFrames = .2f;
+        yield return new WaitForSeconds(invFrames);
+        isInvincible = false;
     }
     
     protected override void Die() {

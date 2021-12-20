@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
+    enum EnvironmentState{
+        State1,
+        State2,
+        State3
+    }
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -16,7 +22,7 @@ public class Entity : MonoBehaviour
         
     }
 
-    public void SwitchState() {
+    public void SwitchState(int State) {
         
     }
 }

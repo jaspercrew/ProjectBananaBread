@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
         
     }
 
-    public void SwitchWorldState() {
+    public void SwitchWorldState(int State) {
         
     }
 }

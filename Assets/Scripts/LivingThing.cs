@@ -7,6 +7,7 @@ public abstract class LivingThing : Entity {
     //Configurable values 
     protected int maxHealth = 100;
     //Trackers
+
     protected int currentHealth;
     protected Animator _animator;
     protected Rigidbody2D _rigidbody;

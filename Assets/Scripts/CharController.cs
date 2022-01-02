@@ -8,6 +8,7 @@ public class CharController: LivingThing {
     //Components
     private BoxCollider2D _collider;
     private ParticleSystem _dust;
+    private ScreenShakeController _screenShakeController;
     
     //Configurable player control values
     private float speed = 3.5f;
@@ -42,6 +43,7 @@ public class CharController: LivingThing {
         _animator = transform.GetComponent<Animator>();
         _collider = transform.GetComponent<BoxCollider2D>();
         _dust = transform.GetComponentInChildren<ParticleSystem>();
+        _screenShakeController = FindObjectOfType<Camera>().GetComponent<ScreenShakeController>();
     }
 
     // Update is called once per frame
@@ -149,6 +151,7 @@ public class CharController: LivingThing {
     protected IEnumerator CounterCoroutine(Enemy enemy) {
         float counterTime = .2f;
         yield return new WaitForSeconds(counterTime);
+        _screenShakeController.LightShake();
         enemy.TakeDamage(20, 2);
         isAttacking = false;
     }
@@ -191,7 +194,7 @@ public class CharController: LivingThing {
     }
 
     protected bool AbleToBeDamaged() {
-        return !isInvincible;
+        return !isInvincible && !isDashing;
     }
     
     //Take damage, knock away from point
@@ -211,6 +214,7 @@ public class CharController: LivingThing {
     }
 
     protected IEnumerator TakeDamageCoroutine() {
+        _screenShakeController.LightShake();
         isInvincible = true;
         float invFrames = .2f;
         yield return new WaitForSeconds(invFrames);
@@ -284,6 +288,7 @@ public class CharController: LivingThing {
     
         yield return new WaitForSeconds(beginAttackDelay);
         
+        
         //move while attacking
         if (IsGrounded()) {
             if (moveVector > .5) {
@@ -300,6 +305,7 @@ public class CharController: LivingThing {
         if (hitEnemies.Length > 0) {
             //pause swing animation if an enemy is hit
             StartCoroutine(PauseAnimatorCoroutine(hitConfirmDelay)); 
+            _screenShakeController.LightShake();
         }
 
         foreach (Collider2D enemy in hitEnemies) {

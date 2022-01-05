@@ -19,6 +19,7 @@ public abstract class LivingThing : Entity {
     protected static readonly int Death = Animator.StringToHash("Death");
     protected static readonly int Grounded = Animator.StringToHash("Grounded");
     protected static readonly int Attack = Animator.StringToHash("Attack");
+    protected static readonly int Parry = Animator.StringToHash("Parry");
 
     public void TakeDamage(int damage) {
         CurrentHealth -= damage;

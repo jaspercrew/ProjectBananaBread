@@ -121,7 +121,7 @@ public class CharController: LivingThing {
         }
         
         if (Input.GetMouseButtonDown(1) && IsAbleToAct() && Time.time >= nextParryTime) {
-            Parry();
+            DoParry();
             nextParryTime = Time.time + 1f / ParryRate;
         }
         
@@ -143,9 +143,9 @@ public class CharController: LivingThing {
         }
     }
 
-    private void Parry() {
+    private void DoParry() {
         // start parry animation
-        animator_.SetTrigger("Parry");
+        Animator.SetTrigger(Parry);
         isParrying = true;
         StartCoroutine(ParryCoroutine());
     }
@@ -374,7 +374,7 @@ public class CharController: LivingThing {
     }
 
 
-    protected void OnLanding() {
+    private void OnLanding() {
         dust.Play();
         Animator.SetBool(Grounded, true);
         // Debug.Log("sus");

@@ -17,13 +17,15 @@ public class Enemy : LivingThing
     // private float moveVector = 0f;
     private float nextAttackTime;
     private IEnumerator attackCo;
-    
-    
+    private EnvironmentState originalState = 0;
+
     // Start is called before the first frame update
     private void Start() {
         CurrentHealth = MaxHealth;
         Animator = transform.GetComponent<Animator>();
         Rigidbody = transform.GetComponent<Rigidbody2D>();
+        if (originalState == 0)
+            originalState = EntityState;
     }
 
     public void TakeDamage(int damage, float knockback) { // assumes damage is taken from PLAYER

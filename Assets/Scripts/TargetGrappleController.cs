@@ -9,11 +9,11 @@ public class TargetGrappleController : MonoBehaviour {
     public Transform swingPoint;
     
     // configs
-    private float velocityModifier = 1.5f;
-    private float grappleBreakValue = 2f;
-    private float maxGrappleVelocity = 10f;
-    
-    
+    private const float VelocityModifier = 1.5f;
+    private const float GrappleBreakValue = 2f;
+    private const float MAXGrappleVelocity = 10f;
+
+
     // Start is called before the first frame update
     private void Start() {
         rigidbody = GetComponent<Rigidbody2D>();
@@ -26,12 +26,12 @@ public class TargetGrappleController : MonoBehaviour {
         Debug.DrawLine (transform.position, swingPoint.position, Color.red);
         // Assert.IsTrue(swingPoint != null);
         Vector2 connect = swingPoint.position - transform.position;
-        rigidbody.velocity += connect.normalized * velocityModifier;
-        if (rigidbody.velocity.magnitude > maxGrappleVelocity) {
-            rigidbody.velocity *= maxGrappleVelocity / rigidbody.velocity.magnitude;
+        rigidbody.velocity += connect.normalized * VelocityModifier;
+        if (rigidbody.velocity.magnitude > MAXGrappleVelocity) {
+            rigidbody.velocity *= MAXGrappleVelocity / rigidbody.velocity.magnitude;
         }
 
-        if ((transform.position - swingPoint.position).magnitude < grappleBreakValue) {
+        if ((transform.position - swingPoint.position).magnitude < GrappleBreakValue) {
             EndGrapple();
         }
     }

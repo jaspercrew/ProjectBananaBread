@@ -16,7 +16,7 @@ public class FluidPlatform: Platform
         
     }
 
-    public virtual void SwitchState(EnvironmentState state) {
+    public override void SwitchToState(EnvironmentState state) {
         
     }
 }

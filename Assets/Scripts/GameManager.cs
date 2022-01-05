@@ -6,11 +6,11 @@ public class GameManager : MonoBehaviour
     
     public EnvironmentState originalState = EnvironmentState.RealWorld;
     public EnvironmentState altState;
-    public EnvironmentState currentState;
+    private EnvironmentState currentState;
 
-    public GameManager()
+    private GameManager()
     {
-        if (Instance != null)
+        if (Instance == null)
             Instance = this;
     }
     
@@ -26,7 +26,16 @@ public class GameManager : MonoBehaviour
 
     public void SwitchWorldState()
     {
-        Entity[] entities = GetComponentsInParent<Entity>();
+        Entity[] entities = FindObjectsOfType<Entity>();
+        // string s = "";
+        //
+        // foreach (Entity e in entities)
+        // {
+        //     s += e.name + ", ";
+        // }
+        //
+        // Debug.Log(s.Substring(0, s.Length - 2));
+        
         EnvironmentState newState;
         
         if (currentState == originalState)

@@ -109,7 +109,9 @@ public class CharController: LivingThing {
 
         if (Input.GetKeyDown(KeyCode.F) && AbleToAct()) {
             //switch states
-            GameObject.FindObjectOfType<BinaryPlatform>().SwitchState(EnvironmentState.Cyberpunk);
+            //GameObject.FindObjectOfType<BinaryPlatform>().SwitchState(EnvironmentState.Cyberpunk);
+            GameManager.Instance.SwitchWorldState();
+            //Debug.Log(GameManager.Instance);
         }
 
         if (Input.GetKeyDown(KeyCode.E) && AbleToAct()) {

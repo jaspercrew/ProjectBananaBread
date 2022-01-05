@@ -145,7 +145,7 @@ public class CharController: LivingThing {
 
     private void Parry() {
         // start parry animation
-        transform.GetComponent<SpriteRenderer>().flipY = true;
+        animator_.SetTrigger("Parry");
         isParrying = true;
         StartCoroutine(ParryCoroutine());
     }
@@ -154,7 +154,7 @@ public class CharController: LivingThing {
         const float parryTime = .5f;
         yield return new WaitForSeconds(parryTime);
         isParrying = false;
-        transform.GetComponent<SpriteRenderer>().flipY = false;
+        //transform.GetComponent<SpriteRenderer>().flipY = false;
     }
 
     public void CounterStrike(Enemy enemy) {

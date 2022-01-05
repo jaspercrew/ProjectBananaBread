@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 
-public class BinaryPlatform : FluidObject //is only active in one state
+public class BinaryPlatform : FluidPlatform //is only active in one state
 {
     private Collider2D _collider;
     private SpriteRenderer _spriteRenderer;

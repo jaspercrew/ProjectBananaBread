@@ -19,7 +19,7 @@ public class Entity : MonoBehaviour
         
     }
 
-    protected virtual void SwitchToState(EnvironmentState newState)
+    public virtual void SwitchToState(EnvironmentState newState)
     {
         entityState = newState;
 

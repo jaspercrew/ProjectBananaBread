@@ -1,26 +1,51 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour {
-    private EnvironmentState altState;
+public class GameManager : MonoBehaviour
+{
+    public static GameManager Instance;
+    
+    public EnvironmentState originalState = EnvironmentState.RealWorld;
+    public EnvironmentState altState;
+    public EnvironmentState currentState;
+
+    public GameManager()
+    {
+        if (Instance != null)
+            Instance = this;
+    }
+    
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
+        // set current state to alt, then switch everything
+        // this calls SwitchToState() on all entities in the scene,
+        // changing everything to the originalState
+        currentState = altState;
+        SwitchWorldState();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SwitchWorldState()
     {
+        Entity[] entities = GetComponentsInParent<Entity>();
+        EnvironmentState newState;
         
-    }
+        if (currentState == originalState)
+        {
+            newState = altState;
+        } 
+        else if (currentState == altState)
+        {
+            newState = originalState;
+        }
+        else
+        {
+            Debug.LogError("Error: scene isn't in original OR alternate states; something went wrong");
+            return;
+        }
 
-    public void SwitchWorldState(int State) {
-        
-    }
-
-    public EnvironmentState getAltState() {
-        return altState;
+        foreach (Entity entity in entities)
+        {
+            entity.SwitchToState(newState);
+        }
     }
 }

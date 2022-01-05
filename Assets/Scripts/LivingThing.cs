@@ -9,15 +9,23 @@ public abstract class LivingThing : Entity {
     //Trackers
 
     protected int currentHealth;
-    protected Animator _animator;
+    protected Animator animator_;
     protected Rigidbody2D _rigidbody;
     protected bool isDashing = false;
-    
+
+    // animator values beforehand to save time later
+    protected static readonly int AnimState = Animator.StringToHash("AnimState");
+    protected static readonly int Idle = Animator.StringToHash("Idle");
+    protected static readonly int Jump = Animator.StringToHash("Jump");
+    protected static readonly int Hurt = Animator.StringToHash("Hurt");
+    protected static readonly int Death = Animator.StringToHash("Death");
+    protected static readonly int Grounded = Animator.StringToHash("Grounded");
+    protected static readonly int Attack = Animator.StringToHash("Attack");
 
     public virtual void TakeDamage(int damage) {
         currentHealth -= damage;
         //damage animation
-        _animator.SetTrigger("Hurt");
+        animator_.SetTrigger(Hurt);
         
         if (currentHealth <= 0) {
             Die();
@@ -55,16 +63,16 @@ public abstract class LivingThing : Entity {
     }
     
     protected virtual void OnLanding() {
-        _animator.SetBool("Grounded", true);
+        animator_.SetBool(Grounded, true);
         //Debug.Log("sus");
     }
     
     //pauses the animator for pausetime
     protected IEnumerator PauseAnimatorCoroutine(float pauseTime) {
-        float temp = _animator.speed;
-        _animator.speed = 0;
+        float temp = animator_.speed;
+        animator_.speed = 0;
         yield return new WaitForSeconds(pauseTime);
-        _animator.speed = temp;
+        animator_.speed = temp;
     }
     
     //knock this object away from point with velocity vel 
@@ -75,7 +83,7 @@ public abstract class LivingThing : Entity {
     
 
     protected virtual void Die() {
-        _animator.SetTrigger("Death");
+        animator_.SetTrigger(Death);
         transform.GetComponent<Collider>().enabled = false;
         _rigidbody.gravityScale = 0;
     }

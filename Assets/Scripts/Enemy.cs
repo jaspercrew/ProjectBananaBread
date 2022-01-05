@@ -25,7 +25,7 @@ public class Enemy : LivingThing
     // Start is called before the first frame update
     void Start() {
         currentHealth = maxHealth;
-        _animator = transform.GetComponent<Animator>();
+        animator_ = transform.GetComponent<Animator>();
         _rigidbody = transform.GetComponent<Rigidbody2D>();
     }
 
@@ -35,7 +35,7 @@ public class Enemy : LivingThing
         KnockAwayFromPoint(knockback, player.transform.position);
         currentHealth -= damage;
         //damage animation
-        _animator.SetTrigger("Hurt");
+        animator_.SetTrigger("Hurt");
         
         if (currentHealth <= 0) {
             Die();
@@ -49,7 +49,7 @@ public class Enemy : LivingThing
     
 
     private void Attack() {
-        _animator.SetTrigger("Attack");
+        animator_.SetTrigger("Attack");
         StartCoroutine(attackCo = AttackCoroutine());
     }
 
@@ -77,7 +77,7 @@ public class Enemy : LivingThing
             CharController player = p.GetComponent<CharController>();
             if (player.isParrying) {
                 //StartCoroutine(PauseAnimatorCoroutine(.2f));
-                player.Counterstrike(GetComponent<Enemy>());
+                player.CounterStrike(GetComponent<Enemy>());
                 break;
             }
             player.TakeDamage(attackDamage, knockbackVal, transform.position);
@@ -85,7 +85,7 @@ public class Enemy : LivingThing
     }
     
     private bool isMovementEnabled() {
-        if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Attack")) {
+        if (animator_.GetCurrentAnimatorStateInfo(0).IsName("Attack")) {
             return false;
         }
         return true;

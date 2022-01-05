@@ -5,190 +5,202 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 public class CharController: LivingThing {
-    //Components
-    private BoxCollider2D _collider;
-    private ParticleSystem _dust;
-    private ScreenShakeController _screenShakeController;
-    private TargetGrappleController _targetGrappleController;
+    // Components
+    private BoxCollider2D boxCollider;
+    private ParticleSystem dust;
+    private ScreenShakeController screenShakeController;
+    private TargetGrappleController targetGrappleController;
     
-    //Configurable player control values
+    // Configurable player control values
     private float speed = 3.5f;
-    private float jumpForce = 6.3f;
-    private float attackRate = 2f;
-    private float parryRate = 1f;
-    private float rollRate = 1f;
-    private int attackDamage = 10;
-    private float comboResetThreshold = 1f;
+    private const float JumpForce = 6.3f;
+    private const float AttackRate = 2f;
+    private const float ParryRate = 1f;
+    private const float RollRate = 1f;
+    private const int AttackDamage = 10;
+    private const float ComboResetThreshold = 1f;
     public LayerMask enemyLayers;
     [SerializeField] private Transform attackPoint;
     [SerializeField] private float attackRange;
     
-    //Trackers
-    private bool isInvincible = false;
-    private float nextParryTime = 0f;
-    public bool isParrying = false;
-    private float nextAttackTime = 0f;
-    private float nextRollTime = 0f;
-    private float lastAttackTime = 0f;
-    private int comboCounter = 0;
-    private bool isAttacking = false;
+    // Trackers
+    private bool isInvincible;
+    private float nextParryTime;
+    public bool isParrying;
+    private float nextAttackTime;
+    private float nextRollTime;
+    private float lastAttackTime;
+    private int comboCounter;
+    private bool isAttacking;
     private float moveVector;
     private float xDir = 2;
-    private readonly HashSet<Collider2D> _colliding = new HashSet<Collider2D>();
+    private readonly HashSet<Collider2D> colliding = new HashSet<Collider2D>();
+    private IEnumerator attackCoroutine;
 
 
     // Start is called before the first frame update
-    void Start() {
+    private void Start() {
         currentHealth = maxHealth;
-        _targetGrappleController = transform.GetComponent<TargetGrappleController>();
+        targetGrappleController = transform.GetComponent<TargetGrappleController>();
         _rigidbody = transform.GetComponent<Rigidbody2D>();
-        _animator = transform.GetComponent<Animator>();
-        _collider = transform.GetComponent<BoxCollider2D>();
-        _dust = transform.GetComponentInChildren<ParticleSystem>();
-        _screenShakeController = FindObjectOfType<Camera>().GetComponent<ScreenShakeController>();
+        animator_ = transform.GetComponent<Animator>();
+        boxCollider = transform.GetComponent<BoxCollider2D>();
+        dust = transform.GetComponentInChildren<ParticleSystem>();
+        screenShakeController = FindObjectOfType<Camera>().GetComponent<ScreenShakeController>();
     }
 
     // Update is called once per frame
-    void FixedUpdate() {
+    private void FixedUpdate() {
         moveVector = Input.GetAxisRaw("Horizontal");
-        //Debug.Log(moveVector);
+        // Debug.Log(moveVector);
 
-        if (AbleToMove()) {
-            //movement animations
-            if (moveVector > Mathf.Epsilon || moveVector < -Mathf.Epsilon) {
-                _animator.SetInteger("AnimState", 2);
-            }
-            else {
-                _animator.SetInteger("AnimState", 0);
-            }
-            
-            //actual moving
-            transform.position += new Vector3(moveVector * speed * Time.deltaTime, 0, 0);
-            
-            //feet dust logic
-            if (Math.Abs(xDir - moveVector) > 0.01f && IsGrounded() && moveVector != 0) {
-                _dust.Play();
-            }
-            xDir = moveVector;
-            
-            //direction switching
-            if (moveVector > 0) {
-                transform.localScale = new Vector2(-1, transform.localScale.y);
-            }
-            else if (moveVector < 0) {
-                transform.localScale = new Vector2(1, transform.localScale.y);
-            }
-            
-            //Vector3 moveVect = new Vector3(Input.GetAxis("Horizontal"), 0, 0);
-            //moveVect = moveVect.normalized * (speed * Time.deltaTime);
-            //_rigidbody.MovePosition(transform.position + moveVect);
-        }
+        if (!IsAbleToMove()) return;
         
-    }
+        // movement animations
+        animator_.SetInteger(AnimState, Mathf.Abs(moveVector) > Mathf.Epsilon? 2 : 0);
 
-    private bool AbleToAct() {
-        if (isDashing || isAttacking || isParrying) {
-            return false;
+        // actual moving
+        transform.position += new Vector3(moveVector * speed * Time.deltaTime, 0, 0);
+            
+        // feet dust logic
+        if (Math.Abs(xDir - moveVector) > 0.01f && IsGrounded() && moveVector != 0) {
+            dust.Play();
         }
-        return true;
+        xDir = moveVector;
+
+        float yScale = transform.localScale.y;
+        // direction switching
+        if (moveVector > 0) {
+            transform.localScale = new Vector3(-1, yScale, 0);
+        }
+        else if (moveVector < 0) {
+            transform.localScale = new Vector3(1, yScale, 0);
+        }
+            
+        // Vector3 moveVect = new Vector3(Input.GetAxis("Horizontal"), 0, 0);
+        // moveVect = moveVect.normalized * (speed * Time.deltaTime);
+        // _rigidbody.MovePosition(transform.position + moveVect);
+
     }
 
-    void Update() {
-        if (Time.time >= nextAttackTime) {
+    private bool IsAbleToAct()
+    {
+        return !isDashing && !isAttacking && !isParrying;
+    }
+
+    private void Update() {
+        if (Time.time >= nextAttackTime && !isAttacking) {
             AttemptAttack();
         }
 
         if (IsGrounded()) {
-            _animator.SetBool("Jump", false);
+            animator_.SetBool(Jump, false);
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && AbleToAct() && Time.time >= nextRollTime) {
-            Roll();
-            nextRollTime = Time.time + 1f / rollRate;
+        if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time >= nextRollTime) {
+            Dash();
+            nextRollTime = Time.time + 1f / RollRate;
         }
 
-        if (Input.GetKeyDown(KeyCode.F) && AbleToAct()) {
-            //switch states
-            //GameObject.FindObjectOfType<BinaryPlatform>().SwitchState(EnvironmentState.Cyberpunk);
+        if (Input.GetKeyDown(KeyCode.F) && IsAbleToAct()) {
+            // switch states
+            // GameObject.FindObjectOfType<BinaryPlatform>().SwitchState(EnvironmentState.Cyberpunk);
             // Debug.Log(GameManager.Instance);
             GameManager.Instance.SwitchWorldState();
         }
 
-        if (Input.GetKeyDown(KeyCode.E) && AbleToAct()) {
-            if (_targetGrappleController.isGrappling) {
-                _targetGrappleController.EndGrapple();
-                return;
+        if (Input.GetKeyDown(KeyCode.E) && IsAbleToAct()) {
+            if (targetGrappleController.isGrappling) {
+                targetGrappleController.EndGrapple();
+                // return;
             }
-            _targetGrappleController.StartGrapple();
+            else
+            {
+                targetGrappleController.StartGrapple();
+            }
         }
         
-        if (Input.GetMouseButtonDown(1) && AbleToAct() && Time.time >= nextParryTime) {
+        if (Input.GetMouseButtonDown(1) && IsAbleToAct() && Time.time >= nextParryTime) {
             Parry();
-            nextParryTime = Time.time + 1f / parryRate;
+            nextParryTime = Time.time + 1f / ParryRate;
         }
         
-        if (Input.GetButtonDown("Jump") && IsGrounded() && AbleToMove()) {
-            Jump();                     
+        if (Input.GetButtonDown("Jump") && IsGrounded() && IsAbleToMove()) {
+            DoJump();                     
         }
         
-        if (Input.GetButtonDown("Fire1")) { //crouch
+        if (Input.GetButtonDown("Fire1")) { // crouch
             Crouch();
         }
 
-        if (Input.GetButtonUp("Fire1")) { //uncrouch
+        if (Input.GetButtonUp("Fire1")) { // uncrouch
             UnCrouch();
         }
 
-        //shortjump
+        // short jump
         if (Input.GetButtonUp("Jump") && !IsGrounded()) {
             _rigidbody.velocity = Vector2.Scale(_rigidbody.velocity, new Vector2(1f, 0.5f));
         }
     }
 
     private void Parry() {
-        //start parry animation
+        // start parry animation
         transform.GetComponent<SpriteRenderer>().flipY = true;
         isParrying = true;
         StartCoroutine(ParryCoroutine());
     }
 
     private IEnumerator ParryCoroutine() {
-        float parryTime = .5f;
+        const float parryTime = .5f;
         yield return new WaitForSeconds(parryTime);
         isParrying = false;
         transform.GetComponent<SpriteRenderer>().flipY = false;
     }
 
-    public void Counterstrike(Enemy enemy) {
+    public void CounterStrike(Enemy enemy) {
         isAttacking = true;
-        //start counter animation
+        // start counter animation
         StartCoroutine(CounterCoroutine(enemy));
-
     }
 
-    protected IEnumerator CounterCoroutine(Enemy enemy) {
-        float counterTime = .2f;
+    private IEnumerator CounterCoroutine(Enemy enemy) {
+        const float counterTime = .2f;
         yield return new WaitForSeconds(counterTime);
-        _screenShakeController.MediumShake();
+        screenShakeController.MediumShake();
         enemy.TakeDamage(20, 2);
         isAttacking = false;
     }
-
-
-
-    private void Roll() {
-        float rollSpeed = 9f;
-        float rollTime = .23f;
-        if (moveVector > .5) {
-            VelocityDash(1, rollSpeed, rollTime);
-            _dust.Play();
+    
+    private void Dash()
+    {
+        Debug.Log("starting dash");
+        if (!IsAbleToAct() && !isAttacking) {
+            Debug.Log("stopping dash cuz bad");
+            return;
         }
-        else if (moveVector < -.5) {
-            VelocityDash(3, rollSpeed, rollTime);
-            _dust.Play();
+        
+        if (isAttacking)
+        {
+            Debug.Log("interrupting attack with dash");
+            animator_.SetTrigger(Idle); // TODO: dash animation
+            isAttacking = false;
+            Assert.IsNotNull(attackCoroutine);
+            StopCoroutine(attackCoroutine);
+            // animator_.SetInteger(AnimState, 0); // TODO
+        }
+
+        const float rollSpeed = 9f;
+        const float rollTime = .23f;
+
+        float xScale = transform.localScale.x;
+        if (Mathf.Abs(xScale) > .5) {
+            VelocityDash(xScale > 0? 3 : 1, rollSpeed, rollTime);
+            dust.Play();
         }
     }
 
+    // TODO: add variable isCrouching and set to true/false here instead of changing speed directly
+    // and use isCrouching in movement and affect speed there
     private void Crouch() {
         speed /= 2;
     }
@@ -198,24 +210,18 @@ public class CharController: LivingThing {
     }
 
     private bool IsGrounded() {
-        return _colliding.Count > 0;
+        return colliding.Count > 0;
     }
 
-    private bool AbleToMove() {
-        if (isAttacking) {
-            return false;
-        }
-        if (isDashing) {
-            return false;
-        }
-        return true;
+    private bool IsAbleToMove() {
+        return !isAttacking && !isDashing;
     }
 
-    protected bool AbleToBeDamaged() {
+    private bool AbleToBeDamaged() {
         return !isInvincible && !isDashing;
     }
     
-    //Take damage, knock away from point
+    // Take damage, knock away from point
     public void TakeDamage(int damage, float knockback, Vector2 point) {
         if (!AbleToBeDamaged()) {
             return;
@@ -223,84 +229,100 @@ public class CharController: LivingThing {
         StartCoroutine(TakeDamageCoroutine());
         KnockAwayFromPoint(knockback, point);
         currentHealth -= damage;
-        //damage animation
-        _animator.SetTrigger("Hurt");
+        // damage animation
+        animator_.SetTrigger(Hurt);
         
         if (currentHealth <= 0) {
             Die();
         }
     }
 
-    protected IEnumerator TakeDamageCoroutine() {
-        _screenShakeController.MediumShake();
+    private IEnumerator TakeDamageCoroutine() {
+        screenShakeController.MediumShake();
         isInvincible = true;
-        float invFrames = .2f;
+        const float invFrames = .2f;
         yield return new WaitForSeconds(invFrames);
         isInvincible = false;
     }
     
     protected override void Die() {
-        _animator.SetTrigger("Death");
+        animator_.SetTrigger(Death);
         transform.GetComponent<Collider>().enabled = false;
         _rigidbody.gravityScale = 0;
     }
 
-    private void Jump() {
-        _dust.Play();
-        _rigidbody.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
-        _animator.SetTrigger("Jump");
-        _animator.SetBool("Grounded", false);
+    private void DoJump() {
+        dust.Play();
+        _rigidbody.AddForce(new Vector2(0, JumpForce), ForceMode2D.Impulse);
+        animator_.SetTrigger(Jump);
+        animator_.SetBool(Grounded, false);
     }
+    
+    // TODO: event queueing system?
+    // eventTimeout = 0.5;
+    // event queue = [(attack, t1), (dash, t2), ...]
+    
+    // update()
+    // top = queue.peek()
+    // if (top.time + eventTimeout >= Time.time)
+    //      queue.pop()
+    // do this again, until: queue is empty, or event is reached, then do as many events as possible
+    // also, once this is done, fix nextAttackTime and nextDashTime or whatever it was
 
-    //handles boolean checking and combo count for attacking 
-    private void AttemptAttack() {
-        if (Input.GetMouseButtonDown(0) && Time.time < lastAttackTime + comboResetThreshold && !isDashing) {
-            //continue combo
+    // handles boolean checking and combo count for attacking 
+    private void AttemptAttack()
+    {
+        if (!IsAbleToAct())
+            return;
+        if (Input.GetMouseButtonDown(0) && Time.time < lastAttackTime + ComboResetThreshold) {
+            // continue combo
             comboCounter++;
-            Attack(comboCounter);
+            DoAttack(comboCounter);
                 
-            if (comboCounter >= 4) { //heavy
+            if (comboCounter >= 4) { // heavy
                 comboCounter = 0;
-                nextAttackTime = Time.time + 2f / attackRate;
+                nextAttackTime = Time.time + 2f / AttackRate;
             }
-            else { //light
-                nextAttackTime = Time.time + 1f / attackRate;
+            else { // light
+                nextAttackTime = Time.time + 1f / AttackRate;
             }
             lastAttackTime = Time.time;
         }
-        else if (Input.GetMouseButtonDown(0) && !isDashing){
-            //start new attack chain 
+        else if (Input.GetMouseButtonDown(0)){
+            // start new attack chain 
             comboCounter = 1;
-            Attack(comboCounter);
+            DoAttack(comboCounter);
                 
-            nextAttackTime = Time.time + 1f / attackRate;
+            nextAttackTime = Time.time + 1f / AttackRate;
             lastAttackTime = Time.time;
         }
     }
     
-    private void Attack(int comboCount) {
-        //_screenShakeController.LightShake();
+    private void DoAttack(int comboCount) {
+        // _screenShakeController.LightShake();
         isAttacking = true;
-        _animator.speed = 1;
+        animator_.speed = 1;
         Assert.IsTrue(comboCount <= 4);
         
-        _animator.SetTrigger("Attack");
-        if (comboCount == 4) { //heavy attack?
-            _animator.speed = .5f;
+        animator_.SetTrigger(Attack);
+        // TODO: remove when we have actual animations
+        if (comboCount == 4) { // heavy attack?
+            animator_.speed = .5f;
         }
-        StartCoroutine(AttackCoroutine(comboCount == 4));
-        
+
+        attackCoroutine = AttackCoroutine(comboCount == 4);
+        StartCoroutine(attackCoroutine);
     }
 
-    private IEnumerator AttackCoroutine(bool heavyAttack) {
-        //light attack modifiers
+    private IEnumerator AttackCoroutine(bool isHeavyAttack) {
+        // light attack modifiers
         float attackBoost = 2.5f;
         float beginAttackDelay = .15f;
         float endAttackDelay = .2f;
         float hitConfirmDelay = .20f;
         
-        //heavy attack modifiers
-        if (heavyAttack) { 
+        // heavy attack modifiers
+        if (isHeavyAttack) { 
             attackBoost = 3.0f;
             beginAttackDelay = .25f;
             endAttackDelay = .4f;
@@ -310,7 +332,7 @@ public class CharController: LivingThing {
         yield return new WaitForSeconds(beginAttackDelay);
         
         
-        //move while attacking
+        // move while attacking
         if (IsGrounded()) {
             if (moveVector > .5) {
                 VelocityDash(1, attackBoost, .5f);
@@ -319,24 +341,31 @@ public class CharController: LivingThing {
                 VelocityDash(3, attackBoost, .5f);
             }
         }
-        
-        //scan for hit enemies
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
-        if (hitEnemies.Length > 0) {
-            //pause swing animation if an enemy is hit
+        const int maxEnemiesHit = 20;
+        Collider2D[] hitColliders = new Collider2D[maxEnemiesHit];
+        
+        // scan for hit enemies
+        int numHitEnemies = Physics2D.OverlapCircleNonAlloc(
+            attackPoint.position, attackRange, hitColliders, enemyLayers);
+
+        if (numHitEnemies > 0) {
+            // pause swing animation if an enemy is hit
             StartCoroutine(PauseAnimatorCoroutine(hitConfirmDelay)); 
-            _screenShakeController.MediumShake();
+            screenShakeController.MediumShake();
         }
 
-        foreach (Collider2D enemy in hitEnemies) {
-            enemy.GetComponent<Enemy>().TakeDamage(attackDamage, heavyAttack ? 2f : 1f);
+        foreach (Collider2D enemy in hitColliders)
+        {
+            if (enemy is null)
+                break;
+            enemy.GetComponent<Enemy>().TakeDamage(AttackDamage, isHeavyAttack ? 2f : 1f);
         }
         yield return new WaitForSeconds(endAttackDelay);
         isAttacking = false;
     }
     
-    //show gizmos in editor
+    // show gizmos in editor
     private void OnDrawGizmosSelected() {
         if (attackPoint == null) {
             return;
@@ -346,32 +375,32 @@ public class CharController: LivingThing {
 
 
     protected override void OnLanding() {
-        _dust.Play();
-        _animator.SetBool("Grounded", true);
-        //Debug.Log("sus");
+        dust.Play();
+        animator_.SetBool(Grounded, true);
+        // Debug.Log("sus");
     }
     
     private void OnCollisionEnter2D(Collision2D other)
     {
-        //Grounding Controller
+        // Grounding Controller
         Collider2D col = other.collider;
         float colX = col.transform.position.x;
         float charX = transform.position.x;
         float colW = col.bounds.extents.x;
-        float charW = _collider.bounds.extents.x;
+        float charW = boxCollider.bounds.extents.x;
 
         if (!col.isTrigger && Mathf.Abs(charX - colX) < Mathf.Abs(colW) + Mathf.Abs(charW) - 0.01f)
         {
-            if (_colliding.Count == 0) {
+            if (colliding.Count == 0) {
                 OnLanding();
             }
-            _colliding.Add(col);
+            colliding.Add(col);
 
         }
     }
     private void OnCollisionExit2D(Collision2D other)
     {
-        _colliding.Remove(other.collider);
+        colliding.Remove(other.collider);
     }
 
 }

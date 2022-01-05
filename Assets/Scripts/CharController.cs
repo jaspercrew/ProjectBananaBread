@@ -51,7 +51,7 @@ public class CharController: LivingThing {
     // Update is called once per frame
     void FixedUpdate() {
         moveVector = Input.GetAxisRaw("Horizontal");
-        Debug.Log(moveVector);
+        //Debug.Log(moveVector);
 
         if (AbleToMove()) {
             //movement animations
@@ -105,6 +105,11 @@ public class CharController: LivingThing {
         if (Input.GetKeyDown(KeyCode.LeftShift) && AbleToAct() && Time.time >= nextRollTime) {
             Roll();
             nextRollTime = Time.time + 1f / rollRate;
+        }
+
+        if (Input.GetKeyDown(KeyCode.F) && AbleToAct()) {
+            //switch states
+            GameObject.FindObjectOfType<BinaryPlatform>().SwitchState(EnvironmentState.Cyberpunk);
         }
 
         if (Input.GetKeyDown(KeyCode.E) && AbleToAct()) {

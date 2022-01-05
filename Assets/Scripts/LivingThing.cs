@@ -33,13 +33,13 @@ public abstract class LivingThing : Entity {
                 _rigidbody.velocity = new Vector2(0, dashSpeed);
                 break;
             case 1:
-                _rigidbody.velocity = new Vector2(dashSpeed, _rigidbody.velocity.y);
+                _rigidbody.velocity = new Vector2(_rigidbody.velocity.x + dashSpeed, _rigidbody.velocity.y);
                 break;
             case 2:
                 _rigidbody.velocity = new Vector2(0, -dashSpeed);
                 break;
             case 3:
-                _rigidbody.velocity = new Vector2(-dashSpeed, _rigidbody.velocity.y);
+                _rigidbody.velocity = new Vector2(_rigidbody.velocity.x - dashSpeed, _rigidbody.velocity.y);
                 break;
             default:
                 Debug.Log("invalid dash direction");

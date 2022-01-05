@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour {
-    private EnvironmentState altState;
+public class StatiObject : Object
+{
     // Start is called before the first frame update
     void Start()
     {
@@ -14,13 +14,5 @@ public class GameManager : MonoBehaviour {
     void Update()
     {
         
-    }
-
-    public void SwitchWorldState(int State) {
-        
-    }
-
-    public EnvironmentState getAltState() {
-        return altState;
     }
 }

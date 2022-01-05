@@ -57,7 +57,11 @@ public class ScreenShakeController : MonoBehaviour {
         _shakeRotation = power * rotationMultiplier;
     }
 
-    public void LightShake() {
+    public void MediumShake() {
         StartShake(.1f, .2f);
+    }
+    
+    public void LightShake() {
+        StartShake(.1f, .08f);
     }
 }

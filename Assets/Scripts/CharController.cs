@@ -9,6 +9,7 @@ public class CharController: LivingThing {
     private BoxCollider2D _collider;
     private ParticleSystem _dust;
     private ScreenShakeController _screenShakeController;
+    private TargetGrappleController _targetGrappleController;
     
     //Configurable player control values
     private float speed = 3.5f;
@@ -39,6 +40,7 @@ public class CharController: LivingThing {
     // Start is called before the first frame update
     void Start() {
         currentHealth = maxHealth;
+        _targetGrappleController = transform.GetComponent<TargetGrappleController>();
         _rigidbody = transform.GetComponent<Rigidbody2D>();
         _animator = transform.GetComponent<Animator>();
         _collider = transform.GetComponent<BoxCollider2D>();
@@ -49,6 +51,7 @@ public class CharController: LivingThing {
     // Update is called once per frame
     void FixedUpdate() {
         moveVector = Input.GetAxisRaw("Horizontal");
+        Debug.Log(moveVector);
 
         if (AbleToMove()) {
             //movement animations
@@ -103,6 +106,14 @@ public class CharController: LivingThing {
             Roll();
             nextRollTime = Time.time + 1f / rollRate;
         }
+
+        if (Input.GetKeyDown(KeyCode.E) && AbleToAct()) {
+            if (_targetGrappleController.isGrappling) {
+                _targetGrappleController.EndGrapple();
+                return;
+            }
+            _targetGrappleController.StartGrapple();
+        }
         
         if (Input.GetMouseButtonDown(1) && AbleToAct() && Time.time >= nextParryTime) {
             Parry();
@@ -151,7 +162,7 @@ public class CharController: LivingThing {
     protected IEnumerator CounterCoroutine(Enemy enemy) {
         float counterTime = .2f;
         yield return new WaitForSeconds(counterTime);
-        _screenShakeController.LightShake();
+        _screenShakeController.MediumShake();
         enemy.TakeDamage(20, 2);
         isAttacking = false;
     }
@@ -214,7 +225,7 @@ public class CharController: LivingThing {
     }
 
     protected IEnumerator TakeDamageCoroutine() {
-        _screenShakeController.LightShake();
+        _screenShakeController.MediumShake();
         isInvincible = true;
         float invFrames = .2f;
         yield return new WaitForSeconds(invFrames);
@@ -261,6 +272,7 @@ public class CharController: LivingThing {
     }
     
     private void Attack(int comboCount) {
+        //_screenShakeController.LightShake();
         isAttacking = true;
         _animator.speed = 1;
         Assert.IsTrue(comboCount <= 4);
@@ -275,14 +287,16 @@ public class CharController: LivingThing {
 
     private IEnumerator AttackCoroutine(bool heavyAttack) {
         //light attack modifiers
-        float attackBoost = 1.5f;
+        float attackBoost = 2.5f;
         float beginAttackDelay = .15f;
+        float endAttackDelay = .2f;
         float hitConfirmDelay = .20f;
         
         //heavy attack modifiers
         if (heavyAttack) { 
-            attackBoost = 2.5f;
+            attackBoost = 3.0f;
             beginAttackDelay = .25f;
+            endAttackDelay = .4f;
             hitConfirmDelay = .30f;
         }
     
@@ -292,7 +306,7 @@ public class CharController: LivingThing {
         //move while attacking
         if (IsGrounded()) {
             if (moveVector > .5) {
-                VelocityDash(1, attackBoost, .2f);
+                VelocityDash(1, attackBoost, .5f);
             }
             else if (moveVector < -.5) {
                 VelocityDash(3, attackBoost, .5f);
@@ -305,12 +319,13 @@ public class CharController: LivingThing {
         if (hitEnemies.Length > 0) {
             //pause swing animation if an enemy is hit
             StartCoroutine(PauseAnimatorCoroutine(hitConfirmDelay)); 
-            _screenShakeController.LightShake();
+            _screenShakeController.MediumShake();
         }
 
         foreach (Collider2D enemy in hitEnemies) {
             enemy.GetComponent<Enemy>().TakeDamage(attackDamage, heavyAttack ? 2f : 1f);
         }
+        yield return new WaitForSeconds(endAttackDelay);
         isAttacking = false;
     }
     
@@ -331,6 +346,7 @@ public class CharController: LivingThing {
     
     private void OnCollisionEnter2D(Collision2D other)
     {
+        //Grounding Controller
         Collider2D col = other.collider;
         float colX = col.transform.position.x;
         float charX = transform.position.x;

@@ -1,15 +1,13 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-// TODO: do we need this
 public class ScreenShakeController : MonoBehaviour {
     public static ScreenShakeController Instance;
     
-    private float _shakeTimeRemaining;
-    private float _shakePower;
-    private float _shakeFadeTime;
-    private float _shakeRotation;
+    private float shakeTimeRemaining;
+    private float shakePower;
+    private float shakeFadeTime;
+    private float shakeRotation;
     private Vector3 origin;
 
     public float rotationMultiplier = 10f;
@@ -30,31 +28,31 @@ public class ScreenShakeController : MonoBehaviour {
     }
 
     private void LateUpdate() {
-        if (_shakeTimeRemaining > 0) {
-            _shakeTimeRemaining -= Time.deltaTime;
+        if (shakeTimeRemaining > 0) {
+            shakeTimeRemaining -= Time.deltaTime;
 
-            float xAmount = Random.Range(-1f, 1f) * _shakePower;
-            float yAmount = Random.Range(-1f, 1f) * _shakePower;
+            float xAmount = Random.Range(-1f, 1f) * shakePower;
+            float yAmount = Random.Range(-1f, 1f) * shakePower;
 
             transform.position += new Vector3(xAmount, yAmount, 0);
 
-            _shakePower = Mathf.MoveTowards
-                (_shakePower, 0f, _shakeFadeTime * Time.deltaTime);
+            shakePower = Mathf.MoveTowards
+                (shakePower, 0f, shakeFadeTime * Time.deltaTime);
 
-            _shakeRotation = Mathf.MoveTowards(_shakeRotation, 0f, 
-                _shakeFadeTime * rotationMultiplier * Time.deltaTime);
+            shakeRotation = Mathf.MoveTowards(shakeRotation, 0f, 
+                shakeFadeTime * rotationMultiplier * Time.deltaTime);
             
         }
-        transform.rotation = Quaternion.Euler(0f, 0f, _shakeRotation * Random.Range(-1f, 1f));
+        transform.rotation = Quaternion.Euler(0f, 0f, shakeRotation * Random.Range(-1f, 1f));
     }
 
     public void StartShake(float length, float power) {
-        _shakeTimeRemaining = length;
-        _shakePower = power;
+        shakeTimeRemaining = length;
+        shakePower = power;
 
-        _shakeFadeTime = power / length;
+        shakeFadeTime = power / length;
 
-        _shakeRotation = power * rotationMultiplier;
+        shakeRotation = power * rotationMultiplier;
     }
 
     public void MediumShake() {

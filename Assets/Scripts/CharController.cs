@@ -40,10 +40,10 @@ public class CharController: LivingThing {
 
     // Start is called before the first frame update
     private void Start() {
-        currentHealth = maxHealth;
+        CurrentHealth = MaxHealth;
         targetGrappleController = transform.GetComponent<TargetGrappleController>();
-        _rigidbody = transform.GetComponent<Rigidbody2D>();
-        animator_ = transform.GetComponent<Animator>();
+        Rigidbody = transform.GetComponent<Rigidbody2D>();
+        Animator = transform.GetComponent<Animator>();
         boxCollider = transform.GetComponent<BoxCollider2D>();
         dust = transform.GetComponentInChildren<ParticleSystem>();
         screenShakeController = FindObjectOfType<Camera>().GetComponent<ScreenShakeController>();
@@ -57,7 +57,7 @@ public class CharController: LivingThing {
         if (!IsAbleToMove()) return;
         
         // movement animations
-        animator_.SetInteger(AnimState, Mathf.Abs(moveVector) > Mathf.Epsilon? 2 : 0);
+        Animator.SetInteger(AnimState, Mathf.Abs(moveVector) > Mathf.Epsilon? 2 : 0);
 
         // actual moving
         transform.position += new Vector3(moveVector * speed * Time.deltaTime, 0, 0);
@@ -85,7 +85,7 @@ public class CharController: LivingThing {
 
     private bool IsAbleToAct()
     {
-        return !isDashing && !isAttacking && !isParrying;
+        return !IsDashing && !isAttacking && !isParrying;
     }
 
     private void Update() {
@@ -94,7 +94,7 @@ public class CharController: LivingThing {
         }
 
         if (IsGrounded()) {
-            animator_.SetBool(Jump, false);
+            Animator.SetBool(Jump, false);
         }
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time >= nextRollTime) {
@@ -139,7 +139,7 @@ public class CharController: LivingThing {
 
         // short jump
         if (Input.GetButtonUp("Jump") && !IsGrounded()) {
-            _rigidbody.velocity = Vector2.Scale(_rigidbody.velocity, new Vector2(1f, 0.5f));
+            Rigidbody.velocity = Vector2.Scale(Rigidbody.velocity, new Vector2(1f, 0.5f));
         }
     }
 
@@ -182,7 +182,7 @@ public class CharController: LivingThing {
         if (isAttacking)
         {
             Debug.Log("interrupting attack with dash");
-            animator_.SetTrigger(Idle); // TODO: dash animation
+            Animator.SetTrigger(Idle); // TODO: dash animation
             isAttacking = false;
             Assert.IsNotNull(attackCoroutine);
             StopCoroutine(attackCoroutine);
@@ -214,11 +214,11 @@ public class CharController: LivingThing {
     }
 
     private bool IsAbleToMove() {
-        return !isAttacking && !isDashing;
+        return !isAttacking && !IsDashing;
     }
 
     private bool AbleToBeDamaged() {
-        return !isInvincible && !isDashing;
+        return !isInvincible && !IsDashing;
     }
     
     // Take damage, knock away from point
@@ -228,11 +228,11 @@ public class CharController: LivingThing {
         }
         StartCoroutine(TakeDamageCoroutine());
         KnockAwayFromPoint(knockback, point);
-        currentHealth -= damage;
+        CurrentHealth -= damage;
         // damage animation
-        animator_.SetTrigger(Hurt);
+        Animator.SetTrigger(Hurt);
         
-        if (currentHealth <= 0) {
+        if (CurrentHealth <= 0) {
             Die();
         }
     }
@@ -246,16 +246,16 @@ public class CharController: LivingThing {
     }
     
     protected override void Die() {
-        animator_.SetTrigger(Death);
+        Animator.SetTrigger(Death);
         transform.GetComponent<Collider>().enabled = false;
-        _rigidbody.gravityScale = 0;
+        Rigidbody.gravityScale = 0;
     }
 
     private void DoJump() {
         dust.Play();
-        _rigidbody.AddForce(new Vector2(0, JumpForce), ForceMode2D.Impulse);
-        animator_.SetTrigger(Jump);
-        animator_.SetBool(Grounded, false);
+        Rigidbody.AddForce(new Vector2(0, JumpForce), ForceMode2D.Impulse);
+        Animator.SetTrigger(Jump);
+        Animator.SetBool(Grounded, false);
     }
     
     // TODO: event queueing system?
@@ -301,13 +301,13 @@ public class CharController: LivingThing {
     private void DoAttack(int comboCount) {
         // _screenShakeController.LightShake();
         isAttacking = true;
-        animator_.speed = 1;
+        Animator.speed = 1;
         Assert.IsTrue(comboCount <= 4);
         
-        animator_.SetTrigger(Attack);
+        Animator.SetTrigger(Attack);
         // TODO: remove when we have actual animations
         if (comboCount == 4) { // heavy attack?
-            animator_.speed = .5f;
+            Animator.speed = .5f;
         }
 
         attackCoroutine = AttackCoroutine(comboCount == 4);
@@ -374,9 +374,9 @@ public class CharController: LivingThing {
     }
 
 
-    protected override void OnLanding() {
+    protected void OnLanding() {
         dust.Play();
-        animator_.SetBool(Grounded, true);
+        Animator.SetBool(Grounded, true);
         // Debug.Log("sus");
     }
     

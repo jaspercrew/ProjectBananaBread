@@ -12,6 +12,7 @@ public class BinaryPlatform : FluidPlatform //is only active in one state
     }
 
     public override void SwitchToState(EnvironmentState state) {
+        base.SwitchToState(state);
         // Debug.Log("run");
         boxCollider.enabled = !isActive;
         Color c = spriteRenderer.color;

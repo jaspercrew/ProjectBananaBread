@@ -1,104 +1,107 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 
 public class Enemy : LivingThing
 {
-    //Configurable values for enemy
-    private float speed = 3f;
+    // Configurable values for enemy
+    // private float speed = 3f;
     [SerializeField] private Transform attackPoint;
     [SerializeField] private float knockbackVal = 2f;
     [SerializeField] private float attackRange = .25f;
-    private float attackRate = .75f;
-    private int attackDamage = 10;
+    private const float AttackRate = .75f;
+    private const int AttackDamage = 10;
     [SerializeField] private LayerMask playerLayers;
-    [SerializeField] private int moveState = 0; //determines movement behavior
+    // [SerializeField] private int moveState; // determines movement behavior
     
-    //Trackers
-    private float moveVector = 0f;
-    private float nextAttackTime = 0f;
+    // Trackers
+    // private float moveVector = 0f;
+    private float nextAttackTime;
     private IEnumerator attackCo;
     
     
-    
     // Start is called before the first frame update
-    void Start() {
-        currentHealth = maxHealth;
-        animator_ = transform.GetComponent<Animator>();
-        _rigidbody = transform.GetComponent<Rigidbody2D>();
+    private void Start() {
+        CurrentHealth = MaxHealth;
+        Animator = transform.GetComponent<Animator>();
+        Rigidbody = transform.GetComponent<Rigidbody2D>();
     }
 
-    public void TakeDamage(int damage, float knockback) { //assumes damage is taken from PLAYER
+    public void TakeDamage(int damage, float knockback) { // assumes damage is taken from PLAYER
         Interrupt();
         GameObject player = GameObject.FindWithTag("Player");
         KnockAwayFromPoint(knockback, player.transform.position);
-        currentHealth -= damage;
-        //damage animation
-        animator_.SetTrigger("Hurt");
+        CurrentHealth -= damage;
+        // damage animation
+        Animator.SetTrigger(Hurt);
         
-        if (currentHealth <= 0) {
+        if (CurrentHealth <= 0) {
             Die();
         }
     }
 
-    public void Interrupt() { //should stop all relevant coroutines
-        StopCoroutine(attackCo); //interrupt attack if take damage
-        _rigidbody.velocity = Vector2.zero;
+    private void Interrupt() { // should stop all relevant coroutines
+        StopCoroutine(attackCo); // interrupt attack if take damage
+        Rigidbody.velocity = Vector2.zero;
     }
     
 
-    private void Attack() {
-        animator_.SetTrigger("Attack");
+    private void DoAttack() {
+        Animator.SetTrigger(Attack);
         StartCoroutine(attackCo = AttackCoroutine());
     }
 
     private IEnumerator AttackCoroutine() {
-        //enemy attack modifiers
-        float attackBoost = 1.5f;
-        float beginAttackDelay = .55f;
-        float hitConfirmDelay = .20f;
+        // enemy attack modifiers
+        // float attackBoost = 1.5f;
+        const float beginAttackDelay = .55f;
+        const float hitConfirmDelay = .20f;
 
         yield return new WaitForSeconds(beginAttackDelay);
 
-        //move while attacking
+        // move while attacking
         // if (moveVector > .5) {
         //     VelocityDash(1, attackBoost);
         // }
         // else if (moveVector < -.5) {
         //     VelocityDash(3, attackBoost);
         // }
-        
-        Collider2D[] hits = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, playerLayers);
-        if (hits.Length > 0) {
-            StartCoroutine(PauseAnimatorCoroutine(hitConfirmDelay)); //pause swing animation if an enemy is hit
+
+        const int maxHits = 20;
+        Collider2D[] hitColliders = new Collider2D[maxHits];
+        int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange, 
+            hitColliders, playerLayers);
+        if (numHits > 0) {
+            StartCoroutine(PauseAnimatorCoroutine(hitConfirmDelay)); // pause swing animation if an enemy is hit
         }
-        foreach (Collider2D p in hits) {
+        foreach (Collider2D p in hitColliders) {
             CharController player = p.GetComponent<CharController>();
             if (player.isParrying) {
-                //StartCoroutine(PauseAnimatorCoroutine(.2f));
+                // StartCoroutine(PauseAnimatorCoroutine(.2f));
                 player.CounterStrike(GetComponent<Enemy>());
                 break;
             }
-            player.TakeDamage(attackDamage, knockbackVal, transform.position);
+            player.TakeDamage(AttackDamage, knockbackVal, transform.position);
         }
     }
     
-    private bool isMovementEnabled() {
-        if (animator_.GetCurrentAnimatorStateInfo(0).IsName("Attack")) {
-            return false;
-        }
-        return true;
-    }
+    // private bool IsMovementEnabled() {
+    //     if (animator_.GetCurrentAnimatorStateInfo(0).IsName("Attack")) {
+    //         return false;
+    //     }
+    //     return true;
+    // }
     
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        //scan for player to attack
-        Collider2D[] scans = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, playerLayers);
-        if (scans.Length > 0 && Time.time >= nextAttackTime) {
-            Attack();
-            nextAttackTime = Time.time + 1f / attackRate;
+        // scan for player to attack
+        const int maxHits = 20;
+        Collider2D[] hitColliders = new Collider2D[maxHits];
+        int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange, 
+            hitColliders, playerLayers);
+        if (numHits > 0 && Time.time >= nextAttackTime) {
+            DoAttack();
+            nextAttackTime = Time.time + 1f / AttackRate;
         }
     }
     

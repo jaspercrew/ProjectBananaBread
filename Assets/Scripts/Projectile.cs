@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Projectile : Entity {
-    //config values
+    // config values
     private float gravityScale = 0f;
     
-    //trackers
-    private BoxCollider2D _collider;
-    private Rigidbody2D _rigidbody;
+    // trackers
+    private new BoxCollider2D collider;
+    private new Rigidbody2D rigidbody;
     // Start is called before the first frame update
     void Start() {
-        _collider = GetComponent<BoxCollider2D>();
-        _rigidbody = GetComponent<Rigidbody2D>();
-        _rigidbody.gravityScale = gravityScale;
-
-
+        collider = GetComponent<BoxCollider2D>();
+        rigidbody = GetComponent<Rigidbody2D>();
+        rigidbody.gravityScale = gravityScale;
     }
 
     // Update is called once per frame

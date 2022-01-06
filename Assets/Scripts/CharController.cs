@@ -131,7 +131,7 @@ public class CharController: LivingThing {
         // movement animations
         Animator.SetInteger(AnimState, Mathf.Abs(moveVector) > Mathf.Epsilon? 2 : 0);
 
-        // actual moving
+        // actual moving TODO add velocity overriding 
         transform.position += new Vector3(moveVector * speed * Time.deltaTime, 0, 0);
             
         // feet dust logic

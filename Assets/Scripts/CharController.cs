@@ -192,8 +192,8 @@ public class CharController: LivingThing {
                 }
                 else
                 {
-                    Debug.Log("reached enqueued " + e.EventType +
-                              ", but skipping because conditions are not met");
+                    // Debug.Log("reached enqueued " + e.EventType +
+                    //           ", but skipping because conditions are not met");
                 }
             }
             
@@ -332,6 +332,7 @@ public class CharController: LivingThing {
         if (!IsAbleToAct())
             return;
         speed *= isCrouching ? 0.5f : 2;
+        isCrouching = !isCrouching;
     }
 
     // private void UnCrouch() {

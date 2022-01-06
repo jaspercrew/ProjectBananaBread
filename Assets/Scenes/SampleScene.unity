@@ -1118,7 +1118,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   originalState: 0
   altState: 2
-  currentState: 0
 --- !u!4 &1898320383
 Transform:
   m_ObjectHideFlags: 0

@@ -45,7 +45,7 @@ public class CharController: LivingThing {
 
     private class Event
     {
-        public const float EventTimeout = 0.5f;
+        public const float EventTimeout = 0.25f;
         public readonly EventTypes EventType;
         public readonly float TimeCreated;
         

@@ -61,14 +61,14 @@ public class RadialGrapple : MonoBehaviour{
         _lineRenderer.SetPosition(0, grapplePoint);
         _lineRenderer.SetPosition(1, transform.position);
         _distanceJoint.connectedAnchor = grapplePoint;
-        _distanceJoint.distance = grappleLength * .95f;
+        _distanceJoint.distance = grappleLength * .90f;
         _distanceJoint.enabled = true;
         _lineRenderer.enabled = true;
         isGrappling = true;
 
         //const float boostForce = 5f;
-        const float gravModifier = 1f;
-        const float minVel = 8f;
+        const float gravModifier = .8f;
+        const float minVel = 10f;
 
         if (transform.localScale.x > 0.5) {
             //facing left

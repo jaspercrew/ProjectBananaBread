@@ -15,9 +15,12 @@ public class CharController: LivingThing {
     private float speed = 3.5f;
     private const float JumpForce = 6.3f;
     // TODO: to implement cooldowns, add a condition to the eventConditions dictionary
-    // private const float AttackRate = 2f;
-    // private const float ParryRate = 1f;
-    // private const float RollRate = 1f;
+    private const float AttackCooldown = 0.5f;
+    private const float ParryCooldown = 1f;
+    private const float DashCooldown = 1f;
+    private float lastAttackTime;
+    private float lastParryTime;
+    private float lastDashTime;
     private const int AttackDamage = 10;
     private const float ComboResetThreshold = 1f;
     public LayerMask enemyLayers;
@@ -31,7 +34,6 @@ public class CharController: LivingThing {
     public bool isCrouching;
     // private float nextAttackTime;
     // private float nextRollTime;
-    private float lastAttackTime;
     private int comboCounter;
     private bool isAttacking;
     private float moveVector;
@@ -73,10 +75,13 @@ public class CharController: LivingThing {
     private readonly Dictionary<Event.EventTypes, Func<CharController, bool>> eventConditions =
         new Dictionary<Event.EventTypes, Func<CharController, bool>>
         {
-            {Event.EventTypes.Dash, @this => @this.IsAbleToAct() || @this.isAttacking},
+            {Event.EventTypes.Dash, @this =>
+                (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown},
             {Event.EventTypes.Jump, @this => @this.IsGrounded() && @this.IsAbleToMove()},
-            {Event.EventTypes.Attack, @this => @this.IsAbleToAct()},
-            {Event.EventTypes.Parry, @this => @this.IsAbleToAct()},
+            {Event.EventTypes.Attack, @this => 
+                @this.IsAbleToAct() && Time.time > @this.lastAttackTime + AttackCooldown},
+            {Event.EventTypes.Parry, @this =>
+                @this.IsAbleToAct() && Time.time > @this.lastParryTime + ParryCooldown},
             {Event.EventTypes.SwitchState, @this => @this.IsAbleToAct()},
             {Event.EventTypes.Crouch, @this => @this.IsAbleToAct()}
         };
@@ -272,6 +277,8 @@ public class CharController: LivingThing {
         Animator.SetTrigger(Parry);
         isParrying = true;
         StartCoroutine(ParryCoroutine());
+        
+        lastParryTime = Time.time;
     }
 
     private IEnumerator ParryCoroutine() {
@@ -314,15 +321,17 @@ public class CharController: LivingThing {
             // animator_.SetInteger(AnimState, 0); // TODO
         }
 
-        const float rollSpeed = 9f;
-        const float rollTime = .23f;
+        const float dashSpeed = 9f;
+        const float dashTime = .23f;
 
         float xScale = transform.localScale.x;
         if (Mathf.Abs(xScale) > .5) {
-            VelocityDash(xScale > 0? 3 : 1, rollSpeed, rollTime);
+            VelocityDash(xScale > 0? 3 : 1, dashSpeed, dashTime);
             dust.Play();
             Animator.SetTrigger(Dash);
         }
+
+        lastDashTime = Time.time;
     }
 
     // TODO: add variable isCrouching and set to true/false here instead of changing speed directly
@@ -421,7 +430,6 @@ public class CharController: LivingThing {
         }
         
         DoAttack(comboCounter);
-        lastAttackTime = Time.time;
     }
     
     private void DoAttack(int comboCount) {
@@ -438,6 +446,8 @@ public class CharController: LivingThing {
 
         attackCoroutine = AttackCoroutine(comboCount == 4);
         StartCoroutine(attackCoroutine);
+        
+        lastAttackTime = Time.time;
     }
 
     private IEnumerator AttackCoroutine(bool isHeavyAttack) {

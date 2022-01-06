@@ -9,7 +9,7 @@ public class CharController: LivingThing {
     private BoxCollider2D boxCollider;
     private ParticleSystem dust;
     private ScreenShakeController screenShakeController;
-    private TargetGrappleController targetGrappleController;
+    private RadialGrapple grappleController;
     
     // Configurable player control values
     private float speed = 3.5f;
@@ -41,12 +41,12 @@ public class CharController: LivingThing {
     // Start is called before the first frame update
     private void Start() {
         CurrentHealth = MaxHealth;
-        targetGrappleController = transform.GetComponent<TargetGrappleController>();
         Rigidbody = transform.GetComponent<Rigidbody2D>();
         Animator = transform.GetComponent<Animator>();
         boxCollider = transform.GetComponent<BoxCollider2D>();
         dust = transform.GetComponentInChildren<ParticleSystem>();
         screenShakeController = FindObjectOfType<Camera>().GetComponent<ScreenShakeController>();
+        grappleController = GetComponent<RadialGrapple>();
     }
 
     // Update is called once per frame
@@ -85,7 +85,7 @@ public class CharController: LivingThing {
 
     private bool IsAbleToAct()
     {
-        return !IsDashing && !isAttacking && !isParrying;
+        return !IsDashing && !isAttacking && !isParrying && !grappleController.isGrappling;
     }
 
     private void Update() {
@@ -98,7 +98,7 @@ public class CharController: LivingThing {
         }
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time >= nextRollTime) {
-            Dash();
+            DoDash();
             nextRollTime = Time.time + 1f / RollRate;
         }
 
@@ -109,17 +109,6 @@ public class CharController: LivingThing {
             GameManager.Instance.SwitchWorldState();
         }
 
-        if (Input.GetKeyDown(KeyCode.E) && IsAbleToAct()) {
-            if (targetGrappleController.isGrappling) {
-                targetGrappleController.EndGrapple();
-                // return;
-            }
-            else
-            {
-                targetGrappleController.StartGrapple();
-            }
-        }
-        
         if (Input.GetMouseButtonDown(1) && IsAbleToAct() && Time.time >= nextParryTime) {
             DoParry();
             nextParryTime = Time.time + 1f / ParryRate;
@@ -171,7 +160,7 @@ public class CharController: LivingThing {
         isAttacking = false;
     }
     
-    private void Dash()
+    private void DoDash()
     {
         Debug.Log("starting dash");
         if (!IsAbleToAct() && !isAttacking) {
@@ -182,7 +171,7 @@ public class CharController: LivingThing {
         if (isAttacking)
         {
             Debug.Log("interrupting attack with dash");
-            Animator.SetTrigger(Idle); // TODO: dash animation
+             // TODO: dash animation
             isAttacking = false;
             Assert.IsNotNull(attackCoroutine);
             StopCoroutine(attackCoroutine);
@@ -196,6 +185,7 @@ public class CharController: LivingThing {
         if (Mathf.Abs(xScale) > .5) {
             VelocityDash(xScale > 0? 3 : 1, rollSpeed, rollTime);
             dust.Play();
+            Animator.SetTrigger(Dash);
         }
     }
 
@@ -214,7 +204,7 @@ public class CharController: LivingThing {
     }
 
     private bool IsAbleToMove() {
-        return !isAttacking && !IsDashing;
+        return !isAttacking && !IsDashing && !isParrying && !grappleController.isGrappling;
     }
 
     private bool AbleToBeDamaged() {
@@ -325,14 +315,14 @@ public class CharController: LivingThing {
         if (isHeavyAttack) { 
             attackBoost = 3.0f;
             beginAttackDelay = .25f;
-            endAttackDelay = .4f;
+            endAttackDelay = .5f;
             hitConfirmDelay = .30f;
         }
     
         yield return new WaitForSeconds(beginAttackDelay);
         
         
-        // move while attacking
+        // move while attacking TODO : change this functionality
         if (IsGrounded()) {
             if (moveVector > .5) {
                 VelocityDash(1, attackBoost, .5f);

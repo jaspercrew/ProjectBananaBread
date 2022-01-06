@@ -20,6 +20,8 @@ public abstract class LivingThing : Entity {
     protected static readonly int Grounded = Animator.StringToHash("Grounded");
     protected static readonly int Attack = Animator.StringToHash("Attack");
     protected static readonly int Parry = Animator.StringToHash("Parry");
+    protected static readonly int Dash = Animator.StringToHash("Recover");
+
 
     public void TakeDamage(int damage) {
         CurrentHealth -= damage;
@@ -80,7 +82,7 @@ public abstract class LivingThing : Entity {
 
     protected virtual void Die() {
         Animator.SetTrigger(Death);
-        transform.GetComponent<Collider>().enabled = false;
+        //transform.GetComponent<Collider>().isTrigger = true;
         Rigidbody.gravityScale = 0;
     }
 

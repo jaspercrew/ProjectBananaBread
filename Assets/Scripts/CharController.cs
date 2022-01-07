@@ -14,7 +14,7 @@ public class CharController: LivingThing {
     // Configurable player control values
     private float speed = 3.5f;
     private const float JumpForce = 6.3f;
-    // TODO: to implement cooldowns, add a condition to the eventConditions dictionary
+    private const int HeavyAttackBuildup = 4;
     private const float AttackCooldown = 0.5f;
     private const float ParryCooldown = 1f;
     private const float DashCooldown = 1f;
@@ -61,7 +61,9 @@ public class CharController: LivingThing {
         }
     }
 
-    private readonly Dictionary<Func<bool>, Event.EventTypes> keyToEventType =
+    // maps from a boolean function to an event, where the function, when called, returns whether
+    // the event's respective button is being pressed, and thus whether the event be queued
+    private static readonly Dictionary<Func<bool>, Event.EventTypes> KeyToEventType =
         new Dictionary<Func<bool>, Event.EventTypes>
         {
             {() => Input.GetKeyDown(KeyCode.LeftShift), Event.EventTypes.Dash},
@@ -72,21 +74,33 @@ public class CharController: LivingThing {
             {() => Input.GetKeyDown(KeyCode.LeftControl), Event.EventTypes.Crouch}
         };
 
-    private readonly Dictionary<Event.EventTypes, Func<CharController, bool>> eventConditions =
+    // maps from event type to a boolean function that says whether the conditions for the 
+    // event to happen are met, and thus whether it should happen
+    //
+    // for some reason, the key-value pairs are static contexts, so you can't use variables or call
+    // methods of CharController, so we have to explicitly pass an instance of a CharController
+    // (i.e. we later explicitly pass in a "this"). we can access private variables just fine since
+    // we're inside the class definition
+    private static readonly Dictionary<Event.EventTypes, Func<CharController, bool>> EventConditions =
         new Dictionary<Event.EventTypes, Func<CharController, bool>>
         {
             {Event.EventTypes.Dash, @this =>
                 (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown},
-            {Event.EventTypes.Jump, @this => @this.IsGrounded() && @this.IsAbleToMove()},
+            {Event.EventTypes.Jump, @this => 
+                @this.IsGrounded() && @this.IsAbleToMove()},
             {Event.EventTypes.Attack, @this => 
                 @this.IsAbleToAct() && Time.time > @this.lastAttackTime + AttackCooldown},
             {Event.EventTypes.Parry, @this =>
                 @this.IsAbleToAct() && Time.time > @this.lastParryTime + ParryCooldown},
-            {Event.EventTypes.SwitchState, @this => @this.IsAbleToAct()},
-            {Event.EventTypes.Crouch, @this => @this.IsAbleToAct()}
+            {Event.EventTypes.SwitchState, 
+                @this => @this.IsAbleToAct()},
+            {Event.EventTypes.Crouch, 
+                @this => @this.IsAbleToAct()}
         };
 
-    private readonly Dictionary<Event.EventTypes, Action<CharController>> eventActions =
+    // maps from event type to a void function (action) that actually executes the action
+    // associated with that event type
+    private static readonly Dictionary<Event.EventTypes, Action<CharController>> EventActions =
         new Dictionary<Event.EventTypes, Action<CharController>>
         {
             {Event.EventTypes.Dash, @this => @this.DoDash()},
@@ -97,20 +111,7 @@ public class CharController: LivingThing {
             {Event.EventTypes.Crouch, @this => @this.Crouch()}
         };
     
-    
 
-    // TODO: event queueing system?
-    // eventTimeout = 0.5;
-    // event queue = [(attack, t1), (dash, t2), ...]
-    
-    // update()
-    // top = queue.peek()
-    // if (top.time + eventTimeout >= Time.time)
-    //      queue.pop()
-    // do this again, until: queue is empty, or event is reached, then do as many events as possible
-    // also, once this is done, fix nextAttackTime and nextDashTime or whatever it was
-
-    // Start is called before the first frame update
     private void Start() {
         CurrentHealth = MaxHealth;
         Rigidbody = transform.GetComponent<Rigidbody2D>();
@@ -121,152 +122,97 @@ public class CharController: LivingThing {
         grappleController = GetComponent<RadialGrapple>();
     }
 
-    // Update is called once per frame
+    
     private void FixedUpdate() {
         moveVector = Input.GetAxisRaw("Horizontal");
-        // Debug.Log(moveVector);
-
         if (!IsAbleToMove()) return;
         
         // movement animations
-        Animator.SetInteger(AnimState, Mathf.Abs(moveVector) > Mathf.Epsilon? 2 : 0);
+        Animator.SetInteger(AnimState, Mathf.Abs(moveVector) > float.Epsilon? 2 : 0);
 
         // actual moving TODO add velocity overriding 
         transform.position += new Vector3(moveVector * speed * Time.deltaTime, 0, 0);
-            
+
         // feet dust logic
         if (Math.Abs(xDir - moveVector) > 0.01f && IsGrounded() && moveVector != 0) {
             dust.Play();
         }
+        
         xDir = moveVector;
 
-        float yScale = transform.localScale.y;
+        Vector3 scale = transform.localScale;
+        float xScale = scale.x;
+        float yScale = scale.y;
         // direction switching
-        if (moveVector > 0) {
+        if (moveVector > 0 && Math.Abs(xScale + 1) > float.Epsilon) {
             transform.localScale = new Vector3(-1, yScale, 0);
         }
-        else if (moveVector < 0) {
+        else if (moveVector < 0 && Math.Abs(xScale - 1) > float.Epsilon) {
             transform.localScale = new Vector3(1, yScale, 0);
         }
-            
-        // Vector3 moveVect = new Vector3(Input.GetAxis("Horizontal"), 0, 0);
-        // moveVect = moveVect.normalized * (speed * Time.deltaTime);
-        // _rigidbody.MovePosition(transform.position + moveVect);
-
-    }
-
-    private bool IsAbleToAct()
-    {
-        return !IsDashing && !isAttacking && !isParrying && !grappleController.isGrappling;
     }
 
     private void Update() {
-        // if (Time.time >= nextAttackTime && !isAttacking) {
-        //     AttemptAttack();
-        // }
-
         // add events if their respective buttons are pressed
-        foreach (KeyValuePair<Func<bool>, Event.EventTypes> pair in keyToEventType)
+        foreach (KeyValuePair<Func<bool>, Event.EventTypes> pair in KeyToEventType)
         {
             if (pair.Key.Invoke())
             {
-                Debug.Log("enqueueing " + pair.Value + " event");
+                // Debug.Log("enqueueing " + pair.Value + " event");
                 eventQueue.AddLast(new Event(pair.Value, Time.time));
             }
         }
         
-        
+        // parse event queue
         for (LinkedListNode<Event> node = eventQueue.First; node != null; node = node.Next)
         {
             Event e = node.Value;
+            
+            // remove expired events
             if (Time.time > e.TimeCreated + Event.EventTimeout)
             {
-                Debug.Log(e.EventType + " event timed out");
+                // Debug.Log(e.EventType + " event timed out");
                 eventQueue.Remove(node);
                 // continue;
             }
+            // execute events whose conditions are met, and remove those whose aren't
             else
             {
-                Func<CharController, bool> conditions = eventConditions[e.EventType];
-                Action<CharController> actionToDo = eventActions[e.EventType];
+                Func<CharController, bool> conditions = EventConditions[e.EventType];
+                Action<CharController> actionToDo = EventActions[e.EventType];
                 if (conditions.Invoke(this))
                 {
-                    Debug.Log("reached enqueued " + e.EventType + ", invoking");
+                    // Debug.Log("reached enqueued " + e.EventType + ", invoking");
                     actionToDo.Invoke(this);
                     eventQueue.Remove(node);
                 }
-                else
-                {
-                    // Debug.Log("reached enqueued " + e.EventType +
-                    //           ", but skipping because conditions are not met");
-                }
             }
-            
-            // TODO: wrong
-            // at this point, the first event in the queue is guaranteed not to be expired,
-            // and since they're sorted in order of creation, the rest are also guaranteed to 
-            // not be expired. therefore, the rest of the queue contains all the queued events
-            // that should be executed
-
-            // Debug.Log(eventQueue.Count + " events to be executed");
-            // while (eventQueue.Count > 0)
-            // {
-            //     Event.EventTypes eventType = eventQueue.Dequeue().EventType;
-            //     Debug.Log("executing " + eventType);
-            //     Action<CharController> actionToDo = eventTypeToAction[eventType];
-            //     actionToDo.Invoke(this);
-            // }
         }
         
         if (IsGrounded()) {
             Animator.SetBool(Jump, false);
         }
 
-        // if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time >= nextRollTime) {
-        //     DoDash();
-        //     nextRollTime = Time.time + 1f / RollRate;
-        // }
-
-        // if (Input.GetKeyDown(KeyCode.F) && IsAbleToAct()) {
-            // switch states
-            // GameObject.FindObjectOfType<BinaryPlatform>().SwitchState(EnvironmentState.Cyberpunk);
-            // Debug.Log(GameManager.Instance);
-            // GameManager.Instance.SwitchWorldState();
-        // }
-
-        // grapple
-        // if (Input.GetKeyDown(KeyCode.E) && IsAbleToAct()) {
-        //     if (targetGrappleController.isGrappling) {
-        //         targetGrappleController.EndGrapple();
-        //         // return;
-        //     }
-        //     else
-        //     {
-        //         targetGrappleController.StartGrapple();
-        //     }
-        // }
-        
-        // if (Input.GetMouseButtonDown(1) && IsAbleToAct() && Time.time >= nextParryTime) {
-        //     DoParry();
-        //     nextParryTime = Time.time + 1f / ParryRate;
-        // }
-        
-        // if (Input.GetButtonDown("Jump") && IsGrounded() && IsAbleToMove()) {
-        //     DoJump();                     
-        // }
-        //
-        // if (Input.GetButtonDown("Fire1")) { // crouch
-        //     Crouch();
-        // }
-        //
-        // if (Input.GetButtonUp("Fire1")) { // uncrouch
-        //     UnCrouch();
-        // }
-
-        // short jump
         if (Input.GetButtonUp("Jump") && !IsGrounded() && Rigidbody.velocity.y > 0) {
             Rigidbody.velocity = Vector2.Scale(Rigidbody.velocity, new Vector2(1f, 0.5f));
         }
+    }
+
+    private bool IsGrounded() {
+        return colliding.Count > 0;
+    }
+
+    private bool IsAbleToMove() {
+        return !isAttacking && !IsDashing && !isParrying && !grappleController.isGrappling;
+    }
+
+    private bool IsAbleToBeDamaged() {
+        return !isInvincible && !IsDashing;
+    }
+
+    private bool IsAbleToAct()
+    {
+        return !IsDashing && !isAttacking && !isParrying && !grappleController.isGrappling;
     }
 
     private void DoParry()
@@ -279,6 +225,63 @@ public class CharController: LivingThing {
         StartCoroutine(ParryCoroutine());
         
         lastParryTime = Time.time;
+    }
+
+    private void DoDash()
+    {
+        if (!IsAbleToAct() && !isAttacking) {
+            return;
+        }
+        
+        // attack cancel
+        if (isAttacking)
+        {
+            Animator.SetTrigger(Idle); // TODO: dash animation
+            isAttacking = false;
+            Assert.IsNotNull(attackCoroutine);
+            StopCoroutine(attackCoroutine);
+        }
+
+        const float dashSpeed = 9f;
+        const float dashTime = .23f;
+
+        float xScale = transform.localScale.x;
+        if (Mathf.Abs(xScale) > .5) {
+            VelocityDash(xScale > 0? 3 : 1, dashSpeed, dashTime);
+            dust.Play();
+            Animator.SetTrigger(Dash);
+        }
+
+        lastDashTime = Time.time;
+    }
+
+    private void DoJump()
+    {
+        if (!IsGrounded() || !IsAbleToMove())
+            return;
+        
+        dust.Play();
+        Rigidbody.AddForce(new Vector2(0, JumpForce), ForceMode2D.Impulse);
+        Animator.SetTrigger(Jump);
+        Animator.SetBool(Grounded, false);
+    }
+
+    private void DoAttack(bool isHeavy) {
+        // _screenShakeController.LightShake();
+        isAttacking = true;
+        Animator.speed = 1;
+        // Assert.IsTrue(comboCount <= HeavyAttackBuildup);
+        
+        Animator.SetTrigger(Attack);
+        // TODO: remove when we have actual animations
+        if (isHeavy) { // heavy attack?
+            Animator.speed = .5f;
+        }
+
+        attackCoroutine = AttackCoroutine(isHeavy);
+        StartCoroutine(attackCoroutine);
+        
+        lastAttackTime = Time.time;
     }
 
     private IEnumerator ParryCoroutine() {
@@ -301,38 +304,6 @@ public class CharController: LivingThing {
         enemy.TakeDamage(20, 2);
         isAttacking = false;
     }
-    
-    private void DoDash()
-    {
-        // Debug.Log("starting dash");
-        if (!IsAbleToAct() && !isAttacking) {
-            // Debug.Log("stopping dash cuz bad");
-            return;
-        }
-        
-        // attack cancel
-        if (isAttacking)
-        {
-            // Debug.Log("interrupting attack with dash");
-            Animator.SetTrigger(Idle); // TODO: dash animation
-            isAttacking = false;
-            Assert.IsNotNull(attackCoroutine);
-            StopCoroutine(attackCoroutine);
-            // animator_.SetInteger(AnimState, 0); // TODO
-        }
-
-        const float dashSpeed = 9f;
-        const float dashTime = .23f;
-
-        float xScale = transform.localScale.x;
-        if (Mathf.Abs(xScale) > .5) {
-            VelocityDash(xScale > 0? 3 : 1, dashSpeed, dashTime);
-            dust.Play();
-            Animator.SetTrigger(Dash);
-        }
-
-        lastDashTime = Time.time;
-    }
 
     // TODO: add variable isCrouching and set to true/false here instead of changing speed directly
     // and use isCrouching in movement and affect speed there
@@ -340,29 +311,13 @@ public class CharController: LivingThing {
     {
         if (!IsAbleToAct())
             return;
-        speed *= isCrouching ? 0.5f : 2;
         isCrouching = !isCrouching;
+        speed *= isCrouching? 0.5f : 2;
     }
 
-    // private void UnCrouch() {
-    //     speed *= 2;
-    // }
-
-    private bool IsGrounded() {
-        return colliding.Count > 0;
-    }
-
-    private bool IsAbleToMove() {
-        return !isAttacking && !IsDashing && !isParrying && !grappleController.isGrappling;
-    }
-
-    private bool AbleToBeDamaged() {
-        return !isInvincible && !IsDashing;
-    }
-    
     // Take damage, knock away from point
     public void TakeDamage(int damage, float knockback, Vector2 point) {
-        if (!AbleToBeDamaged()) {
+        if (!IsAbleToBeDamaged()) {
             return;
         }
         StartCoroutine(TakeDamageCoroutine());
@@ -383,7 +338,7 @@ public class CharController: LivingThing {
         yield return new WaitForSeconds(invFrames);
         isInvincible = false;
     }
-    
+
     protected override void Die() 
     {
         Animator.SetTrigger(Death);
@@ -391,63 +346,26 @@ public class CharController: LivingThing {
         Rigidbody.gravityScale = 0;
     }
 
-    private void DoJump()
-    {
-        if (!IsGrounded() || !IsAbleToMove())
-            return;
-        
-        dust.Play();
-        Rigidbody.AddForce(new Vector2(0, JumpForce), ForceMode2D.Impulse);
-        Animator.SetTrigger(Jump);
-        Animator.SetBool(Grounded, false);
-    }
-    
-    // handles boolean checking and combo count for attacking 
+    // handles combo count for attacking 
     private void AttemptAttack()
     {
         if (!IsAbleToAct())
             return;
-        if (Time.time < lastAttackTime + ComboResetThreshold) {
-            // continue combo
-            comboCounter++;
-                
-            if (comboCounter >= 4) { // heavy
-                comboCounter = 0;
-                // nextAttackTime = Time.time + 2f / AttackRate;
-            }
-            // else { // light
-            //     nextAttackTime = Time.time + 1f / AttackRate;
-            // }
-            // lastAttackTime = Time.time;
-        }
-        else {
-            // start new attack chain 
-            comboCounter = 1;
-            // DoAttack(comboCounter);
-                
-            // nextAttackTime = Time.time + 1f / AttackRate;
-            // lastAttackTime = Time.time;
-        }
         
-        DoAttack(comboCounter);
-    }
-    
-    private void DoAttack(int comboCount) {
-        // _screenShakeController.LightShake();
-        isAttacking = true;
-        Animator.speed = 1;
-        Assert.IsTrue(comboCount <= 4);
-        
-        Animator.SetTrigger(Attack);
-        // TODO: remove when we have actual animations
-        if (comboCount == 4) { // heavy attack?
-            Animator.speed = .5f;
+        // reset if combo reset threshold passed
+        if (lastAttackTime + ComboResetThreshold < Time.time) {
+            comboCounter = 0;
         }
 
-        attackCoroutine = AttackCoroutine(comboCount == 4);
-        StartCoroutine(attackCoroutine);
+        comboCounter++;
+        // this line is equivalent to the 3 commented lines below
+        bool isHeavy = Math.DivRem(comboCounter, HeavyAttackBuildup, out comboCounter) > 0;
+
+        // bool isHeavy = comboCounter == HeavyAttackBuildup;
+        // if (isHeavy)
+        //     comboCounter -= HeavyAttackBuildup;
         
-        lastAttackTime = Time.time;
+        DoAttack(isHeavy);
     }
 
     private IEnumerator AttackCoroutine(bool isHeavyAttack) {

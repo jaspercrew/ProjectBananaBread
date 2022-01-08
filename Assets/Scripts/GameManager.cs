@@ -6,7 +6,8 @@ public class GameManager : MonoBehaviour
     
     public EnvironmentState originalState = EnvironmentState.RealWorld;
     public EnvironmentState altState;
-    private EnvironmentState currentState;
+    [HideInInspector]
+    public EnvironmentState currentState;
 
     private GameManager()
     {

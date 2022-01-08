@@ -27,6 +27,9 @@ public partial class CharController : LivingThing {
     [SerializeField] private float attackRange;
     
     // Trackers
+    [HideInInspector]
+    public bool isInverted;
+    
     private bool isInvincible;
     // private float nextParryTime;
     public bool isParrying;

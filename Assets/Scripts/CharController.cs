@@ -32,6 +32,10 @@ public class CharController: LivingThing {
     // private float nextParryTime;
     public bool isParrying;
     public bool isCrouching;
+    private bool isWallSliding;
+    private Collider2D wallSlidingCollider;
+    private WallJumpDirection wallJumpDir;
+    private int wallJumpFramesLeft;
     // private float nextAttackTime;
     // private float nextRollTime;
     private int comboCounter;
@@ -81,13 +85,14 @@ public class CharController: LivingThing {
     // methods of CharController, so we have to explicitly pass an instance of a CharController
     // (i.e. we later explicitly pass in a "this"). we can access private variables just fine since
     // we're inside the class definition
+    // TODO: add these to the beginnings of each of the respective functions
     private static readonly Dictionary<Event.EventTypes, Func<CharController, bool>> EventConditions =
         new Dictionary<Event.EventTypes, Func<CharController, bool>>
         {
             {Event.EventTypes.Dash, @this =>
                 (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown},
             {Event.EventTypes.Jump, @this => 
-                @this.IsGrounded() && @this.IsAbleToMove()},
+                @this.IsAbleToMove() && (@this.IsGrounded() || @this.isWallSliding)},
             {Event.EventTypes.Attack, @this => 
                 @this.IsAbleToAct() && Time.time > @this.lastAttackTime + AttackCooldown},
             {Event.EventTypes.Parry, @this =>
@@ -122,9 +127,23 @@ public class CharController: LivingThing {
         grappleController = GetComponent<RadialGrapple>();
     }
 
+    private enum WallJumpDirection
+    {
+        Left = -1, None = 0, Right = 1
+    }
     
     private void FixedUpdate() {
         moveVector = Input.GetAxisRaw("Horizontal");
+        
+        if (wallJumpDir != WallJumpDirection.None)
+        {
+            transform.position += new Vector3((int) wallJumpDir * speed * Time.deltaTime, 0, 0);
+            wallJumpFramesLeft--;
+            if (wallJumpFramesLeft == 0)
+                wallJumpDir = WallJumpDirection.None;
+            return;
+        }
+
         if (!IsAbleToMove()) return;
         
         // movement animations
@@ -141,15 +160,25 @@ public class CharController: LivingThing {
         xDir = moveVector;
 
         Vector3 scale = transform.localScale;
-        float xScale = scale.x;
-        float yScale = scale.y;
         // direction switching
-        if (moveVector > 0 && Math.Abs(xScale + 1) > float.Epsilon) {
-            transform.localScale = new Vector3(-1, yScale, 0);
+        if (moveVector > 0 && Math.Abs(scale.x + 1) > float.Epsilon) {
+            FaceRight();
         }
-        else if (moveVector < 0 && Math.Abs(xScale - 1) > float.Epsilon) {
-            transform.localScale = new Vector3(1, yScale, 0);
+        else if (moveVector < 0 && Math.Abs(scale.x - 1) > float.Epsilon) {
+            FaceLeft();
         }
+    }
+
+    private void FaceLeft()
+    {
+        Transform t = transform; // more efficient, according to Rider
+        t.localScale = new Vector3(1, t.localScale.y, 0);
+    }
+
+    private void FaceRight()
+    {
+        Transform t = transform; // more efficient, according to Rider
+        t.localScale = new Vector3(-1, t.localScale.y, 0);
     }
 
     private void Update() {
@@ -180,8 +209,12 @@ public class CharController: LivingThing {
             {
                 Func<CharController, bool> conditions = EventConditions[e.EventType];
                 Action<CharController> actionToDo = EventActions[e.EventType];
+                // if (e.EventType == Event.EventTypes.Jump)
+                    // Debug.Log("jump reached");
                 if (conditions.Invoke(this))
                 {
+                    // if (e.EventType == Event.EventTypes.Jump)
+                        // Debug.Log("jump executed");
                     // Debug.Log("reached enqueued " + e.EventType + ", invoking");
                     actionToDo.Invoke(this);
                     eventQueue.Remove(node);
@@ -196,6 +229,15 @@ public class CharController: LivingThing {
         if (Input.GetButtonUp("Jump") && !IsGrounded() && Rigidbody.velocity.y > 0) {
             Rigidbody.velocity = Vector2.Scale(Rigidbody.velocity, new Vector2(1f, 0.5f));
         }
+
+        const float wallSlideSpeed = 0.75f;
+        Vector2 v = Rigidbody.velocity;
+        
+        // wall sliding
+        if (isWallSliding && v.y <= 0)
+        {
+            Rigidbody.velocity = new Vector2(v.x, Mathf.Max(v.y, -wallSlideSpeed));
+        }
     }
 
     private bool IsGrounded() {
@@ -203,7 +245,8 @@ public class CharController: LivingThing {
     }
 
     private bool IsAbleToMove() {
-        return !isAttacking && !IsDashing && !isParrying && !grappleController.isGrappling;
+        return !isAttacking && !IsDashing && !isParrying && !grappleController.isGrappling &&
+               wallJumpDir == WallJumpDirection.None;
     }
 
     private bool IsAbleToBeDamaged() {
@@ -257,10 +300,26 @@ public class CharController: LivingThing {
 
     private void DoJump()
     {
-        if (!IsGrounded() || !IsAbleToMove())
+        if (!IsGrounded() && !isWallSliding || !IsAbleToMove())
             return;
         
         dust.Play();
+
+        const int wallJumpFrames = 10;
+
+        if (isWallSliding)
+        {
+            wallJumpDir = transform.position.x - wallSlidingCollider.transform.position.x > 0? 
+                WallJumpDirection.Right : WallJumpDirection.Left;
+            wallJumpFramesLeft = wallJumpFrames;
+            if (wallJumpDir == WallJumpDirection.Left)
+                FaceLeft();
+            else if (wallJumpDir == WallJumpDirection.Right)
+                FaceRight();
+            else
+                Debug.LogError("wall jump dir is bad");
+        }
+        
         Rigidbody.AddForce(new Vector2(0, JumpForce), ForceMode2D.Impulse);
         Animator.SetTrigger(Jump);
         Animator.SetBool(Grounded, false);
@@ -438,23 +497,48 @@ public class CharController: LivingThing {
     {
         // Grounding Controller
         Collider2D col = other.collider;
+
+        if (col.isTrigger)
+            return;
+        
         float colX = col.transform.position.x;
         float charX = transform.position.x;
         float colW = col.bounds.extents.x;
         float charW = boxCollider.bounds.extents.x;
+        // horizontal distance between char and incoming object
+        float dx = Mathf.Abs(charX - colX);
+        float maxDx = Mathf.Abs(colW) + Mathf.Abs(charW);
+        const float maxWallSlideDistance = 0.03f;
 
-        if (!col.isTrigger && Mathf.Abs(charX - colX) < Mathf.Abs(colW) + Mathf.Abs(charW) - 0.01f)
+        if (dx < maxDx)
         {
+            // Debug.Log("new colliding: " + other.gameObject.name);
             if (colliding.Count == 0) {
                 OnLanding();
             }
             colliding.Add(col);
-
+        }
+        else if (dx < maxDx + maxWallSlideDistance)
+        {
+            // TODO: snap to wall?
+            // transform.position = 
+            isWallSliding = true;
+            wallSlidingCollider = col;
+            // Debug.Log("now wall sliding! (on " + other.gameObject.name + ")");
         }
     }
     private void OnCollisionExit2D(Collision2D other)
     {
-        colliding.Remove(other.collider);
+        if (other.collider.Equals(wallSlidingCollider))
+        {
+            isWallSliding = false;
+            wallSlidingCollider = null;
+            // Debug.Log("stopped wall sliding!");
+        }
+        else
+        {
+            colliding.Remove(other.collider);
+        }
     }
 
 }

@@ -1,27 +1,23 @@
 using UnityEngine;
-using System.Collections;
-using Newtonsoft.Json.Serialization;
 
 public class RadialGrapple : MonoBehaviour{
     public Camera mainCamera;
-    private LineRenderer _lineRenderer;
-    private DistanceJoint2D _distanceJoint;
-    private Rigidbody2D rigidbody2D;
-    public bool isGrappling = false;
+    private LineRenderer lineRenderer;
+    private DistanceJoint2D distanceJoint;
+    private Rigidbody2D rigidbody2d;
+    public bool isGrappling;
 
     private Rigidbody2D p;
     public Rigidbody2D projectile;
 
-// Start is called before the first frame update
-    void Start() {
-        _lineRenderer = GetComponent<LineRenderer>();
-        _distanceJoint = GetComponent<DistanceJoint2D>();
-        rigidbody2D = GetComponent<Rigidbody2D>();
-        _distanceJoint.enabled = false;
+    private void Start() {
+        lineRenderer = GetComponent<LineRenderer>();
+        distanceJoint = GetComponent<DistanceJoint2D>();
+        rigidbody2d = GetComponent<Rigidbody2D>();
+        distanceJoint.enabled = false;
     }
 
-// Update is called once per frame
-    void Update() {
+    private void Update() {
         if (Input.GetKeyDown(KeyCode.Q)) {
             //Vector2 mousePos = (Vector2) mainCamera.ScreenToWorldPoint(Input.mousePosition);
             Vector2 leftDir = new Vector2(-1, 1.4f);
@@ -44,8 +40,8 @@ public class RadialGrapple : MonoBehaviour{
             EndGrapple();
         }
 
-        if (_distanceJoint.enabled) {
-            _lineRenderer.SetPosition(1, transform.position);
+        if (distanceJoint.enabled) {
+            lineRenderer.SetPosition(1, transform.position);
         }
     }
 
@@ -58,12 +54,12 @@ public class RadialGrapple : MonoBehaviour{
     }
 
     public void StartGrapple(Vector3 grapplePoint, float grappleLength) {
-        _lineRenderer.SetPosition(0, grapplePoint);
-        _lineRenderer.SetPosition(1, transform.position);
-        _distanceJoint.connectedAnchor = grapplePoint;
-        _distanceJoint.distance = grappleLength * .90f;
-        _distanceJoint.enabled = true;
-        _lineRenderer.enabled = true;
+        lineRenderer.SetPosition(0, grapplePoint);
+        lineRenderer.SetPosition(1, transform.position);
+        distanceJoint.connectedAnchor = grapplePoint;
+        distanceJoint.distance = grappleLength * .90f;
+        distanceJoint.enabled = true;
+        lineRenderer.enabled = true;
         isGrappling = true;
 
         //const float boostForce = 5f;
@@ -72,24 +68,24 @@ public class RadialGrapple : MonoBehaviour{
 
         if (transform.localScale.x > 0.5) {
             //facing left
-            rigidbody2D.velocity += (new Vector2(rigidbody2D.velocity.y, 0) * gravModifier);
-            if (rigidbody2D.velocity.x > -minVel) {
-                rigidbody2D.velocity = (Vector2.left * minVel);
+            rigidbody2d.velocity += (new Vector2(rigidbody2d.velocity.y, 0) * gravModifier);
+            if (rigidbody2d.velocity.x > -minVel) {
+                rigidbody2d.velocity = (Vector2.left * minVel);
                 Debug.Log("left boost");
             }
         }
         else if (transform.localScale.x < -0.5) {
-            rigidbody2D.velocity -= (new Vector2(rigidbody2D.velocity.y, 0) * gravModifier);
-            if (rigidbody2D.velocity.x < minVel) {
-                rigidbody2D.velocity = (Vector2.right * minVel);
+            rigidbody2d.velocity -= (new Vector2(rigidbody2d.velocity.y, 0) * gravModifier);
+            if (rigidbody2d.velocity.x < minVel) {
+                rigidbody2d.velocity = (Vector2.right * minVel);
                 Debug.Log("right boost");
             }
         }
     }
 
     public void EndGrapple() {
-        _distanceJoint.enabled = false;
-        _lineRenderer.enabled = false;
+        distanceJoint.enabled = false;
+        lineRenderer.enabled = false;
         isGrappling = false;
     }
     

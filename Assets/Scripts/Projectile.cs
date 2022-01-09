@@ -5,13 +5,13 @@ public abstract class Projectile : Entity {
     // protected float GravityScale = 0f;
 
     // trackers
-    protected new BoxCollider2D collider;
-    protected new Rigidbody2D rigidbody;
+    protected BoxCollider2D Collider2D;
+    protected Rigidbody2D Rigidbody2D;
     
     // Start is called before the first frame update
     private void Start() {
-        collider = GetComponent<BoxCollider2D>();
-        rigidbody = GetComponent<Rigidbody2D>();
+        Collider2D = GetComponent<BoxCollider2D>();
+        Rigidbody2D = GetComponent<Rigidbody2D>();
         // rigidbody.gravityScale = GravityScale;
     }
 

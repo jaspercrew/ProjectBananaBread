@@ -1,5 +1,7 @@
-public class Platform : Entity
+public class Platform : Entity, IGrappleable
 {
+    public bool isGrappleable;
+    
     // Start is called before the first frame update
     // void Start()
     // {
@@ -11,4 +13,9 @@ public class Platform : Entity
     // {
     //     
     // }
+
+    public bool IsGrappleable()
+    {
+        return isGrappleable;
+    }
 }

@@ -33,14 +33,15 @@ public class GrappleProjectile : Projectile {
         lineRenderer.SetPosition(1, characterController.transform.position);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("Player")) return;
-        
-        Debug.Log(other.gameObject.name);
-        Vector3 pos = transform.position;
-        float length = (pos - characterController.transform.position).magnitude;
-        grappleController.StartGrapple(other.ClosestPoint(pos), length);
-        Destroy(gameObject);
+    private void OnTriggerEnter2D(Collider2D other) {
+        if (other.gameObject.GetComponent<isGrappleable>() != null || 
+            other.GetComponentInParent(typeof(isGrappleable)) != null) {
+            
+            Debug.Log(other.gameObject.name);
+            Vector3 pos = transform.position;
+            float length = (pos - characterController.transform.position).magnitude;
+            grappleController.StartGrapple(other.ClosestPoint(pos), length);
+            Destroy(gameObject);
+        }
     }
 }

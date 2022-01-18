@@ -35,13 +35,13 @@ public class FluidGravityZone : Entity
 
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.gameObject.CompareTag("Player") && isActive) {
-            other.GetComponent<CharController>().isInverted = true;
+            other.GetComponent<CharController>().Invert();
         }
     }
     
     private void OnTriggerExit2D(Collider2D other) {
         if (other.gameObject.CompareTag("Player") && isActive) {
-            other.GetComponent<CharController>().isInverted = false;
+            other.GetComponent<CharController>().DeInvert();
         }
     }
 }

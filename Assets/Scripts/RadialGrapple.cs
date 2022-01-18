@@ -1,10 +1,11 @@
 using UnityEngine;
 
-public class RadialGrapple : MonoBehaviour{
+public partial class RadialGrapple : MonoBehaviour{
     public Camera mainCamera;
     private LineRenderer lineRenderer;
     private DistanceJoint2D distanceJoint;
     private Rigidbody2D rigidbody2d;
+    private CharController charController;
     public bool isGrappling;
 
     private Rigidbody2D p;
@@ -14,21 +15,23 @@ public class RadialGrapple : MonoBehaviour{
         lineRenderer = GetComponent<LineRenderer>();
         distanceJoint = GetComponent<DistanceJoint2D>();
         rigidbody2d = GetComponent<Rigidbody2D>();
+        charController = FindObjectOfType<CharController>();
+        
         distanceJoint.enabled = false;
     }
 
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Q)) {
             //Vector2 mousePos = (Vector2) mainCamera.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 leftDir = new Vector2(-1, 1.4f);
-            Vector2 rightDir = new Vector2(1, 1.4f);
+            Vector2 Dir = new Vector2(1, 1.4f);
             if (transform.localScale.x > 0.5) {
-                LaunchHook(leftDir);
+                Dir.x = -Dir.x;
             }
-            else if (transform.localScale.x < -0.5) {
-                LaunchHook(rightDir);
+
+            if (charController.isInverted) {
+                Dir.y = -Dir.y;
             }
-            
+            LaunchHook(Dir);
         }
         else if (Input.GetKeyUp(KeyCode.Q)) {
             //TODO kill projectile as well
@@ -47,7 +50,7 @@ public class RadialGrapple : MonoBehaviour{
 
     private void LaunchHook(Vector2 direction) {
         const float speed = 20f;
-        Vector3 offset = new Vector3(0, 1, 0);
+        Vector3 offset = charController.isInverted ? new Vector3(0, -1, 0) : new Vector3(0, 1, 0);
         p = Instantiate(projectile, transform.position + offset, transform.rotation);
         p.gameObject.GetComponent<GrappleProjectile>().SetStats(direction.normalized, speed);
         

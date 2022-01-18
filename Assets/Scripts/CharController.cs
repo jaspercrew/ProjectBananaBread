@@ -9,6 +9,7 @@ public partial class CharController : LivingThing {
     private ParticleSystem dust;
     private ScreenShakeController screenShakeController;
     private RadialGrapple grappleController;
+    private SpriteRenderer spriteRenderer;
     
     // Configurable player control values
     private float speed = 3.5f;
@@ -29,7 +30,6 @@ public partial class CharController : LivingThing {
     // Trackers
     [HideInInspector]
     public bool isInverted;
-    
     private bool isInvincible;
     // private float nextParryTime;
     public bool isParrying;
@@ -141,4 +141,19 @@ public partial class CharController : LivingThing {
     {
         return !IsDashing && !isAttacking && !isParrying && !grappleController.isGrappling;
     }
+
+    public void Invert() {
+        isInverted = true;
+        Rigidbody.gravityScale = -Mathf.Abs(Rigidbody.gravityScale);
+        transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
+        spriteRenderer.flipX = true;
+    }
+    
+    public void DeInvert() {
+        isInverted = false;
+        Rigidbody.gravityScale = Mathf.Abs(Rigidbody.gravityScale);
+        transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
+        spriteRenderer.flipX = false;
+    }
+    
 }

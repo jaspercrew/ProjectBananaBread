@@ -11,6 +11,7 @@ public partial class CharController {
         dust = transform.GetComponentInChildren<ParticleSystem>();
         screenShakeController = FindObjectOfType<Camera>().GetComponent<ScreenShakeController>();
         grappleController = GetComponent<RadialGrapple>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
     
     private void FixedUpdate() {

@@ -7,13 +7,20 @@ public class FluidGravityZone : Entity
 {
     // Start is called before the first frame update
     private BoxCollider2D boxCollider2D;
+    private SpriteRenderer spriteRenderer;
+    private CharController charController;
     [SerializeField] public EnvironmentState invertState;
     private bool isActive = false;
     
     void Start() {
         boxCollider2D = GetComponent<BoxCollider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        charController = FindObjectOfType<CharController>();
         if (invertState == GameManager.Instance.currentState) {
-            isActive = true;
+            EnableFGZ();
+        }
+        else {
+            DisableFGZ();
         }
     }
 
@@ -25,11 +32,14 @@ public class FluidGravityZone : Entity
 
     public override void SwitchToState(EnvironmentState state) {
         if (invertState == state) {
-            isActive = true;
+            EnableFGZ();
         }
         else {
-            isActive = false;
-            //disable player inversion
+            if (boxCollider2D.bounds.Contains(charController.transform.position)) {
+                charController.DeInvert();
+            }git
+            DisableFGZ();
+            //TODO: disable player inversion
         }
     }
 
@@ -43,5 +53,17 @@ public class FluidGravityZone : Entity
         if (other.gameObject.CompareTag("Player") && isActive) {
             other.GetComponent<CharController>().DeInvert();
         }
+    }
+
+    private void EnableFGZ() {
+        isActive = true;
+        boxCollider2D.size = Vector2.one;
+        spriteRenderer.enabled = true;
+    }
+
+    private void DisableFGZ() {
+        isActive = false;
+        boxCollider2D.size = Vector2.zero;
+        spriteRenderer.enabled = false;
     }
 }

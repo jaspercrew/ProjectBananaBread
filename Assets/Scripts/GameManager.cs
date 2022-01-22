@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
     
     public EnvironmentState originalState = EnvironmentState.RealWorld;
     public EnvironmentState altState;
-    [HideInInspector]
+    //[HideInInspector]
     public EnvironmentState currentState;
 
     private GameManager()
@@ -52,6 +52,8 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Error: scene isn't in original OR alternate states; something went wrong");
             return;
         }
+
+        currentState = newState;
 
         foreach (Entity entity in entities)
         {

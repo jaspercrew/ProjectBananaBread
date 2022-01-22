@@ -40,8 +40,7 @@ public class GrappleProjectile : Projectile {
         
         Debug.Log(other.gameObject.name);
         Vector3 pos = transform.position;
-        float length = (pos - characterController.transform.position).magnitude;
-        grappleController.StartGrapple(other.ClosestPoint(pos), length);
+        grappleController.StartGrapple(other.ClosestPoint(pos));
         Destroy(gameObject);
     }
 }

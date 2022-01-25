@@ -37,7 +37,7 @@ public class FluidGravityZone : Entity
         else {
             if (boxCollider2D.bounds.Contains(charController.transform.position)) {
                 charController.DeInvert();
-            }git
+            }
             DisableFGZ();
             //TODO: disable player inversion
         }

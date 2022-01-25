@@ -3,8 +3,7 @@ using System.Collections;
 using UnityEngine;
 
 public partial class CharController {
-    private void DoParry()
-    {
+    private void DoParry() {
         if (!IsAbleToAct())
             return;
         // start parry animation
@@ -13,6 +12,13 @@ public partial class CharController {
         StartCoroutine(ParryCoroutine());
         
         lastParryTime = Time.time;
+    }
+
+    private void DoInteract() {
+        Debug.Log(Interactor.interactors.Count);
+        foreach (Interactor i in Interactor.interactors) {
+            i.Interact();
+        }
     }
 
     // Take damage, knock away from point

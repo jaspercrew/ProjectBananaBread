@@ -57,7 +57,7 @@ public partial class CharController : LivingThing {
         
         public enum EventTypes
         {
-            Dash, Jump, Attack, Parry, SwitchState, Crouch
+            Dash, Jump, Attack, Parry, SwitchState, Crouch, Interact
         }
 
         public Event(EventTypes type, float time)
@@ -76,6 +76,7 @@ public partial class CharController : LivingThing {
             {() => Input.GetButtonDown("Jump"), Event.EventTypes.Jump},
             {() => Input.GetMouseButtonDown(0), Event.EventTypes.Attack},
             {() => Input.GetMouseButtonDown(1), Event.EventTypes.Parry},
+            {() => Input.GetKeyDown(KeyCode.E), Event.EventTypes.Interact},
             {() => Input.GetKeyDown(KeyCode.F), Event.EventTypes.SwitchState},
             {() => Input.GetKeyDown(KeyCode.LeftControl), Event.EventTypes.Crouch}
         };
@@ -99,6 +100,8 @@ public partial class CharController : LivingThing {
                 @this.IsAbleToAct() && Time.time > @this.lastAttackTime + AttackCooldown},
             {Event.EventTypes.Parry, @this =>
                 @this.IsAbleToAct() && Time.time > @this.lastParryTime + ParryCooldown},
+            {Event.EventTypes.Interact, 
+                @this => @this.IsAbleToAct()},
             {Event.EventTypes.SwitchState, 
                 @this => @this.IsAbleToAct()},
             {Event.EventTypes.Crouch, 
@@ -114,6 +117,7 @@ public partial class CharController : LivingThing {
             {Event.EventTypes.Jump, @this => @this.DoJump()},
             {Event.EventTypes.Attack, @this => @this.AttemptAttack()},
             {Event.EventTypes.Parry, @this => @this.DoParry()},
+            {Event.EventTypes.Interact, @this => @this.DoInteract()},
             {Event.EventTypes.SwitchState, @this => GameManager.Instance.SwitchWorldState()},
             {Event.EventTypes.Crouch, @this => @this.Crouch()}
         };

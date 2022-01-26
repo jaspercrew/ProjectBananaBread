@@ -24,7 +24,7 @@ public class ScreenShakeController : MonoBehaviour {
             StartShake(.1f, .2f);
         }
 
-        transform.position = origin;
+        //transform.position = GetComponentInParent<CameraFollow>().targetPosition;
     }
 
     private void LateUpdate() {

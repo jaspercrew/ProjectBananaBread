@@ -15,7 +15,7 @@ public partial class CharController {
     }
 
     private void DoInteract() {
-        Debug.Log(Interactor.interactors.Count);
+        //Debug.Log(Interactor.interactors.Count);
         foreach (Interactor i in Interactor.interactors) {
             i.Interact();
         }

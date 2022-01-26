@@ -2,7 +2,11 @@
     "m_SGVersion": 2,
     "m_Type": "UnityEditor.ShaderGraph.GraphData",
     "m_ObjectId": "c1e7aa41b8e34d66890f76e17479b64f",
-    "m_Properties": [],
+    "m_Properties": [
+        {
+            "m_Id": "bb6a7548065640189b7b02cef3561619"
+        }
+    ],
     "m_Keywords": [],
     "m_Nodes": [
         {
@@ -174,6 +178,29 @@
     },
     "m_Labels": [],
     "m_Space": 0
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Texture2DShaderProperty",
+    "m_ObjectId": "bb6a7548065640189b7b02cef3561619",
+    "m_Guid": {
+        "m_GuidSerialized": "dd10035d-dcfe-494d-85fe-8fd4d0cc22df"
+    },
+    "m_Name": "GenericTex",
+    "m_DefaultReferenceName": "Texture2D_bb6a7548065640189b7b02cef3561619",
+    "m_OverrideReferenceName": "_GenericTex",
+    "m_GeneratePropertyBlock": true,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": {
+        "m_SerializedTexture": "{\"texture\":{\"instanceID\":0}}",
+        "m_Guid": ""
+    },
+    "m_Modifiable": true,
+    "m_DefaultType": 0
 }
 
 {

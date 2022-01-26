@@ -21,5 +21,8 @@ public class FluidSpotlight : Interactor {
     {
         InteractorUpdate();
     }
-    
+
+    public override void Interact() {
+        transform.GetChild(0).Rotate(Vector3.forward, 30);
+    }
 }

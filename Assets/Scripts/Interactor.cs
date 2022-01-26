@@ -22,7 +22,7 @@ public abstract class Interactor : Entity {
         collider2D = GetComponent<BoxCollider2D>();
         renderer = GetComponent<Renderer>();
         collider2D.edgeRadius = bonusInteractRange;
-        renderer.material.shader = Shader.Find("Shader Graphs/GenericShader");
+        //renderer.material.shader = Shader.Find("Shader Graphs/GenericShader");
         isInteractable = false;
     }
     
@@ -40,7 +40,7 @@ public abstract class Interactor : Entity {
         if (other.gameObject.CompareTag("Player")) {
             interactors.Add(this);
             isInteractable = true;
-            renderer.material.shader = Shader.Find("Shader Graphs/GenericShader");
+            //renderer.material.shader = Shader.Find("Shader Graphs/GenericShader");
         }
     }
     
@@ -48,7 +48,7 @@ public abstract class Interactor : Entity {
         if (other.gameObject.CompareTag("Player")) {
             interactors.Remove(this);
             isInteractable = false;
-            renderer.material.shader = Shader.Find("Shader Graphs/BorderGraph");
+            //renderer.material.shader = Shader.Find("Shader Graphs/BorderGraph");
         }
     }
 }

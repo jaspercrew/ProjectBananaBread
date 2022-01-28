@@ -30,9 +30,131 @@ public partial class CharController {
         
         // movement animations
         Animator.SetInteger(AnimState, Mathf.Abs(moveVector) > float.Epsilon? 2 : 0);
+        
+        
+        float xVel = Rigidbody.velocity.x;
 
-        // actual moving TODO add velocity overriding 
-        transform.position += new Vector3(moveVector * speed * Time.deltaTime, 0, 0);
+        // void ApplyDrag(float factor)
+        // {
+        //     if (xVel > 0)
+        //     {
+        //         Rigidbody.velocity -= factor * new Vector2(Mathf.Min(XDrag, xVel), 0);
+        //     }
+        //     else if (xVel < 0)
+        //     {
+        //         Rigidbody.velocity += factor * new Vector2(Mathf.Min(XDrag, -xVel), 0);
+        //     }
+        // }
+        
+        // drag (what's um...)
+        // ApplyDrag(1);
+        // if (xVel > 0)
+        // {
+        //     Rigidbody.velocity -= new Vector2(Mathf.Min(XDrag, xVel), 0);
+        // }
+        // else if (xVel < 0)
+        // {
+        //     Rigidbody.velocity += new Vector2(Mathf.Min(XDrag, -xVel), 0);
+        // }
+        
+        // velocity overriding and movement
+        
+        // if in air, use acceleration
+        // if on ground, use translation
+
+        if (IsGrounded())
+        {
+            Rigidbody.velocity = new Vector2(moveVector * speed, Rigidbody.velocity.y);
+        }
+        else
+        {
+            // if recently grappled
+            //      if you have high velocity, and you're trying to move opposite,
+            //      then just add velocity normally in opp direction
+            //      if high vel, and trying to move same, don't add vel
+            // else
+            //      add vel normally, with max
+
+            // bool move;
+            // bool applyMaxVel;
+            
+            // if (isRecentlyGrappled)
+            // {
+            //     if (Mathf.Abs(xVel) > speed)
+            //     {
+            //         if (Math.Sign(moveVector) == -Math.Sign(xVel))
+            //         {
+            //             move = true;
+            //         }
+            //         else
+            //         {
+            //             move = false;
+            //         }
+            //
+            //         applyMaxVel = false;
+            //     }
+            //     else
+            //     {
+            //         isRecentlyGrappled = false;
+            //         move = true;
+            //         applyMaxVel = true;
+            //     }
+            // }
+            // else
+            // {
+            //     move = true;
+            //     applyMaxVel = true;
+            // }
+
+            bool isHighVel = Mathf.Abs(xVel) > speed;
+            bool isMovingSameDir = Math.Sign(moveVector) == Math.Sign(xVel);
+
+            bool move = !(isRecentlyGrappled && isHighVel && isMovingSameDir);
+            bool applyMaxVel = !(isRecentlyGrappled && isHighVel);
+            
+            if (move)
+            {
+                Rigidbody.velocity += moveVector * new Vector2(InAirAcceleration, 0);
+            }
+
+            if (applyMaxVel)
+            {
+                Vector2 vel = Rigidbody.velocity;
+                float newXVel = vel.x;
+                float yVel = vel.y;
+                if (newXVel > speed)
+                {
+                    Rigidbody.velocity = new Vector2(speed, yVel);
+                }
+                else if (newXVel < -speed)
+                {
+                    Rigidbody.velocity = new Vector2(-speed, yVel);
+                }
+            }
+        }
+
+
+        // // if vel < trans, cancel x vel (both same and opposite dir) TODO: this causes a "jolt"
+        // if (0 < Mathf.Abs(xVel) && Mathf.Abs(xVel) <= speed && moveVector != 0)
+        // {
+        //     Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
+        // }
+        // // if low velocity, move normally
+        // else if (Mathf.Abs(xVel) <= speed)
+        // {
+        //     transform.position += new Vector3(moveVector * speed * Time.deltaTime, 0, 0);
+        //     // Rigidbody.velocity = new Vector2(moveVector * speed, Rigidbody.velocity.y);
+        // }
+        // // if high velocity and opposite dir, do drag again
+        // else if (Mathf.Abs(xVel) > speed && Math.Sign(moveVector) == -Math.Sign(xVel))
+        // {
+        //     ApplyDrag(0.5f);
+        // }
+        // // if high velocity and same dir, undo a little drag
+        // else if (Mathf.Abs(xVel) > speed && Math.Sign(moveVector) == Math.Sign(xVel))
+        // {
+        //     ApplyDrag(-0.5f);
+        // }
 
         // feet dust logic
         if (Math.Abs(xDir - moveVector) > 0.01f && IsGrounded() && moveVector != 0) {
@@ -96,7 +218,9 @@ public partial class CharController {
             Animator.SetBool(Jump, false);
         }
 
-        if (Input.GetButtonUp("Jump") && !IsGrounded() && Rigidbody.velocity.y > 0) {
+        // short jump
+        if (Input.GetButtonUp("Jump") && !IsGrounded() && 
+            ((!isInverted && Rigidbody.velocity.y > 0) || (isInverted && Rigidbody.velocity.y < 0))) {
             Rigidbody.velocity = Vector2.Scale(Rigidbody.velocity, new Vector2(1f, 0.5f));
         }
 

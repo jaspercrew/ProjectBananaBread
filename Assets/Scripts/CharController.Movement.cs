@@ -40,7 +40,7 @@ public partial class CharController {
 
         const int wallJumpFrames = 10;
 
-        if (isWallSliding)
+        if (isWallSliding && !IsGrounded())
         {
             wallJumpDir = transform.position.x - wallSlidingCollider.transform.position.x > 0? 
                 WallJumpDirection.Right : WallJumpDirection.Left;
@@ -70,7 +70,9 @@ public partial class CharController {
         speed *= isCrouching? 0.5f : 2;
     }
     
-    private void OnLanding() {
+    private void OnLanding()
+    {
+        isRecentlyGrappled = false;
         dust.Play();
         Animator.SetBool(Grounded, true);
         // Debug.Log("sus");

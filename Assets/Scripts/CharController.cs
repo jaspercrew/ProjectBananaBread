@@ -12,7 +12,8 @@ public partial class CharController : LivingThing {
     private SpriteRenderer spriteRenderer;
     
     // Configurable player control values
-    private float speed = 3.5f;
+    public float speed = 7f;
+    private const float InAirAcceleration = 1f;
     private const float JumpForce = 6.3f;
     private const int HeavyAttackBuildup = 4;
     private const float AttackCooldown = 0.5f;
@@ -31,6 +32,7 @@ public partial class CharController : LivingThing {
     [HideInInspector]
     public bool isInverted;
     private bool isInvincible;
+    public bool isRecentlyGrappled;
     // private float nextParryTime;
     public bool isParrying;
     public bool isCrouching;

@@ -18,11 +18,12 @@ public class Enemy : LivingThing
     private float nextAttackTime;
     private IEnumerator attackCo;
     private EnvironmentState originalState = 0;
+    private bool isAlive = true;
 
     // Start is called before the first frame update
     private void Start() {
         CurrentHealth = MaxHealth;
-        Animator = transform.GetComponent<Animator>();
+        Animator = transform.GetComponentInChildren<Animator>();
         Rigidbody = transform.GetComponent<Rigidbody2D>();
         if (originalState == 0)
             originalState = EntityState;
@@ -42,14 +43,31 @@ public class Enemy : LivingThing
     }
 
     private void Interrupt() { // should stop all relevant coroutines
-        StopCoroutine(attackCo); // interrupt attack if take damage
-        Rigidbody.velocity = Vector2.zero;
+        if (attackCo != null) {
+            StopCoroutine(attackCo); // interrupt attack if take damage
+            Rigidbody.velocity = Vector2.zero;
+        }
     }
     
 
     private void DoAttack() {
         Animator.SetTrigger(Attack);
         StartCoroutine(attackCo = AttackCoroutine());
+    }
+
+    protected override void Die() {
+        isAlive = false;
+        Animator.SetTrigger(Death);
+        Debug.Log("deatfh");
+        StartCoroutine(DieCoroutine());
+        
+    }
+
+    protected virtual IEnumerator DieCoroutine() {
+        const float deathTime = 2f;
+        yield return new WaitForSeconds(deathTime);
+        Debug.Log("2");
+        Destroy(gameObject);
     }
 
     private IEnumerator AttackCoroutine() {
@@ -96,14 +114,16 @@ public class Enemy : LivingThing
     // Update is called once per frame
     private void Update()
     {
-        // scan for player to attack
-        const int maxHits = 20;
-        Collider2D[] hitColliders = new Collider2D[maxHits];
-        int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange, 
-            hitColliders, playerLayers);
-        if (numHits > 0 && Time.time >= nextAttackTime) {
-            DoAttack();
-            nextAttackTime = Time.time + 1f / AttackRate;
+        if (isAlive) {
+            // scan for player to attack
+            const int maxHits = 20;
+            Collider2D[] hitColliders = new Collider2D[maxHits];
+            int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange,
+                hitColliders, playerLayers);
+            if (numHits > 0 && Time.time >= nextAttackTime) {
+                DoAttack();
+                nextAttackTime = Time.time + 1f / AttackRate;
+            }
         }
     }
     

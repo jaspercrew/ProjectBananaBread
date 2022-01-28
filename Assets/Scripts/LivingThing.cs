@@ -83,7 +83,7 @@ public abstract class LivingThing : Entity {
     protected virtual void Die() {
         Animator.SetTrigger(Death);
         //transform.GetComponent<Collider>().isTrigger = true;
-        Rigidbody.gravityScale = 0;
+        //Rigidbody.gravityScale = 0;
     }
 
     protected void Stun(float stunTime) {

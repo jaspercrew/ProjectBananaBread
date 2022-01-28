@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using Pathfinding;
 using UnityEngine;
 
 public class Enemy : LivingThing
@@ -20,9 +22,12 @@ public class Enemy : LivingThing
     private EnvironmentState originalState = 0;
     private bool isAlive = true;
 
+    private AIPath aiPath;
+
     // Start is called before the first frame update
     private void Start() {
         CurrentHealth = MaxHealth;
+        aiPath = GetComponent<AIPath>();
         Animator = transform.GetComponentInChildren<Animator>();
         Rigidbody = transform.GetComponent<Rigidbody2D>();
         if (originalState == 0)
@@ -30,15 +35,17 @@ public class Enemy : LivingThing
     }
 
     public void TakeDamage(int damage, float knockback) { // assumes damage is taken from PLAYER
-        Interrupt();
-        GameObject player = GameObject.FindWithTag("Player");
-        KnockAwayFromPoint(knockback, player.transform.position);
-        CurrentHealth -= damage;
-        // damage animation
-        Animator.SetTrigger(Hurt);
-        
-        if (CurrentHealth <= 0) {
-            Die();
+        if (isAlive) {
+            Interrupt();
+            GameObject player = GameObject.FindWithTag("Player");
+            KnockAwayFromPoint(knockback, player.transform.position);
+            CurrentHealth -= damage;
+            // damage animation
+            Animator.SetTrigger(Hurt);
+
+            if (CurrentHealth <= 0) {
+                Die();
+            }
         }
     }
 
@@ -56,18 +63,10 @@ public class Enemy : LivingThing
     }
 
     protected override void Die() {
+        const float deathTime = 1f;
         isAlive = false;
         Animator.SetTrigger(Death);
-        Debug.Log("deatfh");
-        StartCoroutine(DieCoroutine());
-        
-    }
-
-    protected virtual IEnumerator DieCoroutine() {
-        const float deathTime = 2f;
-        yield return new WaitForSeconds(deathTime);
-        Debug.Log("2");
-        Destroy(gameObject);
+        Destroy(gameObject, deathTime);
     }
 
     private IEnumerator AttackCoroutine() {
@@ -124,6 +123,15 @@ public class Enemy : LivingThing
                 DoAttack();
                 nextAttackTime = Time.time + 1f / AttackRate;
             }
+            if (aiPath.desiredVelocity.x > 0) {
+                //Debug.Log("fr");
+                FaceRight();
+            }
+            else if (aiPath.desiredVelocity.x < 0) {
+                //Debug.Log("fl");
+                FaceLeft();
+            }
+            Animator.SetInteger(AnimState, Mathf.Abs(aiPath.velocity.x) > .1 ? 2 : 0);
         }
     }
     

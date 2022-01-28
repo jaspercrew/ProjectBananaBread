@@ -33,6 +33,18 @@ public abstract class LivingThing : Entity {
         }
     }
     
+    protected void FaceLeft()
+    {
+        Transform t = transform; // more efficient, according to Rider
+        t.localScale = new Vector3(1, t.localScale.y, 0);
+    }
+
+    protected void FaceRight()
+    {
+        Transform t = transform; // more efficient, according to Rider
+        t.localScale = new Vector3(-1, t.localScale.y, 0);
+    }
+    
     // boosts the game object in a certain cardinal direction 
     protected void VelocityDash(int cardinalDirection, float dashSpeed, float dashTime) {
         IsDashing = true;

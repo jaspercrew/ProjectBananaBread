@@ -58,17 +58,7 @@ public partial class CharController {
         Animator.SetBool(Grounded, false);
     }
 
-    private void FaceLeft()
-    {
-        Transform t = transform; // more efficient, according to Rider
-        t.localScale = new Vector3(1, t.localScale.y, 0);
-    }
 
-    private void FaceRight()
-    {
-        Transform t = transform; // more efficient, according to Rider
-        t.localScale = new Vector3(-1, t.localScale.y, 0);
-    }
 
     // TODO: add variable isCrouching and set to true/false here instead of changing speed directly
     // and use isCrouching in movement and affect speed there

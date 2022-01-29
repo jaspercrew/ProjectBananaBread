@@ -2039,6 +2039,10 @@ PrefabInstance:
       propertyPath: m_EdgeRadius
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8891111172322128962, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
+      propertyPath: speed
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 8891111172322128963, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
       propertyPath: m_RootOrder
       value: 8

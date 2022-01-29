@@ -4,6 +4,7 @@ using UnityEngine;
 
 public partial class CharController {
     private void DoParry() {
+        Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
         if (!IsAbleToAct())
             return;
         // start parry animation
@@ -76,14 +77,14 @@ public partial class CharController {
 
     private IEnumerator AttackCoroutine(bool isHeavyAttack) {
         // light attack modifiers
-        float attackBoost = 2.5f;
+        float attackBoost = 1.5f;
         float beginAttackDelay = .15f;
-        float endAttackDelay = .2f;
+        float endAttackDelay = .35f;
         float hitConfirmDelay = .20f;
         
         // heavy attack modifiers
         if (isHeavyAttack) { 
-            attackBoost = 3.0f;
+            attackBoost = 2.0f;
             beginAttackDelay = .25f;
             endAttackDelay = .5f;
             hitConfirmDelay = .30f;
@@ -95,12 +96,16 @@ public partial class CharController {
         // move while attacking TODO : change this functionality
         if (IsGrounded()) {
             if (moveVector > .5) {
-                VelocityDash(1, attackBoost, .5f);
+                Rigidbody.velocity = new Vector2(attackBoost, Rigidbody.velocity.y);
             }
             else if (moveVector < -.5) {
-                VelocityDash(3, attackBoost, .5f);
+                Rigidbody.velocity = new Vector2(-attackBoost, Rigidbody.velocity.y);
+            }
+            else {
+                Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
             }
         }
+        
 
         const int maxEnemiesHit = 20;
         Collider2D[] hitColliders = new Collider2D[maxEnemiesHit];
@@ -128,6 +133,7 @@ public partial class CharController {
     private void DoAttack(bool isHeavy) {
         // _screenShakeController.LightShake();
         isAttacking = true;
+        //Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
         Animator.speed = 1;
         // Assert.IsTrue(comboCount <= HeavyAttackBuildup);
         

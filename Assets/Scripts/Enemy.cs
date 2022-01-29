@@ -23,6 +23,7 @@ public class Enemy : LivingThing
     private bool isAlive = true;
 
     private AIPath aiPath;
+    private CharController charController;
 
     // Start is called before the first frame update
     private void Start() {
@@ -30,7 +31,8 @@ public class Enemy : LivingThing
         aiPath = GetComponent<AIPath>();
         Animator = transform.GetComponentInChildren<Animator>();
         Rigidbody = transform.GetComponent<Rigidbody2D>();
-        if (originalState == 0)
+        charController = FindObjectOfType<CharController>();
+        if (originalState == 0) ;
             originalState = EntityState;
     }
 
@@ -87,22 +89,27 @@ public class Enemy : LivingThing
 
         const int maxHits = 20;
         Collider2D[] hitColliders = new Collider2D[maxHits];
-        int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange, 
+        int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange,
             hitColliders, playerLayers);
         if (numHits > 0) {
             StartCoroutine(PauseAnimatorCoroutine(hitConfirmDelay)); // pause swing animation if an enemy is hit
         }
-        foreach (Collider2D p in hitColliders) {
-            CharController player = p.GetComponent<CharController>();
-            if (player.isParrying) {
-                // StartCoroutine(PauseAnimatorCoroutine(.2f));
-                player.CounterStrike(GetComponent<Enemy>());
-                break;
+
+        if (hitColliders.Length > 0) {
+            foreach (Collider2D p in hitColliders) {
+                if (p == null || p.gameObject.GetComponent<CharController>() == null) {
+                    break;
+                }
+                if (charController.isParrying) {
+                    // StartCoroutine(PauseAnimatorCoroutine(.2f));
+                    charController.CounterStrike(GetComponent<Enemy>());
+                    break;
+                }
+                charController.TakeDamage(AttackDamage, knockbackVal, transform.position);
             }
-            player.TakeDamage(AttackDamage, knockbackVal, transform.position);
         }
     }
-    
+
     // private bool IsMovementEnabled() {
     //     if (animator_.GetCurrentAnimatorStateInfo(0).IsName("Attack")) {
     //         return false;

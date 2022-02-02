@@ -37,14 +37,21 @@ public abstract class Interactor : Entity {
     }
     
     protected virtual void OnTriggerEnter2D(Collider2D other) {
+        TrigEnterFunction(other);
+    }
+    
+    protected virtual void OnTriggerExit2D(Collider2D other) {
+        TrigExitFunction(other);
+    }
+
+    protected virtual void TrigEnterFunction(Collider2D other) {
         if (other.gameObject.CompareTag("Player")) {
             interactors.Add(this);
             isInteractable = true;
             //renderer.material.shader = Shader.Find("Shader Graphs/GenericShader");
         }
     }
-    
-    protected virtual void OnTriggerExit2D(Collider2D other) {
+    protected virtual void TrigExitFunction(Collider2D other) {
         if (other.gameObject.CompareTag("Player")) {
             interactors.Remove(this);
             isInteractable = false;

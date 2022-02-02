@@ -33,9 +33,13 @@ public partial class CharController {
 
     private void DoJump()
     {
-        if (!IsGrounded() && !isWallSliding || !IsAbleToMove())
-            return;
+        // if (!IsGrounded() && !isWallSliding || !IsAbleToMove()){
+        //     return;
+        // }
+        //Debug.Log("jump run");
         
+        canDoubleJump = !canDoubleJump;
+
         dust.Play();
 
         const int wallJumpFrames = 10;
@@ -70,8 +74,8 @@ public partial class CharController {
         speed *= isCrouching? 0.5f : 2;
     }
     
-    private void OnLanding()
-    {
+    private void OnLanding() {
+        canDoubleJump = false;
         isRecentlyGrappled = false;
         dust.Play();
         Animator.SetBool(Grounded, true);

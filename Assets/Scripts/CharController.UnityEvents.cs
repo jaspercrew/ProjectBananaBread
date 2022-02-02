@@ -4,6 +4,7 @@ using UnityEngine;
 
 public partial class CharController {
     private void Start() {
+        //canDoubleJump = false;
         CurrentHealth = MaxHealth;
         Rigidbody = transform.GetComponent<Rigidbody2D>();
         Animator = transform.GetComponent<Animator>();
@@ -15,6 +16,7 @@ public partial class CharController {
     }
     
     private void FixedUpdate() {
+        //Debug.Log(canDoubleJump);
         moveVector = Input.GetAxisRaw("Horizontal");
         
         if (wallJumpDir != WallJumpDirection.None)

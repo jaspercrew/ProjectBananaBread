@@ -23,6 +23,24 @@ public class FluidSpotlight : Interactor {
     }
 
     public override void Interact() {
-        transform.GetChild(0).Rotate(Vector3.forward, 30);
+        transform.Find("ToRotate").Rotate(Vector3.forward, 30);
+        //transform.getch
+    }
+    
+    protected override void TrigEnterFunction(Collider2D other) {
+        if (other.gameObject.CompareTag("Player")) {
+            interactors.Add(this);
+            isInteractable = true;
+            transform.Find("ToRotate").Find("ToEnable").GetComponentInChildren<SpriteRenderer>().enabled = true;
+            //renderer.material.shader = Shader.Find("Shader Graphs/GenericShader");
+        }
+    }
+    protected override void TrigExitFunction(Collider2D other) {
+        if (other.gameObject.CompareTag("Player")) {
+            interactors.Remove(this);
+            isInteractable = false;
+            transform.Find("ToRotate").Find("ToEnable").GetComponentInChildren<SpriteRenderer>().enabled = false;
+            //renderer.material.shader = Shader.Find("Shader Graphs/BorderGraph");
+        }
     }
 }

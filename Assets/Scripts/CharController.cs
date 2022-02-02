@@ -36,6 +36,7 @@ public partial class CharController : LivingThing {
     // private float nextParryTime;
     public bool isParrying;
     public bool isCrouching;
+    private bool canDoubleJump;
     private bool isWallSliding;
     private Collider2D wallSlidingCollider;
     private WallJumpDirection wallJumpDir;
@@ -97,7 +98,7 @@ public partial class CharController : LivingThing {
             {Event.EventTypes.Dash, @this =>
                 (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown},
             {Event.EventTypes.Jump, @this => 
-                @this.IsAbleToMove() && (@this.IsGrounded() || @this.isWallSliding)},
+                @this.IsAbleToMove() && (@this.IsGrounded() || @this.isWallSliding || @this.canDoubleJump)},
             {Event.EventTypes.Attack, @this => 
                 @this.IsAbleToAct() && Time.time > @this.lastAttackTime + AttackCooldown},
             {Event.EventTypes.Parry, @this =>

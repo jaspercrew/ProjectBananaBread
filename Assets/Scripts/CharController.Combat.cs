@@ -150,7 +150,7 @@ public partial class CharController {
     }
 
     private IEnumerator ParryCoroutine() {
-        const float parryTime = .5f;
+        const float parryTime = .7f;
         yield return new WaitForSeconds(parryTime);
         isParrying = false;
         //transform.GetComponent<SpriteRenderer>().flipY = false;

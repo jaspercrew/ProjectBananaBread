@@ -58,8 +58,9 @@ public partial class CharController {
         }
         
         Rigidbody.AddForce(new Vector2(0, isInverted ? -JumpForce : JumpForce), ForceMode2D.Impulse);
-        Animator.SetTrigger(Jump);
         Animator.SetBool(Grounded, false);
+        Animator.SetTrigger(Jump);
+        
     }
 
 

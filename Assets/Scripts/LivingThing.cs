@@ -4,12 +4,13 @@ using UnityEngine;
 public abstract class LivingThing : Entity {
     // Configurable values 
     protected const int MaxHealth = 100;
+    protected bool isStunned;
 
     // Trackers
-    protected int CurrentHealth;
+    public int CurrentHealth;
     protected Animator Animator;
     protected Rigidbody2D Rigidbody;
-    protected bool IsDashing;
+    protected bool isDashing;
 
     // animator values beforehand to save time later
     protected static readonly int AnimState = Animator.StringToHash("AnimState");
@@ -47,7 +48,7 @@ public abstract class LivingThing : Entity {
     
     // boosts the game object in a certain cardinal direction 
     protected void VelocityDash(int cardinalDirection, float dashSpeed, float dashTime) {
-        IsDashing = true;
+        isDashing = true;
         StartCoroutine(DashCoroutine(dashTime));
         // TODO: do something about this monstrosity
         switch (cardinalDirection) {
@@ -73,7 +74,7 @@ public abstract class LivingThing : Entity {
     private IEnumerator DashCoroutine(float dashTime) {
         yield return new WaitForSeconds(dashTime);
         Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
-        IsDashing = false;
+        isDashing = false;
     }
 
     // pauses the animator for pauseTime
@@ -98,8 +99,14 @@ public abstract class LivingThing : Entity {
         //Rigidbody.gravityScale = 0;
     }
 
-    protected void Stun(float stunTime) {
-        
+    public virtual void Stun(float stunTime) {
+        isStunned = true;
+        StartCoroutine(StunCoroutine(stunTime));
+    }
+
+    public virtual IEnumerator StunCoroutine(float stunTime) {
+        yield return new WaitForSeconds(stunTime);
+        isStunned = false;
     }
 
 

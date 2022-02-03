@@ -7,12 +7,14 @@ public partial class CharController : LivingThing {
     // Components
     private BoxCollider2D boxCollider;
     private ParticleSystem dust;
+    private ParticleSystem SlicedashPS;
     private ScreenShakeController screenShakeController;
     private RadialGrapple grappleController;
     private SpriteRenderer spriteRenderer;
     
     // Configurable player control values
     public float speed = 7f;
+    private const int SliceDamage = 100;
     private const float InAirAcceleration = 1f;
     private const float JumpForce = 6.3f;
     private const int HeavyAttackBuildup = 4;
@@ -26,7 +28,11 @@ public partial class CharController : LivingThing {
     private const float ComboResetThreshold = 1f;
     public LayerMask enemyLayers;
     [SerializeField] private Transform attackPoint;
+    [SerializeField] private Transform slicePoint;
     [SerializeField] private float attackRange;
+    
+    //Children
+    private Transform particleChild;
     
     // Trackers
     [HideInInspector]
@@ -45,6 +51,7 @@ public partial class CharController : LivingThing {
     // private float nextRollTime;
     private int comboCounter;
     private bool isAttacking;
+    private bool isSliceDashing;
     private float moveVector;
     private float xDir = 2;
     private readonly HashSet<Collider2D> colliding = new HashSet<Collider2D>();
@@ -60,7 +67,7 @@ public partial class CharController : LivingThing {
         
         public enum EventTypes
         {
-            Dash, Jump, Attack, Parry, SwitchState, Crouch, Interact
+            Dash, Jump, Attack, Parry, Interact, SwitchState, SliceDash, Crouch, 
         }
 
         public Event(EventTypes type, float time)
@@ -81,6 +88,7 @@ public partial class CharController : LivingThing {
             {() => Input.GetMouseButtonDown(1), Event.EventTypes.Parry},
             {() => Input.GetKeyDown(KeyCode.E), Event.EventTypes.Interact},
             {() => Input.GetKeyDown(KeyCode.F), Event.EventTypes.SwitchState},
+            {() => Input.GetKeyDown(KeyCode.R), Event.EventTypes.SliceDash},
             {() => Input.GetKeyDown(KeyCode.LeftControl), Event.EventTypes.Crouch}
         };
 
@@ -107,6 +115,8 @@ public partial class CharController : LivingThing {
                 @this => @this.IsAbleToAct()},
             {Event.EventTypes.SwitchState, 
                 @this => @this.IsAbleToAct()},
+            {Event.EventTypes.SliceDash, @this => 
+                (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown},
             {Event.EventTypes.Crouch, 
                 @this => @this.IsAbleToAct()}
         };
@@ -122,6 +132,7 @@ public partial class CharController : LivingThing {
             {Event.EventTypes.Parry, @this => @this.DoParry()},
             {Event.EventTypes.Interact, @this => @this.DoInteract()},
             {Event.EventTypes.SwitchState, @this => GameManager.Instance.SwitchWorldState()},
+            {Event.EventTypes.SliceDash, @this => @this.DoSliceDash()},
             {Event.EventTypes.Crouch, @this => @this.Crouch()}
         };
     
@@ -136,17 +147,16 @@ public partial class CharController : LivingThing {
     }
 
     private bool IsAbleToMove() {
-        return !isAttacking && !IsDashing && !isParrying && !grappleController.isGrappling &&
+        return !isAttacking && !isDashing && !isParrying && !grappleController.isGrappling &&
                wallJumpDir == WallJumpDirection.None;
     }
 
     private bool IsAbleToBeDamaged() {
-        return !isInvincible && !IsDashing;
+        return !isInvincible && !isDashing;
     }
 
-    private bool IsAbleToAct()
-    {
-        return !IsDashing && !isAttacking && !isParrying && !grappleController.isGrappling;
+    private bool IsAbleToAct() {
+        return !isDashing && !isAttacking && !isParrying && !grappleController.isGrappling && !isSliceDashing;
     }
 
     public void Invert() {
@@ -162,5 +172,15 @@ public partial class CharController : LivingThing {
         transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
         spriteRenderer.flipX = false;
     }
-    
+
+    public void Interrupt() {
+        StopAllCoroutines();
+        Rigidbody.velocity = Vector2.zero;
+        isAttacking = false;
+        isCrouching = false;
+        isParrying = false;
+        isSliceDashing = false;
+        isDashing = false;
+    }
+
 }

@@ -20,13 +20,14 @@ public class Enemy : LivingThing
     private float nextAttackTime;
     private IEnumerator attackCo;
     private EnvironmentState originalState = 0;
-    private bool isAlive = true;
+    private bool canFunction;
 
     private AIPath aiPath;
     private CharController charController;
 
     // Start is called before the first frame update
     private void Start() {
+        canFunction = true;
         CurrentHealth = MaxHealth;
         aiPath = GetComponent<AIPath>();
         Animator = transform.GetComponentInChildren<Animator>();
@@ -37,7 +38,7 @@ public class Enemy : LivingThing
     }
 
     public void TakeDamage(int damage, float knockback) { // assumes damage is taken from PLAYER
-        if (isAlive) {
+        if (canFunction) {
             Interrupt();
             GameObject player = GameObject.FindWithTag("Player");
             KnockAwayFromPoint(knockback, player.transform.position);
@@ -51,7 +52,7 @@ public class Enemy : LivingThing
         }
     }
 
-    private void Interrupt() { // should stop all relevant coroutines
+    public virtual void Interrupt() { // should stop all relevant coroutines
         if (attackCo != null) {
             StopCoroutine(attackCo); // interrupt attack if take damage
             Rigidbody.velocity = Vector2.zero;
@@ -66,7 +67,7 @@ public class Enemy : LivingThing
 
     protected override void Die() {
         const float deathTime = 1f;
-        isAlive = false;
+        DisableFunctionality();
         Animator.SetTrigger(Death);
         Destroy(gameObject, deathTime);
     }
@@ -120,7 +121,7 @@ public class Enemy : LivingThing
     // Update is called once per frame
     private void Update()
     {
-        if (isAlive) {
+        if (canFunction) {
             // scan for player to attack
             const int maxHits = 20;
             Collider2D[] hitColliders = new Collider2D[maxHits];
@@ -130,22 +131,42 @@ public class Enemy : LivingThing
                 DoAttack();
                 nextAttackTime = Time.time + 1f / AttackRate;
             }
+            //movement visuals
             if (aiPath.desiredVelocity.x > 0) {
-                //Debug.Log("fr");
                 FaceRight();
             }
             else if (aiPath.desiredVelocity.x < 0) {
-                //Debug.Log("fl");
                 FaceLeft();
             }
             Animator.SetInteger(AnimState, Mathf.Abs(aiPath.velocity.x) > .1 ? 2 : 0);
         }
     }
+    public override void Stun(float stunTime) {
+        Interrupt();
+        DisableFunctionality();
+        StartCoroutine(StunCoroutine(stunTime));
+    }
+
+    public override IEnumerator StunCoroutine(float stunTime) {
+        yield return new WaitForSeconds(stunTime);
+        EnableFunctionality();
+    }
     
-    private void OnDrawGizmosSelected() {
-        if (attackPoint == null) {
-            return;
-        }
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    // private void OnDrawGizmosSelected() {
+    //     if (attackPoint == null) {
+    //         return;
+    //     }
+    //     Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    // }
+
+    protected void DisableFunctionality() {
+        StopAllCoroutines();
+        canFunction = false;
+        aiPath.canMove = false;
+    }
+
+    protected void EnableFunctionality() {
+        canFunction = true;
+        aiPath.canMove = true;
     }
 }

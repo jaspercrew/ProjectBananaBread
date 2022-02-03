@@ -4,12 +4,13 @@ using UnityEngine;
 
 public partial class CharController {
     private void Start() {
-        //canDoubleJump = false;
+        particleChild = transform.Find("Particles");
         CurrentHealth = MaxHealth;
         Rigidbody = transform.GetComponent<Rigidbody2D>();
         Animator = transform.GetComponent<Animator>();
         boxCollider = transform.GetComponent<BoxCollider2D>();
-        dust = transform.GetComponentInChildren<ParticleSystem>();
+        dust = particleChild.Find("DustPS").GetComponent<ParticleSystem>();
+        SlicedashPS = particleChild.Find("SliceDashPS").GetComponent<ParticleSystem>();
         screenShakeController = FindObjectOfType<Camera>().GetComponent<ScreenShakeController>();
         grappleController = GetComponent<RadialGrapple>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -173,9 +174,12 @@ public partial class CharController {
         else if (moveVector < 0 && Math.Abs(scale.x - 1) > float.Epsilon) {
             FaceLeft();
         }
+        
+
     }
 
     private void Update() {
+        //Debug.Log(isSliceDashing);
         // add events if their respective buttons are pressed
         foreach (KeyValuePair<Func<bool>, Event.EventTypes> pair in KeyToEventType)
         {
@@ -234,10 +238,35 @@ public partial class CharController {
         {
             Rigidbody.velocity = new Vector2(v.x, Mathf.Max(v.y, -wallSlideSpeed));
         }
+        
+        //slicedash detection
+        if (isSliceDashing) {
+            const int maxEnemiesHit = 1;
+            Collider2D[] hitColliders = new Collider2D[maxEnemiesHit];
+
+            // scan for hit enemies
+            int numHitEnemies = Physics2D.OverlapCircleNonAlloc(
+                slicePoint.position, attackRange, hitColliders, enemyLayers);
+
+            // if (numHitEnemies > 0) {
+            //     // pause swing animation if an enemy is hit
+            //     StartCoroutine(PauseAnimatorCoroutine(hitConfirmDelay));
+            //     screenShakeController.MediumShake();
+            // }
+            if (hitColliders[0] == null) {
+                return;
+            }
+            else {
+                Debug.Log("execute");
+                StartCoroutine(SliceExecuteCoroutine(hitColliders[0].GetComponent<Enemy>()));
+            }
+            
+        }
     }
     
     private void OnCollisionEnter2D(Collision2D other)
     {
+        
         // Grounding Controller
         Collider2D col = other.collider;
 
@@ -269,6 +298,8 @@ public partial class CharController {
             wallSlidingCollider = col;
             // Debug.Log("now wall sliding! (on " + other.gameObject.name + ")");
         }
+
+       
     }
     private void OnCollisionExit2D(Collision2D other)
     {
@@ -282,6 +313,11 @@ public partial class CharController {
         {
             colliding.Remove(other.collider);
         }
+        
+        // if (isSliceDashing && other.gameObject.GetComponent<Enemy>() != null) {
+        //     Debug.Log("execute");
+        //     StartCoroutine(SliceExecuteCoroutine(other.gameObject.GetComponent<Enemy>()));
+        // }
     }
     
     // show gizmos in editor

@@ -3,6 +3,50 @@ using System.Collections;
 using UnityEngine;
 
 public partial class CharController {
+    private void DoSliceDash() {
+        if (!IsAbleToAct()) {
+             return;
+        }
+        isSliceDashing = true;
+        const float dashSpeed = 40f;
+        const float dashTime = .15f;
+
+        float xScale = transform.localScale.x; 
+        VelocityDash(xScale > 0? 3 : 1, dashSpeed, dashTime);
+        SlicedashPS.Play();
+        Animator.SetTrigger(Dash);
+        StartCoroutine(SliceDashCoroutine(dashTime));
+
+        lastDashTime = Time.time;
+    }
+
+    private IEnumerator SliceDashCoroutine(float dashTime) {
+        yield return new WaitForSeconds(dashTime * 3);
+        isSliceDashing = false;
+    }
+
+    private IEnumerator SliceExecuteCoroutine(Enemy enemy) {
+        
+        enemy.Stun(2);
+        Rigidbody.velocity = Vector2.zero;
+        Transform t = transform; // more efficient, according to Rider
+        t.localScale = new Vector3(-t.localScale.x, t.localScale.y, 0);
+        isDashing = false;
+        isSliceDashing = false;
+        isAttacking = true;
+        
+        yield return new WaitForSeconds(1.25f);
+        Animator.SetTrigger(Attack);
+        if (enemy.CurrentHealth < SliceDamage) { //execute
+                
+        }
+        else {
+            enemy.TakeDamage(SliceDamage);
+        }
+        yield return new WaitForSeconds(.5f);
+        isAttacking = false;
+    }
+    
     private void DoParry() {
         Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
         if (!IsAbleToAct())

@@ -72,7 +72,7 @@ public class Enemy : LivingThing
         Destroy(gameObject, deathTime);
     }
 
-    private IEnumerator AttackCoroutine() {
+    private IEnumerator  AttackCoroutine() {
         // enemy attack modifiers
         // float attackBoost = 1.5f;
         const float beginAttackDelay = .55f;
@@ -123,24 +123,34 @@ public class Enemy : LivingThing
     {
         if (canFunction) {
             // scan for player to attack
-            const int maxHits = 20;
-            Collider2D[] hitColliders = new Collider2D[maxHits];
-            int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange,
-                hitColliders, playerLayers);
-            if (numHits > 0 && Time.time >= nextAttackTime) {
-                DoAttack();
-                nextAttackTime = Time.time + 1f / AttackRate;
-            }
+            ScanForAttack_Update();
             //movement visuals
-            if (aiPath.desiredVelocity.x > 0) {
-                FaceRight();
-            }
-            else if (aiPath.desiredVelocity.x < 0) {
-                FaceLeft();
-            }
-            Animator.SetInteger(AnimState, Mathf.Abs(aiPath.velocity.x) > .1 ? 2 : 0);
+            TurnAround_Update();
         }
     }
+
+    private void TurnAround_Update() {
+        if (aiPath.desiredVelocity.x > 0) {
+            FaceRight();
+        }
+        else if (aiPath.desiredVelocity.x < 0) {
+            FaceLeft();
+        }
+        Animator.SetInteger(AnimState, Mathf.Abs(aiPath.velocity.x) > .1 ? 2 : 0);
+    }
+
+    private void ScanForAttack_Update() {
+        const int maxHits = 20;
+        Collider2D[] hitColliders = new Collider2D[maxHits];
+        int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange,
+            hitColliders, playerLayers);
+        if (numHits > 0 && Time.time >= nextAttackTime) {
+            DoAttack();
+            nextAttackTime = Time.time + 1f / AttackRate;
+        }
+    }
+    
+    
     public override void Stun(float stunTime) {
         Interrupt();
         DisableFunctionality();

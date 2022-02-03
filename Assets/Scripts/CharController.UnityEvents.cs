@@ -17,98 +17,27 @@ public partial class CharController {
     }
     
     private void FixedUpdate() {
-        //Debug.Log(canDoubleJump);
         moveVector = Input.GetAxisRaw("Horizontal");
-        
-        if (wallJumpDir != WallJumpDirection.None)
-        {
-            transform.position += new Vector3((int) wallJumpDir * speed * Time.deltaTime, 0, 0);
-            wallJumpFramesLeft--;
-            if (wallJumpFramesLeft == 0)
-                wallJumpDir = WallJumpDirection.None;
-            return;
-        }
-
+        WallJumpDetection_FixedUpdate();
         if (!IsAbleToMove()) return;
-        
         // movement animations
         Animator.SetInteger(AnimState, Mathf.Abs(moveVector) > float.Epsilon? 2 : 0);
         
+        VelocityOverriding_FixedUpdate(moveVector);
+
+        TurnAround_FixedUpdate();
         
+    }
+
+    private void VelocityOverriding_FixedUpdate(float moveVector) {
         float xVel = Rigidbody.velocity.x;
-
-        // void ApplyDrag(float factor)
-        // {
-        //     if (xVel > 0)
-        //     {
-        //         Rigidbody.velocity -= factor * new Vector2(Mathf.Min(XDrag, xVel), 0);
-        //     }
-        //     else if (xVel < 0)
-        //     {
-        //         Rigidbody.velocity += factor * new Vector2(Mathf.Min(XDrag, -xVel), 0);
-        //     }
-        // }
-        
-        // drag (what's um...)
-        // ApplyDrag(1);
-        // if (xVel > 0)
-        // {
-        //     Rigidbody.velocity -= new Vector2(Mathf.Min(XDrag, xVel), 0);
-        // }
-        // else if (xVel < 0)
-        // {
-        //     Rigidbody.velocity += new Vector2(Mathf.Min(XDrag, -xVel), 0);
-        // }
-        
-        // velocity overriding and movement
-        
-        // if in air, use acceleration
-        // if on ground, use translation
-
         if (IsGrounded())
         {
             Rigidbody.velocity = new Vector2(moveVector * speed, Rigidbody.velocity.y);
         }
         else
         {
-            // if recently grappled
-            //      if you have high velocity, and you're trying to move opposite,
-            //      then just add velocity normally in opp direction
-            //      if high vel, and trying to move same, don't add vel
-            // else
-            //      add vel normally, with max
-
-            // bool move;
-            // bool applyMaxVel;
-            
-            // if (isRecentlyGrappled)
-            // {
-            //     if (Mathf.Abs(xVel) > speed)
-            //     {
-            //         if (Math.Sign(moveVector) == -Math.Sign(xVel))
-            //         {
-            //             move = true;
-            //         }
-            //         else
-            //         {
-            //             move = false;
-            //         }
-            //
-            //         applyMaxVel = false;
-            //     }
-            //     else
-            //     {
-            //         isRecentlyGrappled = false;
-            //         move = true;
-            //         applyMaxVel = true;
-            //     }
-            // }
-            // else
-            // {
-            //     move = true;
-            //     applyMaxVel = true;
-            // }
-
+           
             bool isHighVel = Mathf.Abs(xVel) > speed;
             bool isMovingSameDir = Math.Sign(moveVector) == Math.Sign(xVel);
 
@@ -135,30 +64,20 @@ public partial class CharController {
                 }
             }
         }
+    }
 
+    private void WallJumpDetection_FixedUpdate() {
+        if (wallJumpDir != WallJumpDirection.None)
+        {
+            transform.position += new Vector3((int) wallJumpDir * speed * Time.deltaTime, 0, 0);
+            wallJumpFramesLeft--;
+            if (wallJumpFramesLeft == 0)
+                wallJumpDir = WallJumpDirection.None;
+            return;
+        }
+    }
 
-        // // if vel < trans, cancel x vel (both same and opposite dir) TODO: this causes a "jolt"
-        // if (0 < Mathf.Abs(xVel) && Mathf.Abs(xVel) <= speed && moveVector != 0)
-        // {
-        //     Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
-        // }
-        // // if low velocity, move normally
-        // else if (Mathf.Abs(xVel) <= speed)
-        // {
-        //     transform.position += new Vector3(moveVector * speed * Time.deltaTime, 0, 0);
-        //     // Rigidbody.velocity = new Vector2(moveVector * speed, Rigidbody.velocity.y);
-        // }
-        // // if high velocity and opposite dir, do drag again
-        // else if (Mathf.Abs(xVel) > speed && Math.Sign(moveVector) == -Math.Sign(xVel))
-        // {
-        //     ApplyDrag(0.5f);
-        // }
-        // // if high velocity and same dir, undo a little drag
-        // else if (Mathf.Abs(xVel) > speed && Math.Sign(moveVector) == Math.Sign(xVel))
-        // {
-        //     ApplyDrag(-0.5f);
-        // }
-
+    private void TurnAround_FixedUpdate() {
         // feet dust logic
         if (Math.Abs(xDir - moveVector) > 0.01f && IsGrounded() && moveVector != 0) {
             dust.Play();
@@ -174,12 +93,26 @@ public partial class CharController {
         else if (moveVector < 0 && Math.Abs(scale.x - 1) > float.Epsilon) {
             FaceLeft();
         }
-        
-
     }
 
     private void Update() {
-        //Debug.Log(isSliceDashing);
+        EventHandling_Update();
+        
+        //jump animation
+        if (IsGrounded()) {
+            Animator.SetBool(Jump, false);
+        }
+        // short jump
+        ShortJumpDetection_Update();
+
+        //wall slide detection
+        WallSlideDetection_Update();
+        
+        //slicedash detection
+        SliceDashDetection_Update();
+    }
+
+    private void EventHandling_Update() {
         // add events if their respective buttons are pressed
         foreach (KeyValuePair<Func<bool>, Event.EventTypes> pair in KeyToEventType)
         {
@@ -208,38 +141,20 @@ public partial class CharController {
                 Func<CharController, bool> conditions = EventConditions[e.EventType];
                 Action<CharController> actionToDo = EventActions[e.EventType];
                 // if (e.EventType == Event.EventTypes.Jump)
-                    // Debug.Log("jump reached");
+                // Debug.Log("jump reached");
                 if (conditions.Invoke(this))
                 {
                     // if (e.EventType == Event.EventTypes.Jump)
-                        // Debug.Log("jump executed");
+                    // Debug.Log("jump executed");
                     // Debug.Log("reached enqueued " + e.EventType + ", invoking");
                     actionToDo.Invoke(this);
                     eventQueue.Remove(node);
                 }
             }
         }
-        
-        if (IsGrounded()) {
-            Animator.SetBool(Jump, false);
-        }
+    }
 
-        // short jump
-        if (Input.GetButtonUp("Jump") && !IsGrounded() && 
-            ((!isInverted && Rigidbody.velocity.y > 0) || (isInverted && Rigidbody.velocity.y < 0))) {
-            Rigidbody.velocity = Vector2.Scale(Rigidbody.velocity, new Vector2(1f, 0.5f));
-        }
-
-        const float wallSlideSpeed = 0.75f;
-        Vector2 v = Rigidbody.velocity;
-        
-        // wall sliding
-        if (isWallSliding && v.y <= 0)
-        {
-            Rigidbody.velocity = new Vector2(v.x, Mathf.Max(v.y, -wallSlideSpeed));
-        }
-        
-        //slicedash detection
+    private void SliceDashDetection_Update() {
         if (isSliceDashing) {
             const int maxEnemiesHit = 1;
             Collider2D[] hitColliders = new Collider2D[maxEnemiesHit];
@@ -261,6 +176,24 @@ public partial class CharController {
                 StartCoroutine(SliceExecuteCoroutine(hitColliders[0].GetComponent<Enemy>()));
             }
             
+        }
+    }
+
+    private void ShortJumpDetection_Update() {
+        if (Input.GetButtonUp("Jump") && !IsGrounded() && 
+            ((!isInverted && Rigidbody.velocity.y > 0) || (isInverted && Rigidbody.velocity.y < 0))) {
+            Rigidbody.velocity = Vector2.Scale(Rigidbody.velocity, new Vector2(1f, 0.5f));
+        }
+    }
+
+    private void WallSlideDetection_Update() {
+        const float wallSlideSpeed = 0.75f;
+        Vector2 v = Rigidbody.velocity;
+        
+        // wall sliding
+        if (isWallSliding && v.y <= 0)
+        {
+            Rigidbody.velocity = new Vector2(v.x, Mathf.Max(v.y, -wallSlideSpeed));
         }
     }
     

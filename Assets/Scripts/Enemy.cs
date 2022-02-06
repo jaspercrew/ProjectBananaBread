@@ -33,7 +33,7 @@ public class Enemy : LivingThing
         Animator = transform.GetComponentInChildren<Animator>();
         Rigidbody = transform.GetComponent<Rigidbody2D>();
         charController = FindObjectOfType<CharController>();
-        if (originalState == 0) ;
+        if (originalState == 0)
             originalState = EntityState;
     }
 

@@ -164,12 +164,19 @@ public partial class CharController {
             screenShakeController.MediumShake();
         }
 
+        bool hit = false;
+        
         foreach (Collider2D enemy in hitColliders)
         {
             if (enemy is null)
                 break;
             enemy.GetComponent<Enemy>().TakeDamage(AttackDamage, isHeavyAttack ? 2f : 1f);
+            hit = true;
         }
+        
+        if (hit)
+            AudioManager.Instance.Play(SoundName.Hit, 1);
+        
         yield return new WaitForSeconds(endAttackDelay);
         isAttacking = false;
     }

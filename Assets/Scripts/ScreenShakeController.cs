@@ -1,65 +1,49 @@
-﻿using UnityEngine;
+﻿using Cinemachine;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class ScreenShakeController : MonoBehaviour {
     public static ScreenShakeController Instance;
+    private CinemachineVirtualCamera virtualCamera;
+    private float shakeTimer;
     
-    private float shakeTimeRemaining;
-    private float shakePower;
-    private float shakeFadeTime;
-    private float shakeRotation;
-    private Vector3 origin;
 
-    public float rotationMultiplier = 10f;
 
+    //public float rotationMultiplier = 10f;
     // Start is called before the first frame update
     private void Start() {
-        origin = transform.position;
+        virtualCamera = GetComponent<CinemachineVirtualCamera>();
         Instance = this;
     }
+    
 
-    // Update is called once per frame
-    void Update() {
-        if (Input.GetKeyDown(KeyCode.K)) {
-            StartShake(.1f, .2f);
-        }
-
-        //transform.position = GetComponentInParent<CameraFollow>().targetPosition;
-    }
-
-    private void LateUpdate() {
-        if (shakeTimeRemaining > 0) {
-            shakeTimeRemaining -= Time.deltaTime;
-
-            float xAmount = Random.Range(-1f, 1f) * shakePower;
-            float yAmount = Random.Range(-1f, 1f) * shakePower;
-
-            transform.position += new Vector3(xAmount, yAmount, 0);
-
-            shakePower = Mathf.MoveTowards
-                (shakePower, 0f, shakeFadeTime * Time.deltaTime);
-
-            shakeRotation = Mathf.MoveTowards(shakeRotation, 0f, 
-                shakeFadeTime * rotationMultiplier * Time.deltaTime);
-            
-        }
-        transform.rotation = Quaternion.Euler(0f, 0f, shakeRotation * Random.Range(-1f, 1f));
-    }
+    
 
     public void StartShake(float length, float power) {
-        shakeTimeRemaining = length;
-        shakePower = power;
-
-        shakeFadeTime = power / length;
-
-        shakeRotation = power * rotationMultiplier;
+        CinemachineBasicMultiChannelPerlin perlin =
+            virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+        perlin.m_AmplitudeGain = power;
+        shakeTimer = length;
+        Debug.Log("shake start");
+    }
+    
+    
+    // Update is called once per frame
+    void Update() {
+        if (shakeTimer > 0) {
+            shakeTimer -= Time.deltaTime;
+            if (shakeTimer <= 0f) {
+                virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = 0f;
+                
+            }
+        }
     }
 
     public void MediumShake() {
-        StartShake(.1f, .2f);
+        StartShake(.1f, 4f);
     }
     
     public void LightShake() {
-        StartShake(.1f, .08f);
+        StartShake(.1f, 1.6f);
     }
 }

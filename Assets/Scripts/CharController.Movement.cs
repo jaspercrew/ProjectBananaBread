@@ -21,12 +21,11 @@ public partial class CharController {
         const float dashSpeed = 9f;
         const float dashTime = .23f;
 
-        float xScale = transform.localScale.x;
-        if (Mathf.Abs(xScale) > .5) {
-            VelocityDash(xScale > 0? 3 : 1, dashSpeed, dashTime);
-            dust.Play();
-            Animator.SetTrigger(Dash);
-        }
+        //float xScale = transform.localScale.x;
+        VelocityDash(moveVector < 0? 3 : 1, dashSpeed, dashTime);
+        dust.Play();
+        Animator.SetTrigger(Dash);
+        
 
         lastDashTime = Time.time;
     }

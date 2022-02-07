@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 
 public partial class CharController {
@@ -11,7 +12,7 @@ public partial class CharController {
         boxCollider = transform.GetComponent<BoxCollider2D>();
         dust = particleChild.Find("DustPS").GetComponent<ParticleSystem>();
         SlicedashPS = particleChild.Find("SliceDashPS").GetComponent<ParticleSystem>();
-        screenShakeController = FindObjectOfType<Camera>().GetComponent<ScreenShakeController>();
+        screenShakeController = FindObjectOfType<CinemachineVirtualCamera>().GetComponent<ScreenShakeController>();
         grappleController = GetComponent<RadialGrapple>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }

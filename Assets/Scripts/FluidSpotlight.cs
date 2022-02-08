@@ -5,26 +5,45 @@ using System.Transactions;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
 
-public class FluidSpotlight : Interactor {
-    
+
+
+public class FluidSpotlight : Interactor
+{
+
+    public EnvironmentState specialState;
+
+    protected virtual void SpecializeLight() {
+        
+    }
+
+    protected virtual void DespecializeLight() {
+        
+    }
+        
     
 
+    public override void SwitchToState(EnvironmentState state) {
+        CheckFluidity(state);
+    }
+
+    protected virtual void CheckFluidity(EnvironmentState state) {
+        if (specialState == state)
+        {
+            SpecializeLight();
+        }
+        else
+        {
+            DespecializeLight();
+        }
+    }
     // Start is called before the first frame update
     void Start() {
         InitializeInteractor();
         bonusInteractRange = 0f;
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        InteractorUpdate();
     }
 
     public override void Interact() {
         transform.Find("ToRotate").Rotate(Vector3.forward, 30);
-        //transform.getch
     }
     
     protected override void TrigEnterFunction(Collider2D other) {
@@ -44,3 +63,5 @@ public class FluidSpotlight : Interactor {
         }
     }
 }
+
+

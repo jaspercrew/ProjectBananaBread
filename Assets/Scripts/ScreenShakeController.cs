@@ -1,7 +1,6 @@
 ﻿using Cinemachine;
 using UnityEngine;
 using Random = UnityEngine.Random;
-//DEPRECATED
 public class ScreenShakeController : MonoBehaviour {
     public static ScreenShakeController Instance;
     private CinemachineVirtualCamera virtualCamera;

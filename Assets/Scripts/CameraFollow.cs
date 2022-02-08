@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
+//DEPRECATED
 public class CameraFollow : MonoBehaviour {
     public Transform target;
     public float smoothTime = 0.3F;

@@ -251,6 +251,7 @@ public partial class CharController {
         }
         
         else if (dx < maxDx + maxWallSlideDistance) {
+            canDoubleJump = false;
             isWallTouching = true;
             wallTouchingCollider = wallCol;
         }

@@ -11,7 +11,7 @@ public partial class CharController : LivingThing {
     private ScreenShakeController screenShakeController;
     private RadialGrapple grappleController;
     private SpriteRenderer spriteRenderer;
-    
+
     // Configurable player control values
     public float speed = 7f;
     private const int SliceDamage = 100;
@@ -44,7 +44,8 @@ public partial class CharController : LivingThing {
     public bool isCrouching;
     private bool canDoubleJump;
     private bool isWallSliding;
-    private Collider2D wallSlidingCollider;
+    private bool isWallTouching;
+    private Collider2D wallTouchingCollider;
     private WallJumpDirection wallJumpDir;
     private int wallJumpFramesLeft;
     // private float nextAttackTime;

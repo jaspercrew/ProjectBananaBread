@@ -175,7 +175,7 @@ public partial class CharController {
         }
         
         if (hit)
-            AudioManager.Instance.Play(SoundName.Hit, 1);
+            AudioManager.Instance.Play(SoundName.Hit, .5f);
         
         yield return new WaitForSeconds(endAttackDelay);
         isAttacking = false;

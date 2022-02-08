@@ -45,7 +45,7 @@ public partial class CharController {
 
         if (isWallSliding && !IsGrounded())
         {
-            wallJumpDir = transform.position.x - wallSlidingCollider.transform.position.x > 0? 
+            wallJumpDir = transform.position.x - wallTouchingCollider.transform.position.x > 0? 
                 WallJumpDirection.Right : WallJumpDirection.Left;
             wallJumpFramesLeft = wallJumpFrames;
             if (wallJumpDir == WallJumpDirection.Left)

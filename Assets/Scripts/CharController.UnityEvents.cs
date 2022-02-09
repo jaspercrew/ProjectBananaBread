@@ -11,8 +11,9 @@ public partial class CharController {
         Animator = transform.GetComponent<Animator>();
         boxCollider = transform.GetComponent<BoxCollider2D>();
         dust = particleChild.Find("DustPS").GetComponent<ParticleSystem>();
-        SlicedashPS = particleChild.Find("SliceDashPS").GetComponent<ParticleSystem>();
-        screenShakeController = FindObjectOfType<CinemachineVirtualCamera>().GetComponent<ScreenShakeController>();
+        slicedashPS = particleChild.Find("SliceDashPS").GetComponent<ParticleSystem>();
+        parryPS = particleChild.Find("ParryPS").GetComponent<ParticleSystem>();
+        screenShakeController = ScreenShakeController.Instance;
         grappleController = GetComponent<RadialGrapple>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }

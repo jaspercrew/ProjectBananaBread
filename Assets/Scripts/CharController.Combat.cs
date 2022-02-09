@@ -13,7 +13,7 @@ public partial class CharController {
 
         float xScale = transform.localScale.x; 
         VelocityDash(xScale > 0? 3 : 1, dashSpeed, dashTime);
-        SlicedashPS.Play();
+        slicedashPS.Play();
         Animator.SetTrigger(Dash);
         StartCoroutine(SliceDashCoroutine(dashTime));
 
@@ -207,7 +207,9 @@ public partial class CharController {
         //transform.GetComponent<SpriteRenderer>().flipY = false;
     }
 
-    public void CounterStrike(Enemy enemy) {
+    public void CounterStrike(Enemy enemy)
+    {
+        parryPS.Play();
         isAttacking = true;
         // start counter animation
         StartCoroutine(CounterCoroutine(enemy));
@@ -215,9 +217,15 @@ public partial class CharController {
 
     private IEnumerator CounterCoroutine(Enemy enemy) {
         const float counterTime = .2f;
+        parryPS.Stop();
+        
         yield return new WaitForSeconds(counterTime);
         screenShakeController.MediumShake();
+        AudioManager.Instance.Play(SoundName.Hit, .5f);
         enemy.TakeDamage(20, 2);
         isAttacking = false;
+        
+        yield return new WaitForSeconds(.7f);
+        parryPS.Clear();
     }
 }

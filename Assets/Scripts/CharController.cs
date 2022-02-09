@@ -7,7 +7,8 @@ public partial class CharController : LivingThing {
     // Components
     private BoxCollider2D boxCollider;
     private ParticleSystem dust;
-    private ParticleSystem SlicedashPS;
+    private ParticleSystem slicedashPS;
+    private ParticleSystem parryPS;
     private ScreenShakeController screenShakeController;
     private RadialGrapple grappleController;
     private SpriteRenderer spriteRenderer;

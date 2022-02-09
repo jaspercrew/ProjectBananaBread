@@ -11,9 +11,9 @@ public class ScreenShakeController : MonoBehaviour {
     //public float rotationMultiplier = 10f;
     // Start is called before the first frame update
     private void Start() {
-        virtualCamera = GetComponent<CinemachineVirtualCamera>();
         Instance = this;
     }
+    
     
 
     
@@ -29,6 +29,8 @@ public class ScreenShakeController : MonoBehaviour {
     
     // Update is called once per frame
     void Update() {
+        virtualCamera = GetComponent<CinemachineBrain>().ActiveVirtualCamera.
+            VirtualCameraGameObject.GetComponent<CinemachineVirtualCamera>();
         if (shakeTimer > 0) {
             shakeTimer -= Time.deltaTime;
             if (shakeTimer <= 0f) {

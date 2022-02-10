@@ -66,6 +66,16 @@ public partial class CharController {
         }
     }
 
+    public void CauseSwitch()
+    {
+        switchPS.Stop();
+        switchPS.Clear();
+        IEnumerator pc = ParticleBurstCoroutine(switchPS, .7f);
+        StopCoroutine(pc);
+        StartCoroutine(pc);
+        GameManager.Instance.SwitchWorldState();
+    }
+
     // Take damage, knock away from point
     public void TakeDamage(int damage, float knockback, Vector2 point) {
         if (!IsAbleToBeDamaged()) {
@@ -209,23 +219,23 @@ public partial class CharController {
 
     public void CounterStrike(Enemy enemy)
     {
-        parryPS.Play();
         isAttacking = true;
         // start counter animation
+        
+       // IEnumerator switchParticleCoroutine; 
+        //switchParticleCoroutine = 
+
+        StartCoroutine(ParticleBurstCoroutine(parryPS, 0.3f));
         StartCoroutine(CounterCoroutine(enemy));
     }
 
     private IEnumerator CounterCoroutine(Enemy enemy) {
         const float counterTime = .2f;
-        parryPS.Stop();
-        
+
         yield return new WaitForSeconds(counterTime);
         screenShakeController.MediumShake();
         AudioManager.Instance.Play(SoundName.Hit, .5f);
         enemy.TakeDamage(20, 2);
         isAttacking = false;
-        
-        yield return new WaitForSeconds(.7f);
-        parryPS.Clear();
     }
 }

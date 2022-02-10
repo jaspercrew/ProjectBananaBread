@@ -10,9 +10,12 @@ public partial class CharController {
         Rigidbody = transform.GetComponent<Rigidbody2D>();
         Animator = transform.GetComponent<Animator>();
         boxCollider = transform.GetComponent<BoxCollider2D>();
+        
         dust = particleChild.Find("DustPS").GetComponent<ParticleSystem>();
         slicedashPS = particleChild.Find("SliceDashPS").GetComponent<ParticleSystem>();
         parryPS = particleChild.Find("ParryPS").GetComponent<ParticleSystem>();
+        switchPS = particleChild.Find("SwitchPS").GetComponent<ParticleSystem>();
+        
         screenShakeController = ScreenShakeController.Instance;
         grappleController = GetComponent<RadialGrapple>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -40,6 +43,7 @@ public partial class CharController {
         {
             
             Rigidbody.velocity = new Vector2(moveVector * speed, Rigidbody.velocity.y);
+            
         }
         else
         {

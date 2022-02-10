@@ -9,6 +9,7 @@ public partial class CharController : LivingThing {
     private ParticleSystem dust;
     private ParticleSystem slicedashPS;
     private ParticleSystem parryPS;
+    private ParticleSystem switchPS;
     private ScreenShakeController screenShakeController;
     private RadialGrapple grappleController;
     private SpriteRenderer spriteRenderer;
@@ -133,7 +134,7 @@ public partial class CharController : LivingThing {
             {Event.EventTypes.Attack, @this => @this.AttemptAttack()},
             {Event.EventTypes.Parry, @this => @this.DoParry()},
             {Event.EventTypes.Interact, @this => @this.DoInteract()},
-            {Event.EventTypes.SwitchState, @this => GameManager.Instance.SwitchWorldState()},
+            {Event.EventTypes.SwitchState, @this => @this.CauseSwitch()},
             {Event.EventTypes.SliceDash, @this => @this.DoSliceDash()},
             {Event.EventTypes.Crouch, @this => @this.Crouch()}
         };
@@ -155,6 +156,14 @@ public partial class CharController : LivingThing {
 
     private bool IsAbleToBeDamaged() {
         return !isInvincible && !isDashing;
+    }
+
+    private IEnumerator ParticleBurstCoroutine(ParticleSystem ps, float time)
+    {
+        ps.Play();
+        yield return new WaitForSeconds(time);
+        ps.Stop();
+        ps.Clear();
     }
 
     private bool IsAbleToAct() {

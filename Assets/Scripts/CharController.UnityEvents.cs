@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public partial class CharController {
     private void Start() {
@@ -229,8 +230,8 @@ public partial class CharController {
     
     private void OnCollisionEnter2D(Collision2D other)
     {
+        //Debug.Log(other.collider);
         //Debug.Log("colenter" + Time.time);
-        
         // Grounding Controller
         Collider2D wallCol = other.collider;
 
@@ -245,10 +246,11 @@ public partial class CharController {
         float dx = Mathf.Abs(charX - colX);
         float maxDx = Mathf.Abs(colW) + Mathf.Abs(charW);
         const float maxWallSlideDistance = 0.03f;
+        Debug.Log("dx " + dx + "    maxDx " + maxDx);
 
-        if (dx < maxDx)
+        if (dx < maxDx) //failing 
         {
-            //Debug.Log("new colliding: " + other.gameObject.name);
+            Debug.Log("new colliding: " + other.gameObject.name);
             if (colliding.Count == 0) {
                 OnLanding();
             }

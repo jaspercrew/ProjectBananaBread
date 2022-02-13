@@ -75,6 +75,7 @@ public partial class CharController {
     }
     
     private void OnLanding() {
+        Debug.Log("land");
         canDoubleJump = false;
         isRecentlyGrappled = false;
         dust.Play();

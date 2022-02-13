@@ -5,7 +5,7 @@ using UnityEngine;
 
 public partial class CharController : LivingThing {
     // Components
-    private BoxCollider2D boxCollider;
+    private BoxCollider2D charCollider;
     private ParticleSystem dust;
     private ParticleSystem slicedashPS;
     private ParticleSystem parryPS;
@@ -39,6 +39,7 @@ public partial class CharController : LivingThing {
     // Trackers
     [HideInInspector]
     public bool isInverted;
+    private bool isGrounded;
     private bool isInvincible;
     public bool isRecentlyGrappled;
     // private float nextParryTime;
@@ -57,8 +58,9 @@ public partial class CharController : LivingThing {
     private bool isSliceDashing;
     private float moveVector;
     private float xDir = 2;
-    private readonly HashSet<Collider2D> colliding = new HashSet<Collider2D>();
+    // private readonly HashSet<Collider2D> colliding = new HashSet<Collider2D>();
     private IEnumerator attackCoroutine;
+    private LayerMask obstacleLayerMask;
 
     private readonly LinkedList<Event> eventQueue = new LinkedList<Event>();
 
@@ -145,8 +147,9 @@ public partial class CharController : LivingThing {
         Left = -1, None = 0, Right = 1
     }
 
-    private bool IsGrounded() {
-        return colliding.Count > 0;
+    private bool IsGrounded()
+    {
+        return isGrounded;
     }
 
     private bool IsAbleToMove() {

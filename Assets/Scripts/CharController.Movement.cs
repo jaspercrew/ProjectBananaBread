@@ -37,6 +37,8 @@ public partial class CharController {
         // }
         //Debug.Log("jump run");
         
+        Debug.Log("isGrounded: " + isGrounded + ", so jumping");
+        
         canDoubleJump = !canDoubleJump;
 
         dust.Play();

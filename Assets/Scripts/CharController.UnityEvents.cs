@@ -317,11 +317,14 @@ public partial class CharController {
     // }
 
     // show gizmos in editor
+    
     private void OnDrawGizmosSelected() {
-        if (attackPoint == null) {
-            return;
+        if (attackPoint != null) {
+            Gizmos.DrawWireSphere(attackPoint.position, attackRange);
         }
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireCube(transform.position + (Vector3) charCollider.offset, charCollider.size);
     }
 
 }

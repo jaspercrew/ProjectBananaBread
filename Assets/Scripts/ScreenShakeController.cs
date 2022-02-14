@@ -23,7 +23,7 @@ public class ScreenShakeController : MonoBehaviour {
             virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
         perlin.m_AmplitudeGain = power;
         shakeTimer = length;
-        Debug.Log("shake start");
+        //Debug.Log("shake start");
     }
     
     

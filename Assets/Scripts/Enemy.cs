@@ -3,30 +3,24 @@ using System.Collections;
 using Pathfinding;
 using UnityEngine;
 
-public class Enemy : LivingThing
+public abstract class Enemy : LivingThing
 {
-    // Configurable values for enemy
-    // private float speed = 3f;
-    [SerializeField] private Transform attackPoint;
-    [SerializeField] private float knockbackVal = 2f;
-    [SerializeField] private float attackRange = .25f;
-    private const float AttackRate = .75f;
-    private const int AttackDamage = 10;
-    [SerializeField] private LayerMask playerLayers;
+    // Attacking
+    protected float speed = 3f;
     // [SerializeField] private int moveState; // determines movement behavior
     
     // Trackers
     // private float moveVector = 0f;
-    private float nextAttackTime;
-    private IEnumerator attackCo;
-    private EnvironmentState originalState = 0;
-    private bool canFunction;
+    protected EnvironmentState originalState = 0;
+    protected bool canFunction;
 
-    private AIPath aiPath;
-    private CharController charController;
+    protected AIPath aiPath;
+    protected CharController charController;
 
     // Start is called before the first frame update
-    private void Start() {
+
+    protected void InitializeEnemy()
+    {
         canFunction = true;
         CurrentHealth = MaxHealth;
         aiPath = GetComponent<AIPath>();
@@ -59,17 +53,8 @@ public class Enemy : LivingThing
     }
 
     public virtual void Interrupt() { // should stop all relevant coroutines
-        if (attackCo != null) {
-            StopCoroutine(attackCo); // interrupt attack if take damage
-            Rigidbody.velocity = Vector2.zero;
-        }
     }
     
-
-    private void DoAttack() {
-        Animator.SetTrigger(Attack);
-        StartCoroutine(attackCo = AttackCoroutine());
-    }
 
     protected override void Die() {
         const float deathTime = 1f;
@@ -77,63 +62,15 @@ public class Enemy : LivingThing
         Animator.SetTrigger(Death);
         Destroy(gameObject, deathTime);
     }
-
-    private IEnumerator AttackCoroutine() {
-        // enemy attack modifiers
-        // float attackBoost = 1.5f;
-        const float beginAttackDelay = .55f;
-        const float hitConfirmDelay = .20f;
-
-        yield return new WaitForSeconds(beginAttackDelay);
-
-        // move while attacking
-        // if (moveVector > .5) {
-        //     VelocityDash(1, attackBoost);
-        // }
-        // else if (moveVector < -.5) {
-        //     VelocityDash(3, attackBoost);
-        // }
-
-        const int maxHits = 20;
-        Collider2D[] hitColliders = new Collider2D[maxHits];
-        int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange,
-            hitColliders, playerLayers);
-        if (numHits > 0) {
-            StartCoroutine(PauseAnimatorCoroutine(hitConfirmDelay)); // pause swing animation if an enemy is hit
-        }
-
-        if (hitColliders.Length > 0) {
-            foreach (Collider2D p in hitColliders) {
-                if (p == null || p.gameObject.GetComponent<CharController>() == null) {
-                    break;
-                }
-                if (charController.isParrying) {
-                    // StartCoroutine(PauseAnimatorCoroutine(.2f));
-                    charController.CounterStrike(GetComponent<Enemy>());
-                    break;
-                }
-                charController.TakeDamage(AttackDamage, knockbackVal, transform.position);
-            }
-        }
+    
+    
+    protected bool IsMovementEnabled()
+    {
+        return true;
     }
-
-    // private bool IsMovementEnabled() {
-    //     if (animator_.GetCurrentAnimatorStateInfo(0).IsName("Attack")) {
-    //         return false;
-    //     }
-    //     return true;
-    // }
     
     // Update is called once per frame
-    private void Update()
-    {
-        if (canFunction) {
-            // scan for player to attack
-            ScanForAttack_Update();
-            //movement visuals
-            TurnAround_Update();
-        }
-    }
+
 
     protected void TurnAround_Update() {
         if (aiPath.desiredVelocity.x > 0) {
@@ -145,18 +82,7 @@ public class Enemy : LivingThing
         Animator.SetInteger(AnimState, Mathf.Abs(aiPath.velocity.x) > .1 ? 2 : 0);
     }
 
-    protected void ScanForAttack_Update() {
-        const int maxHits = 20;
-        Collider2D[] hitColliders = new Collider2D[maxHits];
-        int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange,
-            hitColliders, playerLayers);
-        if (numHits > 0 && Time.time >= nextAttackTime) {
-            DoAttack();
-            nextAttackTime = Time.time + 1f / AttackRate;
-        }
-    }
-    
-    
+
     public override void Stun(float stunTime) {
         Interrupt();
         DisableFunctionality();

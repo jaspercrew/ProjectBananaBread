@@ -3,7 +3,7 @@ using System.Collections;
 using Pathfinding;
 using UnityEngine;
 
-public abstract class Enemy : LivingThing
+public class Enemy : LivingThing
 {
     // Attacking
     protected float speed = 3f;

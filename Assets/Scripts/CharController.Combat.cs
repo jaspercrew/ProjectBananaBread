@@ -13,7 +13,7 @@ public partial class CharController {
 
         float xScale = transform.localScale.x; 
         VelocityDash(xScale > 0? 3 : 1, dashSpeed, dashTime);
-        slicedashPS.Play();
+        sliceDashPS.Play();
         Animator.SetTrigger(Dash);
         StartCoroutine(SliceDashCoroutine(dashTime));
 
@@ -148,7 +148,7 @@ public partial class CharController {
         
         
         // move while attacking TODO : change this functionality
-        if (IsGrounded()) {
+        if (isGrounded) {
             if (moveVector > .5) {
                 Rigidbody.velocity = new Vector2(attackBoost, Rigidbody.velocity.y);
             }

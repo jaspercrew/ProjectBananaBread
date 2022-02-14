@@ -11,7 +11,7 @@ public partial class CharController {
         charCollider = transform.GetComponent<BoxCollider2D>();
         
         dust = particleChild.Find("DustPS").GetComponent<ParticleSystem>();
-        slicedashPS = particleChild.Find("SliceDashPS").GetComponent<ParticleSystem>();
+        sliceDashPS = particleChild.Find("SliceDashPS").GetComponent<ParticleSystem>();
         parryPS = particleChild.Find("ParryPS").GetComponent<ParticleSystem>();
         switchPS = particleChild.Find("SwitchPS").GetComponent<ParticleSystem>();
         obstacleLayerMask = LayerMask.GetMask("Obstacle");
@@ -26,23 +26,27 @@ public partial class CharController {
         // Debug.Log("sliding" + isWallSliding);
         
         moveVector = Input.GetAxisRaw("Horizontal");
-        WallJumpDetection_FixedUpdate();
         if (!IsAbleToMove()) return;
         // movement animations
         Animator.SetInteger(AnimState, Mathf.Abs(moveVector) > float.Epsilon? 2 : 0);
         
-        VelocityOverriding_FixedUpdate();
+        MovementAndVelocityOverriding_FixedUpdate();
 
+        // WallJumpDetection_FixedUpdate();
+        
         TurnAround_FixedUpdate();
         
     }
 
-    private void VelocityOverriding_FixedUpdate() {
+    private void MovementAndVelocityOverriding_FixedUpdate() {
         float xVel = Rigidbody.velocity.x;
-        if (IsGrounded())
+        // regular ground movement
+        if (isGrounded)
         {
             Rigidbody.velocity = new Vector2(moveVector * speed, Rigidbody.velocity.y);
+            // Debug.Log("setting vel in movement");
         }
+        // in-air movement
         else
         {
             bool isHighVel = Mathf.Abs(xVel) > speed;
@@ -51,11 +55,9 @@ public partial class CharController {
             bool move = !(isRecentlyGrappled && isHighVel && isMovingSameDir);
             bool applyMaxVel = !(isRecentlyGrappled && isHighVel);
             
-            if (move && !(isWallSliding || (isWallTouching && Rigidbody.velocity.y > 0))) //causes sticking
+            if (move && !isWallSliding /*&& wallJumpFramesLeft == 0*/)
             {
-                //Debug.Log("before " + Rigidbody.velocity);
                 Rigidbody.velocity += moveVector * new Vector2(InAirAcceleration, 0);
-                //Debug.Log("after " + Rigidbody.velocity);
             }
 
             if (applyMaxVel)
@@ -63,32 +65,42 @@ public partial class CharController {
                 Vector2 vel = Rigidbody.velocity;
                 float newXVel = vel.x;
                 float yVel = vel.y;
-                if (newXVel > speed)
-                {
-                    Rigidbody.velocity = new Vector2(speed, yVel);
-                }
-                else if (newXVel < -speed)
-                {
-                    Rigidbody.velocity = new Vector2(-speed, yVel);
-                }
+                // if (newXVel > speed)
+                // {
+                //     Rigidbody.velocity = new Vector2(speed, yVel);
+                // }
+                // else if (newXVel < -speed)
+                // {
+                //     Rigidbody.velocity = new Vector2(-speed, yVel);
+                // }
+
+                // simpler:
+                // if (Mathf.Abs(newXVel) > speed)
+                // {
+                //     Rigidbody.velocity = new Vector2(Mathf.Sign(newXVel) * speed, yVel);
+                // }
+                
+                // simplest:
+                Rigidbody.velocity = new Vector2(Mathf.Clamp(newXVel, -speed, speed), yVel);
             }
         }
     }
 
     private void WallJumpDetection_FixedUpdate() {
-        if (wallJumpDir != WallJumpDirection.None)
+        if (wallJumpFramesLeft > 0)
         {
-            transform.position += new Vector3((int) wallJumpDir * speed * Time.deltaTime, 0, 0);
+            // Debug.Log("------- WALL JUMPING (FIXED) UPDATE - "
+            //           + wallJumpFramesLeft + " left, dir = " + wallJumpDir + " -------");
+            // transform.position += new Vector3((int) wallJumpDir * speed * Time.deltaTime, 0, 0);
+            Rigidbody.velocity = new Vector2(wallJumpDir * speed, Rigidbody.velocity.y);
+            // Debug.Log("setting velocity in wall jumping");
             wallJumpFramesLeft--;
-            if (wallJumpFramesLeft == 0) {
-                wallJumpDir = WallJumpDirection.None;
-            }
         }
     }
 
     private void TurnAround_FixedUpdate() {
         // feet dust logic
-        if (Math.Abs(xDir - moveVector) > 0.01f && IsGrounded() && moveVector != 0) {
+        if (Math.Abs(xDir - moveVector) > 0.01f && isGrounded && moveVector != 0) {
             dust.Play();
         }
         
@@ -106,30 +118,33 @@ public partial class CharController {
 
     private void Update() {
         if (Input.GetKeyDown(KeyCode.P))
-            Debug.Log(isGrounded);
+            Debug.Log("grounded? " + isGrounded + "; wall sliding? " + isWallSliding);
         
         CheckGrounded_Update();
         
         EventHandling_Update();
         
-        //jump animation
-        if (IsGrounded()) {
+        // jump animation
+        if (isGrounded) {
             Animator.SetBool(Jump, false);
         }
         // short jump
         ShortJumpDetection_Update();
 
-        //wall slide detection
+        // wall slide detection
         WallSlideDetection_Update();
         
         // slice-dash detection
         SliceDashDetection_Update();
+        
+        WallJumpDetection_FixedUpdate();
+
     }
 
 
     private void CheckGrounded_Update()
     {
-        const float groundDistance = 0.1f;
+        const float groundDistance = 0.05f;
 
         Vector3 bounds = charCollider.bounds.extents;
         float halfWidth = Mathf.Abs(bounds.x) - groundDistance;
@@ -146,7 +161,7 @@ public partial class CharController {
         RaycastHit2D hit1 = Physics2D.Linecast(bottomLeft, bottomLeft + aLittleDown, obstacleLayerMask);
         RaycastHit2D hit2 = Physics2D.Linecast(bottomRight, bottomRight + aLittleDown, obstacleLayerMask);
 
-        isGrounded = hit1.collider != null || hit2.collider != null;
+        isGrounded = hit1 || hit2;
     }
 
     private void EventHandling_Update() {
@@ -170,19 +185,16 @@ public partial class CharController {
             {
                 // Debug.Log(e.EventType + " event timed out");
                 eventQueue.Remove(node);
-                // continue;
             }
-            // execute events whose conditions are met, and remove those whose aren't
+            // execute events whose conditions are met
             else
             {
                 Func<CharController, bool> conditions = EventConditions[e.EventType];
                 Action<CharController> actionToDo = EventActions[e.EventType];
-                // if (e.EventType == Event.EventTypes.Jump)
-                // Debug.Log("jump reached");
+                if (e.EventType == Event.EventTypes.Jump)
+                    Debug.Log("reached jump. will execute? " + conditions.Invoke(this));
                 if (conditions.Invoke(this))
                 {
-                    // if (e.EventType == Event.EventTypes.Jump)
-                    // Debug.Log("jump executed");
                     // Debug.Log("reached enqueued " + e.EventType + ", invoking");
                     actionToDo.Invoke(this);
                     eventQueue.Remove(node);
@@ -213,7 +225,7 @@ public partial class CharController {
     }
 
     private void ShortJumpDetection_Update() {
-        if (Input.GetButtonUp("Jump") && !IsGrounded() && 
+        if (Input.GetButtonUp("Jump") && !isGrounded && 
             ((!isInverted && Rigidbody.velocity.y > 0) || (isInverted && Rigidbody.velocity.y < 0))) {
             
             Rigidbody.velocity = Vector2.Scale(Rigidbody.velocity, new Vector2(1f, 0.5f));
@@ -222,33 +234,95 @@ public partial class CharController {
 
     private void WallSlideDetection_Update() {
         const float wallSlideSpeed = 0.75f;
+        const float groundDistance = 0.05f;
+        
         Vector2 v = Rigidbody.velocity;
 
+        Vector3 bounds = charCollider.bounds.extents;
+        float halfWidth = Mathf.Abs(bounds.x) - groundDistance;
+        float halfHeight = Mathf.Abs(bounds.y) - groundDistance;
+        Vector2 center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
         
-        // wall sliding
-        if (isWallSliding)
-        {
-            if (v.y <= 0) {
-                Rigidbody.velocity = new Vector2(v.x, Mathf.Max(v.y, -wallSlideSpeed));
-            }
+        // left points
+        Vector2 middleLeft = center + halfWidth * Vector2.left;
+        Vector2 topLeft = middleLeft + halfHeight * Vector2.up;
+        Vector2 bottomLeft = middleLeft + halfHeight * Vector2.down;
+        Vector2 aLittleLeft = 2 * groundDistance * Vector2.left;
+        
+        // right points
+        Vector2 middleRight = center + halfWidth * Vector2.right;
+        Vector2 topRight = middleRight + halfHeight * Vector2.up;
+        Vector2 bottomRight = middleRight + halfHeight * Vector2.down;
+        Vector2 aLittleRight = 2 * groundDistance * Vector2.right;
 
-            if (v.y > 0 || moveVector == 0) {
-                //Debug.Log("no longer wall sliding - velocity/move vector check");
-                isWallSliding = false;
-            }
-            
-        }
-        
-        else if (isWallTouching && wallTouchingCollider != null && 
-                 Math.Sign(moveVector) == Math.Sign(wallTouchingCollider.transform.position.x - transform.position.x) 
-                 && Rigidbody.velocity.y <= 0) 
+        // left linecasts
+        RaycastHit2D topLeftHit = 
+            Physics2D.Linecast(topLeft, topLeft + aLittleLeft, obstacleLayerMask);
+        RaycastHit2D bottomLeftHit = 
+            Physics2D.Linecast(bottomLeft, bottomLeft + aLittleLeft, obstacleLayerMask);
+        bool isNearWallOnLeft = topLeftHit || bottomLeftHit;
+
+        // right linecasts
+        RaycastHit2D topRightHit = 
+            Physics2D.Linecast(topRight, topRight + aLittleRight, obstacleLayerMask);
+        RaycastHit2D bottomRightHit = 
+            Physics2D.Linecast(bottomRight, bottomRight + aLittleRight, obstacleLayerMask);
+        bool isNearWallOnRight = topRightHit || bottomRightHit;
+
+        Debug.DrawLine(topLeft, topLeft + aLittleLeft, Color.magenta);
+        Debug.DrawLine(bottomLeft, bottomLeft + aLittleLeft, Color.magenta);
+        Debug.DrawLine(topRight, topRight + aLittleRight, Color.magenta);
+        Debug.DrawLine(bottomRight, bottomRight + aLittleRight, Color.magenta);
+
+        isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) || (moveVector < 0 && isNearWallOnLeft));
+
+        if (isNearWallOnLeft)
         {
-            //Debug.Log("now wall sliding");
-            // TODO: snap to wall?
-            isWallSliding = true;
+            // Collider2D hit1 = topLeftHit.collider;
+            // Collider2D hit2 = bottomLeftHit.collider;
+            // wallTouchingCollider = hit1 ? hit1 : hit2;
+            wallJumpDir = +1;
         }
+        else if (isNearWallOnRight)
+        {
+            // Collider2D hit1 = topRightHit.collider;
+            // Collider2D hit2 = bottomRightHit.collider;
+            // wallTouchingCollider = hit1 ? hit1 : hit2;
+            wallJumpDir = -1;
+        }
+        else
+        {
+            // wallTouchingCollider = null;
+            // wallJumpDir = 0;
+        }
+
+
+        // wall sliding
+        // if (isWallSliding)
+        // {
+        //     if (v.y <= 0) {
+        //         Rigidbody.velocity = new Vector2(v.x, Mathf.Max(v.y, -wallSlideSpeed));
+        //     }
+        //
+        //     if (v.y > 0 || moveVector == 0) {
+        //         //Debug.Log("no longer wall sliding - velocity/move vector check");
+        //         isWallSliding = false;
+        //     }
+        //     
+        // }
         
+        // else if (isWallTouching && wallTouchingCollider != null && 
+        //          Math.Sign(moveVector) == 
+        //          Math.Sign(wallTouchingCollider.transform.position.x - transform.position.x) 
+        //          && Rigidbody.velocity.y <= 0) 
+        // {
+        //     //Debug.Log("now wall sliding");
+        //     // TODO: snap to wall?
+        //     isWallSliding = true;
+        // }
         
+        if (isWallSliding)
+            Rigidbody.velocity = new Vector2(v.x, Mathf.Max(v.y, -wallSlideSpeed));
     }
     
     // private void OnCollisionEnter2D(Collision2D other)

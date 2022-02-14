@@ -37,22 +37,22 @@ public partial class CharController {
         // }
         //Debug.Log("jump run");
         
-        Debug.Log("isGrounded: " + isGrounded + ", so jumping");
+        // Debug.Log("isGrounded: " + isGrounded + ", so jumping");
         
         canDoubleJump = !canDoubleJump;
 
         dust.Play();
 
-        const int wallJumpFrames = 10;
+        const int wallJumpFrames = 30;
 
-        if (isWallSliding && !IsGrounded())
+        if (isWallSliding && !isGrounded)
         {
-            wallJumpDir = transform.position.x - wallTouchingCollider.transform.position.x > 0? 
-                WallJumpDirection.Right : WallJumpDirection.Left;
+            Debug.Log("resetting wallJumpFrames to " + wallJumpFrames);
+            // Rigidbody.velocity = new Vector2(wallJumpDir * speed, Rigidbody.velocity.y);
             wallJumpFramesLeft = wallJumpFrames;
-            if (wallJumpDir == WallJumpDirection.Left)
+            if (wallJumpDir == -1)
                 FaceLeft();
-            else if (wallJumpDir == WallJumpDirection.Right)
+            else if (wallJumpDir == 1)
                 FaceRight();
             else
                 Debug.LogError("wall jump dir is bad");

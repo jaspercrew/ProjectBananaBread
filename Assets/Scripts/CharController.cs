@@ -7,7 +7,7 @@ public partial class CharController : LivingThing {
     // Components
     private BoxCollider2D charCollider;
     private ParticleSystem dust;
-    private ParticleSystem slicedashPS;
+    private ParticleSystem sliceDashPS;
     private ParticleSystem parryPS;
     private ParticleSystem switchPS;
     private ScreenShakeController screenShakeController;
@@ -47,9 +47,9 @@ public partial class CharController : LivingThing {
     public bool isCrouching;
     private bool canDoubleJump;
     private bool isWallSliding;
-    private bool isWallTouching;
-    private Collider2D wallTouchingCollider;
-    private WallJumpDirection wallJumpDir;
+    // private bool isWallTouching;
+    // private Collider2D wallTouchingCollider;
+    private int wallJumpDir;
     private int wallJumpFramesLeft;
     // private float nextAttackTime;
     // private float nextRollTime;
@@ -72,7 +72,7 @@ public partial class CharController : LivingThing {
         
         public enum EventTypes
         {
-            Dash, Jump, Attack, Parry, Interact, SwitchState, SliceDash, Crouch, 
+            Dash, Jump, Attack, Parry, Interact, SwitchState, SliceDash, Crouch
         }
 
         public Event(EventTypes type, float time)
@@ -111,7 +111,7 @@ public partial class CharController : LivingThing {
             {Event.EventTypes.Dash, @this =>
                 (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown},
             {Event.EventTypes.Jump, @this => 
-                @this.IsAbleToMove() && (@this.IsGrounded() || @this.isWallSliding || @this.canDoubleJump)},
+                @this.IsAbleToMove() && (@this.isGrounded || @this.isWallSliding || @this.canDoubleJump)},
             {Event.EventTypes.Attack, @this => 
                 @this.IsAbleToAct() && Time.time > @this.lastAttackTime + AttackCooldown},
             {Event.EventTypes.Parry, @this =>
@@ -140,21 +140,17 @@ public partial class CharController : LivingThing {
             {Event.EventTypes.SliceDash, @this => @this.DoSliceDash()},
             {Event.EventTypes.Crouch, @this => @this.Crouch()}
         };
-    
 
-    private enum WallJumpDirection
+    // [Obsolete("use isGrounded boolean directly instead")]
+    // private bool IsGrounded()
+    // {
+    //     return isGrounded;
+    // }
+
+    private bool IsAbleToMove()
     {
-        Left = -1, None = 0, Right = 1
-    }
-
-    private bool IsGrounded()
-    {
-        return isGrounded;
-    }
-
-    private bool IsAbleToMove() {
-        return !isAttacking && !isDashing && !isParrying && !grappleController.isGrappling &&
-               wallJumpDir == WallJumpDirection.None;
+        return !isAttacking && !isDashing && !isParrying && !grappleController.isGrappling 
+               && wallJumpFramesLeft == 0;
     }
 
     private bool IsAbleToBeDamaged() {

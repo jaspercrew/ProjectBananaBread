@@ -52,6 +52,12 @@ public class Enemy : LivingThing
         }
     }
 
+    protected void Pathfind_Update()
+    {
+
+        
+    }
+
     public virtual void Interrupt() { // should stop all relevant coroutines
         if (attackCo != null) {
             StopCoroutine(attackCo); // interrupt attack if take damage
@@ -72,7 +78,7 @@ public class Enemy : LivingThing
         Destroy(gameObject, deathTime);
     }
 
-    private IEnumerator  AttackCoroutine() {
+    private IEnumerator AttackCoroutine() {
         // enemy attack modifiers
         // float attackBoost = 1.5f;
         const float beginAttackDelay = .55f;
@@ -129,7 +135,7 @@ public class Enemy : LivingThing
         }
     }
 
-    private void TurnAround_Update() {
+    protected void TurnAround_Update() {
         if (aiPath.desiredVelocity.x > 0) {
             FaceRight();
         }
@@ -139,7 +145,7 @@ public class Enemy : LivingThing
         Animator.SetInteger(AnimState, Mathf.Abs(aiPath.velocity.x) > .1 ? 2 : 0);
     }
 
-    private void ScanForAttack_Update() {
+    protected void ScanForAttack_Update() {
         const int maxHits = 20;
         Collider2D[] hitColliders = new Collider2D[maxHits];
         int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange,

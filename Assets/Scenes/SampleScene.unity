@@ -418,7 +418,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 519420028}
-  parallexEffect: 0.7
+  parallaxEffect: 0
 --- !u!212 &209982110
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -557,7 +557,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 519420028}
-  parallexEffect: 1
+  parallaxEffect: 0
 --- !u!212 &323162681
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -946,7 +946,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -33.7, y: -7.5, z: -137.44064}
+  m_LocalPosition: {x: -35.61, y: -7.5, z: -137.44064}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1318452159}
@@ -6491,7 +6491,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 768931876}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -11.7, y: -7.72, z: 0}
+  m_LocalPosition: {x: -11.7, y: -8.07, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1303982616}
@@ -6854,7 +6854,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 928001250}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -29.5, y: -6, z: -137.44064}
+  m_LocalPosition: {x: -31.41, y: -6, z: -137.44064}
   m_LocalScale: {x: 12, y: 7, z: 1}
   m_Children:
   - {fileID: 1202502613}
@@ -17632,7 +17632,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1318452157}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 20.61, y: -0.5, z: 127.44064}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1035980158}
@@ -18244,7 +18244,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 519420028}
-  parallexEffect: 0.5
+  parallaxEffect: 0
 --- !u!212 &1625152335
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -24153,7 +24153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 519420028}
-  parallexEffect: 0.3
+  parallaxEffect: 0
 --- !u!212 &1877904489
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -24410,7 +24410,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 519420028}
-  parallexEffect: 0
+  parallaxEffect: 0
 --- !u!212 &1971510505
 SpriteRenderer:
   m_ObjectHideFlags: 0

@@ -64,9 +64,11 @@ public partial class CharController {
                 Rigidbody.velocity += moveVector * new Vector2(InAirAcceleration, 0);
             }
 
-            if (moveVector == 0 && !isRecentlyGrappled)
+            //slow down if player is not inputting horizontal movement (not technically drag)
+            if (moveVector == 0 && !grappleController.isGrappling)
             {
-                Rigidbody.velocity = new Vector2(Rigidbody.velocity.x * .8f, Rigidbody.velocity.y);
+                //Debug.Log("drag");
+                Rigidbody.velocity = new Vector2(Rigidbody.velocity.x * .9f, Rigidbody.velocity.y);
             }
 
             if (applyMaxVel)

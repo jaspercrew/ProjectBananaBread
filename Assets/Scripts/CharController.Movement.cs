@@ -67,7 +67,7 @@ public partial class CharController {
 
     private IEnumerator JumpCooldownCoroutine()
     {
-        Debug.Log("j-cd run");
+        //Debug.Log("j-cd run");
         const float jumpCooldown = 0.4f;
         yield return new WaitForSeconds(jumpCooldown);
         canDoubleJump = true;
@@ -75,7 +75,7 @@ public partial class CharController {
 
     private void DoDoubleJump()
     {
-        Debug.Log("double jump");
+        //Debug.Log("double jump");
         dust.Play();
         float doubleJumpForce = JumpForce * .9f;
         canDoubleJump = false;

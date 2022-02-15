@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -38,9 +39,8 @@ public partial class CharController {
         //Debug.Log("jump run");
         
         // Debug.Log("isGrounded: " + isGrounded + ", so jumping");
-        
-        canDoubleJump = !canDoubleJump;
 
+        StartCoroutine(JumpCooldownCoroutine());
         dust.Play();
 
         const int wallJumpFrames = 30;
@@ -62,6 +62,25 @@ public partial class CharController {
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
         
+    }
+
+    private IEnumerator JumpCooldownCoroutine()
+    {
+        const float jumpCooldown = 0.4f;
+        yield return new WaitForSeconds(jumpCooldown);
+        canDoubleJump = true;
+    }
+
+    private void DoDoubleJump()
+    {
+        Debug.Log("double jump");
+        dust.Play();
+        float doubleJumpForce = JumpForce * .9f;
+        canDoubleJump = false;
+        
+        Rigidbody.AddForce(new Vector2(0, isInverted ? -doubleJumpForce : doubleJumpForce), ForceMode2D.Impulse);
+        Animator.SetBool(Grounded, false);
+        Animator.SetTrigger(Jump);
     }
 
 

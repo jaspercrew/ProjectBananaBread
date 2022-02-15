@@ -72,7 +72,7 @@ public partial class CharController : LivingThing {
         
         public enum EventTypes
         {
-            Dash, Jump, Attack, Parry, Interact, SwitchState, SliceDash, Crouch
+            Dash, Jump, DoubleJump, Attack, Parry, Interact, SwitchState, SliceDash, Crouch
         }
 
         public Event(EventTypes type, float time)
@@ -89,6 +89,7 @@ public partial class CharController : LivingThing {
         {
             {() => Input.GetKeyDown(KeyCode.LeftShift), Event.EventTypes.Dash},
             {() => Input.GetButtonDown("Jump"), Event.EventTypes.Jump},
+            {() => Input.GetButtonDown("Jump"), Event.EventTypes.DoubleJump},
             {() => Input.GetMouseButtonDown(0), Event.EventTypes.Attack},
             {() => Input.GetMouseButtonDown(1), Event.EventTypes.Parry},
             {() => Input.GetKeyDown(KeyCode.E), Event.EventTypes.Interact},
@@ -111,7 +112,9 @@ public partial class CharController : LivingThing {
             {Event.EventTypes.Dash, @this =>
                 (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown},
             {Event.EventTypes.Jump, @this => 
-                @this.IsAbleToMove() && (@this.isGrounded || @this.isWallSliding || @this.canDoubleJump)},
+                @this.IsAbleToMove() && (@this.isGrounded || @this.isWallSliding)},
+            {Event.EventTypes.DoubleJump, @this => 
+                @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && @this.canDoubleJump},
             {Event.EventTypes.Attack, @this => 
                 @this.IsAbleToAct() && Time.time > @this.lastAttackTime + AttackCooldown},
             {Event.EventTypes.Parry, @this =>
@@ -133,6 +136,7 @@ public partial class CharController : LivingThing {
         {
             {Event.EventTypes.Dash, @this => @this.DoDash()},
             {Event.EventTypes.Jump, @this => @this.DoJump()},
+            {Event.EventTypes.DoubleJump, @this => @this.DoDoubleJump()},
             {Event.EventTypes.Attack, @this => @this.AttemptAttack()},
             {Event.EventTypes.Parry, @this => @this.DoParry()},
             {Event.EventTypes.Interact, @this => @this.DoInteract()},

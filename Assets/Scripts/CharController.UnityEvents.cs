@@ -4,7 +4,10 @@ using UnityEditor.VersionControl;
 using UnityEngine;
 
 public partial class CharController {
-    private void Start() {
+    private void Start()
+    {
+        canDoubleJump = false;
+        
         particleChild = transform.Find("Particles");
         CurrentHealth = MaxHealth;
         Rigidbody = transform.GetComponent<Rigidbody2D>();

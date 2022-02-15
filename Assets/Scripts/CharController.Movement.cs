@@ -10,14 +10,15 @@ public partial class CharController {
             return;
         }
         
-        // attack cancel
-        if (isAttacking)
-        {
-            Animator.SetTrigger(Idle); // TODO: dash animation
-            isAttacking = false;
-            Assert.IsNotNull(attackCoroutine);
-            StopCoroutine(attackCoroutine);
-        }
+        //attack cancel
+        // if (isAttacking)
+        // {
+        //     Animator.SetTrigger(Idle); // TODO: dash animation
+        //     isAttacking = false;
+        //     Assert.IsNotNull(attackCoroutine);
+        //     StopCoroutine(attackCoroutine);
+        // }
+        Interrupt();
 
         const float dashSpeed = 9f;
         const float dashTime = .23f;
@@ -40,7 +41,7 @@ public partial class CharController {
         
         // Debug.Log("isGrounded: " + isGrounded + ", so jumping");
 
-        StartCoroutine(JumpCooldownCoroutine());
+        
         dust.Play();
 
         const int wallJumpFrames = 30;
@@ -57,7 +58,7 @@ public partial class CharController {
             else
                 Debug.LogError("wall jump dir is bad");
         }
-        
+        StartCoroutine(JumpCooldownCoroutine());
         Rigidbody.AddForce(new Vector2(0, isInverted ? -JumpForce : JumpForce), ForceMode2D.Impulse);
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
@@ -66,6 +67,7 @@ public partial class CharController {
 
     private IEnumerator JumpCooldownCoroutine()
     {
+        Debug.Log("j-cd run");
         const float jumpCooldown = 0.4f;
         yield return new WaitForSeconds(jumpCooldown);
         canDoubleJump = true;

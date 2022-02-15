@@ -8,6 +8,7 @@ public class MeleeEnemy : Enemy
     [SerializeField] protected Transform attackPoint;
     [SerializeField] protected float knockbackVal = 2f;
     [SerializeField] protected float attackRange = .25f;
+    protected bool isAttacking;
     protected const float AttackRate = .75f;
     protected const int AttackDamage = 10;
     [SerializeField] protected LayerMask playerLayers;
@@ -22,11 +23,19 @@ public class MeleeEnemy : Enemy
 
     private void Update()
     {
+        Pathfind_Update();
         ScanForAttack_Update();
         TurnAround_Update();
     }
 
-    protected void DoAttack() {
+    protected override bool ableToMove()
+    {
+        return canFunction && !isAttacking;
+    }
+
+    protected void DoAttack()
+    {
+        isAttacking = true;
         Animator.SetTrigger(Attack);
         StartCoroutine(attackCo = AttackCoroutine());
     }
@@ -36,6 +45,7 @@ public class MeleeEnemy : Enemy
         // float attackBoost = 1.5f;
         const float beginAttackDelay = .55f;
         const float hitConfirmDelay = .20f;
+        const float hitEndDelay = .4f;
 
         yield return new WaitForSeconds(beginAttackDelay);
 
@@ -49,17 +59,20 @@ public class MeleeEnemy : Enemy
 
         if (hitColliders.Length > 0) {
             foreach (Collider2D p in hitColliders) {
-                if (p == null || p.gameObject.GetComponent<CharController>() == null) {
-                    break;
-                }
-                if (charController.isParrying) {
+                if (p != null && p.gameObject.GetComponent<CharController>() != null && charController.isParrying) {
                     // StartCoroutine(PauseAnimatorCoroutine(.2f));
                     charController.CounterStrike(GetComponent<Enemy>());
-                    break;
                 }
-                charController.TakeDamage(AttackDamage, knockbackVal, transform.position);
+                else if (p != null && p.gameObject.GetComponent<CharController>() != null)
+                {
+                    charController.TakeDamage(AttackDamage, knockbackVal, transform.position);
+                }
             }
         }
+        
+        yield return new WaitForSeconds(hitEndDelay);
+        isAttacking = false;
+        Debug.Log(ableToMove());
     }
     
     protected void ScanForAttack_Update() {
@@ -77,6 +90,17 @@ public class MeleeEnemy : Enemy
         if (attackCo != null) {
             StopCoroutine(attackCo); // interrupt attack if take damage
             Rigidbody.velocity = Vector2.zero;
+            isAttacking = false;
         }
+    }
+    protected override void DisableFunctionality() {
+        StopAllCoroutines();
+        canFunction = false;
+        
+    }
+
+    protected override void EnableFunctionality() {
+        canFunction = true;
+        isAttacking = false;
     }
 }

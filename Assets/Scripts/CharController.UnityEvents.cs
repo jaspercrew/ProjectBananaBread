@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor.VersionControl;
 using UnityEngine;
 
 public partial class CharController {
@@ -60,6 +61,11 @@ public partial class CharController {
                 Rigidbody.velocity += moveVector * new Vector2(InAirAcceleration, 0);
             }
 
+            if (moveVector == 0 && !isRecentlyGrappled)
+            {
+                Rigidbody.velocity = new Vector2(Rigidbody.velocity.x * .8f, Rigidbody.velocity.y);
+            }
+
             if (applyMaxVel)
             {
                 Vector2 vel = Rigidbody.velocity;
@@ -83,6 +89,7 @@ public partial class CharController {
                 // simplest:
                 Rigidbody.velocity = new Vector2(Mathf.Clamp(newXVel, -speed, speed), yVel);
             }
+            
         }
     }
 
@@ -161,7 +168,12 @@ public partial class CharController {
         RaycastHit2D hit1 = Physics2D.Linecast(bottomLeft, bottomLeft + aLittleDown, obstacleLayerMask);
         RaycastHit2D hit2 = Physics2D.Linecast(bottomRight, bottomRight + aLittleDown, obstacleLayerMask);
 
-        isGrounded = hit1 || hit2;
+        bool newlyGrounded = hit1 || hit2;
+        if (!isGrounded && newlyGrounded){
+            OnLanding();
+        }
+
+        isGrounded = newlyGrounded;
     }
 
     private void EventHandling_Update() {
@@ -191,8 +203,7 @@ public partial class CharController {
             {
                 Func<CharController, bool> conditions = EventConditions[e.EventType];
                 Action<CharController> actionToDo = EventActions[e.EventType];
-                if (e.EventType == Event.EventTypes.Jump)
-                    Debug.Log("reached jump. will execute? " + conditions.Invoke(this));
+
                 if (conditions.Invoke(this))
                 {
                     // Debug.Log("reached enqueued " + e.EventType + ", invoking");

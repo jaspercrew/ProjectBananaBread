@@ -6,7 +6,7 @@ using UnityEngine;
 public class Enemy : LivingThing
 {
     // Attacking
-    protected float speed = 3f;
+    protected float speed = 5f;
     // [SerializeField] private int moveState; // determines movement behavior
     
     // Trackers
@@ -46,9 +46,29 @@ public class Enemy : LivingThing
         }
     }
 
+    protected virtual bool ableToMove()
+    {
+        return canFunction;
+    }
+
     protected void Pathfind_Update()
     {
-
+        if (ableToMove())
+        {
+            const float buffer = .5f;
+            if (charController.transform.position.x > transform.position.x + buffer)
+            {
+                Rigidbody.velocity = new Vector2(speed, Rigidbody.velocity.y);
+            }
+            else if (charController.transform.position.x < transform.position.x - buffer)
+            {
+                Rigidbody.velocity = new Vector2(-speed, Rigidbody.velocity.y);
+            }
+        }
+        else
+        {
+            Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
+        }
         
     }
 
@@ -73,13 +93,13 @@ public class Enemy : LivingThing
 
 
     protected void TurnAround_Update() {
-        if (aiPath.desiredVelocity.x > 0) {
+        if (Rigidbody.velocity.x > 0) {
             FaceRight();
         }
-        else if (aiPath.desiredVelocity.x < 0) {
+        else if (Rigidbody.velocity.x < 0) {
             FaceLeft();
         }
-        Animator.SetInteger(AnimState, Mathf.Abs(aiPath.velocity.x) > .1 ? 2 : 0);
+        Animator.SetInteger(AnimState, Mathf.Abs(Rigidbody.velocity.x) > .1 ? 2 : 0);
     }
 
 
@@ -101,14 +121,12 @@ public class Enemy : LivingThing
     //     Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     // }
 
-    protected void DisableFunctionality() {
+    protected virtual void DisableFunctionality() {
         StopAllCoroutines();
         canFunction = false;
-        aiPath.canMove = false;
     }
 
-    protected void EnableFunctionality() {
+    protected virtual void EnableFunctionality() {
         canFunction = true;
-        aiPath.canMove = true;
     }
 }

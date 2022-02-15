@@ -92,7 +92,7 @@ public partial class RadialGrapple : MonoBehaviour{
 
         //const float boostForce = 5f;
         const float gravModifier = .8f;
-        const float minVel = 7f;
+        const float minVel = 10f;
 
         if (transform.localScale.x > 0.5) {
             //facing left

@@ -20,7 +20,7 @@ public partial class CharController {
         // }
         Interrupt();
 
-        const float dashSpeed = 9f;
+        const float dashSpeed = 5f;
         const float dashTime = .23f;
 
         //float xScale = transform.localScale.x;

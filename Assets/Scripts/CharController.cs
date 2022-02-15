@@ -189,7 +189,7 @@ public partial class CharController : LivingThing {
 
     public void Interrupt() {
         StopAllCoroutines();
-        Rigidbody.velocity = Vector2.zero;
+        //Rigidbody.velocity = Vector2.zero;
         isAttacking = false;
         isCrouching = false;
         isParrying = false;

@@ -54,16 +54,16 @@ public abstract class LivingThing : Entity {
         // TODO: do something about this monstrosity
         switch (cardinalDirection) {
             case 0:
-                Rigidbody.velocity += new Vector2(0, dashSpeed);
+                Rigidbody.velocity = new Vector2(0, dashSpeed);
                 break;
             case 1:
-                Rigidbody.velocity += new Vector2(Rigidbody.velocity.x + dashSpeed, Rigidbody.velocity.y);
+                Rigidbody.velocity = new Vector2(Rigidbody.velocity.x + dashSpeed, Rigidbody.velocity.y);
                 break;
             case 2:
-                Rigidbody.velocity += new Vector2(0, -dashSpeed);
+                Rigidbody.velocity = new Vector2(0, -dashSpeed);
                 break;
             case 3:
-                Rigidbody.velocity += new Vector2(Rigidbody.velocity.x - dashSpeed, Rigidbody.velocity.y);
+                Rigidbody.velocity = new Vector2(Rigidbody.velocity.x - dashSpeed, Rigidbody.velocity.y);
                 break;
             default:
                 Debug.Log("invalid dash direction");

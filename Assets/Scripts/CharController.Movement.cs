@@ -20,11 +20,11 @@ public partial class CharController {
         // }
         Interrupt();
 
-        const float dashSpeed = 5f;
+        const float dashSpeed = 9f;
         const float dashTime = .23f;
 
-        //float xScale = transform.localScale.x;
-        VelocityDash(moveVector < 0? 3 : 1, dashSpeed, dashTime);
+        float xScale = transform.localScale.x;
+        VelocityDash(xScale > 0? 3 : 1, dashSpeed, dashTime);
         dust.Play();
         Animator.SetTrigger(Dash);
         
@@ -44,7 +44,7 @@ public partial class CharController {
         
         dust.Play();
 
-        const int wallJumpFrames = 30;
+        const int wallJumpFrames = 60;
 
         if (isWallSliding && !isGrounded)
         {

@@ -13,7 +13,7 @@ public abstract class FluidPlatform: Platform
         CheckPlatform(state);
     }
 
-    protected virtual void CheckPlatform(EnvironmentState state) {
+    protected void CheckPlatform(EnvironmentState state) {
         if (enabledState == state)
         {
             ActivatePlatform();

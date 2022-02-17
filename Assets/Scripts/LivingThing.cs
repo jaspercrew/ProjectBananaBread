@@ -47,35 +47,18 @@ public abstract class LivingThing : Entity {
     }
     
     // boosts the game object in a certain cardinal direction 
-    protected void VelocityDash(int cardinalDirection, float dashSpeed, float dashTime) {
+    protected void VelocityDash(float dashSpeed, float dashTime) {
         isDashing = true;
-        
-        StartCoroutine(DashCoroutine(dashTime, Rigidbody.velocity.x));
-        // TODO: do something about this monstrosity
-        switch (cardinalDirection) {
-            case 0:
-                Rigidbody.velocity = new Vector2(0, dashSpeed);
-                break;
-            case 1:
-                Rigidbody.velocity = new Vector2(Rigidbody.velocity.x + dashSpeed, Rigidbody.velocity.y);
-                break;
-            case 2:
-                Rigidbody.velocity = new Vector2(0, -dashSpeed);
-                break;
-            case 3:
-                Rigidbody.velocity = new Vector2(Rigidbody.velocity.x - dashSpeed, Rigidbody.velocity.y);
-                break;
-            default:
-                Debug.Log("invalid dash direction");
-                break;
-        }
+        StartCoroutine(DashCoroutine(dashTime, dashSpeed));
+        // monstrosity removed
+        Rigidbody.velocity = new Vector2(Rigidbody.velocity.x + dashSpeed, Rigidbody.velocity.y);
     }
 
     // dash coroutine handles stopping the dash
-    private IEnumerator DashCoroutine(float dashTime, float savedVel) {
-        Debug.Log(savedVel);
+    private IEnumerator DashCoroutine(float dashTime, float dashSpeed) {
+        //Debug.Log(savedVel);
         yield return new WaitForSeconds(dashTime);
-        Rigidbody.velocity = new Vector2(savedVel, Rigidbody.velocity.y);
+        Rigidbody.velocity = new Vector2(Rigidbody.velocity.x - dashSpeed, Rigidbody.velocity.y);
         isDashing = false;
     }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.VersionControl;
 using UnityEngine;
@@ -142,7 +143,7 @@ public partial class CharController {
         }
         // short jump
         ShortJumpDetection_Update();
-
+        JumpCooldown_Update();
         // wall slide detection
         WallSlideDetection_Update();
         
@@ -246,6 +247,21 @@ public partial class CharController {
             
             Rigidbody.velocity = Vector2.Scale(Rigidbody.velocity, new Vector2(1f, 0.5f));
         }
+    }
+    private void JumpCooldown_Update()
+    {
+        //Debug.Log(justJumped);
+        if (Input.GetKeyUp(KeyCode.Space) && justJumped)
+        {
+            canDoubleJump = true;
+            justJumped = false;
+        }
+    }
+
+    private IEnumerator JumpCooldownCoroutine() //TODO : fix doublejump bug
+    {
+        yield return new WaitForSeconds(.1f);
+        canDoubleJump = true;
     }
 
     private void WallSlideDetection_Update() {
@@ -411,13 +427,13 @@ public partial class CharController {
 
     // show gizmos in editor
     
-    private void OnDrawGizmosSelected() {
-        if (attackPoint != null) {
-            Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-        }
-
-        Gizmos.color = Color.magenta;
-        Gizmos.DrawWireCube(transform.position + (Vector3) charCollider.offset, charCollider.size);
-    }
+    // private void OnDrawGizmosSelected() {
+    //     if (attackPoint != null) {
+    //         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    //     }
+    //
+    //     Gizmos.color = Color.magenta;
+    //     Gizmos.DrawWireCube(transform.position + (Vector3) charCollider.offset, charCollider.size);
+    // }
 
 }

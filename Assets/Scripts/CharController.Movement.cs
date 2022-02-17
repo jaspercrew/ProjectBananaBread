@@ -24,7 +24,7 @@ public partial class CharController {
         const float dashTime = .23f;
 
         float xScale = transform.localScale.x;
-        VelocityDash(xScale > 0? 3 : 1, dashSpeed, dashTime);
+        VelocityDash(xScale > 0? -dashSpeed : dashSpeed, dashTime);
         dust.Play();
         Animator.SetTrigger(Dash);
         
@@ -58,23 +58,22 @@ public partial class CharController {
             else
                 Debug.LogError("wall jump dir is bad");
         }
-        StartCoroutine(JumpCooldownCoroutine());
+        
         Rigidbody.AddForce(new Vector2(0, isInverted ? -JumpForce : JumpForce), ForceMode2D.Impulse);
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
-        
+        justJumped = true;
+
     }
 
-    private IEnumerator JumpCooldownCoroutine()
-    {
-        //Debug.Log("j-cd run");
-        const float jumpCooldown = 0.4f;
-        yield return new WaitForSeconds(jumpCooldown);
-        canDoubleJump = true;
-    }
+
 
     private void DoDoubleJump()
     {
+        // Debug.Log(justJumped);
+        // Debug.Log(Input.GetKeyUp(KeyCode.Space));
+        // Debug.Log(Input.GetKeyDown(KeyCode.Space));
+        // Assert.IsTrue(canDoubleJump);
         //Debug.Log("double jump");
         dust.Play();
         float doubleJumpForce = JumpForce * .9f;

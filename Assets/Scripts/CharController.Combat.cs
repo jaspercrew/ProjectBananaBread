@@ -12,7 +12,7 @@ public partial class CharController {
         const float dashTime = .15f;
 
         float xScale = transform.localScale.x; 
-        VelocityDash(xScale > 0? 3 : 1, dashSpeed, dashTime);
+        VelocityDash(xScale > 0? -dashSpeed : dashSpeed, dashTime);
         sliceDashPS.Play();
         Animator.SetTrigger(Dash);
         StartCoroutine(SliceDashCoroutine(dashTime));

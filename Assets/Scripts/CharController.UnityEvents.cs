@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.VersionControl;
 using UnityEngine;
@@ -64,9 +65,11 @@ public partial class CharController {
                 Rigidbody.velocity += moveVector * new Vector2(InAirAcceleration, 0);
             }
 
-            if (moveVector == 0 && !isRecentlyGrappled)
+            //slow down if player is not inputting horizontal movement (not technically drag)
+            if (moveVector == 0 && !grappleController.isGrappling)
             {
-                Rigidbody.velocity = new Vector2(Rigidbody.velocity.x * .8f, Rigidbody.velocity.y);
+                //Debug.Log("drag");
+                Rigidbody.velocity = new Vector2(Rigidbody.velocity.x * .9f, Rigidbody.velocity.y);
             }
 
             if (applyMaxVel)
@@ -140,7 +143,7 @@ public partial class CharController {
         }
         // short jump
         ShortJumpDetection_Update();
-
+        JumpCooldown_Update();
         // wall slide detection
         WallSlideDetection_Update();
         
@@ -245,6 +248,21 @@ public partial class CharController {
             Rigidbody.velocity = Vector2.Scale(Rigidbody.velocity, new Vector2(1f, 0.5f));
         }
     }
+    private void JumpCooldown_Update()
+    {
+        //Debug.Log(justJumped);
+        if (Input.GetKeyUp(KeyCode.Space) && justJumped)
+        {
+            canDoubleJump = true;
+            justJumped = false;
+        }
+    }
+
+    private IEnumerator JumpCooldownCoroutine() //TODO : fix doublejump bug
+    {
+        yield return new WaitForSeconds(.1f);
+        canDoubleJump = true;
+    }
 
     private void WallSlideDetection_Update() {
         const float wallSlideSpeed = 0.75f;
@@ -259,36 +277,36 @@ public partial class CharController {
         
         // left points
         Vector2 middleLeft = center + halfWidth * Vector2.left;
-        Vector2 topLeft = middleLeft + halfHeight * Vector2.up;
+        // Vector2 topLeft = middleLeft + halfHeight * Vector2.up;
         Vector2 bottomLeft = middleLeft + halfHeight * Vector2.down;
         Vector2 aLittleLeft = 2 * groundDistance * Vector2.left;
         
         // right points
         Vector2 middleRight = center + halfWidth * Vector2.right;
-        Vector2 topRight = middleRight + halfHeight * Vector2.up;
+        // Vector2 topRight = middleRight + halfHeight * Vector2.up;
         Vector2 bottomRight = middleRight + halfHeight * Vector2.down;
         Vector2 aLittleRight = 2 * groundDistance * Vector2.right;
 
         // left linecasts
-        RaycastHit2D topLeftHit = 
-            Physics2D.Linecast(topLeft, topLeft + aLittleLeft, obstacleLayerMask);
+        // RaycastHit2D topLeftHit = 
+        //     Physics2D.Linecast(topLeft, topLeft + aLittleLeft, obstacleLayerMask);
         RaycastHit2D bottomLeftHit = 
             Physics2D.Linecast(bottomLeft, bottomLeft + aLittleLeft, obstacleLayerMask);
-        bool isNearWallOnLeft = topLeftHit || bottomLeftHit;
+        bool isNearWallOnLeft = bottomLeftHit;
 
         // right linecasts
-        RaycastHit2D topRightHit = 
-            Physics2D.Linecast(topRight, topRight + aLittleRight, obstacleLayerMask);
+        // RaycastHit2D topRightHit = 
+        //     Physics2D.Linecast(topRight, topRight + aLittleRight, obstacleLayerMask);
         RaycastHit2D bottomRightHit = 
             Physics2D.Linecast(bottomRight, bottomRight + aLittleRight, obstacleLayerMask);
-        bool isNearWallOnRight = topRightHit || bottomRightHit;
+        bool isNearWallOnRight = bottomRightHit;
 
-        Debug.DrawLine(topLeft, topLeft + aLittleLeft, Color.magenta);
-        Debug.DrawLine(bottomLeft, bottomLeft + aLittleLeft, Color.magenta);
-        Debug.DrawLine(topRight, topRight + aLittleRight, Color.magenta);
-        Debug.DrawLine(bottomRight, bottomRight + aLittleRight, Color.magenta);
+        // Debug.DrawLine(topLeft, topLeft + aLittleLeft, Color.magenta);
+        // Debug.DrawLine(bottomLeft, bottomLeft + aLittleLeft, Color.magenta);
+        // Debug.DrawLine(topRight, topRight + aLittleRight, Color.magenta);
+        // Debug.DrawLine(bottomRight, bottomRight + aLittleRight, Color.magenta);
 
-        isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) || (moveVector < 0 && isNearWallOnLeft));
+        isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) || (moveVector < 0 && isNearWallOnLeft)) && IsAbleToMove();
 
         if (isNearWallOnLeft)
         {
@@ -296,6 +314,7 @@ public partial class CharController {
             // Collider2D hit2 = bottomLeftHit.collider;
             // wallTouchingCollider = hit1 ? hit1 : hit2;
             wallJumpDir = +1;
+            canDoubleJump = false;
         }
         else if (isNearWallOnRight)
         {
@@ -303,6 +322,7 @@ public partial class CharController {
             // Collider2D hit2 = bottomRightHit.collider;
             // wallTouchingCollider = hit1 ? hit1 : hit2;
             wallJumpDir = -1;
+            canDoubleJump = false;
         }
         else
         {
@@ -336,6 +356,7 @@ public partial class CharController {
         // }
         
         if (isWallSliding)
+            
             Rigidbody.velocity = new Vector2(v.x, Mathf.Max(v.y, -wallSlideSpeed));
     }
     
@@ -406,13 +427,13 @@ public partial class CharController {
 
     // show gizmos in editor
     
-    private void OnDrawGizmosSelected() {
-        if (attackPoint != null) {
-            Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-        }
-
-        Gizmos.color = Color.magenta;
-        Gizmos.DrawWireCube(transform.position + (Vector3) charCollider.offset, charCollider.size);
-    }
+    // private void OnDrawGizmosSelected() {
+    //     if (attackPoint != null) {
+    //         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    //     }
+    //
+    //     Gizmos.color = Color.magenta;
+    //     Gizmos.DrawWireCube(transform.position + (Vector3) charCollider.offset, charCollider.size);
+    // }
 
 }

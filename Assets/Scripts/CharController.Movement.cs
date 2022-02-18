@@ -10,20 +10,21 @@ public partial class CharController {
             return;
         }
         
-        // attack cancel
-        if (isAttacking)
-        {
-            Animator.SetTrigger(Idle); // TODO: dash animation
-            isAttacking = false;
-            Assert.IsNotNull(attackCoroutine);
-            StopCoroutine(attackCoroutine);
-        }
+        //attack cancel
+        // if (isAttacking)
+        // {
+        //     Animator.SetTrigger(Idle); // TODO: dash animation
+        //     isAttacking = false;
+        //     Assert.IsNotNull(attackCoroutine);
+        //     StopCoroutine(attackCoroutine);
+        // }
+        Interrupt();
 
         const float dashSpeed = 9f;
         const float dashTime = .23f;
 
-        //float xScale = transform.localScale.x;
-        VelocityDash(moveVector < 0? 3 : 1, dashSpeed, dashTime);
+        float xScale = transform.localScale.x;
+        VelocityDash(xScale > 0? -dashSpeed : dashSpeed, dashTime);
         dust.Play();
         Animator.SetTrigger(Dash);
         
@@ -40,10 +41,10 @@ public partial class CharController {
         
         // Debug.Log("isGrounded: " + isGrounded + ", so jumping");
 
-        StartCoroutine(JumpCooldownCoroutine());
+        
         dust.Play();
 
-        const int wallJumpFrames = 30;
+        const int wallJumpFrames = 60;
 
         if (isWallSliding && !isGrounded)
         {
@@ -61,19 +62,19 @@ public partial class CharController {
         Rigidbody.AddForce(new Vector2(0, isInverted ? -JumpForce : JumpForce), ForceMode2D.Impulse);
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
-        
+        justJumped = true;
+
     }
 
-    private IEnumerator JumpCooldownCoroutine()
-    {
-        const float jumpCooldown = 0.4f;
-        yield return new WaitForSeconds(jumpCooldown);
-        canDoubleJump = true;
-    }
+
 
     private void DoDoubleJump()
     {
-        Debug.Log("double jump");
+        // Debug.Log(justJumped);
+        // Debug.Log(Input.GetKeyUp(KeyCode.Space));
+        // Debug.Log(Input.GetKeyDown(KeyCode.Space));
+        // Assert.IsTrue(canDoubleJump);
+        //Debug.Log("double jump");
         dust.Play();
         float doubleJumpForce = JumpForce * .9f;
         canDoubleJump = false;

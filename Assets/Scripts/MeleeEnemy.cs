@@ -72,7 +72,6 @@ public class MeleeEnemy : Enemy
         
         yield return new WaitForSeconds(hitEndDelay);
         isAttacking = false;
-        Debug.Log(AbleToMove());
     }
     
     protected void ScanForAttack_Update() {

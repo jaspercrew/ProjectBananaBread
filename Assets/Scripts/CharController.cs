@@ -42,6 +42,7 @@ public partial class CharController : LivingThing {
     private bool isGrounded;
     private bool isInvincible;
     public bool isRecentlyGrappled;
+    private bool justJumped;
     // private float nextParryTime;
     public bool isParrying;
     public bool isCrouching;
@@ -88,8 +89,8 @@ public partial class CharController : LivingThing {
         new Dictionary<Func<bool>, Event.EventTypes>
         {
             {() => Input.GetKeyDown(KeyCode.LeftShift), Event.EventTypes.Dash},
-            {() => Input.GetButtonDown("Jump"), Event.EventTypes.Jump},
-            {() => Input.GetButtonDown("Jump"), Event.EventTypes.DoubleJump},
+            {() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.Jump},
+            {() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.DoubleJump},
             {() => Input.GetMouseButtonDown(0), Event.EventTypes.Attack},
             {() => Input.GetMouseButtonDown(1), Event.EventTypes.Parry},
             {() => Input.GetKeyDown(KeyCode.E), Event.EventTypes.Interact},
@@ -114,7 +115,7 @@ public partial class CharController : LivingThing {
             {Event.EventTypes.Jump, @this => 
                 @this.IsAbleToMove() && (@this.isGrounded || @this.isWallSliding)},
             {Event.EventTypes.DoubleJump, @this => 
-                @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && @this.canDoubleJump},
+                @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && @this.canDoubleJump && Input.GetKeyDown(KeyCode.Space)},
             {Event.EventTypes.Attack, @this => 
                 @this.IsAbleToAct() && Time.time > @this.lastAttackTime + AttackCooldown},
             {Event.EventTypes.Parry, @this =>
@@ -189,7 +190,7 @@ public partial class CharController : LivingThing {
 
     public void Interrupt() {
         StopAllCoroutines();
-        Rigidbody.velocity = Vector2.zero;
+        //Rigidbody.velocity = Vector2.zero;
         isAttacking = false;
         isCrouching = false;
         isParrying = false;

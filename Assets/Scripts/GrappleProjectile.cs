@@ -38,7 +38,7 @@ public class GrappleProjectile : Projectile {
         Platform p = other.gameObject.GetComponent<Platform>();
         if (p == null || !p.isGrappleable) return;
         
-        Debug.Log(other.gameObject.name);
+        //Debug.Log(other.gameObject.name);
         Vector3 pos = transform.position;
         grappleController.StartGrapple(other.ClosestPoint(pos));
         Destroy(gameObject);

@@ -28,7 +28,7 @@ public class MeleeEnemy : Enemy
         TurnAround_Update();
     }
 
-    protected override bool ableToMove()
+    protected override bool AbleToMove()
     {
         return canFunction && !isAttacking;
     }
@@ -72,7 +72,7 @@ public class MeleeEnemy : Enemy
         
         yield return new WaitForSeconds(hitEndDelay);
         isAttacking = false;
-        Debug.Log(ableToMove());
+        Debug.Log(AbleToMove());
     }
     
     protected void ScanForAttack_Update() {

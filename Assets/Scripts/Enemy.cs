@@ -46,14 +46,14 @@ public class Enemy : LivingThing
         }
     }
 
-    protected virtual bool ableToMove()
+    protected virtual bool AbleToMove()
     {
         return canFunction;
     }
 
     protected void Pathfind_Update()
     {
-        if (ableToMove())
+        if (AbleToMove())
         {
             const float buffer = .5f;
             if (charController.transform.position.x > transform.position.x + buffer)

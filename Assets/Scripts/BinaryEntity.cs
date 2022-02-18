@@ -1,25 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class BinaryEntity : Entity
 {
     public EnvironmentState enabledState;
-    public bool isActive;
+    public bool isShifted;
 
     // Start is called before the first frame update
     private void Awake() {
         CheckEntity(GameManager.Instance.currentState);
     }
 
-    protected virtual void ActivateEntity()
+    protected virtual void ShiftEntity()
     {
-        isActive = true;
+        isShifted = true;
     }
 
-    protected virtual void DeactivateEntity()
+    protected virtual void DeshiftEntity()
     {
-        isActive = false;
+        isShifted = false;
     }
         
     
@@ -31,11 +32,11 @@ public class BinaryEntity : Entity
     protected void CheckEntity(EnvironmentState state) {
         if (enabledState == state)
         {
-            ActivateEntity();
+            ShiftEntity();
         }
         else
         {
-            DeactivateEntity();
+            DeshiftEntity();
         }
     }
 }

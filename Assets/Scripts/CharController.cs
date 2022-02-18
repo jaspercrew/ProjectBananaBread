@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public partial class CharController : LivingThing {
+public partial class CharController : LivingThing
+{
+    public static CharController Instance;
     // Components
     private BoxCollider2D charCollider;
     private ParticleSystem dust;

@@ -5,6 +5,19 @@ using UnityEditor.VersionControl;
 using UnityEngine;
 
 public partial class CharController {
+    private void Awake()
+    {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+            // DontDestroyOnLoad(gameObject);
+        }
+    }
+
     private void Start()
     {
         canDoubleJump = false;

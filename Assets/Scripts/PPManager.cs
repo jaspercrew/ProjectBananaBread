@@ -10,6 +10,8 @@ public class PPManager : MonoBehaviour
     public static PPManager Instance;
     private bool shiftEffecting;
     private Bloom bloom;
+    private ChromaticAberration chromaticAberration;
+    private FilmGrain filmGrain;
     private void Awake()
     {
         if (Instance != null)
@@ -30,6 +32,8 @@ public class PPManager : MonoBehaviour
     {
         volume = GetComponent<Volume>();
         volume.profile.TryGet<Bloom>(out bloom);
+        volume.profile.TryGet<ChromaticAberration>(out chromaticAberration);
+        volume.profile.TryGet<FilmGrain>(out filmGrain);
     }
 
     // Update is called once per frame
@@ -48,6 +52,11 @@ public class PPManager : MonoBehaviour
         const float increaseDuration = .13f;
         const float decreaseDuration = .2f;
         const float effectIntensity = .5f;
+        const float chromaticAberrationIntensity = .7f;
+        const float filmGrainIntensity = .4f;
+
+        chromaticAberration.intensity.value = chromaticAberrationIntensity;
+        filmGrain.intensity.value = filmGrainIntensity;
         
         float increaseTimeElapsed = 0f;
         while (increaseTimeElapsed < increaseDuration)  {
@@ -65,6 +74,8 @@ public class PPManager : MonoBehaviour
             yield return null;
         }
         bloom.intensity.value = 0f;
+        chromaticAberration.intensity.value = 0f;
+        filmGrain.intensity.value = 0f;
 
     }
 }

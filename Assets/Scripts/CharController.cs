@@ -39,7 +39,6 @@ public partial class CharController : LivingThing
     private Transform particleChild;
     
     // Trackers
-    [HideInInspector]
     public bool isInverted;
     private bool isGrounded;
     private bool isInvincible;
@@ -177,17 +176,25 @@ public partial class CharController : LivingThing
     }
 
     public void Invert() {
-        isInverted = true;
+        
         Rigidbody.gravityScale = -Mathf.Abs(Rigidbody.gravityScale);
-        transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
+        if (!isInverted)
+        {
+            transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
+        }
+        
         spriteRenderer.flipX = true;
+        isInverted = true;
     }
     
     public void DeInvert() {
-        isInverted = false;
         Rigidbody.gravityScale = Mathf.Abs(Rigidbody.gravityScale);
-        transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
+        if (isInverted)
+        {
+            transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
+        }
         spriteRenderer.flipX = false;
+        isInverted = false;
     }
 
     public void Interrupt() {

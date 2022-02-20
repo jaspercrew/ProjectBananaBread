@@ -69,11 +69,8 @@ public partial class CharController {
     public void CauseSwitch()
     {
         PPManager.Instance.ShiftEffect();
-        switchPS.Stop();
-        switchPS.Clear();
-        IEnumerator pc = ParticleBurstCoroutine(switchPS, .7f);
-        StopCoroutine(pc);
-        StartCoroutine(pc);
+        switchPS.Play();
+        
         GameManager.Instance.SwitchWorldState();
     }
 

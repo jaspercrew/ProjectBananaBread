@@ -59,7 +59,7 @@ public class PPManager : MonoBehaviour
     
     public IEnumerator SpecificShiftEffectCoroutine(bool toAlt)
     {
-        float shiftEffectDuration = .33f;
+        shiftEffectDuration = .33f;
         
         Debug.Log(smh.highlights.value);
         Debug.Log(smh.shadows.value);

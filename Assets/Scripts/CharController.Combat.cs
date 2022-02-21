@@ -68,7 +68,7 @@ public partial class CharController {
 
     public void CauseSwitch()
     {
-        PPManager.Instance.ShiftEffect();
+        PPManager.Instance.ShiftEffect(GameManager.Instance.currentState == GameManager.Instance.originalState);
         switchPS.Play();
         
         GameManager.Instance.SwitchWorldState();

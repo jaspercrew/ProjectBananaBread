@@ -39,6 +39,17 @@ public class Enemy : LivingThing
             CurrentHealth -= damage;
             // damage animation
             Animator.SetTrigger(Hurt);
+            ParticleSystem gorePS = transform.Find("Particles").Find("GorePS").GetComponent<ParticleSystem>();
+            ParticleSystem.ShapeModule shape = gorePS.shape;
+            if (transform.position.x < charController.transform.position.x)
+            {
+                shape.rotation = new Vector3(0, 0, 145);
+            }
+            else
+            {
+                shape.rotation = new Vector3(0, 0, 0);
+            }
+            gorePS.Play();
 
             if (CurrentHealth <= 0) {
                 Die();

@@ -35,10 +35,11 @@ public class GrappleProjectile : Projectile {
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Rigidbody2D.velocity = Vector2.zero;
         Platform p = other.gameObject.GetComponent<Platform>();
-        if (p == null || !p.isGrappleable) return;
         
+        
+        if (p == null || !p.isGrappleable) return;
+        Rigidbody2D.velocity = Vector2.zero;
         //Debug.Log(other.gameObject.name);
         Vector3 pos = transform.position;
         grappleController.StartGrapple(pos);

@@ -130,7 +130,7 @@ public partial class CharController {
     private IEnumerator AttackCoroutine(bool isHeavyAttack) {
         // light attack modifiers
         float attackBoost = 1.5f;
-        float beginAttackDelay = .15f;
+        float beginAttackDelay = .12f;
         float endAttackDelay = .35f;
         float hitConfirmDelay = .20f;
         

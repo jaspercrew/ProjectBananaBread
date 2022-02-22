@@ -17,7 +17,7 @@ public partial class CharController : LivingThing
     private SpriteRenderer spriteRenderer;
 
     // Configurable player control values
-    public float speed = 7f;
+    public float speed = 10f;
     private const int SliceDamage = 100;
     private const float InAirAcceleration = 1f;
     private const float JumpForce = 6.3f;

@@ -260,7 +260,7 @@ public partial class CharController
 
     private void DoYoink()
     {
-        castProjectileRB.GetComponentInParent<BladeProjectile>().Yoink();
+        castProjectileRB.GetComponentInParent<BladeProjectile>().Callback();
         canYoink = false;
         //StartCoroutine(YoinkCoroutine());
 

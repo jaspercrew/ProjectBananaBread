@@ -136,7 +136,7 @@ public partial class CharController : LivingThing
             {Event.EventTypes.Cast, 
                 @this => @this.IsAbleToAct() && @this.castProjectileRB == null && @this.canCast},
             {Event.EventTypes.Yoink, 
-                @this => @this.IsAbleToAct() && @this.castProjectileRB != null && @this.castProjectileRB.GetComponent<BladeProjectile>().isStuck && @this.canYoink}
+                @this => @this.IsAbleToAct() && @this.castProjectileRB != null && @this.canYoink}
         };
 
     // maps from event type to a void function (action) that actually executes the action

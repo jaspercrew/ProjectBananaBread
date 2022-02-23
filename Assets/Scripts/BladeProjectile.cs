@@ -73,15 +73,17 @@ public class BladeProjectile : Projectile
         
     }
 
-    public void Yoink()
+    public void Callback()
     {
+        if (!isStuck)
+        {
+            isReturning = true;
+            return;
+        }
         Enemy enemyStuck = stuckTo.GetComponent<Enemy>();
         Platform platformStuck = stuckTo.GetComponent<Platform>();
         Entity entityStuck = stuckTo.GetComponent<Entity>();
-        if (!isStuck)
-        {
-            return;
-        }
+
         Debug.Log("yoink from" + stuckTo.name);
         transform.SetParent(null);
 
@@ -91,15 +93,15 @@ public class BladeProjectile : Projectile
         }
         else if (enemyStuck != null)
         {
-            enemyStuck.TakeDamage(10);
-            enemyStuck.Yoink(5f);
+            enemyStuck.TakeDamage(5);
+            enemyStuck.Yoink(15f);
             
         }
         else if (entityStuck != null)
         {
             if (stuckTo.GetComponent<Rigidbody2D>() != null)
             {
-                entityStuck.Yoink(5f);
+                entityStuck.Yoink(10f);
             }
         }
 

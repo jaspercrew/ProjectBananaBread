@@ -30,7 +30,7 @@ public class MeleeEnemy : Enemy
 
     protected override bool AbleToMove()
     {
-        return canFunction && !isAttacking;
+        return base.AbleToMove() && !isAttacking;
     }
 
     protected void DoAttack()

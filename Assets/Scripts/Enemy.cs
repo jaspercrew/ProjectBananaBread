@@ -33,7 +33,7 @@ public class Enemy : LivingThing
 
     public void TakeDamage(int damage, float knockback) { // assumes damage is taken from PLAYER
         if (canFunction) {
-            Interrupt();
+            Stun(4f);
             GameObject player = GameObject.FindWithTag("Player");
             KnockAwayFromPoint(knockback, player.transform.position);
             CurrentHealth -= damage;
@@ -116,7 +116,9 @@ public class Enemy : LivingThing
 
     public override void Stun(float stunTime) {
         Interrupt();
+        //Rigidbody.velocity = Vector2.zero;
         DisableFunctionality();
+        Rigidbody.velocity = Vector2.zero;
         StartCoroutine(StunCoroutine(stunTime));
     }
 

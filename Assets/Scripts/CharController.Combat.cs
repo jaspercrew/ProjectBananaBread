@@ -243,14 +243,38 @@ public partial class CharController
 
     private void DoCast()
     {
-        const float castSpeed = 15f;
-        castProjectileRB = Instantiate(castProjectileInput, transform.position, transform.rotation);
-        castProjectileRB.GetComponentInParent<BladeProjectile>().Initialize(Input.mousePosition - transform.position, castSpeed);
+        const float castSpeed = 25f;
+        castProjectileRB = Instantiate(castProjectileInput, attackPoint.position, transform.rotation);
+        castProjectileRB.GetComponentInParent<BladeProjectile>().Initialize(((Camera.main).ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized, castSpeed);
+        StartCoroutine(CastCoroutine());
+        canCast = false;
+    }
+
+    private IEnumerator CastCoroutine()
+    {
+        const float cooldown = .3f;
+        yield return new WaitForSeconds(cooldown);
+        canYoink = true;
+        
     }
 
     private void DoYoink()
     {
         castProjectileRB.GetComponentInParent<BladeProjectile>().Yoink();
-        
+        canYoink = false;
+        //StartCoroutine(YoinkCoroutine());
+
+    }
+
+    public void ReturnCast()
+    {
+        StartCoroutine(YoinkCoroutine());
+    }
+    
+    private IEnumerator YoinkCoroutine()
+    {
+        const float cooldown = .3f;
+        yield return new WaitForSeconds(cooldown);
+        canCast = true;
     }
 }

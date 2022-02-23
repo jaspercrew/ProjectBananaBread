@@ -20,6 +20,7 @@ public partial class CharController {
 
     private void Start()
     {
+        canCast = true;
         canDoubleJump = false;
         
         particleChild = transform.Find("Particles");

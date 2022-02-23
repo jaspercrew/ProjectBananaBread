@@ -48,6 +48,8 @@ public partial class CharController : LivingThing
     public bool isParrying;
     public bool isCrouching;
     private bool canDoubleJump;
+    private bool canYoink;
+    private bool canCast;
     private bool isWallSliding;
     // private bool isWallTouching;
     // private Collider2D wallTouchingCollider;
@@ -132,9 +134,9 @@ public partial class CharController : LivingThing
             {Event.EventTypes.Crouch, 
                 @this => @this.IsAbleToAct()},
             {Event.EventTypes.Cast, 
-                @this => @this.IsAbleToAct() && @this.castProjectileRB == null},
+                @this => @this.IsAbleToAct() && @this.castProjectileRB == null && @this.canCast},
             {Event.EventTypes.Yoink, 
-                @this => @this.IsAbleToAct() && @this.castProjectileRB.GetComponent<BladeProjectile>().isStuck}
+                @this => @this.IsAbleToAct() && @this.castProjectileRB != null && @this.castProjectileRB.GetComponent<BladeProjectile>().isStuck && @this.canYoink}
         };
 
     // maps from event type to a void function (action) that actually executes the action

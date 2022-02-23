@@ -24,15 +24,15 @@ public abstract class LivingThing : Entity {
     protected static readonly int Dash = Animator.StringToHash("Recover");
 
 
-    public void TakeDamage(int damage) {
-        CurrentHealth -= damage;
-        // damage animation
-        Animator.SetTrigger(Hurt);
-        
-        if (CurrentHealth <= 0) {
-            Die();
-        }
-    }
+    // public virtual void TakeDamage(int damage) {
+    //     CurrentHealth -= damage;
+    //     // damage animation
+    //     Animator.SetTrigger(Hurt);
+    //     
+    //     if (CurrentHealth <= 0) {
+    //         Die();
+    //     }
+    // }
     
     protected void FaceLeft()
     {

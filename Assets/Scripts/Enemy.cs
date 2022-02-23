@@ -31,9 +31,9 @@ public class Enemy : LivingThing
             originalState = EntityState;
     }
 
-    public void TakeDamage(int damage, float knockback) { // assumes damage is taken from PLAYER
+    public void TakeDamage(int damage, float knockback = 8f) { // assumes damage is taken from PLAYER
         if (canFunction) {
-            Stun(4f);
+            Stun(.2f);
             GameObject player = GameObject.FindWithTag("Player");
             KnockAwayFromPoint(knockback, player.transform.position);
             CurrentHealth -= damage;
@@ -56,6 +56,8 @@ public class Enemy : LivingThing
             }
         }
     }
+    
+    
 
     protected virtual bool AbleToMove()
     {
@@ -115,10 +117,11 @@ public class Enemy : LivingThing
 
 
     public override void Stun(float stunTime) {
+        Debug.Log("stun");
         Interrupt();
         //Rigidbody.velocity = Vector2.zero;
         DisableFunctionality();
-        Rigidbody.velocity = Vector2.zero;
+        //Rigidbody.velocity = Vector2.zero;
         StartCoroutine(StunCoroutine(stunTime));
     }
 

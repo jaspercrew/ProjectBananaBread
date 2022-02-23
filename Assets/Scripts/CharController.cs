@@ -74,7 +74,7 @@ public partial class CharController : LivingThing
         
         public enum EventTypes
         {
-            Dash, Jump, DoubleJump, Attack, Parry, Interact, SwitchState, SliceDash, Crouch
+            Dash, Jump, DoubleJump, Attack, Parry, Interact, SwitchState, SliceDash, Crouch, Cast, Yoink
         }
 
         public Event(EventTypes type, float time)
@@ -97,7 +97,9 @@ public partial class CharController : LivingThing
             {() => Input.GetKeyDown(KeyCode.E), Event.EventTypes.Interact},
             {() => Input.GetKeyDown(KeyCode.F), Event.EventTypes.SwitchState},
             {() => Input.GetKeyDown(KeyCode.R), Event.EventTypes.SliceDash},
-            {() => Input.GetKeyDown(KeyCode.LeftControl), Event.EventTypes.Crouch}
+            {() => Input.GetKeyDown(KeyCode.LeftControl), Event.EventTypes.Crouch},
+            {() => Input.GetKeyDown(KeyCode.V), Event.EventTypes.Cast},
+            {() => Input.GetKeyDown(KeyCode.V), Event.EventTypes.Yoink}
         };
 
     // maps from event type to a boolean function that says whether the conditions for the 
@@ -128,7 +130,11 @@ public partial class CharController : LivingThing
             {Event.EventTypes.SliceDash, @this => 
                 (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown},
             {Event.EventTypes.Crouch, 
-                @this => @this.IsAbleToAct()}
+                @this => @this.IsAbleToAct()},
+            {Event.EventTypes.Cast, 
+                @this => @this.IsAbleToAct() && @this.castProjectileRB == null},
+            {Event.EventTypes.Yoink, 
+                @this => @this.IsAbleToAct() && @this.castProjectileRB.GetComponent<BladeProjectile>().isStuck}
         };
 
     // maps from event type to a void function (action) that actually executes the action
@@ -144,7 +150,9 @@ public partial class CharController : LivingThing
             {Event.EventTypes.Interact, @this => @this.DoInteract()},
             {Event.EventTypes.SwitchState, @this => @this.CauseSwitch()},
             {Event.EventTypes.SliceDash, @this => @this.DoSliceDash()},
-            {Event.EventTypes.Crouch, @this => @this.Crouch()}
+            {Event.EventTypes.Crouch, @this => @this.Crouch()},
+            {Event.EventTypes.Cast, @this => @this.DoCast()},
+            {Event.EventTypes.Yoink, @this => @this.DoYoink()}
         };
 
     // [Obsolete("use isGrounded boolean directly instead")]

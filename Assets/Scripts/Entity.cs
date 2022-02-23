@@ -15,4 +15,12 @@ public class Entity : MonoBehaviour
         
         // TODO: change sprite set
     }
+    public void Yoink(float yoinkForce)
+    {
+        if (GetComponent<Rigidbody2D>() == null)
+        {
+            return;
+        }
+        GetComponent<Rigidbody2D>().AddForce(yoinkForce * (CharController.Instance.transform.position - transform.position).normalized, ForceMode2D.Impulse);
+    }
 }

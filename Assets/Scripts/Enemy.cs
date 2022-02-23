@@ -140,4 +140,9 @@ public class Enemy : LivingThing
     protected virtual void EnableFunctionality() {
         canFunction = true;
     }
+
+    public void Yoink(float yoinkForce)
+    {
+        Rigidbody.AddForce(yoinkForce * (charController.transform.position - transform.position).normalized, ForceMode2D.Impulse);
+    }
 }

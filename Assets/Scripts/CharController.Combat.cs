@@ -1,8 +1,12 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-public partial class CharController {
+public partial class CharController
+{
+    private Rigidbody2D castProjectileRB;
+    public Rigidbody2D castProjectileInput;
     private void DoSliceDash() {
         if (!IsAbleToAct()) {
              return;
@@ -235,5 +239,18 @@ public partial class CharController {
         AudioManager.Instance.Play(SoundName.Hit, .5f);
         enemy.TakeDamage(20, 2);
         isAttacking = false;
+    }
+
+    private void DoCast()
+    {
+        const float castSpeed = 15f;
+        castProjectileRB = Instantiate(castProjectileInput, transform.position, transform.rotation);
+        castProjectileRB.GetComponentInParent<BladeProjectile>().Initialize(Input.mousePosition - transform.position, castSpeed);
+    }
+
+    private void DoYoink()
+    {
+        castProjectileRB.GetComponentInParent<BladeProjectile>().Yoink();
+        
     }
 }

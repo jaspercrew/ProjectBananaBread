@@ -243,7 +243,7 @@ public partial class CharController
 
     private void DoCast()
     {
-        const float castSpeed = 25f;
+        const float castSpeed = 35f;
         castProjectileRB = Instantiate(castProjectileInput, attackPoint.position, transform.rotation);
         castProjectileRB.GetComponentInParent<BladeProjectile>().Initialize(((Camera.main).ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized, castSpeed);
         StartCoroutine(CastCoroutine());

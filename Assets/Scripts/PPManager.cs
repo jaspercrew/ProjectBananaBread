@@ -26,10 +26,7 @@ public class PPManager : MonoBehaviour
         else
         {
             Instance = this;
-            // DontDestroyOnLoad(gameObject);
         }
-
-        
     }
 
     // Start is called before the first frame update
@@ -40,16 +37,8 @@ public class PPManager : MonoBehaviour
         volume.profile.TryGet<ChromaticAberration>(out chromaticAberration);
         volume.profile.TryGet<FilmGrain>(out filmGrain);
         volume.profile.TryGet<ShadowsMidtonesHighlights>(out smh);
-        
-        //SpecificShiftEffect(true);
-        
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
 
     public void ShiftEffect(bool toAlt)
     {

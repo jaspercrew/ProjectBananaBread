@@ -115,9 +115,7 @@ public class Enemy : LivingThing
     public override void Stun(float stunTime) {
         Debug.Log("stun");
         Interrupt();
-        //Rigidbody.velocity = Vector2.zero;
         DisableFunctionality();
-        //Rigidbody.velocity = Vector2.zero;
         StartCoroutine(StunCoroutine(stunTime));
     }
 
@@ -144,16 +142,9 @@ public class Enemy : LivingThing
 
     public void Yoink(float yoinkForce)
     {
-        const float upwardBoost = 3f;
-        //Vector3 dir = (charController.transform.position - transform.position).normalized;
         Vector3 dir = (Camera.main).ScreenToWorldPoint(Input.mousePosition) - transform.position;
-        //dir = new Vector3(dir.x, dir.y, 0);
-        Debug.Log(dir);
-        
-        //Rigidbody.AddForce(Vector2.up * upwardBoost, ForceMode2D.Impulse);
         Rigidbody.AddForce(yoinkForce * dir.normalized , ForceMode2D.Impulse);
         movementDisabledAirborne = true;
-        
     }
     
 

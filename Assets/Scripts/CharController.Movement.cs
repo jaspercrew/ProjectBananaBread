@@ -9,15 +9,7 @@ public partial class CharController {
         if (!IsAbleToAct() && !isAttacking) {
             return;
         }
-        
-        //attack cancel
-        // if (isAttacking)
-        // {
-        //     Animator.SetTrigger(Idle); // TODO: dash animation
-        //     isAttacking = false;
-        //     Assert.IsNotNull(attackCoroutine);
-        //     StopCoroutine(attackCoroutine);
-        // }
+        fadeFrames = 30;
         Interrupt();
 
         const float dashSpeed = 9f;

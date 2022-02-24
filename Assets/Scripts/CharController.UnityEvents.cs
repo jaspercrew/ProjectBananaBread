@@ -33,6 +33,7 @@ public partial class CharController {
         sliceDashPS = particleChild.Find("SliceDashPS").GetComponent<ParticleSystem>();
         parryPS = particleChild.Find("ParryPS").GetComponent<ParticleSystem>();
         switchPS = particleChild.Find("SwitchPS").GetComponent<ParticleSystem>();
+        fadePS = particleChild.Find("FadePS").GetComponent<ParticleSystem>();
         obstacleLayerMask = LayerMask.GetMask("Obstacle");
         
         screenShakeController = ScreenShakeController.Instance;
@@ -91,22 +92,6 @@ public partial class CharController {
                 Vector2 vel = Rigidbody.velocity;
                 float newXVel = vel.x;
                 float yVel = vel.y;
-                // if (newXVel > speed)
-                // {
-                //     Rigidbody.velocity = new Vector2(speed, yVel);
-                // }
-                // else if (newXVel < -speed)
-                // {
-                //     Rigidbody.velocity = new Vector2(-speed, yVel);
-                // }
-
-                // simpler:
-                // if (Mathf.Abs(newXVel) > speed)
-                // {
-                //     Rigidbody.velocity = new Vector2(Mathf.Sign(newXVel) * speed, yVel);
-                // }
-                
-                // simplest:
                 Rigidbody.velocity = new Vector2(Mathf.Clamp(newXVel, -speed, speed), yVel);
             }
             
@@ -120,7 +105,6 @@ public partial class CharController {
             //           + wallJumpFramesLeft + " left, dir = " + wallJumpDir + " -------");
             // transform.position += new Vector3((int) wallJumpDir * speed * Time.deltaTime, 0, 0);
             Rigidbody.velocity = new Vector2(wallJumpDir * speed, Rigidbody.velocity.y);
-            // Debug.Log("setting velocity in wall jumping");
             wallJumpFramesLeft--;
         }
     }
@@ -160,6 +144,7 @@ public partial class CharController {
         JumpCooldown_Update();
         // wall slide detection
         WallSlideDetection_Update();
+        FadeParticle_Update();
         
         // slice-dash detection
         SliceDashDetection_Update();
@@ -242,12 +227,7 @@ public partial class CharController {
             // scan for hit enemies
             Physics2D.OverlapCircleNonAlloc(
                 slicePoint.position, attackRange, hitColliders, enemyLayers);
-
-            // if (numHitEnemies > 0) {
-            //     // pause swing animation if an enemy is hit
-            //     StartCoroutine(PauseAnimatorCoroutine(hitConfirmDelay));
-            //     screenShakeController.MediumShake();
-            // }
+            
             if (hitColliders[0] != null) {
                 //Debug.Log("execute");
                 StartCoroutine(SliceExecuteCoroutine(hitColliders[0].GetComponent<Enemy>()));
@@ -272,6 +252,21 @@ public partial class CharController {
         }
     }
 
+    private void FadeParticle_Update()
+    {
+        if (fadeFrames > 0)
+        {
+            //Debug.Log("fdsfds");
+            fadeFrames -= 1;
+            if (fadePS.textureSheetAnimation.spriteCount > 0)
+            {
+                fadePS.textureSheetAnimation.RemoveSprite(0);
+            }
+            fadePS.textureSheetAnimation.AddSprite(spriteRenderer.sprite);
+            fadePS.Play();
+        }
+    }
+
     private IEnumerator JumpCooldownCoroutine() //TODO : fix doublejump bug
     {
         yield return new WaitForSeconds(.1f);
@@ -291,163 +286,41 @@ public partial class CharController {
         
         // left points
         Vector2 middleLeft = center + halfWidth * Vector2.left;
-        // Vector2 topLeft = middleLeft + halfHeight * Vector2.up;
         Vector2 bottomLeft = middleLeft + halfHeight * Vector2.down;
         Vector2 aLittleLeft = 2 * groundDistance * Vector2.left;
         
         // right points
         Vector2 middleRight = center + halfWidth * Vector2.right;
-        // Vector2 topRight = middleRight + halfHeight * Vector2.up;
         Vector2 bottomRight = middleRight + halfHeight * Vector2.down;
         Vector2 aLittleRight = 2 * groundDistance * Vector2.right;
 
         // left linecasts
-        // RaycastHit2D topLeftHit = 
-        //     Physics2D.Linecast(topLeft, topLeft + aLittleLeft, obstacleLayerMask);
         RaycastHit2D bottomLeftHit = 
             Physics2D.Linecast(bottomLeft, bottomLeft + aLittleLeft, obstacleLayerMask);
         bool isNearWallOnLeft = bottomLeftHit;
 
         // right linecasts
-        // RaycastHit2D topRightHit = 
-        //     Physics2D.Linecast(topRight, topRight + aLittleRight, obstacleLayerMask);
         RaycastHit2D bottomRightHit = 
             Physics2D.Linecast(bottomRight, bottomRight + aLittleRight, obstacleLayerMask);
         bool isNearWallOnRight = bottomRightHit;
-
-        // Debug.DrawLine(topLeft, topLeft + aLittleLeft, Color.magenta);
-        // Debug.DrawLine(bottomLeft, bottomLeft + aLittleLeft, Color.magenta);
-        // Debug.DrawLine(topRight, topRight + aLittleRight, Color.magenta);
-        // Debug.DrawLine(bottomRight, bottomRight + aLittleRight, Color.magenta);
 
         isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) || (moveVector < 0 && isNearWallOnLeft)) && IsAbleToMove();
 
         if (isNearWallOnLeft)
         {
-            // Collider2D hit1 = topLeftHit.collider;
-            // Collider2D hit2 = bottomLeftHit.collider;
-            // wallTouchingCollider = hit1 ? hit1 : hit2;
             wallJumpDir = +1;
             canDoubleJump = false;
         }
         else if (isNearWallOnRight)
         {
-            // Collider2D hit1 = topRightHit.collider;
-            // Collider2D hit2 = bottomRightHit.collider;
-            // wallTouchingCollider = hit1 ? hit1 : hit2;
             wallJumpDir = -1;
             canDoubleJump = false;
         }
-        else
-        {
-            // wallTouchingCollider = null;
-            // wallJumpDir = 0;
-        }
 
-
-        // wall sliding
-        // if (isWallSliding)
-        // {
-        //     if (v.y <= 0) {
-        //         Rigidbody.velocity = new Vector2(v.x, Mathf.Max(v.y, -wallSlideSpeed));
-        //     }
-        //
-        //     if (v.y > 0 || moveVector == 0) {
-        //         //Debug.Log("no longer wall sliding - velocity/move vector check");
-        //         isWallSliding = false;
-        //     }
-        //     
-        // }
-        
-        // else if (isWallTouching && wallTouchingCollider != null && 
-        //          Math.Sign(moveVector) == 
-        //          Math.Sign(wallTouchingCollider.transform.position.x - transform.position.x) 
-        //          && Rigidbody.velocity.y <= 0) 
-        // {
-        //     //Debug.Log("now wall sliding");
-        //     // TODO: snap to wall?
-        //     isWallSliding = true;
-        // }
         
         if (isWallSliding)
             
             Rigidbody.velocity = new Vector2(v.x, Mathf.Max(v.y, -wallSlideSpeed));
     }
     
-    // private void OnCollisionEnter2D(Collision2D other)
-    // {
-    //     //Debug.Log("col enter" + Time.time);
-    //     
-    //     // Grounding Controller
-    //     Collider2D wallCol = other.collider;
-    //
-    //     if (wallCol.isTrigger)
-    //         return;
-    //     
-    //     float colX = wallCol.transform.position.x;
-    //     float charX = transform.position.x;
-    //     float colW = wallCol.bounds.extents.x;
-    //     float charW = boxCollider.bounds.extents.x;
-    //     // horizontal distance between char and incoming object
-    //     float dx = Mathf.Abs(charX - colX);
-    //     float maxDx = Mathf.Abs(colW) + Mathf.Abs(charW);
-    //     const float maxWallSlideDistance = 0.03f;
-    //
-    //     if (dx < maxDx)
-    //     {
-    //         //Debug.Log("new colliding: " + other.gameObject.name);
-    //         if (colliding.Count == 0) {
-    //             OnLanding();
-    //         }
-    //         colliding.Add(wallCol);
-    //     }
-    //     
-    //     else if (dx < maxDx + maxWallSlideDistance) {
-    //         canDoubleJump = false;
-    //         isWallTouching = true;
-    //         wallTouchingCollider = wallCol;
-    //     }
-    //     
-    //     // wall sliding 
-    // else if (dx < maxDx + maxWallSlideDistance && Math.Sign(moveVector) == Math.Sign(colX - charX) 
-    //          && Rigidbody.velocity.y <= 0) 
-    //     // {
-    //     //     //Debug.Log("now wall sliding");
-    //     //     // TODO: snap to wall?
-    //     //     isWallSliding = true;
-    //     // }
-    // }
-    
-    // private void OnCollisionExit2D(Collision2D other)
-    // {
-    //     if (other.collider.Equals(wallTouchingCollider))
-    //     {
-    //        // Debug.Log("not wall sliding - exit collider");
-    //         isWallTouching = false;
-    //         isWallSliding = false;
-    //         wallTouchingCollider = null;
-    //         // Debug.Log("stopped wall sliding!");
-    //     }
-    //     else
-    //     {
-    //         colliding.Remove(other.collider);
-    //     }
-    //     
-    //     // if (isSliceDashing && other.gameObject.GetComponent<Enemy>() != null) {
-    //     //     Debug.Log("execute");
-    //     //     StartCoroutine(SliceExecuteCoroutine(other.gameObject.GetComponent<Enemy>()));
-    //     // }
-    // }
-
-    // show gizmos in editor
-    
-    // private void OnDrawGizmosSelected() {
-    //     if (attackPoint != null) {
-    //         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-    //     }
-    //
-    //     Gizmos.color = Color.magenta;
-    //     Gizmos.DrawWireCube(transform.position + (Vector3) charCollider.offset, charCollider.size);
-    // }
-
 }

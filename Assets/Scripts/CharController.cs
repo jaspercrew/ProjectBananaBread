@@ -12,6 +12,7 @@ public partial class CharController : LivingThing
     private ParticleSystem sliceDashPS;
     private ParticleSystem parryPS;
     private ParticleSystem switchPS;
+    private ParticleSystem fadePS;
     private ScreenShakeController screenShakeController;
     private RadialGrapple grappleController;
     private SpriteRenderer spriteRenderer;
@@ -57,6 +58,7 @@ public partial class CharController : LivingThing
     private int wallJumpFramesLeft;
     // private float nextAttackTime;
     // private float nextRollTime;
+    private int fadeFrames; 
     private int comboCounter;
     private bool isAttacking;
     private bool isSliceDashing;

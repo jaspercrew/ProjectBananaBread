@@ -28,6 +28,7 @@ public partial class CharController
     {
         canCast = true;
         canDoubleJump = false;
+        fadeSpriteIterator = 0;
         
         particleChild = transform.Find("Particles");
         CurrentHealth = MaxHealth;
@@ -262,12 +263,14 @@ public partial class CharController
     {
         
         GameObject newFadeSprite;
-        if (fadeFrames > 0)
+        if (fadeTime > 0)
         {
-            //Debug.Log("fdsfds");
-            fadeFrames -= 1;
-            if (fadeFrames % 20 == 0)
+            const int fadeSpriteLimiter = 22;
+            fadeSpriteIterator += 1;
+            fadeTime -= Time.deltaTime;
+            if (fadeSpriteIterator == fadeSpriteLimiter)
             {
+                fadeSpriteIterator = 0;
                 newFadeSprite = Instantiate(fadeSprite, transform.position, transform.rotation);
                 newFadeSprite.GetComponent<FadeSprite>().Initialize(spriteRenderer.sprite, transform.localScale.x < 0);
             }

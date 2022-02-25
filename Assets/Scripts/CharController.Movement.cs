@@ -2,7 +2,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public partial class CharController {
+public partial class CharController
+{
+    
 
     private void DoDash()
     {
@@ -17,8 +19,10 @@ public partial class CharController {
 
         float xScale = transform.localScale.x;
 
-        fadeFrames = 120;
-        VelocityDash(xScale > 0? -dashSpeed : dashSpeed, dashTime);
+        fadeTime = .28f;
+        float dashDir = moveVector == 0 ? -xScale : moveVector;
+
+        VelocityDash(dashDir * dashSpeed, dashTime);
         dust.Play();
         Animator.SetTrigger(Dash);
         

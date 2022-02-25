@@ -58,7 +58,8 @@ public partial class CharController : LivingThing
     private int wallJumpFramesLeft;
     // private float nextAttackTime;
     // private float nextRollTime;
-    private int fadeFrames; 
+    private int fadeSpriteIterator;
+    private float fadeTime; 
     private int comboCounter;
     private bool isAttacking;
     private bool isSliceDashing;

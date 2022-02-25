@@ -7,12 +7,14 @@ public class FadeSprite : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private const float fadeTime = 20f;
     private float timeLeft;
+    
 
     // Start is called before the first frame update
     void Awake()
     {
         spriteRenderer = GetComponentInParent<SpriteRenderer>();
         timeLeft = fadeTime;
+        //fadeSpriteIterator = 0;
     }
     
     void FixedUpdate()

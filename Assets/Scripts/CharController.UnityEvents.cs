@@ -3,8 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.VersionControl;
 using UnityEngine;
+using UnityEngine.Assertions;
+using Object = UnityEngine.Object;
 
-public partial class CharController {
+
+
+public partial class CharController
+{
+    public GameObject fadeSprite;
     private void Awake()
     {
         if (Instance != null)
@@ -144,8 +150,8 @@ public partial class CharController {
         JumpCooldown_Update();
         // wall slide detection
         WallSlideDetection_Update();
-        FadeParticle_Update();
         
+        FadeParticle_Update();
         // slice-dash detection
         SliceDashDetection_Update();
         
@@ -254,16 +260,17 @@ public partial class CharController {
 
     private void FadeParticle_Update()
     {
+        
+        GameObject newFadeSprite;
         if (fadeFrames > 0)
         {
             //Debug.Log("fdsfds");
             fadeFrames -= 1;
-            if (fadePS.textureSheetAnimation.spriteCount > 0)
+            if (fadeFrames % 20 == 0)
             {
-                fadePS.textureSheetAnimation.RemoveSprite(0);
+                newFadeSprite = Instantiate(fadeSprite, transform.position, transform.rotation);
+                newFadeSprite.GetComponent<FadeSprite>().Initialize(spriteRenderer.sprite, transform.localScale.x < 0);
             }
-            fadePS.textureSheetAnimation.AddSprite(spriteRenderer.sprite);
-            fadePS.Play();
         }
     }
 

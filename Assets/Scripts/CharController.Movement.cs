@@ -9,13 +9,15 @@ public partial class CharController {
         if (!IsAbleToAct() && !isAttacking) {
             return;
         }
-        fadeFrames = 30;
+        
         Interrupt();
 
         const float dashSpeed = 9f;
         const float dashTime = .23f;
 
         float xScale = transform.localScale.x;
+
+        fadeFrames = 120;
         VelocityDash(xScale > 0? -dashSpeed : dashSpeed, dashTime);
         dust.Play();
         Animator.SetTrigger(Dash);

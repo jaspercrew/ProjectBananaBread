@@ -39,7 +39,7 @@ public partial class CharController
         sliceDashPS = particleChild.Find("SliceDashPS").GetComponent<ParticleSystem>();
         parryPS = particleChild.Find("ParryPS").GetComponent<ParticleSystem>();
         switchPS = particleChild.Find("SwitchPS").GetComponent<ParticleSystem>();
-        fadePS = particleChild.Find("FadePS").GetComponent<ParticleSystem>();
+        //fadePS = particleChild.Find("FadePS").GetComponent<ParticleSystem>();
         obstacleLayerMask = LayerMask.GetMask("Obstacle");
         
         screenShakeController = ScreenShakeController.Instance;

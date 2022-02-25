@@ -12,7 +12,7 @@ public partial class CharController : LivingThing
     private ParticleSystem sliceDashPS;
     private ParticleSystem parryPS;
     private ParticleSystem switchPS;
-    private ParticleSystem fadePS;
+    //private ParticleSystem fadePS;
     private ScreenShakeController screenShakeController;
     private RadialGrapple grappleController;
     private SpriteRenderer spriteRenderer;

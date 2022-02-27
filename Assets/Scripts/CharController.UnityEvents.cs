@@ -70,7 +70,7 @@ public partial class CharController
         // regular ground movement
         if (isGrounded)
         {
-            Rigidbody.velocity = new Vector2(moveVector * speed, Rigidbody.velocity.y);
+            Rigidbody.velocity = new Vector2(moveVector * speed, Rigidbody.velocity.y); 
             // Debug.Log("setting vel in movement");
         }
         // in-air movement
@@ -265,7 +265,7 @@ public partial class CharController
         GameObject newFadeSprite;
         if (fadeTime > 0)
         {
-            const int fadeSpriteLimiter = 22;
+            const int fadeSpriteLimiter = 25;
             fadeSpriteIterator += 1;
             fadeTime -= Time.deltaTime;
             if (fadeSpriteIterator == fadeSpriteLimiter)

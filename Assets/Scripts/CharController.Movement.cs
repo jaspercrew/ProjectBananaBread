@@ -2,7 +2,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public partial class CharController {
+public partial class CharController
+{
+    
 
     private void DoDash()
     {
@@ -10,21 +12,17 @@ public partial class CharController {
             return;
         }
         
-        //attack cancel
-        // if (isAttacking)
-        // {
-        //     Animator.SetTrigger(Idle); // TODO: dash animation
-        //     isAttacking = false;
-        //     Assert.IsNotNull(attackCoroutine);
-        //     StopCoroutine(attackCoroutine);
-        // }
         Interrupt();
 
         const float dashSpeed = 9f;
         const float dashTime = .23f;
 
         float xScale = transform.localScale.x;
-        VelocityDash(xScale > 0? -dashSpeed : dashSpeed, dashTime);
+
+        fadeTime = .28f;
+        float dashDir = moveVector == 0 ? -xScale : moveVector;
+
+        VelocityDash(dashDir * dashSpeed, dashTime);
         dust.Play();
         Animator.SetTrigger(Dash);
         

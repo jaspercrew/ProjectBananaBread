@@ -24,15 +24,15 @@ public abstract class LivingThing : Entity {
     protected static readonly int Dash = Animator.StringToHash("Recover");
 
 
-    public void TakeDamage(int damage) {
-        CurrentHealth -= damage;
-        // damage animation
-        Animator.SetTrigger(Hurt);
-        
-        if (CurrentHealth <= 0) {
-            Die();
-        }
-    }
+    // public virtual void TakeDamage(int damage) {
+    //     CurrentHealth -= damage;
+    //     // damage animation
+    //     Animator.SetTrigger(Hurt);
+    //     
+    //     if (CurrentHealth <= 0) {
+    //         Die();
+    //     }
+    // }
     
     protected void FaceLeft()
     {
@@ -72,8 +72,10 @@ public abstract class LivingThing : Entity {
     }
     
     // knock this object away from point with velocity vel 
-    protected void KnockAwayFromPoint(float vel, Vector3 point) {
-        Rigidbody.velocity = vel * (transform.position - point).normalized;
+    protected void KnockAwayFromPoint(float force, Vector3 point) {
+        Vector2 dir =(transform.position - point).normalized;
+        Rigidbody.AddForce(dir * force, ForceMode2D.Impulse);
+        Debug.Log(force + "cringe");
     }
     
     

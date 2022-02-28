@@ -3,8 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.VersionControl;
 using UnityEngine;
+using UnityEngine.Assertions;
+using Object = UnityEngine.Object;
 
-public partial class CharController {
+
+
+public partial class CharController
+{
+    public GameObject fadeSprite;
     private void Awake()
     {
         if (Instance != null)
@@ -20,7 +26,9 @@ public partial class CharController {
 
     private void Start()
     {
+        canCast = true;
         canDoubleJump = false;
+        fadeSpriteIterator = 0;
         
         particleChild = transform.Find("Particles");
         CurrentHealth = MaxHealth;
@@ -32,6 +40,7 @@ public partial class CharController {
         sliceDashPS = particleChild.Find("SliceDashPS").GetComponent<ParticleSystem>();
         parryPS = particleChild.Find("ParryPS").GetComponent<ParticleSystem>();
         switchPS = particleChild.Find("SwitchPS").GetComponent<ParticleSystem>();
+        //fadePS = particleChild.Find("FadePS").GetComponent<ParticleSystem>();
         obstacleLayerMask = LayerMask.GetMask("Obstacle");
         
         screenShakeController = ScreenShakeController.Instance;
@@ -56,46 +65,6 @@ public partial class CharController {
         
     }
 
-    private void MovementAndVelocityOverriding_FixedUpdate_OLD() {
-        float xVel = Rigidbody.velocity.x;
-        // regular ground movement
-        if (isGrounded)
-        {
-            Rigidbody.velocity = new Vector2(moveVector * speed, Rigidbody.velocity.y);
-            // Debug.Log("setting vel in movement");
-        }
-        // in-air movement
-        else
-        {
-            bool isHighVel = Mathf.Abs(xVel) > speed;
-            bool isMovingSameDir = Math.Sign(moveVector) == Math.Sign(xVel);
-
-            bool move = !(isRecentlyGrappled && isHighVel && isMovingSameDir);
-            bool applyMaxVel = !(isRecentlyGrappled && isHighVel);
-            
-            if (move && !isWallSliding /*&& wallJumpFramesLeft == 0*/)
-            {
-                Rigidbody.velocity += moveVector * new Vector2(InAirAcceleration, 0);
-            }
-
-            //slow down if player is not inputting horizontal movement (not technically drag)
-            if (moveVector == 0 && !grappleController.isGrappling)
-            {
-                //Debug.Log("drag");
-                Rigidbody.velocity = new Vector2(Rigidbody.velocity.x * .9f, Rigidbody.velocity.y);
-            }
-
-            if (applyMaxVel)
-            {
-                Vector2 vel = Rigidbody.velocity;
-                float newXVel = vel.x;
-                float yVel = vel.y;
-                Rigidbody.velocity = new Vector2(Mathf.Clamp(newXVel, -speed, speed), yVel);
-            }
-            
-        }
-    }
-
     private void MovementAndVelocityOverriding_FixedUpdate() {
         Vector2 v = Rigidbody.velocity;
         float xVel = v.x;
@@ -103,22 +72,32 @@ public partial class CharController {
         // regular ground movement
         if (isGrounded)
         {
-            // Rigidbody.velocity = new Vector2(moveVector * speed, Rigidbody.velocity.y);
-            // Debug.Log("setting vel in movement");
             int moveDir = Math.Sign(moveVector);
-            if (moveDir == 0)
+            if (moveDir == 0 && Mathf.Abs(xVel) >= MinGroundSpeed)
             {
+                Debug.Log("here: " + xVel);
                 int antiMoveDir = -Math.Sign(xVel);
+                
+                // TODO
                 Rigidbody.AddForce(antiMoveDir * OnGroundDeceleration * Vector2.right, ForceMode2D.Force);
             }
-            else
+            else 
+            if (moveDir != 0)
             {
                 Rigidbody.AddForce(moveDir * OnGroundAcceleration * Vector2.right, ForceMode2D.Force);
             }
             
             // apply max velocity
-            if (Mathf.Abs(xVel) > speed) // if newXVel != xVel
+            if (Mathf.Abs(xVel) > speed)// if newXVel != xVel
+            {
                 Rigidbody.velocity = new Vector2(Mathf.Clamp(xVel, -speed, speed), yVel);
+            }
+
+            // apply min velocity
+            if (Mathf.Abs(xVel) < MinGroundSpeed)
+            {
+                Rigidbody.velocity = new Vector2(0, yVel);
+            }
         }
         // in-air movement
         else
@@ -131,25 +110,20 @@ public partial class CharController {
             
             if (move && !isWallSliding /*&& wallJumpFramesLeft == 0*/)
             {
-                // Rigidbody.velocity += moveVector * new Vector2(InAirAcceleration, 0);
                 Rigidbody.AddForce(Math.Sign(moveVector) * InAirAcceleration * Vector2.right, ForceMode2D.Force);
             }
 
             // slow down if player is not inputting horizontal movement (not technically drag)
             if (moveVector == 0 && !grappleController.isGrappling)
             {
-                //Debug.Log("drag");
-                // Rigidbody.velocity = new Vector2(Rigidbody.velocity.x * .9f, Rigidbody.velocity.y);
-                int currentDir = Math.Sign(xVel);
                 // drag as a function of current x velocity
-                Rigidbody.AddForce(-currentDir * InAirDrag * Vector2.right, ForceMode2D.Force);
+                Rigidbody.AddForce(-xVel * InAirDrag * Vector2.right, ForceMode2D.Force);
             }
 
             if (applyMaxVel)
             {
                 Vector2 vel = Rigidbody.velocity;
-                float newXVel = vel.x;
-                Rigidbody.velocity = new Vector2(Mathf.Clamp(newXVel, -speed, speed), yVel);
+                Rigidbody.velocity = new Vector2(Mathf.Clamp(vel.x, -speed, speed), yVel);
             }
             
         }
@@ -161,8 +135,8 @@ public partial class CharController {
             // Debug.Log("------- WALL JUMPING (FIXED) UPDATE - "
             //           + wallJumpFramesLeft + " left, dir = " + wallJumpDir + " -------");
             // transform.position += new Vector3((int) wallJumpDir * speed * Time.deltaTime, 0, 0);
+            // TODO check this out
             Rigidbody.velocity = new Vector2(wallJumpDir * speed, Rigidbody.velocity.y);
-            // Debug.Log("setting velocity in wall jumping");
             wallJumpFramesLeft--;
         }
     }
@@ -203,6 +177,7 @@ public partial class CharController {
         // wall slide detection
         WallSlideDetection_Update();
         
+        FadeParticle_Update();
         // slice-dash detection
         SliceDashDetection_Update();
         
@@ -284,12 +259,7 @@ public partial class CharController {
             // scan for hit enemies
             Physics2D.OverlapCircleNonAlloc(
                 slicePoint.position, attackRange, hitColliders, enemyLayers);
-
-            // if (numHitEnemies > 0) {
-            //     // pause swing animation if an enemy is hit
-            //     StartCoroutine(PauseAnimatorCoroutine(hitConfirmDelay));
-            //     screenShakeController.MediumShake();
-            // }
+            
             if (hitColliders[0] != null) {
                 //Debug.Log("execute");
                 StartCoroutine(SliceExecuteCoroutine(hitColliders[0].GetComponent<Enemy>()));
@@ -314,6 +284,24 @@ public partial class CharController {
         }
     }
 
+    private void FadeParticle_Update()
+    {
+        
+        GameObject newFadeSprite;
+        if (fadeTime > 0)
+        {
+            const int fadeSpriteLimiter = 25;
+            fadeSpriteIterator += 1;
+            fadeTime -= Time.deltaTime;
+            if (fadeSpriteIterator == fadeSpriteLimiter)
+            {
+                fadeSpriteIterator = 0;
+                newFadeSprite = Instantiate(fadeSprite, transform.position, transform.rotation);
+                newFadeSprite.GetComponent<FadeSprite>().Initialize(spriteRenderer.sprite, transform.localScale.x < 0);
+            }
+        }
+    }
+
     private IEnumerator JumpCooldownCoroutine() //TODO : fix doublejump bug
     {
         yield return new WaitForSeconds(.1f);
@@ -333,163 +321,41 @@ public partial class CharController {
         
         // left points
         Vector2 middleLeft = center + halfWidth * Vector2.left;
-        // Vector2 topLeft = middleLeft + halfHeight * Vector2.up;
         Vector2 bottomLeft = middleLeft + halfHeight * Vector2.down;
         Vector2 aLittleLeft = 2 * groundDistance * Vector2.left;
         
         // right points
         Vector2 middleRight = center + halfWidth * Vector2.right;
-        // Vector2 topRight = middleRight + halfHeight * Vector2.up;
         Vector2 bottomRight = middleRight + halfHeight * Vector2.down;
         Vector2 aLittleRight = 2 * groundDistance * Vector2.right;
 
         // left linecasts
-        // RaycastHit2D topLeftHit = 
-        //     Physics2D.Linecast(topLeft, topLeft + aLittleLeft, obstacleLayerMask);
         RaycastHit2D bottomLeftHit = 
             Physics2D.Linecast(bottomLeft, bottomLeft + aLittleLeft, obstacleLayerMask);
         bool isNearWallOnLeft = bottomLeftHit;
 
         // right linecasts
-        // RaycastHit2D topRightHit = 
-        //     Physics2D.Linecast(topRight, topRight + aLittleRight, obstacleLayerMask);
         RaycastHit2D bottomRightHit = 
             Physics2D.Linecast(bottomRight, bottomRight + aLittleRight, obstacleLayerMask);
         bool isNearWallOnRight = bottomRightHit;
-
-        // Debug.DrawLine(topLeft, topLeft + aLittleLeft, Color.magenta);
-        // Debug.DrawLine(bottomLeft, bottomLeft + aLittleLeft, Color.magenta);
-        // Debug.DrawLine(topRight, topRight + aLittleRight, Color.magenta);
-        // Debug.DrawLine(bottomRight, bottomRight + aLittleRight, Color.magenta);
 
         isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) || (moveVector < 0 && isNearWallOnLeft)) && IsAbleToMove();
 
         if (isNearWallOnLeft)
         {
-            // Collider2D hit1 = topLeftHit.collider;
-            // Collider2D hit2 = bottomLeftHit.collider;
-            // wallTouchingCollider = hit1 ? hit1 : hit2;
             wallJumpDir = +1;
             canDoubleJump = false;
         }
         else if (isNearWallOnRight)
         {
-            // Collider2D hit1 = topRightHit.collider;
-            // Collider2D hit2 = bottomRightHit.collider;
-            // wallTouchingCollider = hit1 ? hit1 : hit2;
             wallJumpDir = -1;
             canDoubleJump = false;
         }
-        else
-        {
-            // wallTouchingCollider = null;
-            // wallJumpDir = 0;
-        }
 
-
-        // wall sliding
-        // if (isWallSliding)
-        // {
-        //     if (v.y <= 0) {
-        //         Rigidbody.velocity = new Vector2(v.x, Mathf.Max(v.y, -wallSlideSpeed));
-        //     }
-        //
-        //     if (v.y > 0 || moveVector == 0) {
-        //         //Debug.Log("no longer wall sliding - velocity/move vector check");
-        //         isWallSliding = false;
-        //     }
-        //     
-        // }
-        
-        // else if (isWallTouching && wallTouchingCollider != null && 
-        //          Math.Sign(moveVector) == 
-        //          Math.Sign(wallTouchingCollider.transform.position.x - transform.position.x) 
-        //          && Rigidbody.velocity.y <= 0) 
-        // {
-        //     //Debug.Log("now wall sliding");
-        //     // TODO: snap to wall?
-        //     isWallSliding = true;
-        // }
         
         if (isWallSliding)
             
             Rigidbody.velocity = new Vector2(v.x, Mathf.Max(v.y, -wallSlideSpeed));
     }
     
-    // private void OnCollisionEnter2D(Collision2D other)
-    // {
-    //     //Debug.Log("col enter" + Time.time);
-    //     
-    //     // Grounding Controller
-    //     Collider2D wallCol = other.collider;
-    //
-    //     if (wallCol.isTrigger)
-    //         return;
-    //     
-    //     float colX = wallCol.transform.position.x;
-    //     float charX = transform.position.x;
-    //     float colW = wallCol.bounds.extents.x;
-    //     float charW = boxCollider.bounds.extents.x;
-    //     // horizontal distance between char and incoming object
-    //     float dx = Mathf.Abs(charX - colX);
-    //     float maxDx = Mathf.Abs(colW) + Mathf.Abs(charW);
-    //     const float maxWallSlideDistance = 0.03f;
-    //
-    //     if (dx < maxDx)
-    //     {
-    //         //Debug.Log("new colliding: " + other.gameObject.name);
-    //         if (colliding.Count == 0) {
-    //             OnLanding();
-    //         }
-    //         colliding.Add(wallCol);
-    //     }
-    //     
-    //     else if (dx < maxDx + maxWallSlideDistance) {
-    //         canDoubleJump = false;
-    //         isWallTouching = true;
-    //         wallTouchingCollider = wallCol;
-    //     }
-    //     
-    //     // wall sliding 
-    // else if (dx < maxDx + maxWallSlideDistance && Math.Sign(moveVector) == Math.Sign(colX - charX) 
-    //          && Rigidbody.velocity.y <= 0) 
-    //     // {
-    //     //     //Debug.Log("now wall sliding");
-    //     //     // TODO: snap to wall?
-    //     //     isWallSliding = true;
-    //     // }
-    // }
-    
-    // private void OnCollisionExit2D(Collision2D other)
-    // {
-    //     if (other.collider.Equals(wallTouchingCollider))
-    //     {
-    //        // Debug.Log("not wall sliding - exit collider");
-    //         isWallTouching = false;
-    //         isWallSliding = false;
-    //         wallTouchingCollider = null;
-    //         // Debug.Log("stopped wall sliding!");
-    //     }
-    //     else
-    //     {
-    //         colliding.Remove(other.collider);
-    //     }
-    //     
-    //     // if (isSliceDashing && other.gameObject.GetComponent<Enemy>() != null) {
-    //     //     Debug.Log("execute");
-    //     //     StartCoroutine(SliceExecuteCoroutine(other.gameObject.GetComponent<Enemy>()));
-    //     // }
-    // }
-
-    // show gizmos in editor
-    
-    // private void OnDrawGizmosSelected() {
-    //     if (attackPoint != null) {
-    //         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-    //     }
-    //
-    //     Gizmos.color = Color.magenta;
-    //     Gizmos.DrawWireCube(transform.position + (Vector3) charCollider.offset, charCollider.size);
-    // }
-
 }

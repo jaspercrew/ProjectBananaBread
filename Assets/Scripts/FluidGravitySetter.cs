@@ -25,12 +25,13 @@ public class FluidGravitySetter : BinaryEntity
         {
             if (isShifted)
             {
-                CharController.Instance.isInverted = true;
+                CharController.Instance.Invert();
             }
             else
             {
-                CharController.Instance.isInverted = false;
+                CharController.Instance.DeInvert();
             }
+            
         }
     }
 }

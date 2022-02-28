@@ -1,4 +1,5 @@
 using System;
+using Pathfinding.Ionic.Zlib;
 using UnityEngine;
 
 public partial class RadialGrapple : MonoBehaviour{
@@ -19,7 +20,7 @@ public partial class RadialGrapple : MonoBehaviour{
         distanceJoint = GetComponent<DistanceJoint2D>();
         rigidbody2d = GetComponent<Rigidbody2D>();
         charController = FindObjectOfType<CharController>();
-        
+        lineRenderer.enabled = false;
         distanceJoint.enabled = false;
     }
 
@@ -45,15 +46,15 @@ public partial class RadialGrapple : MonoBehaviour{
 
             EndGrapple();
         }
-
-        
-
-        if (distanceJoint.enabled) {
-            lineRenderer.SetPosition(1, transform.position);
+        lineRenderer.SetPosition(1, transform.position);
+        if (p != null) //isLaunched
+        {
+            lineRenderer.SetPosition(0, p.transform.position);
         }
     }
 
     private void FixedUpdate() {
+        
         if (isGrappling) {
             const float offsetMultiplier = 1f;
             float offset = Mathf.Cos(Vector3.Angle(transform.position - attachmentPoint, Vector3.down)) * offsetMultiplier;
@@ -61,6 +62,7 @@ public partial class RadialGrapple : MonoBehaviour{
             //Debug.Log(offset);
             float grappleLength = (attachmentPoint - transform.position).magnitude;
             distanceJoint.distance = grappleLength;
+            //lineRenderer.SetPosition(0, p.transform.position);
         }
     }
 
@@ -69,6 +71,7 @@ public partial class RadialGrapple : MonoBehaviour{
         Vector3 offset = charController.isInverted ? new Vector3(0, -1, 0) : new Vector3(0, 1, 0);
         p = Instantiate(projectile, transform.position + offset, transform.rotation);
         p.gameObject.GetComponent<GrappleProjectile>().SetStats(direction.normalized, speed);
+        lineRenderer.enabled = true;
         
     }
 
@@ -82,8 +85,8 @@ public partial class RadialGrapple : MonoBehaviour{
         
         isGrappling = true;
         charController.isRecentlyGrappled = true;
-        lineRenderer.SetPosition(0, grapplePoint);
-        lineRenderer.SetPosition(1, transform.position);
+        //lineRenderer.SetPosition(0, grapplePoint);
+        //lineRenderer.SetPosition(1, transform.position);
         distanceJoint.connectedAnchor = grapplePoint;
         
         distanceJoint.enabled = true;

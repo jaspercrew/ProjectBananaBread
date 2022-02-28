@@ -30,7 +30,7 @@ public class MeleeEnemy : Enemy
 
     protected override bool AbleToMove()
     {
-        return canFunction && !isAttacking;
+        return base.AbleToMove() && !isAttacking;
     }
 
     protected void DoAttack()
@@ -102,4 +102,11 @@ public class MeleeEnemy : Enemy
         canFunction = true;
         isAttacking = false;
     }
+    // public override void Stun(float stunTime) {
+    //     Interrupt();
+    //     //Rigidbody.velocity = Vector2.zero;
+    //     DisableFunctionality();
+    //     Rigidbody.velocity = Vector2.zero;
+    //     StartCoroutine(StunCoroutine(stunTime));
+    // }
 }

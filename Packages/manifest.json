@@ -6,6 +6,7 @@
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.2d.spriteshape": "5.1.5",
     "com.unity.2d.tilemap": "1.0.0",
+    "com.unity.2d.tilemap.extras": "file:F:/jaspe/Desktop/Unity Projects/2d extras/2d-extras",
     "com.unity.cinemachine": "2.6.11",
     "com.unity.collab-proxy": "1.15.1",
     "com.unity.ide.rider": "2.0.7",

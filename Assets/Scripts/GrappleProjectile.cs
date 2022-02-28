@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class GrappleProjectile : Projectile {
     //components
-    private LineRenderer lineRenderer;
+    //private LineRenderer lineRenderer;
     private CharController characterController;
     private RadialGrapple grappleController;
     
@@ -24,23 +24,27 @@ public class GrappleProjectile : Projectile {
         characterController = FindObjectOfType<CharController>();
         grappleController = FindObjectOfType<RadialGrapple>();
         Rigidbody2D.gravityScale = GravityScale;
-        lineRenderer = GetComponent<LineRenderer>();
+        //lineRenderer = GetComponent<LineRenderer>();
         Rigidbody2D.velocity = direction * speed;
     }
 
     private void Update() {
-        lineRenderer.SetPosition(0, transform.position);
-        lineRenderer.SetPosition(1, characterController.transform.position);
+        // lineRenderer.SetPosition(0, transform.position);
+        // lineRenderer.SetPosition(1, characterController.transform.position);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         Platform p = other.gameObject.GetComponent<Platform>();
-        if (p == null || !p.isGrappleable) return;
         
+        
+        if (p == null || !p.isGrappleable) return;
+        Rigidbody2D.velocity = Vector2.zero;
         //Debug.Log(other.gameObject.name);
         Vector3 pos = transform.position;
-        grappleController.StartGrapple(other.ClosestPoint(pos));
-        Destroy(gameObject);
+        grappleController.StartGrapple(pos);
+        
+        //lineRenderer.
+        //Destroy(gameObject);
     }
 }

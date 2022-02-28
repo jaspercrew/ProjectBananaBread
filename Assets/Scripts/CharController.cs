@@ -12,17 +12,19 @@ public partial class CharController : LivingThing
     private ParticleSystem sliceDashPS;
     private ParticleSystem parryPS;
     private ParticleSystem switchPS;
+    //private ParticleSystem fadePS;
     private ScreenShakeController screenShakeController;
     private RadialGrapple grappleController;
     private SpriteRenderer spriteRenderer;
 
     // Configurable player control values
-    public float speed = 7f;
+    public float speed = 10f;
     private const int SliceDamage = 100;
+    private const float MinGroundSpeed = 0.05f;
     private const float OnGroundAcceleration = 12f;
     private const float OnGroundDeceleration = 18f;
     private const float InAirAcceleration = 12f;
-    private const float InAirDrag = 0.2f;
+    private const float InAirDrag = 1f;
     private const float JumpForce = 6.3f;
     private const int HeavyAttackBuildup = 4;
     private const float AttackCooldown = 0.5f;
@@ -42,7 +44,6 @@ public partial class CharController : LivingThing
     private Transform particleChild;
     
     // Trackers
-    [HideInInspector]
     public bool isInverted;
     private bool isGrounded;
     private bool isInvincible;
@@ -52,6 +53,8 @@ public partial class CharController : LivingThing
     public bool isParrying;
     public bool isCrouching;
     private bool canDoubleJump;
+    private bool canYoink;
+    private bool canCast;
     private bool isWallSliding;
     // private bool isWallTouching;
     // private Collider2D wallTouchingCollider;
@@ -59,6 +62,8 @@ public partial class CharController : LivingThing
     private int wallJumpFramesLeft;
     // private float nextAttackTime;
     // private float nextRollTime;
+    private int fadeSpriteIterator;
+    private float fadeTime; 
     private int comboCounter;
     private bool isAttacking;
     private bool isSliceDashing;
@@ -78,7 +83,7 @@ public partial class CharController : LivingThing
         
         public enum EventTypes
         {
-            Dash, Jump, DoubleJump, Attack, Parry, Interact, SwitchState, SliceDash, Crouch
+            Dash, Jump, DoubleJump, Attack, Parry, Interact, SwitchState, SliceDash, Crouch, Cast, Yoink
         }
 
         public Event(EventTypes type, float time)
@@ -101,7 +106,9 @@ public partial class CharController : LivingThing
             {() => Input.GetKeyDown(KeyCode.E), Event.EventTypes.Interact},
             {() => Input.GetKeyDown(KeyCode.F), Event.EventTypes.SwitchState},
             {() => Input.GetKeyDown(KeyCode.R), Event.EventTypes.SliceDash},
-            {() => Input.GetKeyDown(KeyCode.LeftControl), Event.EventTypes.Crouch}
+            {() => Input.GetKeyDown(KeyCode.LeftControl), Event.EventTypes.Crouch},
+            {() => Input.GetKeyDown(KeyCode.V), Event.EventTypes.Cast},
+            {() => Input.GetKeyDown(KeyCode.V), Event.EventTypes.Yoink}
         };
 
     // maps from event type to a boolean function that says whether the conditions for the 
@@ -132,7 +139,11 @@ public partial class CharController : LivingThing
             {Event.EventTypes.SliceDash, @this => 
                 (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown},
             {Event.EventTypes.Crouch, 
-                @this => @this.IsAbleToAct()}
+                @this => @this.IsAbleToAct()},
+            {Event.EventTypes.Cast, 
+                @this => @this.IsAbleToAct() && @this.castProjectileRB == null && @this.canCast},
+            {Event.EventTypes.Yoink, 
+                @this => @this.IsAbleToAct() && @this.castProjectileRB != null && @this.canYoink}
         };
 
     // maps from event type to a void function (action) that actually executes the action
@@ -148,7 +159,9 @@ public partial class CharController : LivingThing
             {Event.EventTypes.Interact, @this => @this.DoInteract()},
             {Event.EventTypes.SwitchState, @this => @this.CauseSwitch()},
             {Event.EventTypes.SliceDash, @this => @this.DoSliceDash()},
-            {Event.EventTypes.Crouch, @this => @this.Crouch()}
+            {Event.EventTypes.Crouch, @this => @this.Crouch()},
+            {Event.EventTypes.Cast, @this => @this.DoCast()},
+            {Event.EventTypes.Yoink, @this => @this.DoYoink()}
         };
 
     // [Obsolete("use isGrounded boolean directly instead")]
@@ -180,17 +193,25 @@ public partial class CharController : LivingThing
     }
 
     public void Invert() {
-        isInverted = true;
+        
         Rigidbody.gravityScale = -Mathf.Abs(Rigidbody.gravityScale);
-        transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
+        if (!isInverted)
+        {
+            transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
+        }
+        
         spriteRenderer.flipX = true;
+        isInverted = true;
     }
     
     public void DeInvert() {
-        isInverted = false;
         Rigidbody.gravityScale = Mathf.Abs(Rigidbody.gravityScale);
-        transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
+        if (isInverted)
+        {
+            transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
+        }
         spriteRenderer.flipX = false;
+        isInverted = false;
     }
 
     public void Interrupt() {

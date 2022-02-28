@@ -6,13 +6,15 @@ using UnityEngine;
 public class Enemy : LivingThing
 {
     // Attacking
-    protected float speed = 5f;
+    protected float speed = 3f;
     // [SerializeField] private int moveState; // determines movement behavior
     
     // Trackers
     // private float moveVector = 0f;
     protected EnvironmentState originalState = 0;
     protected bool canFunction;
+    protected bool movementDisabledAirborne;
+    protected bool movementDisabledTimed;
 
     protected AIPath aiPath;
     protected CharController charController;
@@ -31,28 +33,44 @@ public class Enemy : LivingThing
             originalState = EntityState;
     }
 
-    public void TakeDamage(int damage, float knockback) { // assumes damage is taken from PLAYER
+    public void TakeDamage(int damage, float knockback = 0f) { // assumes damage is taken from PLAYER
         if (canFunction) {
-            Interrupt();
+            Stun(.2f);
             GameObject player = GameObject.FindWithTag("Player");
             KnockAwayFromPoint(knockback, player.transform.position);
+            StartCoroutine(DisableMoveCoroutine(.2f));
             CurrentHealth -= damage;
+            
             // damage animation
             Animator.SetTrigger(Hurt);
+            ParticleSystem gorePS = transform.Find("Particles").Find("GorePS").GetComponent<ParticleSystem>();
+            ParticleSystem.ShapeModule shape = gorePS.shape;
+            if (transform.position.x < charController.transform.position.x)
+            {
+                shape.rotation = new Vector3(0, 0, 145);
+            }
+            else
+            {
+                shape.rotation = new Vector3(0, 0, 0);
+            }
+            gorePS.Play();
 
             if (CurrentHealth <= 0) {
                 Die();
             }
         }
     }
+    
+    
 
     protected virtual bool AbleToMove()
     {
-        return canFunction;
+        return canFunction && !movementDisabledAirborne && !movementDisabledTimed;
     }
 
     protected void Pathfind_Update()
     {
+        //Debug.Log(movementDisabledAirborne);
         if (AbleToMove())
         {
             const float buffer = .5f;
@@ -65,10 +83,10 @@ public class Enemy : LivingThing
                 Rigidbody.velocity = new Vector2(-speed, Rigidbody.velocity.y);
             }
         }
-        else
-        {
-            Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
-        }
+        
+        // {
+        //     Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
+        // }
         
     }
 
@@ -83,15 +101,6 @@ public class Enemy : LivingThing
         Destroy(gameObject, deathTime);
     }
     
-    
-    protected bool IsMovementEnabled()
-    {
-        return true;
-    }
-    
-    // Update is called once per frame
-
-
     protected void TurnAround_Update() {
         if (Rigidbody.velocity.x > 0) {
             FaceRight();
@@ -104,6 +113,7 @@ public class Enemy : LivingThing
 
 
     public override void Stun(float stunTime) {
+        Debug.Log("stun");
         Interrupt();
         DisableFunctionality();
         StartCoroutine(StunCoroutine(stunTime));
@@ -128,5 +138,30 @@ public class Enemy : LivingThing
 
     protected virtual void EnableFunctionality() {
         canFunction = true;
+    }
+
+    public void Yoink(float yoinkForce)
+    {
+        Vector3 dir = (Camera.main).ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        Rigidbody.AddForce(yoinkForce * dir.normalized , ForceMode2D.Impulse);
+        movementDisabledAirborne = true;
+    }
+    
+
+
+    protected IEnumerator DisableMoveCoroutine(float time)
+    {
+        movementDisabledTimed = true;
+        yield return new WaitForSeconds(time);
+        movementDisabledTimed = false;
+
+    }
+
+    protected void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.GetComponent<Platform>() != null)
+        {
+            movementDisabledAirborne = false;
+        }
     }
 }

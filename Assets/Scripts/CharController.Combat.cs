@@ -1,8 +1,12 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-public partial class CharController {
+public partial class CharController
+{
+    private Rigidbody2D castProjectileRB;
+    public Rigidbody2D castProjectileInput;
     private void DoSliceDash() {
         if (!IsAbleToAct()) {
              return;
@@ -68,12 +72,9 @@ public partial class CharController {
 
     public void CauseSwitch()
     {
-        PPManager.Instance.ShiftEffect();
-        switchPS.Stop();
-        switchPS.Clear();
-        IEnumerator pc = ParticleBurstCoroutine(switchPS, .7f);
-        StopCoroutine(pc);
-        StartCoroutine(pc);
+        PPManager.Instance.ShiftEffect(GameManager.Instance.currentState == GameManager.Instance.originalState);
+        switchPS.Play();
+        
         GameManager.Instance.SwitchWorldState();
     }
 
@@ -133,7 +134,7 @@ public partial class CharController {
     private IEnumerator AttackCoroutine(bool isHeavyAttack) {
         // light attack modifiers
         float attackBoost = 1.5f;
-        float beginAttackDelay = .15f;
+        float beginAttackDelay = .12f;
         float endAttackDelay = .35f;
         float hitConfirmDelay = .20f;
         
@@ -238,5 +239,42 @@ public partial class CharController {
         AudioManager.Instance.Play(SoundName.Hit, .5f);
         enemy.TakeDamage(20, 2);
         isAttacking = false;
+    }
+
+    private void DoCast()
+    {
+        const float castSpeed = 35f;
+        castProjectileRB = Instantiate(castProjectileInput, attackPoint.position, transform.rotation);
+        castProjectileRB.GetComponentInParent<BladeProjectile>().Initialize(((Camera.main).ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized, castSpeed);
+        StartCoroutine(CastCoroutine());
+        canCast = false;
+    }
+
+    private IEnumerator CastCoroutine()
+    {
+        const float cooldown = .3f;
+        yield return new WaitForSeconds(cooldown);
+        canYoink = true;
+        
+    }
+
+    private void DoYoink()
+    {
+        castProjectileRB.GetComponentInParent<BladeProjectile>().Callback();
+        canYoink = false;
+        //StartCoroutine(YoinkCoroutine());
+
+    }
+
+    public void ReturnCast()
+    {
+        StartCoroutine(YoinkCoroutine());
+    }
+    
+    private IEnumerator YoinkCoroutine()
+    {
+        const float cooldown = .3f;
+        yield return new WaitForSeconds(cooldown);
+        canCast = true;
     }
 }

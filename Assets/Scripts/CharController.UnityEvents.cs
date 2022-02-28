@@ -1,12 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.VersionControl;
 using UnityEngine;
-using UnityEngine.Assertions;
-using Object = UnityEngine.Object;
-
-
 
 public partial class CharController
 {
@@ -286,8 +280,6 @@ public partial class CharController
 
     private void FadeParticle_Update()
     {
-        
-        GameObject newFadeSprite;
         if (fadeTime > 0)
         {
             const int fadeSpriteLimiter = 25;
@@ -296,17 +288,18 @@ public partial class CharController
             if (fadeSpriteIterator == fadeSpriteLimiter)
             {
                 fadeSpriteIterator = 0;
-                newFadeSprite = Instantiate(fadeSprite, transform.position, transform.rotation);
-                newFadeSprite.GetComponent<FadeSprite>().Initialize(spriteRenderer.sprite, transform.localScale.x < 0);
+                GameObject newFadeSprite = Instantiate(fadeSprite, transform.position, transform.rotation);
+                newFadeSprite.GetComponent<FadeSprite>()
+                    .Initialize(spriteRenderer.sprite, transform.localScale.x < 0);
             }
         }
     }
 
-    private IEnumerator JumpCooldownCoroutine() //TODO : fix doublejump bug
-    {
-        yield return new WaitForSeconds(.1f);
-        canDoubleJump = true;
-    }
+    // private IEnumerator JumpCooldownCoroutine() // TODO : fix double jump bug
+    // {
+    //     yield return new WaitForSeconds(.1f);
+    //     canDoubleJump = true;
+    // }
 
     private void WallSlideDetection_Update() {
         const float wallSlideSpeed = 0.75f;
@@ -339,7 +332,8 @@ public partial class CharController
             Physics2D.Linecast(bottomRight, bottomRight + aLittleRight, obstacleLayerMask);
         bool isNearWallOnRight = bottomRightHit;
 
-        isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) || (moveVector < 0 && isNearWallOnLeft)) && IsAbleToMove();
+        isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) 
+                                     || (moveVector < 0 && isNearWallOnLeft)) && IsAbleToMove();
 
         if (isNearWallOnLeft)
         {

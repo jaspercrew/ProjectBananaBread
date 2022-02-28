@@ -1,11 +1,10 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public partial class CharController
 {
-    private Rigidbody2D castProjectileRB;
+    private Rigidbody2D castProjectileRb;
     public Rigidbody2D castProjectileInput;
     private void DoSliceDash() {
         if (!IsAbleToAct()) {
@@ -64,13 +63,12 @@ public partial class CharController
     }
 
     private void DoInteract() {
-        //Debug.Log(Interactor.interactors.Count);
         foreach (Interactor i in Interactor.interactors) {
             i.Interact();
         }
     }
 
-    public void CauseSwitch()
+    private void CauseSwitch()
     {
         PPManager.Instance.ShiftEffect(GameManager.Instance.currentState == GameManager.Instance.originalState);
         switchPS.Play();
@@ -244,8 +242,12 @@ public partial class CharController
     private void DoCast()
     {
         const float castSpeed = 35f;
-        castProjectileRB = Instantiate(castProjectileInput, attackPoint.position, transform.rotation);
-        castProjectileRB.GetComponentInParent<BladeProjectile>().Initialize(((Camera.main).ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized, castSpeed);
+        castProjectileRb = Instantiate(castProjectileInput, attackPoint.position, transform.rotation);
+        if (Camera.main is null)
+            return;
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        castProjectileRb.GetComponentInParent<BladeProjectile>()
+            .Initialize((mousePos - transform.position).normalized, castSpeed);
         StartCoroutine(CastCoroutine());
         canCast = false;
     }
@@ -260,7 +262,7 @@ public partial class CharController
 
     private void DoYoink()
     {
-        castProjectileRB.GetComponentInParent<BladeProjectile>().Callback();
+        castProjectileRb.GetComponentInParent<BladeProjectile>().Callback();
         canYoink = false;
         //StartCoroutine(YoinkCoroutine());
 

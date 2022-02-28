@@ -1,11 +1,7 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 public partial class CharController
 {
-    
-
     private void DoDash()
     {
         if (!IsAbleToAct() && !isAttacking) {
@@ -64,8 +60,7 @@ public partial class CharController
 
     }
 
-
-
+    
     private void DoDoubleJump()
     {
         // Debug.Log(justJumped);
@@ -81,8 +76,7 @@ public partial class CharController
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
     }
-
-
+    
 
     // TODO: add variable isCrouching and set to true/false here instead of changing speed directly
     // and use isCrouching in movement and affect speed there

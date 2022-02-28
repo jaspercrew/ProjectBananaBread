@@ -127,7 +127,8 @@ public partial class CharController : LivingThing
             {Event.EventTypes.Jump, @this => 
                 @this.IsAbleToMove() && (@this.isGrounded || @this.isWallSliding)},
             {Event.EventTypes.DoubleJump, @this => 
-                @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && @this.canDoubleJump && Input.GetKeyDown(KeyCode.Space)},
+                @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && 
+                @this.canDoubleJump && Input.GetKeyDown(KeyCode.Space)},
             {Event.EventTypes.Attack, @this => 
                 @this.IsAbleToAct() && Time.time > @this.lastAttackTime + AttackCooldown},
             {Event.EventTypes.Parry, @this =>
@@ -141,9 +142,9 @@ public partial class CharController : LivingThing
             {Event.EventTypes.Crouch, 
                 @this => @this.IsAbleToAct()},
             {Event.EventTypes.Cast, 
-                @this => @this.IsAbleToAct() && @this.castProjectileRB == null && @this.canCast},
+                @this => @this.IsAbleToAct() && @this.castProjectileRb == null && @this.canCast},
             {Event.EventTypes.Yoink, 
-                @this => @this.IsAbleToAct() && @this.castProjectileRB != null && @this.canYoink}
+                @this => @this.IsAbleToAct() && @this.castProjectileRb != null && @this.canYoink}
         };
 
     // maps from event type to a void function (action) that actually executes the action
@@ -214,7 +215,7 @@ public partial class CharController : LivingThing
         isInverted = false;
     }
 
-    public void Interrupt() {
+    private void Interrupt() {
         StopAllCoroutines();
         //Rigidbody.velocity = Vector2.zero;
         isAttacking = false;

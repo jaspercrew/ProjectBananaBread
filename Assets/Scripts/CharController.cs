@@ -20,7 +20,7 @@ public partial class CharController : LivingThing
     // Configurable player control values
     public float speed = 10f;
     private const int SliceDamage = 100;
-    private const float MinGroundSpeed = 0.5gitf;
+    private const float MinGroundSpeed = 0.5f;
     private const float OnGroundAcceleration = 28f;
     private const float OnGroundDeceleration = 30f;
     private const float InAirAcceleration = 20f;

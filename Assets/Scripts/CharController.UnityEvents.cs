@@ -56,7 +56,7 @@ public partial class CharController {
         
     }
 
-    private void MovementAndVelocityOverriding_FixedUpdate() {
+    private void MovementAndVelocityOverriding_FixedUpdate_OLD() {
         float xVel = Rigidbody.velocity.x;
         // regular ground movement
         if (isGrounded)
@@ -90,22 +90,65 @@ public partial class CharController {
                 Vector2 vel = Rigidbody.velocity;
                 float newXVel = vel.x;
                 float yVel = vel.y;
-                // if (newXVel > speed)
-                // {
-                //     Rigidbody.velocity = new Vector2(speed, yVel);
-                // }
-                // else if (newXVel < -speed)
-                // {
-                //     Rigidbody.velocity = new Vector2(-speed, yVel);
-                // }
+                Rigidbody.velocity = new Vector2(Mathf.Clamp(newXVel, -speed, speed), yVel);
+            }
+            
+        }
+    }
 
-                // simpler:
-                // if (Mathf.Abs(newXVel) > speed)
-                // {
-                //     Rigidbody.velocity = new Vector2(Mathf.Sign(newXVel) * speed, yVel);
-                // }
-                
-                // simplest:
+    private void MovementAndVelocityOverriding_FixedUpdate() {
+        Vector2 v = Rigidbody.velocity;
+        float xVel = v.x;
+        float yVel = v.y;
+        // regular ground movement
+        if (isGrounded)
+        {
+            // Rigidbody.velocity = new Vector2(moveVector * speed, Rigidbody.velocity.y);
+            // Debug.Log("setting vel in movement");
+            int moveDir = Math.Sign(moveVector);
+            if (moveDir == 0)
+            {
+                int antiMoveDir = -Math.Sign(xVel);
+                Rigidbody.AddForce(antiMoveDir * OnGroundDeceleration * Vector2.right, ForceMode2D.Force);
+            }
+            else
+            {
+                Rigidbody.AddForce(moveDir * OnGroundAcceleration * Vector2.right, ForceMode2D.Force);
+            }
+            
+            // apply max velocity
+            if (Mathf.Abs(xVel) > speed) // if newXVel != xVel
+                Rigidbody.velocity = new Vector2(Mathf.Clamp(xVel, -speed, speed), yVel);
+        }
+        // in-air movement
+        else
+        {
+            bool isHighVel = Mathf.Abs(xVel) > speed;
+            bool isMovingSameDir = Math.Sign(moveVector) == Math.Sign(xVel);
+
+            bool move = !(isRecentlyGrappled && isHighVel && isMovingSameDir);
+            bool applyMaxVel = !(isRecentlyGrappled && isHighVel);
+            
+            if (move && !isWallSliding /*&& wallJumpFramesLeft == 0*/)
+            {
+                // Rigidbody.velocity += moveVector * new Vector2(InAirAcceleration, 0);
+                Rigidbody.AddForce(Math.Sign(moveVector) * InAirAcceleration * Vector2.right, ForceMode2D.Force);
+            }
+
+            // slow down if player is not inputting horizontal movement (not technically drag)
+            if (moveVector == 0 && !grappleController.isGrappling)
+            {
+                //Debug.Log("drag");
+                // Rigidbody.velocity = new Vector2(Rigidbody.velocity.x * .9f, Rigidbody.velocity.y);
+                int currentDir = Math.Sign(xVel);
+                // drag as a function of current x velocity
+                Rigidbody.AddForce(-currentDir * InAirDrag * Vector2.right, ForceMode2D.Force);
+            }
+
+            if (applyMaxVel)
+            {
+                Vector2 vel = Rigidbody.velocity;
+                float newXVel = vel.x;
                 Rigidbody.velocity = new Vector2(Mathf.Clamp(newXVel, -speed, speed), yVel);
             }
             

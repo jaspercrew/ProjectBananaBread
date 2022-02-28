@@ -6,8 +6,8 @@ using UnityEngine.Rendering;
 
 public abstract class Interactor : Entity {
     //components
-    protected Renderer renderer;
-    protected BoxCollider2D collider2D;
+    protected Renderer Renderer;
+    protected BoxCollider2D Collider2D;
     
     //configs
     protected float bonusInteractRange;
@@ -19,9 +19,9 @@ public abstract class Interactor : Entity {
     
     // Start is called before the first frame update
     protected void InitializeInteractor() {
-        collider2D = GetComponent<BoxCollider2D>();
-        renderer = GetComponent<Renderer>();
-        collider2D.edgeRadius = bonusInteractRange;
+        Collider2D = GetComponent<BoxCollider2D>();
+        Renderer = GetComponent<Renderer>();
+        Collider2D.edgeRadius = bonusInteractRange;
         //renderer.material.shader = Shader.Find("Shader Graphs/GenericShader");
         isInteractable = false;
     }

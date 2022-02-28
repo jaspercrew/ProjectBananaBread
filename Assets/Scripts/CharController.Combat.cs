@@ -81,6 +81,7 @@ public partial class CharController
         if (!IsAbleToBeDamaged()) {
             return;
         }
+        GameManager.Instance.FreezeFrame();
         StartCoroutine(TakeDamageCoroutine());
         KnockAwayFromPoint(knockback, point);
         CurrentHealth -= damage;

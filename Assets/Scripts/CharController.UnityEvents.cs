@@ -282,7 +282,7 @@ public partial class CharController
     {
         if (fadeTime > 0)
         {
-            const int fadeSpriteLimiter = 25;
+            const int fadeSpriteLimiter = 20;
             fadeSpriteIterator += 1;
             fadeTime -= Time.deltaTime;
             if (fadeSpriteIterator == fadeSpriteLimiter)

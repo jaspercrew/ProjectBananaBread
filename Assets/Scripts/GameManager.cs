@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
     public EnvironmentState altState;
     //[HideInInspector]
     public EnvironmentState currentState;
+    private int frozenFrames;
+    
 
     private GameManager()
     {
@@ -25,18 +27,25 @@ public class GameManager : MonoBehaviour
         SwitchWorldState();
     }
 
+    private void Update()
+    {
+        if (frozenFrames > 0)
+        {
+            Debug.Log("decrement frozeframes");
+            frozenFrames -= 1;
+            if (frozenFrames == 0)
+            {
+                Time.timeScale = 1;
+            }
+        }
+
+        
+    }
+
     public void SwitchWorldState()
     {
         Entity[] entities = FindObjectsOfType<Entity>();
-        // string s = "";
-        //
-        // foreach (Entity e in entities)
-        // {
-        //     s += e.name + ", ";
-        // }
-        //
-        // Debug.Log(s.Substring(0, s.Length - 2));
-        
+
         EnvironmentState newState;
         
         if (currentState == originalState)
@@ -59,5 +68,12 @@ public class GameManager : MonoBehaviour
         {
             entity.SwitchToState(newState);
         }
+    }
+
+    public void FreezeFrame()
+    {
+        Time.timeScale = 0;
+        const int frames = 50;
+        frozenFrames = frames;
     }
 }

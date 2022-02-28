@@ -75,10 +75,10 @@ public partial class CharController
             int moveDir = Math.Sign(moveVector);
             if (moveDir == 0 && Mathf.Abs(xVel) >= MinGroundSpeed)
             {
-                Debug.Log("here: " + xVel);
+                // Debug.Log("here: " + xVel);
                 int antiMoveDir = -Math.Sign(xVel);
                 
-                // TODO
+                // TODO change this if we choose to add ice or something
                 Rigidbody.AddForce(antiMoveDir * OnGroundDeceleration * Vector2.right, ForceMode2D.Force);
             }
             else 

@@ -45,15 +45,7 @@ public class GameManager : MonoBehaviour
     public void SwitchWorldState()
     {
         Entity[] entities = FindObjectsOfType<Entity>();
-        // string s = "";
-        //
-        // foreach (Entity e in entities)
-        // {
-        //     s += e.name + ", ";
-        // }
-        //
-        // Debug.Log(s.Substring(0, s.Length - 2));
-        
+
         EnvironmentState newState;
         
         if (currentState == originalState)

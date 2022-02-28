@@ -9,7 +9,7 @@ public class BinaryEntity : Entity
     public bool isShifted;
 
     // Start is called before the first frame update
-    private void Awake() {
+    protected virtual void Awake() {
         CheckEntity(GameManager.Instance.currentState);
     }
 

@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
     public EnvironmentState altState;
     //[HideInInspector]
     public EnvironmentState currentState;
+    private int frozenFrames;
+    
 
     private GameManager()
     {
@@ -23,6 +25,21 @@ public class GameManager : MonoBehaviour
         // changing everything to the originalState
         currentState = altState;
         SwitchWorldState();
+    }
+
+    private void Update()
+    {
+        if (frozenFrames > 0)
+        {
+            Debug.Log("decrement frozeframes");
+            frozenFrames -= 1;
+            if (frozenFrames == 0)
+            {
+                Time.timeScale = 1;
+            }
+        }
+
+        
     }
 
     public void SwitchWorldState()
@@ -59,5 +76,12 @@ public class GameManager : MonoBehaviour
         {
             entity.SwitchToState(newState);
         }
+    }
+
+    public void FreezeFrame()
+    {
+        Time.timeScale = 0;
+        const int frames = 50;
+        frozenFrames = frames;
     }
 }

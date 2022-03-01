@@ -33,9 +33,6 @@ public class BladeProjectile : Projectile
 
     public void Initialize(Vector3 dir, float speed)
     {
-        //Rigidbody2D.isKinematic = false;
-        //this.dir = dir.normalized;
-        //outSpeed = speed;
         transform.eulerAngles = new Vector3(0, 0, Mathf.Rad2Deg * (Mathf.Atan2(dir.y, dir.x)));
         Rigidbody2D.velocity = speed * dir.normalized;
     }

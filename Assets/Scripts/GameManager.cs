@@ -1,13 +1,11 @@
+using System.Collections;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    
-    public EnvironmentState originalState = EnvironmentState.RealWorld;
-    public EnvironmentState altState;
-    //[HideInInspector]
-    public EnvironmentState currentState;
+
+    public bool isGameShifted;
     private int frozenFrames;
     
 
@@ -23,57 +21,47 @@ public class GameManager : MonoBehaviour
         // set current state to alt, then switch everything
         // this calls SwitchToState() on all entities in the scene,
         // changing everything to the originalState
-        currentState = altState;
-        SwitchWorldState();
+        isGameShifted = false;
+        ShiftWorld();
     }
 
-    private void Update()
-    {
-        if (frozenFrames > 0)
-        {
-            Debug.Log("decrement frozeframes");
-            frozenFrames -= 1;
-            if (frozenFrames == 0)
-            {
-                Time.timeScale = 1;
-            }
-        }
+    // private void Update()
+    // {
+    //     if (frozenFrames > 0)
+    //     {
+    //         Debug.Log("decrement frozeframes");
+    //         frozenFrames -= 1;
+    //         if (frozenFrames == 0)
+    //         {
+    //             Time.timeScale = 1;
+    //         }
+    //     }
+    //
+    //     
+    // }
 
-        
-    }
-
-    public void SwitchWorldState()
+    public void ShiftWorld()
     {
         Entity[] entities = FindObjectsOfType<Entity>();
-
-        EnvironmentState newState;
+        isGameShifted = !isGameShifted;
         
-        if (currentState == originalState)
-        {
-            newState = altState;
-        } 
-        else if (currentState == altState)
-        {
-            newState = originalState;
-        }
-        else
-        {
-            Debug.LogError("Error: scene isn't in original OR alternate states; something went wrong");
-            return;
-        }
-
-        currentState = newState;
 
         foreach (Entity entity in entities)
         {
-            entity.SwitchToState(newState);
+            entity.Shift();
         }
     }
 
     public void FreezeFrame()
     {
-        Time.timeScale = 0;
-        const int frames = 50;
-        frozenFrames = frames;
+        const float freezeTime = 0.1f;
+        StartCoroutine(FreezeFrameCoroutine(freezeTime));
+    }
+
+    private IEnumerator FreezeFrameCoroutine(float time)
+    {
+        Time.timeScale = 0f;
+        yield return new WaitForSecondsRealtime(time);
+        Time.timeScale = 1f;
     }
 }

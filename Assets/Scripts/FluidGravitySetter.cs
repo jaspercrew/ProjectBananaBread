@@ -6,24 +6,24 @@ public class FluidGravitySetter : BinaryEntity
     private Collider2D collider;
     private void Awake()
     {
-        CheckEntity(GameManager.Instance.currentState);
+        CheckEntity();
     }
 
-    protected override void ShiftEntity()
+    protected override void TurnShifted()
     {
-        base.ShiftEntity();
+        base.TurnShifted();
     }
     
-    protected override void DeshiftEntity()
+    protected override void TurnUnshifted()
     {
-        base.DeshiftEntity();
+        base.TurnUnshifted();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            if (isShifted)
+            if (GameManager.Instance.isGameShifted)
             {
                 CharController.Instance.Invert();
             }

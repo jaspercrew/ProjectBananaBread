@@ -11,7 +11,6 @@ public class Enemy : LivingThing
     
     // Trackers
     // private float moveVector = 0f;
-    protected EnvironmentState originalState = 0;
     protected bool canFunction;
     protected bool movementDisabledAirborne;
     protected bool movementDisabledTimed;
@@ -29,8 +28,6 @@ public class Enemy : LivingThing
         Animator = transform.GetComponentInChildren<Animator>();
         Rigidbody = transform.GetComponent<Rigidbody2D>();
         charController = FindObjectOfType<CharController>();
-        if (originalState == 0)
-            originalState = EntityState;
     }
 
     public void TakeDamage(int damage, float knockback = 0f) { // assumes damage is taken from PLAYER

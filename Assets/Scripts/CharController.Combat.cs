@@ -70,10 +70,10 @@ public partial class CharController
 
     private void CauseSwitch()
     {
-        PPManager.Instance.ShiftEffect(GameManager.Instance.currentState == GameManager.Instance.originalState);
+        PPManager.Instance.ShiftEffect(GameManager.Instance.isGameShifted);
         switchPS.Play();
         
-        GameManager.Instance.SwitchWorldState();
+        GameManager.Instance.ShiftWorld();
     }
 
     // Take damage, knock away from point

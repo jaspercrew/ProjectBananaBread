@@ -24,6 +24,7 @@ public partial class CharController
         canDoubleJump = false;
         fadeSpriteIterator = 0;
         
+        
         particleChild = transform.Find("Particles");
         CurrentHealth = MaxHealth;
         Rigidbody = transform.GetComponent<Rigidbody2D>();
@@ -34,12 +35,15 @@ public partial class CharController
         sliceDashPS = particleChild.Find("SliceDashPS").GetComponent<ParticleSystem>();
         parryPS = particleChild.Find("ParryPS").GetComponent<ParticleSystem>();
         switchPS = particleChild.Find("SwitchPS").GetComponent<ParticleSystem>();
+        trailRenderer = particleChild.Find("FX").GetComponent<TrailRenderer>();
         //fadePS = particleChild.Find("FadePS").GetComponent<ParticleSystem>();
         obstacleLayerMask = LayerMask.GetMask("Obstacle");
         
         screenShakeController = ScreenShakeController.Instance;
         grappleController = GetComponent<RadialGrapple>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        
+        trailRenderer.emitting = false;
     }
     
     private void FixedUpdate() {
@@ -51,7 +55,7 @@ public partial class CharController
         // movement animations
         Animator.SetInteger(AnimState, Mathf.Abs(moveVector) > float.Epsilon? 2 : 0);
         
-        MovementAndVelocityOverriding_FixedUpdate();
+        StandardMovement_FixedUpdate();
 
         // WallJumpDetection_FixedUpdate();
         
@@ -59,7 +63,7 @@ public partial class CharController
         
     }
 
-    private void MovementAndVelocityOverriding_FixedUpdate() {
+    private void StandardMovement_FixedUpdate() {
         Vector2 v = Rigidbody.velocity;
         float xVel = v.x;
         float yVel = v.y;

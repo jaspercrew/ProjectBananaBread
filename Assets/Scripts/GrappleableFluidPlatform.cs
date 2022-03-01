@@ -9,13 +9,13 @@ public class GrappleableFluidPlatform : FluidPlatform
     private void Awake() {
         boxCollider = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        CheckPlatform(GameManager.Instance.currentState);
+        CheckPlatform();
     }
 
-    protected override void ActivatePlatform() {
+    protected override void TurnShifted() {
         isGrappleable = true;
     }
-    protected override void DeactivatePlatform() {
+    protected override void TurnUnshifted() {
         isGrappleable = false;
     }
 }

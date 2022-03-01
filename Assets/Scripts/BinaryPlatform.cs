@@ -12,10 +12,10 @@ public class BinaryPlatform : FluidPlatform //is only active in one state
     private void Awake() {
         boxCollider = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        CheckPlatform(GameManager.Instance.currentState);
+        CheckPlatform();
     }
 
-    protected override void ActivatePlatform() {
+    protected override void TurnShifted() {
         isActive = true;
         boxCollider.size = Vector2.one;
         Color c = spriteRenderer.color;
@@ -23,7 +23,7 @@ public class BinaryPlatform : FluidPlatform //is only active in one state
         spriteRenderer.color = c;
     }
 
-    protected override void DeactivatePlatform() {
+    protected override void TurnUnshifted() {
         isActive = false;
         boxCollider.size = Vector2.zero;
         Color c = spriteRenderer.color;

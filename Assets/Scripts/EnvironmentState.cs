@@ -1,7 +1,7 @@
-﻿public enum EnvironmentState {
-    RealWorld,
-    FeudalJapan,
-    Cyberpunk,
-    Hellscape,
-    Western
-}
+﻿// public enum EnvironmentState {
+//     RealWorld,
+//     FeudalJapan,
+//     Cyberpunk,
+//     Hellscape,
+//     Western
+// }

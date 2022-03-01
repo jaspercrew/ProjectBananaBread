@@ -48,11 +48,12 @@ public partial class CharController
         {
             Debug.Log("resetting wallJumpFrames to " + wallJumpFrames);
             // Rigidbody.velocity = new Vector2(wallJumpDir * speed, Rigidbody.velocity.y);
-            wallJumpFramesLeft = wallJumpFrames;
+            //wallJumpFramesLeft = wallJumpFrames;
+            forcedMoveTime = .1f;
             if (wallJumpDir == -1)
-                FaceLeft();
+                forcedMoveVector = -1;
             else if (wallJumpDir == 1)
-                FaceRight();
+                forcedMoveVector = 1;
             else
                 Debug.LogError("wall jump dir is bad");
         }

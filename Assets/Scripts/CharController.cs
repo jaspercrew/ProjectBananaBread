@@ -12,7 +12,6 @@ public partial class CharController : LivingThing
     private ParticleSystem sliceDashPS;
     private ParticleSystem parryPS;
     private ParticleSystem switchPS;
-    //private ParticleSystem fadePS;
     private ScreenShakeController screenShakeController;
     private RadialGrapple grappleController;
     private SpriteRenderer spriteRenderer;
@@ -26,49 +25,61 @@ public partial class CharController : LivingThing
     private const float AttackCooldown = 0.5f;
     private const float ParryCooldown = 1f;
     private const float DashCooldown = 1f;
-    private float lastAttackTime;
-    private float lastParryTime;
-    private float lastDashTime;
     private const int AttackDamage = 10;
     private const float ComboResetThreshold = 1f;
+    public float attackRange = .25f;
     public LayerMask enemyLayers;
     [SerializeField] private Transform attackPoint;
     [SerializeField] private Transform slicePoint;
-    [SerializeField] private float attackRange;
+    
     
     //Children
     private Transform particleChild;
     
     // Trackers
-    public bool isInverted;
-    private bool isGrounded;
-    private bool isInvincible;
-    public bool isRecentlyGrappled;
-    private bool justJumped;
-    // private float nextParryTime;
+    private float lastAttackTime;
+    private bool isAttacking;
+    private int comboCounter;
+    private IEnumerator attackCoroutine;
+    
+    private float lastParryTime;
     public bool isParrying;
+    
+    private float lastDashTime;
+    
+    private bool isSliceDashing;
+    
+    public bool isInverted;
+    
+    private bool isGrounded;
+    
+    private bool isInvincible;
+    
+    public bool isRecentlyGrappled;
+    
+    private bool justJumped;
+
     public bool isCrouching;
     private bool canDoubleJump;
+    
     private bool canYoink;
     private bool canCast;
+    
     private bool isWallSliding;
-    // private bool isWallTouching;
-    // private Collider2D wallTouchingCollider;
     private int wallJumpDir;
-    private int wallJumpFramesLeft;
-    // private float nextAttackTime;
-    // private float nextRollTime;
+    //private int wallJumpFramesLeft;
+    
     private int fadeSpriteIterator;
-    private float fadeTime; 
-    private int comboCounter;
-    private bool isAttacking;
-    private bool isSliceDashing;
+    private float fadeTime;
+    
     private float moveVector;
+    private float inputVector;
     private float xDir = 2;
-    // private readonly HashSet<Collider2D> colliding = new HashSet<Collider2D>();
-    private IEnumerator attackCoroutine;
-    private LayerMask obstacleLayerMask;
+    private int forcedMoveVector;
+    private float forcedMoveTime;
 
+    private LayerMask obstacleLayerMask;
+    
     private readonly LinkedList<Event> eventQueue = new LinkedList<Event>();
 
     private class Event
@@ -168,8 +179,7 @@ public partial class CharController : LivingThing
 
     private bool IsAbleToMove()
     {
-        return !isAttacking && !isDashing && !isParrying && !grappleController.isGrappling 
-               && wallJumpFramesLeft == 0;
+        return !isAttacking && !isDashing && !isParrying && !grappleController.isGrappling;
     }
 
     private bool IsAbleToBeDamaged() {

@@ -52,7 +52,7 @@ public partial class CharController
         // Debug.Log("touching" + isWallTouching);
         // Debug.Log("sliding" + isWallSliding);
         
-        moveVector = Input.GetAxisRaw("Horizontal");
+        inputVector = Input.GetAxisRaw("Horizontal");
         if (!IsAbleToMove()) return;
         // movement animations
         Animator.SetInteger(AnimState, Mathf.Abs(moveVector) > float.Epsilon? 2 : 0);
@@ -67,6 +67,12 @@ public partial class CharController
 
     private void MovementAndVelocityOverriding_FixedUpdate() {
         float xVel = Rigidbody.velocity.x;
+        moveVector = inputVector;
+        if (forcedMoveTime > 0)
+        {
+            moveVector = forcedMoveVector;
+            forcedMoveTime -= Time.deltaTime;
+        }
         // regular ground movement
         if (isGrounded)
         {
@@ -105,16 +111,16 @@ public partial class CharController
         }
     }
 
-    private void WallJumpDetection_FixedUpdate() {
-        if (wallJumpFramesLeft > 0)
-        {
-            // Debug.Log("------- WALL JUMPING (FIXED) UPDATE - "
-            //           + wallJumpFramesLeft + " left, dir = " + wallJumpDir + " -------");
-            // transform.position += new Vector3((int) wallJumpDir * speed * Time.deltaTime, 0, 0);
-            Rigidbody.velocity = new Vector2(wallJumpDir * speed, Rigidbody.velocity.y);
-            wallJumpFramesLeft--;
-        }
-    }
+    // private void WallJumpDetection_FixedUpdate() {
+    //     if (wallJumpFramesLeft > 0)
+    //     {
+    //         // Debug.Log("------- WALL JUMPING (FIXED) UPDATE - "
+    //         //           + wallJumpFramesLeft + " left, dir = " + wallJumpDir + " -------");
+    //         // transform.position += new Vector3((int) wallJumpDir * speed * Time.deltaTime, 0, 0);
+    //         Rigidbody.velocity = new Vector2(wallJumpDir * speed, Rigidbody.velocity.y);
+    //         wallJumpFramesLeft--;
+    //     }
+    // }
 
     private void TurnAround_FixedUpdate() {
         // feet dust logic
@@ -156,7 +162,7 @@ public partial class CharController
         // slice-dash detection
         SliceDashDetection_Update();
         
-        WallJumpDetection_FixedUpdate();
+        //WallJumpDetection_FixedUpdate();
 
     }
 
@@ -277,11 +283,11 @@ public partial class CharController
         }
     }
 
-    private IEnumerator JumpCooldownCoroutine() //TODO : fix doublejump bug
-    {
-        yield return new WaitForSeconds(.1f);
-        canDoubleJump = true;
-    }
+    // private IEnumerator JumpCooldownCoroutine() //TODO : fix doublejump bug
+    // {
+    //     yield return new WaitForSeconds(.1f);
+    //     canDoubleJump = true;
+    // }
 
     private void WallSlideDetection_Update() {
         const float wallSlideSpeed = 0.75f;

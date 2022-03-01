@@ -45,24 +45,30 @@ public partial class CharController
 
         
         dust.Play();
-
-        const int wallJumpFrames = 30;
+        int jumpDir = 0;
+        //const int wallJumpFrames = 30;
 
         if (isWallSliding && !isGrounded)
         {
-            Debug.Log("resetting wallJumpFrames to " + wallJumpFrames);
-            // Rigidbody.velocity = new Vector2(wallJumpDir * speed, Rigidbody.velocity.y);
-            //wallJumpFramesLeft = wallJumpFrames;
-            forcedMoveTime = .1f;
+            //Debug.Log("resetting wallJumpFrames to " + wallJumpFrames);
+            forcedMoveTime = .2f;
             if (wallJumpDir == -1)
+            {
+                FaceLeft();
                 forcedMoveVector = -1;
+                jumpDir = -1;
+            }
             else if (wallJumpDir == 1)
+            {
+                FaceRight();
                 forcedMoveVector = 1;
+                jumpDir = 1;
+            }
             else
                 Debug.LogError("wall jump dir is bad");
         }
         
-        Rigidbody.AddForce(new Vector2(0, isInverted ? -JumpForce : JumpForce), ForceMode2D.Impulse);
+        Rigidbody.AddForce(new Vector2(jumpDir, isInverted ? -JumpForce : JumpForce), ForceMode2D.Impulse);
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
         justJumped = true;
@@ -72,11 +78,6 @@ public partial class CharController
     
     private void DoDoubleJump()
     {
-        // Debug.Log(justJumped);
-        // Debug.Log(Input.GetKeyUp(KeyCode.Space));
-        // Debug.Log(Input.GetKeyDown(KeyCode.Space));
-        // Assert.IsTrue(canDoubleJump);
-        //Debug.Log("double jump");
         dust.Play();
         float doubleJumpForce = JumpForce * .9f;
         canDoubleJump = false;

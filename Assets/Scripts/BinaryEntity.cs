@@ -5,38 +5,35 @@ using UnityEngine.Serialization;
 
 public class BinaryEntity : Entity
 {
-    public EnvironmentState enabledState;
-    public bool isShifted;
 
     // Start is called before the first frame update
-    private void Awake() {
-        CheckEntity(GameManager.Instance.currentState);
+    protected virtual void Awake() {
+        CheckEntity();
     }
 
-    protected virtual void ShiftEntity()
+    protected virtual void TurnShifted()
     {
-        isShifted = true;
+
     }
 
-    protected virtual void DeshiftEntity()
+    protected virtual void TurnUnshifted()
     {
-        isShifted = false;
+
     }
-        
     
 
-    public override void SwitchToState(EnvironmentState state) {
-        CheckEntity(state);
+    public override void Shift(){
+        CheckEntity();
     }
 
-    protected void CheckEntity(EnvironmentState state) {
-        if (enabledState == state)
+    protected void CheckEntity() {
+        if (GameManager.Instance.isGameShifted)
         {
-            ShiftEntity();
+            TurnShifted();
         }
         else
         {
-            DeshiftEntity();
+            TurnUnshifted();
         }
     }
 }

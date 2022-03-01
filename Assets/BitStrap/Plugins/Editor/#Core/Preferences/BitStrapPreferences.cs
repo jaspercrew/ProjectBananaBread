@@ -20,7 +20,7 @@ namespace BitStrap
 			}
 		}
 
-		[PreferenceItem( "BitStrap" )]
+		// [PreferenceItem( "BitStrap" )]
 		private static void OnPreferencesGUI()
 		{
 			if( GUILayout.Button( "Open Web Documentation" ) )

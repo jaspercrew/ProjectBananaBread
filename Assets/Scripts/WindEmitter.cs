@@ -17,16 +17,16 @@ public class WindEmitter : BinaryEntity
     private BoxCollider2D boxCollider;
     private const float windForce = 5f;
     
-    protected override void ShiftEntity()
+    protected override void TurnShifted()
     {
-        base.ShiftEntity();
+        base.TurnShifted();
         currentWind = altStateWind;
         ChangeWind(currentWind);
     }
 
-    protected override void DeshiftEntity()
+    protected override void TurnUnshifted()
     {
-        base.DeshiftEntity();
+        base.TurnUnshifted();
         currentWind = realStateWind;
         ChangeWind(currentWind);
     }
@@ -58,11 +58,12 @@ public class WindEmitter : BinaryEntity
     }
     
     // Start is called before the first frame update
-    private void Start()
+    protected override void Awake()
     {
         areaEffector = GetComponent<AreaEffector2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         areaEffector.forceMagnitude = windForce;
+        base.Awake();
     }
 
 }

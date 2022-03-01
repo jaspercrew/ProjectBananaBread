@@ -1,7 +1,9 @@
-﻿using System.Diagnostics;
-using UnityEngine;
+﻿//DEPRECATED
 
-public class SolidifierSpotlight : FluidSpotlight{
-
-    
-}
+// using System.Diagnostics;
+// using UnityEngine;
+//
+// public class SolidifierSpotlight : FluidSpotlight{
+//
+//     
+// }

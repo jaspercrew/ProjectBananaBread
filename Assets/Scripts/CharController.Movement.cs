@@ -1,33 +1,37 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 public partial class CharController
 {
-    
-
     private void DoDash()
     {
         if (!IsAbleToAct() && !isAttacking) {
             return;
         }
-        
         Interrupt();
-
-        const float dashSpeed = 9f;
+        
+        float xScale = transform.localScale.x;
+        float dashDir = moveVector == 0 ? -xScale : moveVector;
+        float dashSpeed = 9f * dashDir;
         const float dashTime = .23f;
 
-        float xScale = transform.localScale.x;
-
         fadeTime = .28f;
-        float dashDir = moveVector == 0 ? -xScale : moveVector;
-
-        VelocityDash(dashDir * dashSpeed, dashTime);
+        isDashing = true;
+        trailRenderer.emitting = true;
+        StartCoroutine(DashCoroutine(dashTime, dashSpeed));
+        Rigidbody.velocity = new Vector2(Rigidbody.velocity.x + dashSpeed, Rigidbody.velocity.y);
         dust.Play();
         Animator.SetTrigger(Dash);
-        
-
         lastDashTime = Time.time;
+    }
+
+    // dash coroutine handles stopping the dash
+    private IEnumerator DashCoroutine(float dashTime, float dashSpeed) {
+        //Debug.Log(savedVel);
+        yield return new WaitForSeconds(dashTime);
+        Rigidbody.velocity = new Vector2(Rigidbody.velocity.x - dashSpeed, Rigidbody.velocity.y);
+        isDashing = false;
+        trailRenderer.emitting = false;
     }
 
     private void DoJump()
@@ -42,7 +46,7 @@ public partial class CharController
         
         dust.Play();
 
-        const int wallJumpFrames = 60;
+        const int wallJumpFrames = 30;
 
         if (isWallSliding && !isGrounded)
         {
@@ -65,8 +69,7 @@ public partial class CharController
 
     }
 
-
-
+    
     private void DoDoubleJump()
     {
         // Debug.Log(justJumped);
@@ -82,8 +85,7 @@ public partial class CharController
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
     }
-
-
+    
 
     // TODO: add variable isCrouching and set to true/false here instead of changing speed directly
     // and use isCrouching in movement and affect speed there

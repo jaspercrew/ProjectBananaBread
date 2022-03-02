@@ -5,7 +5,7 @@ using UnityEngine;
 public class FadeSprite : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
-    private const float fadeTime = 20f;
+    private const float fadeTime = 15f;
     private float timeLeft;
     
 

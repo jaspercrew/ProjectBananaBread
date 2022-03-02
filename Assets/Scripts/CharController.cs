@@ -75,7 +75,7 @@ public partial class CharController : LivingThing
     //private int wallJumpFramesLeft;
     
     private int fadeSpriteIterator;
-    private float fadeTime;
+    public float fadeTime;
     
     private float moveVector;
     private float inputVector;
@@ -177,11 +177,6 @@ public partial class CharController : LivingThing
             {Event.EventTypes.Yoink, @this => @this.DoYoink()}
         };
 
-    // [Obsolete("use isGrounded boolean directly instead")]
-    // private bool IsGrounded()
-    // {
-    //     return isGrounded;
-    // }
 
     private bool IsAbleToMove()
     {

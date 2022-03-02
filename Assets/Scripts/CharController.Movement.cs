@@ -36,22 +36,13 @@ public partial class CharController
 
     private void DoJump()
     {
-        // if (!IsGrounded() && !isWallSliding || !IsAbleToMove()){
-        //     return;
-        // }
-        //Debug.Log("jump run");
-        
-        // Debug.Log("isGrounded: " + isGrounded + ", so jumping");
-
-        
         dust.Play();
         int jumpDir = 0;
-        //const int wallJumpFrames = 30;
+        const float horizontalJumpForce = 2f;
 
         if (isWallSliding && !isGrounded)
         {
-            //Debug.Log("resetting wallJumpFrames to " + wallJumpFrames);
-            forcedMoveTime = .2f;
+            forcedMoveTime = .1f;
             if (wallJumpDir == -1)
             {
                 FaceLeft();
@@ -68,7 +59,7 @@ public partial class CharController
                 Debug.LogError("wall jump dir is bad");
         }
         
-        Rigidbody.AddForce(new Vector2(jumpDir, isInverted ? -JumpForce : JumpForce), ForceMode2D.Impulse);
+        Rigidbody.AddForce(new Vector2(jumpDir * horizontalJumpForce, isInverted ? -JumpForce : JumpForce), ForceMode2D.Impulse);
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
         justJumped = true;

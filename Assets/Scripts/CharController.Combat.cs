@@ -120,13 +120,8 @@ public partial class CharController
         }
 
         comboCounter++;
-        // this line is equivalent to the 3 commented lines below
         bool isHeavy = Math.DivRem(comboCounter, HeavyAttackBuildup, out comboCounter) > 0;
 
-        // bool isHeavy = comboCounter == HeavyAttackBuildup;
-        // if (isHeavy)
-        //     comboCounter -= HeavyAttackBuildup;
-        
         DoAttack(isHeavy);
     }
 

@@ -75,8 +75,10 @@ public partial class RadialGrapple : MonoBehaviour{
         
     }
 
-    public void StartGrapple(Vector3 grapplePoint) {
-        
+    public void StartGrapple(Vector3 grapplePoint)
+    {
+
+        charController.fadeTime = .2f;
         attachmentPoint = grapplePoint;
         const float offsetMultiplier = .5f;
         //Vector3 diffNormalized = (grapplePoint - transform.position).normalized ;

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -7,7 +8,8 @@ public class GameManager : MonoBehaviour
 
     public bool isGameShifted;
     private int frozenFrames;
-    
+
+    public Dictionary<string, bool> leverDict = new Dictionary<string, bool>();
 
     private GameManager()
     {
@@ -24,21 +26,6 @@ public class GameManager : MonoBehaviour
         isGameShifted = false;
         ShiftWorld();
     }
-
-    // private void Update()
-    // {
-    //     if (frozenFrames > 0)
-    //     {
-    //         Debug.Log("decrement frozeframes");
-    //         frozenFrames -= 1;
-    //         if (frozenFrames == 0)
-    //         {
-    //             Time.timeScale = 1;
-    //         }
-    //     }
-    //
-    //     
-    // }
 
     public void ShiftWorld()
     {

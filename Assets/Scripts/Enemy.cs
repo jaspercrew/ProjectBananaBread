@@ -34,7 +34,7 @@ public class Enemy : LivingThing
         if (canFunction) {
             Stun(.2f);
             GameObject player = GameObject.FindWithTag("Player");
-            KnockAwayFromPoint(knockback, player.transform.position);
+            //KnockAwayFromPoint(knockback, player.transform.position);
             StartCoroutine(DisableMoveCoroutine(.2f));
             CurrentHealth -= damage;
             
@@ -80,18 +80,13 @@ public class Enemy : LivingThing
                 Rigidbody.velocity = new Vector2(-speed, Rigidbody.velocity.y);
             }
         }
-        
-        // {
-        //     Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
-        // }
-        
     }
 
     public virtual void Interrupt() { // should stop all relevant coroutines
     }
     
 
-    protected override void Die() {
+    protected void Die() {
         const float deathTime = 1f;
         DisableFunctionality();
         Animator.SetTrigger(Death);
@@ -109,7 +104,7 @@ public class Enemy : LivingThing
     }
 
 
-    public override void Stun(float stunTime) {
+    public void Stun(float stunTime) {
         Debug.Log("stun");
         Interrupt();
         DisableFunctionality();
@@ -120,13 +115,6 @@ public class Enemy : LivingThing
         yield return new WaitForSeconds(stunTime);
         EnableFunctionality();
     }
-    
-    // private void OnDrawGizmosSelected() {
-    //     if (attackPoint == null) {
-    //         return;
-    //     }
-    //     Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-    // }
 
     protected virtual void DisableFunctionality() {
         StopAllCoroutines();

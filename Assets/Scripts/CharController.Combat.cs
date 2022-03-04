@@ -83,7 +83,7 @@ public partial class CharController
         }
         GameManager.Instance.FreezeFrame();
         StartCoroutine(TakeDamageCoroutine());
-        KnockAwayFromPoint(knockback, point);
+        //KnockAwayFromPoint(knockback, point);
         CurrentHealth -= damage;
         // damage animation
         Animator.SetTrigger(Hurt);
@@ -101,7 +101,7 @@ public partial class CharController
         isInvincible = false;
     }
 
-    protected override void Die() 
+    protected void Die() 
     {
         Animator.SetTrigger(Death);
         transform.GetComponent<Collider>().enabled = false;
@@ -145,15 +145,16 @@ public partial class CharController
         
         // move while attacking TODO : change this functionality
         if (isGrounded) {
-            if (moveVector > .5) {
-                Rigidbody.velocity = new Vector2(attackBoost, Rigidbody.velocity.y);
-            }
-            else if (moveVector < -.5) {
-                Rigidbody.velocity = new Vector2(-attackBoost, Rigidbody.velocity.y);
-            }
-            else {
-                Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
-            }
+            Rigidbody.velocity = new Vector2(moveVector * attackBoost, Rigidbody.velocity.y);
+            // if (moveVector > .5) {
+            //     Rigidbody.velocity = new Vector2(attackBoost, Rigidbody.velocity.y);
+            // }
+            // else if (moveVector < -.5) {
+            //     Rigidbody.velocity = new Vector2(-attackBoost, Rigidbody.velocity.y);
+            // }
+            // else {
+            //     Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
+            // }
         }
         
 
@@ -166,7 +167,7 @@ public partial class CharController
 
         if (numHitEnemies > 0) {
             // pause swing animation if an enemy is hit
-            StartCoroutine(PauseAnimatorCoroutine(hitConfirmDelay)); 
+            //StartCoroutine(PauseAnimatorCoroutine(hitConfirmDelay)); 
             screenShakeController.MediumShake();
         }
 

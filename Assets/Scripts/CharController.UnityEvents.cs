@@ -14,8 +14,8 @@ public partial class CharController
         else
         {
             Instance = this;
-            // DontDestroyOnLoad(gameObject);
         }
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()

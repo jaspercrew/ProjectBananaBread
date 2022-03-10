@@ -77,8 +77,10 @@ public class AudioManager : MonoBehaviour
     {
         AudioClip primaryClip = soundToClip[primary];
         AudioClip altClip = soundToClip[alt];
-        effectSource.PlayOneShot(primaryClip, songVolume);
-        effectSource.PlayOneShot(altClip, songVolume);
+        primarySource.clip = primaryClip;
+        altSource.clip = altClip;
+        primarySource.Play();
+        altSource.Play();
     }
 
     public void OnShift(bool toAlt)

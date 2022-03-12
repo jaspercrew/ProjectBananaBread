@@ -11,7 +11,8 @@ public partial class CharController
         Interrupt();
         
         float xScale = transform.localScale.x;
-        float dashDir = moveVector == 0 ? -xScale : moveVector;
+        //float dashDir = moveVector == 0 ? -xScale : moveVector;
+        float dashDir = inputVector;
         float dashSpeed = 9f * dashDir;
         const float dashTime = .23f;
 

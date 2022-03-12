@@ -12,7 +12,6 @@ public class Lever : HittableEntity
     {
         isActive = true;
         leverDict[leverName] = isActive;
-
     }
     // Start is called before the first frame update
     void Start()

@@ -81,7 +81,8 @@ public partial class CharController
         if (!IsAbleToBeDamaged()) {
             return;
         }
-        GameManager.Instance.FreezeFrame();
+        screenShakeController.MediumShake();
+        //GameManager.Instance.FreezeFrame();
         StartCoroutine(TakeDamageCoroutine());
         //KnockAwayFromPoint(knockback, point);
         CurrentHealth -= damage;
@@ -94,7 +95,6 @@ public partial class CharController
     }
 
     private IEnumerator TakeDamageCoroutine() {
-        screenShakeController.MediumShake();
         isInvincible = true;
         const float invFrames = .2f;
         yield return new WaitForSeconds(invFrames);
@@ -158,6 +158,8 @@ public partial class CharController
         bool hit = false;
         foreach (Collider2D enemy in hitColliders)
         {
+            if (enemy is null)
+                break;
             if (enemy.GetComponent<Enemy>() != null)
                 enemy.GetComponent<Enemy>().TakeDamage(AttackDamage, isHeavyAttack ? 2f : 1f);
             else if (enemy.GetComponent<HittableEntity>() != null)

@@ -13,7 +13,6 @@ public class CameraFollow : MonoBehaviour {
      
     void Update()
     {
-        // Define a target position above and behind the target transform
         targetPosition = target.position + offset;
 
         // Smoothly move the camera towards that target position

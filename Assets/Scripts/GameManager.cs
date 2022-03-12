@@ -24,7 +24,6 @@ public class GameManager : MonoBehaviour
         // this calls SwitchToState() on all entities in the scene,
         // changing everything to the originalState
         isGameShifted = false;
-        ShiftWorld();
     }
 
     public void ShiftWorld()

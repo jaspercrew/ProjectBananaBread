@@ -16,7 +16,8 @@ public partial class CharController : LivingThing
     private ScreenShakeController screenShakeController;
     private RadialGrapple grappleController;
     private SpriteRenderer spriteRenderer;
-    private LineRenderer lineRenderer;
+    private LineRenderer grappleLineRenderer;
+    private LineRenderer grappleLOSRenderer;
 
     // Configurable player control values
     public float speed = 10f;
@@ -66,8 +67,10 @@ public partial class CharController : LivingThing
     private bool isLineGrappling;
     public Rigidbody2D grappleProjectile;
     private Rigidbody2D sentProjectile;
-    
-    private Vector3 grapplePoint;
+
+    private bool grappleBlocked;
+    private GrapplePoint launchedPoint;
+    private GrapplePoint hookedPoint;
     public bool isRecentlyGrappled;
     
     private bool justJumped;
@@ -104,7 +107,7 @@ public partial class CharController : LivingThing
         
         public enum EventTypes
         {
-            Dash, Jump, DoubleJump, Attack, Parry, Interact, SwitchState, SliceDash, Crouch, Cast, Yoink
+            Dash, Jump, DoubleJump, Attack, Parry, Interact, SwitchState, SliceDash, Crouch, Cast, Yoink, Grapple
         }
 
         public Event(EventTypes type, float time)
@@ -129,7 +132,8 @@ public partial class CharController : LivingThing
             {() => Input.GetKeyDown(KeyCode.R), Event.EventTypes.SliceDash},
             {() => Input.GetKeyDown(KeyCode.LeftControl), Event.EventTypes.Crouch},
             {() => Input.GetKeyDown(KeyCode.V), Event.EventTypes.Cast},
-            {() => Input.GetKeyDown(KeyCode.V), Event.EventTypes.Yoink}
+            {() => Input.GetKeyDown(KeyCode.V), Event.EventTypes.Yoink},
+            {() => Input.GetKeyDown(KeyCode.G), Event.EventTypes.Grapple},
         };
 
     // maps from event type to a boolean function that says whether the conditions for the 
@@ -165,7 +169,9 @@ public partial class CharController : LivingThing
             {Event.EventTypes.Cast, 
                 @this => @this.IsAbleToAct() && @this.castProjectileRb == null && @this.canCast},
             {Event.EventTypes.Yoink, 
-                @this => @this.IsAbleToAct() && @this.castProjectileRb != null && @this.canYoink}
+                @this => @this.IsAbleToAct() && @this.castProjectileRb != null && @this.canYoink},
+            {Event.EventTypes.Grapple, 
+                @this => @this.IsAbleToAct()}
         };
 
     // maps from event type to a void function (action) that actually executes the action
@@ -183,7 +189,8 @@ public partial class CharController : LivingThing
             {Event.EventTypes.SliceDash, @this => @this.DoSliceDash()},
             {Event.EventTypes.Crouch, @this => @this.Crouch()},
             {Event.EventTypes.Cast, @this => @this.DoCast()},
-            {Event.EventTypes.Yoink, @this => @this.DoYoink()}
+            {Event.EventTypes.Yoink, @this => @this.DoYoink()},
+            {Event.EventTypes.Grapple, @this => @this.AttemptLaunchGrapple()},
         };
 
 

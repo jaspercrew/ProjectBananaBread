@@ -1,12 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Debug = System.Diagnostics.Debug;
 
 public class GrapplePoint : MonoBehaviour
 {
     private const float HoverRange = 3f;
-    public static GrapplePoint CurrentGrapplePoint;
+    public static GrapplePoint targetPoint;
     private SpriteRenderer spriteRenderer;
     private new Camera camera;
 
@@ -20,17 +19,20 @@ public class GrapplePoint : MonoBehaviour
     {
         Vector3 mousePos = camera.ScreenToWorldPoint(Input.mousePosition);
 
-        float thisDist = Vector3.Distance(mousePos, transform.position);
-        float currDist = (CurrentGrapplePoint is null) ? float.MaxValue :
-            Vector3.Distance(mousePos, CurrentGrapplePoint.transform.position);
+        float thisDist = Vector2.Distance(mousePos, transform.position);
+        float currDist = (targetPoint is null) ? float.MaxValue :
+            Vector2.Distance(mousePos, targetPoint.transform.position);
+        // Debug.Log(thisDist);
+        // Debug.Log(currDist);
         
         if (thisDist < HoverRange && thisDist < currDist)
         {
-            CurrentGrapplePoint = this;
+            Debug.Log("point set");
+            targetPoint = this;
         } 
         else if (currDist >= HoverRange)
         {
-            CurrentGrapplePoint = null;
+            targetPoint = null;
         }
     }
 

@@ -21,9 +21,11 @@ public class GrappleProjectile : Projectile {
     {
         GrapplePoint point = other.gameObject.GetComponent<GrapplePoint>();
         
+        
         if (point == null) return;
         Rigidbody2D.velocity = Vector2.zero;
-        CharController.Instance.StartLineGrapple(point);
         Destroy(gameObject);
+        CharController.Instance.StartLineGrapple(point);
+        
     }
 }

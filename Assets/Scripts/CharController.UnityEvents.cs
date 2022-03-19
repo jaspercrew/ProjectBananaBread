@@ -25,8 +25,11 @@ public partial class CharController
         canDoubleJump = false;
         fadeSpriteIterator = 0;
         
-        lineRenderer = transform.GetComponent<LineRenderer>();
-        lineRenderer.enabled = false;
+        grappleLineRenderer = transform.GetComponent<LineRenderer>();
+        grappleLineRenderer.enabled = false;
+
+        grappleLOSRenderer = transform.Find("GrappleLOS").GetComponent<LineRenderer>();
+        grappleLOSRenderer.enabled = false;
         
         particleChild = transform.Find("Particles");
         CurrentHealth = MaxHealth;
@@ -270,11 +273,7 @@ public partial class CharController
     private void Update() {
         if (Input.GetKeyDown(KeyCode.P))
             Debug.Log("grounded? " + isGrounded + "; wall sliding? " + isWallSliding);
-
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            LaunchLine(FindObjectOfType<GrapplePoint>());
-        }
+        
         
         CheckGrounded_Update();
         
@@ -300,23 +299,57 @@ public partial class CharController
 
     private void LineGrappleUpdate()
     {
+        if (!isLineGrappling && !isGrappleLaunched && GrapplePoint.targetPoint != null)
+        {
+            Vector3 targetPosition = GrapplePoint.targetPoint.transform.position;
+            Vector3 direction = (targetPosition - transform.position).normalized;
+            Vector3 offset = Vector3.up * .5f;
+            
+            
+            RaycastHit2D hit = Physics2D.Raycast(transform.position +  offset, direction,
+                Vector2.Distance(transform.position, targetPosition), obstacleLayerMask);
+            
+            if (hit.collider != null)
+            {
+                
+                Debug.Log(hit.collider.gameObject.name);
+                grappleBlocked = true;
+                grappleLOSRenderer.enabled = true;
+                grappleLOSRenderer.SetPosition(1, transform.position + offset);
+                grappleLOSRenderer.SetPosition(0, GrapplePoint.targetPoint.transform.position);
+            }
+            else
+            {
+                grappleBlocked = false;
+                Debug.Log("red off");
+                grappleLOSRenderer.enabled = false;
+            }
+        }
+        else
+        {
+            grappleBlocked = false;
+            Debug.Log("red off");
+            grappleLOSRenderer.enabled = false;
+        }
+        
         if (isGrappleLaunched && sentProjectile != null)
         {
-            lineRenderer.SetPosition(1, transform.position);
-            lineRenderer.SetPosition(0, sentProjectile.transform.position);
+            grappleLineRenderer.SetPosition(1, transform.position);
+            grappleLineRenderer.SetPosition(0, sentProjectile.transform.position);
         }
         const float grappleSpeed = 15f;
         const float disconnectDistance = .3f;
         if (isLineGrappling)
         {
-            Vector3 direction = (grapplePoint - transform.position).normalized;
+            Vector3 direction = (launchedPoint.transform.position - transform.position).normalized;
             Rigidbody.velocity = direction * grappleSpeed;
-            lineRenderer.SetPosition(1, transform.position);
-            lineRenderer.SetPosition(0, grapplePoint);
+            grappleLineRenderer.SetPosition(1, transform.position);
+            grappleLineRenderer.SetPosition(0, launchedPoint.transform.position);
             
 
             
-            if ((grapplePoint - transform.position).magnitude < disconnectDistance)
+            if (isLineGrappling && 
+                Vector2.Distance(transform.position, launchedPoint.transform.position) < disconnectDistance)
             {
                 DisconnectGrapple();
             }

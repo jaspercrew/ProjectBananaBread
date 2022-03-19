@@ -321,14 +321,14 @@ public partial class CharController
             else
             {
                 grappleBlocked = false;
-                Debug.Log("red off");
+                //Debug.Log("red off");
                 grappleLOSRenderer.enabled = false;
             }
         }
         else
         {
             grappleBlocked = false;
-            Debug.Log("red off");
+            //Debug.Log("red off");
             grappleLOSRenderer.enabled = false;
         }
         

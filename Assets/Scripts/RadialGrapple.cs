@@ -2,6 +2,7 @@ using System;
 using Pathfinding.Ionic.Zlib;
 using UnityEngine;
 
+[Obsolete("don't use this piece of crap")]
 public partial class RadialGrapple : MonoBehaviour{
     public Camera mainCamera;
     private LineRenderer lineRenderer;
@@ -86,7 +87,7 @@ public partial class RadialGrapple : MonoBehaviour{
         
         
         isGrappling = true;
-        charController.isRecentlyGrappled = true;
+        // charController.isRecentlyGrappled = true;
         //lineRenderer.SetPosition(0, grapplePoint);
         //lineRenderer.SetPosition(1, transform.position);
         distanceJoint.connectedAnchor = grapplePoint;

@@ -62,20 +62,22 @@ public class WindEmitter : BinaryEntity
     protected override void Awake()
     {
         areaEffector = GetComponent<AreaEffector2D>();
-        BoxCollider2D[] colliders = GetComponents<BoxCollider2D>();
-        Debug.Assert(colliders.Length == 2);
-        boxCollider = colliders[colliders[0].usedByEffector? 0 : 1];
+        // BoxCollider2D[] colliders = GetComponents<BoxCollider2D>();
+        // Debug.Assert(colliders.Length == 2);
+        // boxCollider = colliders[colliders[0].usedByEffector? 0 : 1];
+        boxCollider = GetComponent<BoxCollider2D>();
         areaEffector.forceMagnitude = WindForce;
         base.Awake();
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        CharController.Instance.currentWindZone = this;
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        CharController.Instance.currentWindZone = null;
-    }
+    // moved to WindEmitterChild.cs
+    // private void OnTriggerEnter2D(Collider2D other)
+    // {
+    //     CharController.Instance.currentWindZone = this;
+    // }
+    //
+    // private void OnTriggerExit2D(Collider2D other)
+    // {
+    //     CharController.Instance.currentWindZone = null;
+    // }
 }

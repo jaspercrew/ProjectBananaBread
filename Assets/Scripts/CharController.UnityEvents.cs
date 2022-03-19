@@ -64,7 +64,17 @@ public partial class CharController
         //      water_movement()
         // else
         //      standard_movement()
-        StandardMovement_FixedUpdate();
+        
+        ApplyForcedMovement_FixedUpdate();
+
+        if (!(currentWindZone is null))
+        {
+            WindMovement_FixedUpdate();
+        }
+        else
+        {
+            StandardMovement_FixedUpdate();
+        }
 
         // WallJumpDetection_FixedUpdate();
         
@@ -72,68 +82,42 @@ public partial class CharController
         
     }
 
+    private void ApplyForcedMovement_FixedUpdate()
+    {
+        moveVector = inputVector;
+        if (forcedMoveTime > 0)
+        {
+            moveVector = forcedMoveVector;
+            forcedMoveTime -= Time.fixedDeltaTime;
+        }
+    }
+
     private void StandardMovement_FixedUpdate()
     {
         Vector2 v = Rigidbody.velocity;
         float xVel = v.x;
         float yVel = v.y;
-        moveVector = inputVector;
-        if (forcedMoveTime > 0)
-        {
-            moveVector = forcedMoveVector;
-            forcedMoveTime -= Time.deltaTime;
-        }
 
         // regular ground movement
         if (isGrounded)
         {
             int moveDir = Math.Sign(moveVector);
+            // if user is not moving and has speed, then slow down
             if (moveDir == 0 && Mathf.Abs(xVel) >= MinGroundSpeed)
             {
-                // Debug.Log("here: " + xVel);
                 int antiMoveDir = -Math.Sign(xVel);
 
                 // TODO change this if we choose to add ice or something
-                // TODO change for wind
                 Rigidbody.AddForce(antiMoveDir * OnGroundDeceleration * Vector2.right, ForceMode2D.Force);
             }
+            // otherwise move the player in the direction
             else if (moveDir != 0)
             {
                 Rigidbody.AddForce(moveDir * OnGroundAcceleration * Vector2.right, ForceMode2D.Force);
             }
 
-            if (currentWindZone == null || 
-                currentWindZone.currentWind == WindState.Up || 
-                currentWindZone.currentWind == WindState.Down || 
-                currentWindZone.currentWind == WindState.None)
-            {
-                // apply normal max velocity
-                if (Mathf.Abs(xVel) > speed) // if newXVel != xVel
-                {
-                    Rigidbody.velocity = new Vector2(Mathf.Clamp(xVel, -speed, speed), yVel);
-                }
-            }
-            // if sideways wind,
-            else if (currentWindZone.currentWind == WindState.Left || 
-                     currentWindZone.currentWind == WindState.Right)
-            {
-                // apply wind max velocity
-                int windDir = (int) currentWindZone.currentWind; // -1 if left, 1 if right, something else otherwise
-                int velDir = Math.Sign(xVel);
-                float maxSpeedSameDir = speed + currentWindZone.windSpeedOnPlayer;
-                float maxSpeedOppDir = speed - currentWindZone.windSpeedOnPlayer;
-                
-                if (windDir == velDir && Mathf.Abs(xVel) > maxSpeedSameDir) 
-                {
-                    Rigidbody.velocity = new Vector2(
-                        Mathf.Clamp(xVel, -maxSpeedSameDir, maxSpeedSameDir), yVel);
-                }
-                else if (windDir == -velDir && Mathf.Abs(xVel) > maxSpeedOppDir) 
-                {
-                    Rigidbody.velocity = new Vector2(
-                        Mathf.Clamp(xVel, -maxSpeedOppDir, maxSpeedOppDir), yVel);
-                }
-            }
+            // apply max velocity
+            Rigidbody.velocity = new Vector2(Mathf.Clamp(xVel, -speed, speed), yVel);
 
             // apply min velocity
             if (Mathf.Abs(xVel) < MinGroundSpeed)
@@ -144,45 +128,126 @@ public partial class CharController
         // in-air movement
         else
         {
-            bool isHighVel = Mathf.Abs(xVel) > speed;
-            bool isMovingSameDir = Math.Sign(moveVector) == Math.Sign(xVel);
-
-            bool move = !(isRecentlyGrappled && isHighVel && isMovingSameDir);
-            bool applyMaxVel = !(isRecentlyGrappled && isHighVel) && !isLineGrappling; //TODO: ??? fix
-
-            if (move && !isWallSliding /*&& wallJumpFramesLeft == 0*/)
+            // move if not wall sliding (?)
+            if (!isWallSliding)
             {
                 Rigidbody.AddForce(Math.Sign(moveVector) * InAirAcceleration * Vector2.right, ForceMode2D.Force);
             }
 
-            // slow down if player is not inputting horizontal movement (not technically drag)
-            if (moveVector == 0 && !grappleController.isGrappling && !isLineGrappling)
+            // slow down if player is not inputting horizontal movement
+            // and don't apply if grappling
+            if (moveVector == 0 && !isLineGrappling)
             {
-                //Debug.Log("drag (ma balls)");
-                // drag as a function of current x velocity
+                // apply horizontal "drag" based on current x velocity
                 Rigidbody.AddForce(-xVel * InAirDrag * Vector2.right, ForceMode2D.Force);
             }
 
-            if (applyMaxVel)
+            // apply max velocity if not grappling
+            if (!isLineGrappling)
             {
                 Vector2 vel = Rigidbody.velocity;
                 Rigidbody.velocity = new Vector2(Mathf.Clamp(vel.x, -speed, speed), yVel);
             }
         }
     }
-    
-    // private void WallJumpDetection_FixedUpdate() {
-    //     if (wallJumpFramesLeft > 0)
-    //     {
-    //         // Debug.Log("------- WALL JUMPING (FIXED) UPDATE - "
-    //         //           + wallJumpFramesLeft + " left, dir = " + wallJumpDir + " -------");
-    //         // transform.position += new Vector3((int) wallJumpDir * speed * Time.deltaTime, 0, 0);
-    //         Rigidbody.velocity = new Vector2(wallJumpDir * speed, Rigidbody.velocity.y);
-    //         wallJumpFramesLeft--;
-    //     }
-    // }
 
+    private void WindMovement_FixedUpdate()
+    {
+        Debug.Assert(!(currentWindZone is null));
+        
+        Vector2 v = Rigidbody.velocity;
+        float xVel = v.x;
+        float yVel = v.y;
 
+        bool isHorizWind = (currentWindZone.currentWind == WindState.Left ||
+                            currentWindZone.currentWind == WindState.Right);
+        float horizWindSpeed = isHorizWind? currentWindZone.windSpeedOnPlayer : 0;
+        float vertWindSpeed = isHorizWind? 0 : currentWindZone.windSpeedOnPlayer;
+        // TODO: vertical wind
+
+        // regular ground movement
+        if (isGrounded)
+        {
+            int moveDir = Math.Sign(moveVector);
+            // if user is not moving and has speed, then slow down
+            if (moveDir == 0 && Mathf.Abs(xVel - horizWindSpeed) >= MinGroundSpeed)
+            {
+                int antiMoveDir = -Math.Sign(xVel - horizWindSpeed);
+
+                // TODO change this if we choose to add ice or something
+                Rigidbody.AddForce(antiMoveDir * OnGroundDeceleration * Vector2.right, ForceMode2D.Force);
+            }
+            // otherwise move the player in the direction
+            else if (moveDir != 0)
+            {
+                Rigidbody.AddForce(moveDir * OnGroundAcceleration * Vector2.right, ForceMode2D.Force);
+            }
+
+            // apply min velocity
+            if (Mathf.Abs(xVel - horizWindSpeed) < MinGroundSpeed)
+            {
+                Rigidbody.velocity = new Vector2(horizWindSpeed, yVel);
+            }
+        }
+        // in-air movement
+        else
+        {
+            // move if not wall sliding (?)
+            if (!isWallSliding)
+            {
+                Rigidbody.AddForce(Math.Sign(moveVector) * InAirAcceleration * Vector2.right, ForceMode2D.Force);
+            }
+
+            // slow down if player is not inputting horizontal movement
+            // and don't apply if grappling
+            if (moveVector == 0 && !isLineGrappling)
+            {
+                // apply horizontal "drag" based on current x velocity
+                Rigidbody.AddForce(-(xVel - horizWindSpeed) * InAirDrag * Vector2.right, ForceMode2D.Force);
+            }
+
+            // apply max velocity if not grappling
+            if (!isLineGrappling)
+            {
+                Vector2 vel = Rigidbody.velocity;
+                Rigidbody.velocity = new Vector2(Mathf.Clamp(vel.x, -speed, speed), yVel);
+            }
+        }
+        
+
+        if (currentWindZone.currentWind == WindState.Up || 
+            currentWindZone.currentWind == WindState.Down || 
+            currentWindZone.currentWind == WindState.None)
+        {
+            // apply normal max velocity
+            if (Mathf.Abs(xVel) > speed) // if newXVel != xVel
+            {
+                Rigidbody.velocity = new Vector2(Mathf.Clamp(xVel, -speed, speed), yVel);
+            }
+        }
+        // if sideways wind,
+        else if (currentWindZone.currentWind == WindState.Left || 
+                 currentWindZone.currentWind == WindState.Right)
+        {
+            // apply wind max velocity
+            int windDir = (int) currentWindZone.currentWind; // -1 if left, 1 if right,
+            // something else otherwise
+            int velDir = Math.Sign(xVel);
+            float maxSpeedSameDir = speed + currentWindZone.windSpeedOnPlayer;
+            float maxSpeedOppDir = speed - currentWindZone.windSpeedOnPlayer;
+                
+            if (windDir == velDir && Mathf.Abs(xVel) > maxSpeedSameDir) 
+            {
+                Rigidbody.velocity = new Vector2(
+                    Mathf.Clamp(xVel, -maxSpeedSameDir, maxSpeedSameDir), yVel);
+            }
+            else if (windDir == -velDir && Mathf.Abs(xVel) > maxSpeedOppDir) 
+            {
+                Rigidbody.velocity = new Vector2(
+                    Mathf.Clamp(xVel, -maxSpeedOppDir, maxSpeedOppDir), yVel);
+            }
+        }
+    }
 
     private void TurnAround_FixedUpdate() {
         // feet dust logic
@@ -277,8 +342,10 @@ public partial class CharController
         Debug.DrawLine(bottomLeft, bottomLeft + aLittleDown, Color.magenta);
         Debug.DrawLine(bottomRight, bottomRight + aLittleDown, Color.magenta);
 
-        RaycastHit2D hit1 = Physics2D.Linecast(bottomLeft, bottomLeft + aLittleDown, obstacleLayerMask);
-        RaycastHit2D hit2 = Physics2D.Linecast(bottomRight, bottomRight + aLittleDown, obstacleLayerMask);
+        RaycastHit2D hit1 = 
+            Physics2D.Linecast(bottomLeft, bottomLeft + aLittleDown, obstacleLayerMask);
+        RaycastHit2D hit2 = 
+            Physics2D.Linecast(bottomRight, bottomRight + aLittleDown, obstacleLayerMask);
 
         bool newlyGrounded = hit1 || hit2;
         if (!isGrounded && newlyGrounded){

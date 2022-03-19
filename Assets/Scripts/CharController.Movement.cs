@@ -43,7 +43,7 @@ public partial class CharController
 
         if (isWallSliding && !isGrounded)
         {
-            forcedMoveTime = .1f;
+            forcedMoveTime = .07f; // TODO: constant
             if (wallJumpDir == -1)
             {
                 FaceLeft();
@@ -75,7 +75,8 @@ public partial class CharController
         float doubleJumpForce = JumpForce * .9f;
         canDoubleJump = false;
         
-        Rigidbody.AddForce(new Vector2(0, isInverted ? -doubleJumpForce : doubleJumpForce), ForceMode2D.Impulse);
+        Rigidbody.AddForce(new Vector2(0, isInverted ? -doubleJumpForce : doubleJumpForce), 
+            ForceMode2D.Impulse);
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
     }
@@ -93,7 +94,7 @@ public partial class CharController
     
     private void OnLanding() {
         canDoubleJump = false;
-        isRecentlyGrappled = false;
+        // isRecentlyGrappled = false;
         dust.Play();
         Animator.SetBool(Grounded, true);
         // Debug.Log("sus");
@@ -114,7 +115,7 @@ public partial class CharController
         isGrappleLaunched = false;
         lineRenderer.enabled = true;
         isLineGrappling = true;
-        isRecentlyGrappled = true;
+        // isRecentlyGrappled = true;
         grapplePoint = point.transform.position;
 
 

@@ -644,7 +644,7 @@ AreaEffector2D:
   m_UseColliderMask: 1
   m_ColliderMask:
     serializedVersion: 2
-    m_Bits: 704
+    m_Bits: 576
   m_UseGlobalAngle: 0
   m_ForceAngle: 0
   m_ForceMagnitude: 5
@@ -687,8 +687,9 @@ Transform:
   m_GameObject: {fileID: 254833785}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -24.4316, y: -2.1944, z: 0}
-  m_LocalScale: {x: 38.86256, y: 4.15, z: 1}
+  m_LocalScale: {x: 38.86256, y: 16.12, z: 1}
   m_Children:
+  - {fileID: 1716485541}
   - {fileID: 2098438728}
   m_Father: {fileID: 0}
   m_RootOrder: 12
@@ -705,8 +706,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c93de436c277c59438eb28494282b35a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  realStateWind: 2
-  altStateWind: 3
+  realStateWind: 1
+  altStateWind: -1
+  currentWind: 0
+  windSpeedOnPlayer: 1
 --- !u!4 &299645595 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7176562353918822500, guid: 0a2711ba1793bcd4b8991bd6684fd625, type: 3}
@@ -19479,8 +19482,10 @@ MonoBehaviour:
   slicePoint: {fileID: 1928793238}
   isParrying: 0
   isInverted: 0
+  grappleProjectile: {fileID: 0}
   isRecentlyGrappled: 0
   isCrouching: 0
+  currentWindZone: {fileID: 0}
   fadeTime: 0
 --- !u!95 &1694014680
 Animator:
@@ -19718,6 +19723,50 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 24044d698e108c84c880528336996095, type: 3}
+--- !u!1 &1716485540
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1716485541}
+  - component: {fileID: 1716485542}
+  m_Layer: 0
+  m_Name: WindEmitterCopy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1716485541
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1716485540}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 254833789}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1716485542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1716485540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8466dc3033f4af4b9abab3e311f541e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  none: 0
 --- !u!1 &1725700159
 GameObject:
   m_ObjectHideFlags: 0
@@ -49159,7 +49208,7 @@ Transform:
   m_LocalScale: {x: 1, y: 0.1, z: 1}
   m_Children: []
   m_Father: {fileID: 254833789}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!199 &2098438729
 ParticleSystemRenderer:

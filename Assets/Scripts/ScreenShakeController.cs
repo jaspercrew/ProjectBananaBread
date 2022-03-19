@@ -35,7 +35,7 @@ public class ScreenShakeController : MonoBehaviour {
             shakeTimer -= Time.deltaTime;
             if (shakeTimer <= 0f) {
                 virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = 0f;
-                
+                virtualCamera.transform.eulerAngles = Vector3.zero;
             }
         }
     }

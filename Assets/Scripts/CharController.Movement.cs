@@ -59,7 +59,8 @@ public partial class CharController
                 Debug.LogError("wall jump dir is bad");
         }
         
-        Rigidbody.AddForce(new Vector2(jumpDir * horizontalJumpForce, isInverted ? -JumpForce : JumpForce), ForceMode2D.Impulse);
+        Rigidbody.AddForce(new Vector2(jumpDir * horizontalJumpForce, isInverted ? -JumpForce : JumpForce), 
+            ForceMode2D.Impulse);
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
         justJumped = true;

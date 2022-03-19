@@ -73,13 +73,14 @@ public partial class CharController : LivingThing
     private bool isWallSliding;
     private int wallJumpDir;
     //private int wallJumpFramesLeft;
+    public WindEmitter currentWindZone;
     
     private int fadeSpriteIterator;
     public float fadeTime;
     
     private float moveVector;
     private float inputVector;
-    private float xDir = 2;
+    private float prevMoveVector = 2;
     private int forcedMoveVector;
     private float forcedMoveTime;
 

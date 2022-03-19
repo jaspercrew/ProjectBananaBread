@@ -55,6 +55,12 @@ public partial class CharController
         // movement animations
         Animator.SetInteger(AnimState, Mathf.Abs(moveVector) > float.Epsilon? 2 : 0);
         
+        // if (in wind)
+        //      wind_movement()
+        // else if (in water)
+        //      water_movement()
+        // else
+        //      standard_movement()
         StandardMovement_FixedUpdate();
 
         // WallJumpDetection_FixedUpdate();
@@ -85,6 +91,7 @@ public partial class CharController
                 int antiMoveDir = -Math.Sign(xVel);
 
                 // TODO change this if we choose to add ice or something
+                // TODO change for wind
                 Rigidbody.AddForce(antiMoveDir * OnGroundDeceleration * Vector2.right, ForceMode2D.Force);
             }
             else if (moveDir != 0)
@@ -92,10 +99,37 @@ public partial class CharController
                 Rigidbody.AddForce(moveDir * OnGroundAcceleration * Vector2.right, ForceMode2D.Force);
             }
 
-            // apply max velocity
-            if (Mathf.Abs(xVel) > speed) // if newXVel != xVel
+            if (currentWindZone == null || 
+                currentWindZone.currentWind == WindState.Up || 
+                currentWindZone.currentWind == WindState.Down || 
+                currentWindZone.currentWind == WindState.None)
             {
-                Rigidbody.velocity = new Vector2(Mathf.Clamp(xVel, -speed, speed), yVel);
+                // apply normal max velocity
+                if (Mathf.Abs(xVel) > speed) // if newXVel != xVel
+                {
+                    Rigidbody.velocity = new Vector2(Mathf.Clamp(xVel, -speed, speed), yVel);
+                }
+            }
+            // if sideways wind,
+            else if (currentWindZone.currentWind == WindState.Left || 
+                     currentWindZone.currentWind == WindState.Right)
+            {
+                // apply wind max velocity
+                int windDir = (int) currentWindZone.currentWind; // -1 if left, 1 if right, something else otherwise
+                int velDir = Math.Sign(xVel);
+                float maxSpeedSameDir = speed + currentWindZone.windSpeedOnPlayer;
+                float maxSpeedOppDir = speed - currentWindZone.windSpeedOnPlayer;
+                
+                if (windDir == velDir && Mathf.Abs(xVel) > maxSpeedSameDir) 
+                {
+                    Rigidbody.velocity = new Vector2(
+                        Mathf.Clamp(xVel, -maxSpeedSameDir, maxSpeedSameDir), yVel);
+                }
+                else if (windDir == -velDir && Mathf.Abs(xVel) > maxSpeedOppDir) 
+                {
+                    Rigidbody.velocity = new Vector2(
+                        Mathf.Clamp(xVel, -maxSpeedOppDir, maxSpeedOppDir), yVel);
+                }
             }
 
             // apply min velocity
@@ -148,11 +182,11 @@ public partial class CharController
 
     private void TurnAround_FixedUpdate() {
         // feet dust logic
-        if (Math.Abs(xDir - moveVector) > 0.01f && isGrounded && moveVector != 0) {
+        if (Math.Abs(prevMoveVector - moveVector) > 0.01f && isGrounded && moveVector != 0) {
             dust.Play();
         }
         
-        xDir = moveVector;
+        prevMoveVector = moveVector;
 
         Vector3 scale = transform.localScale;
         // direction switching

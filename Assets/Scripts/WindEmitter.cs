@@ -6,16 +6,17 @@ using UnityEngine.PlayerLoop;
 
 public enum WindState
 {
-    Up, Down, Left, Right, None
+    Up = 2, Down = -2, Left = -1, Right = 1, None = 0
 }
 public class WindEmitter : BinaryEntity
 {
     public WindState realStateWind;
     public WindState altStateWind;
-    private WindState currentWind;
+    public WindState currentWind;
     private AreaEffector2D areaEffector;
     private BoxCollider2D boxCollider;
-    private const float windForce = 5f;
+    private const float WindForce = 5f;
+    public float windSpeedOnPlayer = 3;
     
     protected override void TurnShifted()
     {
@@ -37,19 +38,19 @@ public class WindEmitter : BinaryEntity
         {
             case WindState.Up:
                 areaEffector.forceAngle = 90f;
-                areaEffector.forceMagnitude = windForce;
+                areaEffector.forceMagnitude = WindForce;
                 break;
             case WindState.Down:
                 areaEffector.forceAngle = 270f;
-                areaEffector.forceMagnitude = windForce;
+                areaEffector.forceMagnitude = WindForce;
                 break;
             case WindState.Left:
                 areaEffector.forceAngle = 180f;
-                areaEffector.forceMagnitude = windForce;
+                areaEffector.forceMagnitude = WindForce;
                 break;
             case WindState.Right:
                 areaEffector.forceAngle = 0f;
-                areaEffector.forceMagnitude = windForce;
+                areaEffector.forceMagnitude = WindForce;
                 break;
             case WindState.None:
                 areaEffector.forceMagnitude = 0f;
@@ -61,9 +62,20 @@ public class WindEmitter : BinaryEntity
     protected override void Awake()
     {
         areaEffector = GetComponent<AreaEffector2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
-        areaEffector.forceMagnitude = windForce;
+        BoxCollider2D[] colliders = GetComponents<BoxCollider2D>();
+        Debug.Assert(colliders.Length == 2);
+        boxCollider = colliders[colliders[0].usedByEffector? 0 : 1];
+        areaEffector.forceMagnitude = WindForce;
         base.Awake();
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        CharController.Instance.currentWindZone = this;
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        CharController.Instance.currentWindZone = null;
+    }
 }

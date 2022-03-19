@@ -644,7 +644,7 @@ AreaEffector2D:
   m_UseColliderMask: 1
   m_ColliderMask:
     serializedVersion: 2
-    m_Bits: 704
+    m_Bits: 576
   m_UseGlobalAngle: 0
   m_ForceAngle: 0
   m_ForceMagnitude: 5
@@ -705,8 +705,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c93de436c277c59438eb28494282b35a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  realStateWind: 2
-  altStateWind: 3
+  realStateWind: -1
+  altStateWind: 1
+  currentWind: 1
+  windSpeedOnPlayer: 3
 --- !u!4 &299645595 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7176562353918822500, guid: 0a2711ba1793bcd4b8991bd6684fd625, type: 3}
@@ -6819,12 +6821,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97cacb837becf7949ae233a6b21aa19f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <EntityState>k__BackingField: 0
-  Renderer: {fileID: 0}
-  Collider2D: {fileID: 0}
-  bonusInteractRange: 0
-  isInteractable: 0
-  specialState: 0
 --- !u!4 &768931880
 Transform:
   m_ObjectHideFlags: 0
@@ -18275,7 +18271,7 @@ MonoBehaviour:
       - 0
       globalNormalsAngle: 0
       flipNormals: 0
-    vertexPathUpToDate: 0
+    vertexPathUpToDate: 1
     vertexPathMaxAngleError: 0.3
     vertexPathMinVertexSpacing: 0.01
     showTransformTool: 1
@@ -19246,16 +19242,18 @@ MonoBehaviour:
   castProjectileInput: {fileID: 3870309991120366406, guid: e5443d9096a73484db468b02fc57e85b, type: 3}
   fadeSprite: {fileID: 849027303211011230, guid: 3e65f913ebec9664da23f573e81e5867, type: 3}
   speed: 4
+  attackRange: 0.25
   enemyLayers:
     serializedVersion: 2
     m_Bits: 64
   attackPoint: {fileID: 173137869}
   slicePoint: {fileID: 1928793238}
-  attackRange: 0.25
+  isParrying: 0
   isInverted: 0
   isRecentlyGrappled: 0
-  isParrying: 0
   isCrouching: 0
+  currentWindZone: {fileID: 0}
+  fadeTime: 0
 --- !u!95 &1694014680
 Animator:
   serializedVersion: 3

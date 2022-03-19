@@ -85,7 +85,7 @@ public class AudioManager : MonoBehaviour
 
     public void OnShift(bool toAlt)
     {
-        const float fadeTime = .5f;
+        const float fadeTime = 1f;
         if (toAlt)
         {
             StartCoroutine(FadeOut(primarySource, fadeTime));   

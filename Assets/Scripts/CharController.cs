@@ -16,6 +16,7 @@ public partial class CharController : LivingThing
     private ScreenShakeController screenShakeController;
     private RadialGrapple grappleController;
     private SpriteRenderer spriteRenderer;
+    private LineRenderer lineRenderer;
 
     // Configurable player control values
     public float speed = 10f;
@@ -47,6 +48,7 @@ public partial class CharController : LivingThing
     private int comboCounter;
     private IEnumerator attackCoroutine;
     
+    
     private float lastParryTime;
     public bool isParrying;
     
@@ -60,6 +62,12 @@ public partial class CharController : LivingThing
     
     private bool isInvincible;
     
+    private bool isGrappleLaunched;
+    private bool isLineGrappling;
+    public Rigidbody2D grappleProjectile;
+    private Rigidbody2D sentProjectile;
+    
+    private Vector3 grapplePoint;
     public bool isRecentlyGrappled;
     
     private bool justJumped;
@@ -181,7 +189,7 @@ public partial class CharController : LivingThing
 
     private bool IsAbleToMove()
     {
-        return !isAttacking && !isDashing && !isParrying && !grappleController.isGrappling;
+        return !isAttacking && !isDashing && !isParrying && !grappleController.isGrappling && !isLineGrappling;
     }
 
     private bool IsAbleToBeDamaged() {

@@ -40,11 +40,13 @@ public class MeleeEnemy : Enemy
         StartCoroutine(attackCo = AttackCoroutine());
     }
 
-    protected IEnumerator AttackCoroutine() {
+    protected IEnumerator AttackCoroutine()
+    {
+        Rigidbody.velocity = Vector2.ClampMagnitude(Rigidbody.velocity, .01f);
         // enemy attack modifiers
         // float attackBoost = 1.5f;
         const float beginAttackDelay = .55f;
-        const float hitConfirmDelay = .20f;
+        //const float hitConfirmDelay = .20f;
         const float hitEndDelay = .4f;
 
         yield return new WaitForSeconds(beginAttackDelay);
@@ -53,11 +55,8 @@ public class MeleeEnemy : Enemy
         Collider2D[] hitColliders = new Collider2D[maxHits];
         int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange,
             hitColliders, playerLayers);
-        if (numHits > 0) {
-            StartCoroutine(PauseAnimatorCoroutine(hitConfirmDelay)); // pause swing animation if an enemy is hit
-        }
 
-        if (hitColliders.Length > 0) {
+        if (numHits > 0) {
             foreach (Collider2D p in hitColliders) {
                 if (p != null && p.gameObject.GetComponent<CharController>() != null && charController.isParrying) {
                     // StartCoroutine(PauseAnimatorCoroutine(.2f));

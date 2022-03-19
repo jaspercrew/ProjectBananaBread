@@ -75,15 +75,17 @@ public partial class CharController
         
         GameManager.Instance.ShiftWorld();
     }
-
+    
     // Take damage, knock away from point
     public void TakeDamage(int damage, float knockback, Vector2 point) {
         if (!IsAbleToBeDamaged()) {
             return;
         }
         // GameManager.Instance.FreezeFrame();
+        screenShakeController.MediumShake();
+        //GameManager.Instance.FreezeFrame();
         StartCoroutine(TakeDamageCoroutine());
-        KnockAwayFromPoint(knockback, point);
+        //KnockAwayFromPoint(knockback, point);
         CurrentHealth -= damage;
         // damage animation
         Animator.SetTrigger(Hurt);
@@ -101,7 +103,7 @@ public partial class CharController
         isInvincible = false;
     }
 
-    protected override void Die() 
+    protected void Die() 
     {
         Animator.SetTrigger(Death);
         transform.GetComponent<Collider>().enabled = false;
@@ -142,18 +144,9 @@ public partial class CharController
     
         yield return new WaitForSeconds(beginAttackDelay);
         
-        
         // move while attacking TODO : change this functionality
         if (isGrounded) {
-            if (moveVector > .5) {
-                Rigidbody.velocity = new Vector2(attackBoost, Rigidbody.velocity.y);
-            }
-            else if (moveVector < -.5) {
-                Rigidbody.velocity = new Vector2(-attackBoost, Rigidbody.velocity.y);
-            }
-            else {
-                Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
-            }
+            Rigidbody.velocity = new Vector2(moveVector * attackBoost, Rigidbody.velocity.y);
         }
         
 
@@ -161,27 +154,26 @@ public partial class CharController
         Collider2D[] hitColliders = new Collider2D[maxEnemiesHit];
         
         // scan for hit enemies
-        int numHitEnemies = Physics2D.OverlapCircleNonAlloc(
+        Physics2D.OverlapCircleNonAlloc(
             attackPoint.position, attackRange, hitColliders, enemyLayers);
 
-        if (numHitEnemies > 0) {
-            // pause swing animation if an enemy is hit
-            StartCoroutine(PauseAnimatorCoroutine(hitConfirmDelay)); 
-            screenShakeController.MediumShake();
-        }
-
         bool hit = false;
-        
         foreach (Collider2D enemy in hitColliders)
         {
             if (enemy is null)
                 break;
-            enemy.GetComponent<Enemy>().TakeDamage(AttackDamage, isHeavyAttack ? 2f : 1f);
+            if (enemy.GetComponent<Enemy>() != null)
+                enemy.GetComponent<Enemy>().TakeDamage(AttackDamage, isHeavyAttack ? 2f : 1f);
+            else if (enemy.GetComponent<HittableEntity>() != null)
+                enemy.GetComponent<HittableEntity>().GetHit();
             hit = true;
         }
-        
+
         if (hit)
+        {
+            screenShakeController.MediumShake();
             AudioManager.Instance.Play(SoundName.Hit, .5f);
+        }
         
         yield return new WaitForSeconds(endAttackDelay);
         isAttacking = false;

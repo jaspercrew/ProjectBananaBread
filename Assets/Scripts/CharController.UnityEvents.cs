@@ -14,16 +14,19 @@ public partial class CharController
         else
         {
             Instance = this;
-            // DontDestroyOnLoad(gameObject);
         }
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
+        
         canCast = true;
         canDoubleJump = false;
         fadeSpriteIterator = 0;
         
+        lineRenderer = transform.GetComponent<LineRenderer>();
+        lineRenderer.enabled = false;
         
         particleChild = transform.Find("Particles");
         CurrentHealth = MaxHealth;
@@ -145,7 +148,7 @@ public partial class CharController
             bool isMovingSameDir = Math.Sign(moveVector) == Math.Sign(xVel);
 
             bool move = !(isRecentlyGrappled && isHighVel && isMovingSameDir);
-            bool applyMaxVel = !(isRecentlyGrappled && isHighVel);
+            bool applyMaxVel = !(isRecentlyGrappled && isHighVel) && !isLineGrappling; //TODO: ??? fix
 
             if (move && !isWallSliding /*&& wallJumpFramesLeft == 0*/)
             {
@@ -153,8 +156,9 @@ public partial class CharController
             }
 
             // slow down if player is not inputting horizontal movement (not technically drag)
-            if (moveVector == 0 && !grappleController.isGrappling)
+            if (moveVector == 0 && !grappleController.isGrappling && !isLineGrappling)
             {
+                //Debug.Log("drag (ma balls)");
                 // drag as a function of current x velocity
                 Rigidbody.AddForce(-xVel * InAirDrag * Vector2.right, ForceMode2D.Force);
             }
@@ -201,6 +205,11 @@ public partial class CharController
     private void Update() {
         if (Input.GetKeyDown(KeyCode.P))
             Debug.Log("grounded? " + isGrounded + "; wall sliding? " + isWallSliding);
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            LaunchLine(FindObjectOfType<GrapplePoint>());
+        }
         
         CheckGrounded_Update();
         
@@ -219,9 +228,36 @@ public partial class CharController
         FadeParticle_Update();
         // slice-dash detection
         SliceDashDetection_Update();
-        
+        LineGrappleUpdate();
         //WallJumpDetection_FixedUpdate();
 
+    }
+
+    private void LineGrappleUpdate()
+    {
+        if (isGrappleLaunched && sentProjectile != null)
+        {
+            lineRenderer.SetPosition(1, transform.position);
+            lineRenderer.SetPosition(0, sentProjectile.transform.position);
+        }
+        const float grappleSpeed = 15f;
+        const float disconnectDistance = .3f;
+        if (isLineGrappling)
+        {
+            Vector3 direction = (grapplePoint - transform.position).normalized;
+            Rigidbody.velocity = direction * grappleSpeed;
+            lineRenderer.SetPosition(1, transform.position);
+            lineRenderer.SetPosition(0, grapplePoint);
+            
+
+            
+            if ((grapplePoint - transform.position).magnitude < disconnectDistance)
+            {
+                DisconnectGrapple();
+            }
+
+        }
+        
     }
 
 

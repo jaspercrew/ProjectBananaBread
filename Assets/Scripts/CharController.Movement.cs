@@ -11,7 +11,8 @@ public partial class CharController
         Interrupt();
         
         float xScale = transform.localScale.x;
-        float dashDir = moveVector == 0 ? -xScale : moveVector;
+        //float dashDir = moveVector == 0 ? -xScale : moveVector;
+        float dashDir = inputVector;
         float dashSpeed = 9f * dashDir;
         const float dashTime = .23f;
 
@@ -97,4 +98,33 @@ public partial class CharController
         Animator.SetBool(Grounded, true);
         // Debug.Log("sus");
     }
+
+    private void LaunchLine(GrapplePoint point)
+    {
+        isGrappleLaunched = true;
+        lineRenderer.enabled = true;
+        const float launchSpeed = 25f;
+        Vector3 direction = (point.transform.position - transform.position).normalized;
+        sentProjectile = Instantiate(grappleProjectile, transform.position, transform.rotation);
+        sentProjectile.gameObject.GetComponent<GrappleProjectile>().SetStats(direction, launchSpeed);
+    }
+
+    public void StartLineGrapple(GrapplePoint point)
+    {
+        isGrappleLaunched = false;
+        lineRenderer.enabled = true;
+        isLineGrappling = true;
+        isRecentlyGrappled = true;
+        grapplePoint = point.transform.position;
+
+
+    }
+
+    private void DisconnectGrapple()
+    {
+        lineRenderer.enabled = false;
+        isLineGrappling = false;
+        Rigidbody.velocity = Vector2.zero;
+    }
+    
 }

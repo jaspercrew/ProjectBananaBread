@@ -22,17 +22,6 @@ public abstract class LivingThing : Entity {
     protected static readonly int Attack = Animator.StringToHash("Attack");
     protected static readonly int Parry = Animator.StringToHash("Parry");
     protected static readonly int Dash = Animator.StringToHash("Recover");
-
-
-    // public virtual void TakeDamage(int damage) {
-    //     CurrentHealth -= damage;
-    //     // damage animation
-    //     Animator.SetTrigger(Hurt);
-    //     
-    //     if (CurrentHealth <= 0) {
-    //         Die();
-    //     }
-    // }
     
     protected void FaceLeft()
     {
@@ -63,34 +52,14 @@ public abstract class LivingThing : Entity {
     }
 
     // pauses the animator for pauseTime
-    protected IEnumerator PauseAnimatorCoroutine(float pauseTime) {
-        float temp = Animator.speed;
-        Animator.speed = 0;
-        yield return new WaitForSeconds(pauseTime);
-        // ReSharper disable once Unity.InefficientPropertyAccess
-        Animator.speed = temp;
-    }
+    // protected IEnumerator PauseAnimatorCoroutine(float pauseTime) {
+    //     float temp = Animator.speed;
+    //     Animator.speed = 0;
+    //     yield return new WaitForSeconds(pauseTime);
+    //     // ReSharper disable once Unity.InefficientPropertyAccess
+    //     Animator.speed = temp;
+    // }
     
-    // knock this object away from point with velocity vel 
-    protected void KnockAwayFromPoint(float force, Vector3 point) {
-        Vector2 dir =(transform.position - point).normalized;
-        Rigidbody.AddForce(dir * force, ForceMode2D.Impulse);
-        Debug.Log(force + "cringe");
-    }
-    
-    
-
-    protected virtual void Die() {
-        Animator.SetTrigger(Death);
-        //transform.GetComponent<Collider>().isTrigger = true;
-        //Rigidbody.gravityScale = 0;
-    }
-
-    public virtual void Stun(float stunTime) {
-        isStunned = true;
-        StartCoroutine(StunCoroutine(stunTime));
-    }
-
     public virtual IEnumerator StunCoroutine(float stunTime) {
         yield return new WaitForSeconds(stunTime);
         isStunned = false;

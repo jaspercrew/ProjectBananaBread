@@ -30,7 +30,6 @@ public class FadeSprite : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
     }
 
     public void Initialize(Sprite sprite, bool flipped)

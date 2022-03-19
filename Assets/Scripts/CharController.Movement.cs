@@ -43,7 +43,7 @@ public partial class CharController
 
         if (isWallSliding && !isGrounded)
         {
-            forcedMoveTime = .07f; // TODO: constant
+            forcedMoveTime = .1f;
             if (wallJumpDir == -1)
             {
                 FaceLeft();
@@ -75,8 +75,7 @@ public partial class CharController
         float doubleJumpForce = JumpForce * .9f;
         canDoubleJump = false;
         
-        Rigidbody.AddForce(new Vector2(0, isInverted ? -doubleJumpForce : doubleJumpForce), 
-            ForceMode2D.Impulse);
+        Rigidbody.AddForce(new Vector2(0, isInverted ? -doubleJumpForce : doubleJumpForce), ForceMode2D.Impulse);
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
     }
@@ -94,36 +93,47 @@ public partial class CharController
     
     private void OnLanding() {
         canDoubleJump = false;
-        // isRecentlyGrappled = false;
+        isRecentlyGrappled = false;
         dust.Play();
         Animator.SetBool(Grounded, true);
         // Debug.Log("sus");
     }
 
+    private void AttemptLaunchGrapple()
+    {
+        if (GrapplePoint.targetPoint != null && !isGrappleLaunched && !isLineGrappling && !grappleBlocked)
+        {
+            LaunchLine(GrapplePoint.targetPoint);
+        }
+    }
+
     private void LaunchLine(GrapplePoint point)
     {
+        launchedPoint = point;
         isGrappleLaunched = true;
-        lineRenderer.enabled = true;
+        grappleLineRenderer.enabled = true;
         const float launchSpeed = 25f;
+        const float offset = 2f;
         Vector3 direction = (point.transform.position - transform.position).normalized;
-        sentProjectile = Instantiate(grappleProjectile, transform.position, transform.rotation);
+        sentProjectile = Instantiate(grappleProjectile, transform.position + (direction * offset), transform.rotation);
         sentProjectile.gameObject.GetComponent<GrappleProjectile>().SetStats(direction, launchSpeed);
     }
 
     public void StartLineGrapple(GrapplePoint point)
     {
+        hookedPoint = point;
         isGrappleLaunched = false;
-        lineRenderer.enabled = true;
+        grappleLineRenderer.enabled = true;
         isLineGrappling = true;
-        // isRecentlyGrappled = true;
-        grapplePoint = point.transform.position;
-
-
+        isRecentlyGrappled = true;
     }
 
     private void DisconnectGrapple()
     {
-        lineRenderer.enabled = false;
+        launchedPoint = null;
+        hookedPoint = null;
+        Debug.Log("Disconnect");
+        grappleLineRenderer.enabled = false;
         isLineGrappling = false;
         Rigidbody.velocity = Vector2.zero;
     }

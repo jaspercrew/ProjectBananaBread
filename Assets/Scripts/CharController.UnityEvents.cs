@@ -27,9 +27,11 @@ public partial class CharController
         
         grappleLineRenderer = transform.GetComponent<LineRenderer>();
         grappleLineRenderer.enabled = false;
-
         grappleLOSRenderer = transform.Find("GrappleLOS").GetComponent<LineRenderer>();
         grappleLOSRenderer.enabled = false;
+        grappleClearRenderer = transform.Find("GrappleClear").GetComponent<LineRenderer>();
+        grappleClearRenderer.enabled = false;
+        
         
         particleChild = transform.Find("Particles");
         CurrentHealth = MaxHealth;
@@ -299,20 +301,19 @@ public partial class CharController
 
     private void LineGrappleUpdate()
     {
+
         if (!isLineGrappling && !isGrappleLaunched && GrapplePoint.targetPoint != null)
         {
             Vector3 targetPosition = GrapplePoint.targetPoint.transform.position;
             Vector3 direction = (targetPosition - transform.position).normalized;
             Vector3 offset = Vector3.up * .5f;
             
-            
             RaycastHit2D hit = Physics2D.Raycast(transform.position +  offset, direction,
                 Vector2.Distance(transform.position, targetPosition), obstacleLayerMask);
             
             if (hit.collider != null)
             {
-                
-                Debug.Log(hit.collider.gameObject.name);
+                grappleClearRenderer.enabled = false;
                 grappleBlocked = true;
                 grappleLOSRenderer.enabled = true;
                 grappleLOSRenderer.SetPosition(1, transform.position + offset);
@@ -321,8 +322,10 @@ public partial class CharController
             else
             {
                 grappleBlocked = false;
-                //Debug.Log("red off");
                 grappleLOSRenderer.enabled = false;
+                grappleClearRenderer.enabled = true;
+                grappleClearRenderer.SetPosition(1, transform.position + offset);
+                grappleClearRenderer.SetPosition(0, GrapplePoint.targetPoint.transform.position);
             }
         }
         else
@@ -330,6 +333,9 @@ public partial class CharController
             grappleBlocked = false;
             //Debug.Log("red off");
             grappleLOSRenderer.enabled = false;
+            grappleClearRenderer.enabled = false;
+
+
         }
         
         if (isGrappleLaunched && sentProjectile != null)

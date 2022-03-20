@@ -18,6 +18,7 @@ public partial class CharController : LivingThing
     private SpriteRenderer spriteRenderer;
     private LineRenderer grappleLineRenderer;
     private LineRenderer grappleLOSRenderer;
+    private LineRenderer grappleClearRenderer;
 
     // Configurable player control values
     public float speed = 10f;

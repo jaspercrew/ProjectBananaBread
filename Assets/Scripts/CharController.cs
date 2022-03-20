@@ -14,9 +14,10 @@ public partial class CharController : LivingThing
     private ParticleSystem switchPS;
     private TrailRenderer trailRenderer;
     private ScreenShakeController screenShakeController;
-    private RadialGrapple grappleController;
+    // private RadialGrapple grappleController;
     private SpriteRenderer spriteRenderer;
     private LineRenderer grappleLineRenderer;
+    // ReSharper disable once InconsistentNaming
     private LineRenderer grappleLOSRenderer;
     private LineRenderer grappleClearRenderer;
 
@@ -197,7 +198,7 @@ public partial class CharController : LivingThing
 
     private bool IsAbleToMove()
     {
-        return !isAttacking && !isDashing && !isParrying && !grappleController.isGrappling && !isLineGrappling;
+        return !isAttacking && !isDashing && !isParrying && !isLineGrappling;
     }
 
     private bool IsAbleToBeDamaged() {
@@ -213,7 +214,7 @@ public partial class CharController : LivingThing
     }
 
     private bool IsAbleToAct() {
-        return !isDashing && !isAttacking && !isParrying && !grappleController.isGrappling && !isSliceDashing;
+        return !isDashing && !isAttacking && !isParrying && !isSliceDashing;
     }
 
     public void Invert() {

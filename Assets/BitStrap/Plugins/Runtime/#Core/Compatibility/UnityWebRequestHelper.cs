@@ -19,7 +19,9 @@ namespace BitStrap
 #if UNITY_5
 			return !webRequest.isError;
 #else
-			return !webRequest.isNetworkError && !webRequest.isHttpError;
+			// return !webRequest.isNetworkError && !webRequest.isHttpError;
+			return webRequest.result != UnityWebRequest.Result.ConnectionError &&
+			       webRequest.result != UnityWebRequest.Result.ProtocolError;
 #endif
 		}
 	}

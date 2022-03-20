@@ -48,7 +48,7 @@ public partial class CharController
         obstacleLayerMask = LayerMask.GetMask("Obstacle");
         
         screenShakeController = ScreenShakeController.Instance;
-        grappleController = GetComponent<RadialGrapple>();
+        // grappleController = GetComponent<RadialGrapple>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         
         trailRenderer.emitting = false;
@@ -167,7 +167,7 @@ public partial class CharController
         bool isHorizWind = (currentWindZone.currentWind == WindState.Left ||
                             currentWindZone.currentWind == WindState.Right);
         float horizWindSpeed = isHorizWind? currentWindZone.windSpeedOnPlayer : 0;
-        float vertWindSpeed = isHorizWind? 0 : currentWindZone.windSpeedOnPlayer;
+        // float vertWindSpeed = isHorizWind? 0 : currentWindZone.windSpeedOnPlayer;
         // TODO: vertical wind
 
         // regular ground movement

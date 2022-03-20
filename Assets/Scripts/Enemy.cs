@@ -125,7 +125,7 @@ public class Enemy : LivingThing
         canFunction = true;
     }
 
-    public void Yoink(float yoinkForce)
+    public override void Yoink(float yoinkForce)
     {
         Vector3 dir = (Camera.main).ScreenToWorldPoint(Input.mousePosition) - transform.position;
         Rigidbody.AddForce(yoinkForce * dir.normalized , ForceMode2D.Impulse);

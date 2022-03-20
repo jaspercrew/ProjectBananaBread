@@ -3,8 +3,9 @@ using UnityEngine;
 
 public class FluidGravitySetter : BinaryEntity
 {
-    private Collider2D collider;
-    private void Awake()
+    // private Collider2D collider;
+    
+    protected override void Awake()
     {
         CheckEntity();
     }

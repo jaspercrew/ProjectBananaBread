@@ -132,14 +132,14 @@ public partial class CharController
         float attackBoost = 1.5f;
         float beginAttackDelay = .12f;
         float endAttackDelay = .35f;
-        float hitConfirmDelay = .20f;
+        // float hitConfirmDelay = .20f;
         
         // heavy attack modifiers
         if (isHeavyAttack) { 
             attackBoost = 2.0f;
             beginAttackDelay = .25f;
             endAttackDelay = .5f;
-            hitConfirmDelay = .30f;
+            // hitConfirmDelay = .30f;
         }
     
         yield return new WaitForSeconds(beginAttackDelay);

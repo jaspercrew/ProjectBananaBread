@@ -251,8 +251,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1882710947
-  m_SortingLayer: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 507bf594fe8f8f147a2be428829c49c5, type: 3}
   m_Color: {r: 0, g: 0.6423671, b: 1, a: 1}
@@ -607,8 +607,8 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0, g: 1, b: 0.14155102, a: 0.39215687}
-      key1: {r: 0, g: 1, b: 0.14509805, a: 0.39215687}
+      key0: {r: 0.16734326, g: 0.8207547, b: 0, a: 0.50980395}
+      key1: {r: 0.16862746, g: 0.8235294, b: 0, a: 0.50980395}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -1446,8 +1446,8 @@ LineRenderer:
     colorGradient:
       serializedVersion: 2
       key0: {r: 1, g: 0, b: 0, a: 0.39215687}
-      key1: {r: 1, g: 0, b: 0, a: 0.39215687}
-      key2: {r: 0, g: 0, b: 0, a: 0}
+      key1: {r: 1, g: 0, b: 0, a: 0.50980395}
+      key2: {r: 0, g: 0, b: 0, a: 0.50980395}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
       key5: {r: 0, g: 0, b: 0, a: 0}
@@ -1462,8 +1462,8 @@ LineRenderer:
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 65535
-      atime2: 0
+      atime1: 964
+      atime2: 65535
       atime3: 0
       atime4: 0
       atime5: 0
@@ -1471,7 +1471,7 @@ LineRenderer:
       atime7: 0
       m_Mode: 1
       m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
+      m_NumAlphaKeys: 3
     numCornerVertices: 0
     numCapVertices: 0
     alignment: 0
@@ -1891,8 +1891,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 103378881
+  m_SortingLayer: -4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 1a665d63a39c8324da96957bf11f5e48, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

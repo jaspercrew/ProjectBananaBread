@@ -135,7 +135,7 @@ public partial class CharController
         Debug.Log("Disconnect");
         grappleLineRenderer.enabled = false;
         isLineGrappling = false;
-        Rigidbody.velocity = Vector2.zero;
+        Rigidbody.velocity = Vector2.ClampMagnitude(Rigidbody.velocity, 3f);
     }
     
 }

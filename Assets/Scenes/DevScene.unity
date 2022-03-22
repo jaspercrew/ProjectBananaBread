@@ -254,12 +254,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 507bf594fe8f8f147a2be428829c49c5, type: 3}
-  m_Color: {r: 0, g: 0.6423671, b: 1, a: 1}
+  m_Sprite: {fileID: 2325857476847377239, guid: 137af54a783991847b2059387b5a4ad8, type: 3}
+  m_Color: {r: 0, g: 0.9817288, b: 1, a: 0.70980394}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.64, y: 0.64}
+  m_Size: {x: 1.28, y: 1.28}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -581,8 +581,8 @@ LineRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 103378881
-  m_SortingLayer: -4
+  m_SortingLayerID: -1882710947
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
@@ -607,9 +607,9 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.16734326, g: 0.8207547, b: 0, a: 0.50980395}
-      key1: {r: 0.16862746, g: 0.8235294, b: 0, a: 0.50980395}
-      key2: {r: 0, g: 0, b: 0, a: 0}
+      key0: {r: 0, g: 0.87058824, b: 0.8862745, a: 0.50980395}
+      key1: {r: 0, g: 0.87058824, b: 0.8862745, a: 0.50980395}
+      key2: {r: 0, g: 0.87058824, b: 0.8862745, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
       key5: {r: 0, g: 0, b: 0, a: 0}
@@ -617,7 +617,7 @@ LineRenderer:
       key7: {r: 0, g: 0, b: 0, a: 0}
       ctime0: 0
       ctime1: 65535
-      ctime2: 0
+      ctime2: 65535
       ctime3: 0
       ctime4: 0
       ctime5: 0
@@ -19939,9 +19939,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8af66dde68b5c0344812ed9a1df80c92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainCamera: {fileID: 519420031}
-  isGrappling: 0
-  projectile: {fileID: 1920082404479384334, guid: 7f946ab064a4c614a865b845260eaef6, type: 3}
 --- !u!1 &1694337919
 GameObject:
   m_ObjectHideFlags: 0

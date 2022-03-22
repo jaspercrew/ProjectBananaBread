@@ -70,12 +70,19 @@ public class Enemy : LivingThing
         //Debug.Log(movementDisabledAirborne);
         if (AbleToMove())
         {
+            float thisXPos = transform.position.x;
+            float charXPos = charController.transform.position.x;
             const float buffer = .5f;
-            if (charController.transform.position.x > transform.position.x + buffer)
+            float xLeft = charXPos - buffer;
+            float xRight = charXPos + buffer;
+            
+            float targetX = Mathf.Abs(thisXPos - xLeft) < Mathf.Abs(thisXPos - xRight) ? xLeft : xRight; //??
+            
+            if (targetX > transform.position.x)
             {
                 Rigidbody.velocity = new Vector2(speed, Rigidbody.velocity.y);
             }
-            else if (charController.transform.position.x < transform.position.x - buffer)
+            else if (targetX < transform.position.x)
             {
                 Rigidbody.velocity = new Vector2(-speed, Rigidbody.velocity.y);
             }

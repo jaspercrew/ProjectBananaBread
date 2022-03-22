@@ -34,5 +34,19 @@ public class FluidGravitySetter : BinaryEntity
             }
             
         }
+        
+        else if (other.gameObject.GetComponent<Rigidbody2D>() != null)
+        {
+            if (GameManager.Instance.isGameShifted)
+            {
+                other.gameObject.GetComponent<Rigidbody2D>().gravityScale =
+                    Mathf.Abs(other.gameObject.GetComponent<Rigidbody2D>().gravityScale);
+            }
+            else
+            {
+                other.gameObject.GetComponent<Rigidbody2D>().gravityScale =
+                    -Mathf.Abs(other.gameObject.GetComponent<Rigidbody2D>().gravityScale);
+            }
+        }
     }
 }

@@ -12,6 +12,9 @@ public class GrapplePoint : MonoBehaviour
     private SpriteRenderer LoopFX;
     private const float rotateSpeed = 150f;
 
+    public Color clearColor;
+    public Color blockedColor;
+
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -50,6 +53,16 @@ public class GrapplePoint : MonoBehaviour
             targetPoint = null;
             
         }
+    }
+
+    public void Blocked()
+    {
+        LoopFX.color = blockedColor;
+    }
+
+    public void Cleared()
+    {
+        LoopFX.color = clearColor;
     }
 
 }

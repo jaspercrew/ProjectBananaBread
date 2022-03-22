@@ -313,6 +313,7 @@ public partial class CharController
             
             if (hit.collider != null)
             {
+                GrapplePoint.targetPoint.Blocked();
                 grappleClearRenderer.enabled = false;
                 grappleBlocked = true;
                 grappleLOSRenderer.enabled = true;
@@ -321,6 +322,7 @@ public partial class CharController
             }
             else
             {
+                GrapplePoint.targetPoint.Cleared();
                 grappleBlocked = false;
                 grappleLOSRenderer.enabled = false;
                 grappleClearRenderer.enabled = true;

@@ -74,7 +74,7 @@ public partial class CharController
         switchPS.Play();
         
         GameManager.Instance.ShiftWorld();
-    }g
+    }
     
     // Take damage, knock away from point
     public void TakeDamage(int damage, float knockback, Vector2 point) {

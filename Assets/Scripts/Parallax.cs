@@ -8,7 +8,8 @@ public class Parallax : MonoBehaviour
     private float length, startpos;
     [SerializeField]
     public GameObject cam;
-    public float parallaxEffect;
+
+    private const float parallaxEffect = .3f;
 
     void Start()
     {

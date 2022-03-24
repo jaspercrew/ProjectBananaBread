@@ -50,8 +50,8 @@ public class PPManager : MonoBehaviour
     {
         shiftEffectDuration = .33f;
         
-        Debug.Log(smh.highlights.value);
-        Debug.Log(smh.shadows.value);
+        //Debug.Log(smh.highlights.value);
+        //Debug.Log(smh.shadows.value);
         float timeElapsed = 0f;
         
         Vector4 highlightValue = new Vector4(1f, .3f, .8f, 0); 

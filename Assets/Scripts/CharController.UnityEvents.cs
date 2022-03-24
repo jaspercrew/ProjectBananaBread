@@ -21,6 +21,7 @@ public partial class CharController
 
     private void Start()
     {
+        lastShiftTime = 0f;
         
         canCast = true;
         canDoubleJump = false;

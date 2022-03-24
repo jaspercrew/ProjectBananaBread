@@ -34,6 +34,7 @@ public partial class CharController : LivingThing
     private const float AttackCooldown = 0.5f;
     private const float ParryCooldown = 1f;
     private const float DashCooldown = 1f;
+    public const float ShiftCooldown = 1f;
     private const int AttackDamage = 10;
     private const float ComboResetThreshold = 1f;
     public float attackRange = .25f;
@@ -50,7 +51,8 @@ public partial class CharController : LivingThing
     private bool isAttacking;
     private int comboCounter;
     private IEnumerator attackCoroutine;
-    
+
+    private float lastShiftTime;
     
     private float lastParryTime;
     public bool isParrying;
@@ -163,7 +165,7 @@ public partial class CharController : LivingThing
             {Event.EventTypes.Interact, 
                 @this => @this.IsAbleToAct()},
             {Event.EventTypes.SwitchState, 
-                @this => @this.IsAbleToAct()},
+                @this => @this.IsAbleToAct() && Time.time > @this.lastShiftTime + ShiftCooldown},
             {Event.EventTypes.SliceDash, @this => 
                 (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown},
             {Event.EventTypes.Crouch, 

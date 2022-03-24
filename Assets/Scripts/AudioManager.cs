@@ -58,7 +58,7 @@ public class AudioManager : MonoBehaviour
             primarySource.volume = 1f;
             altSource.volume = 0f;
         }
-        PlaySong(SoundName.Song1A, SoundName.Song1B);
+        //PlaySong(SoundName.Song1A, SoundName.Song1B);
     }
 
     public void Play(SoundName sound, float volume)
@@ -85,7 +85,7 @@ public class AudioManager : MonoBehaviour
 
     public void OnShift(bool toAlt)
     {
-        const float fadeTime = 1f;
+        const float fadeTime = .5f;
         if (toAlt)
         {
             StartCoroutine(FadeOut(primarySource, fadeTime));   

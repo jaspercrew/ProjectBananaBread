@@ -247,6 +247,16 @@ public partial class CharController : LivingThing
         isParrying = false;
         isSliceDashing = false;
         isDashing = false;
+        
     }
+
+    public void PrepForScene()
+    {
+        Interrupt();
+        currentWindZone = null;
+        
+    }
+    
+
 
 }

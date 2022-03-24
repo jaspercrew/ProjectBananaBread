@@ -16,6 +16,7 @@ public partial class CharController
             Instance = this;
         }
         DontDestroyOnLoad(gameObject);
+        PrepForScene();
     }
 
     private void Start()
@@ -224,6 +225,7 @@ public partial class CharController
             currentWindZone.currentWind == WindState.Down || 
             currentWindZone.currentWind == WindState.None)
         {
+            
             // apply normal max velocity
             if (Mathf.Abs(xVel) > speed) // if newXVel != xVel
             {

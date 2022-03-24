@@ -32,8 +32,8 @@ public class CameraManager : MonoBehaviour {
     }
 
     public void SwitchCam(CameraName camName) {
-        nameToCam[camName].Priority = 15;
         nameToCam[currentCam].Priority = 5;
+        nameToCam[camName].Priority = 15;
         currentCam = camName;
     }
 }

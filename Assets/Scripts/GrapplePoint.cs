@@ -44,7 +44,7 @@ public class GrapplePoint : MonoBehaviour
         
         if (thisDist < HoverRange && thisDist < currDist)
         {
-            Debug.Log("point set");
+            //Debug.Log("point set");
             targetPoint = this;
             
         } 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,7 +17,12 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
             Instance = this;
     }
-    
+
+    private void Awake()
+    {
+
+    }
+
     // Start is called before the first frame update
     private void Start()
     {

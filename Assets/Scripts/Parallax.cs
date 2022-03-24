@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,10 +9,15 @@ public class Parallax : MonoBehaviour
     [SerializeField]
     public GameObject cam;
     public float parallaxEffect;
+
     void Start()
     {
         startpos = transform.position.x;
         length = GetComponent<SpriteRenderer>().bounds.size.x;
+        if (cam == null)
+        {
+            cam = GameObject.FindWithTag("MainCamera");
+        }
     }
     void Update()
     {

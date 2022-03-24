@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections;
 using Cinemachine;
 using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;
 public class ScreenShakeController : MonoBehaviour {
     public static ScreenShakeController Instance;
-    private CinemachineVirtualCamera virtualCamera;
+    public CinemachineVirtualCamera virtualCamera;
     private float shakeTimer;
     private float startingIntensity;
     private float shakeTimerTotal;
@@ -14,6 +15,12 @@ public class ScreenShakeController : MonoBehaviour {
     // Start is called before the first frame update
     private void Start() {
         Instance = this;
+        StartCoroutine(LateStart());
+    }
+
+    private IEnumerator LateStart()
+    {
+        yield return new WaitForEndOfFrame();
         virtualCamera = GetComponent<CinemachineBrain>().ActiveVirtualCamera.
             VirtualCameraGameObject.GetComponent<CinemachineVirtualCamera>();
     }

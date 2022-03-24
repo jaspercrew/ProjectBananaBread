@@ -28,7 +28,7 @@ public class AudioManager : MonoBehaviour
         else
         {
             Instance = this;
-            // DontDestroyOnLoad(gameObject);
+            
         }
 
         foreach (SoundName sound in Enum.GetValues(typeof(SoundName)))

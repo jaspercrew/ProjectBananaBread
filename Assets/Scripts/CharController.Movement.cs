@@ -132,7 +132,7 @@ public partial class CharController
     {
         launchedPoint = null;
         hookedPoint = null;
-        Debug.Log("Disconnect");
+        //Debug.Log("Disconnect");
         grappleLineRenderer.enabled = false;
         isLineGrappling = false;
         Rigidbody.velocity = Vector2.ClampMagnitude(Rigidbody.velocity, 3f);

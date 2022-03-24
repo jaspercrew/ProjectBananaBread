@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,16 +19,15 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-
+        // set current state to alt, then switch everything
+        // this calls SwitchToState() on all entities in the scene,
+        // changing everything to the originalState
+        isGameShifted = false;
     }
 
     // Start is called before the first frame update
     private void Start()
     {
-        // set current state to alt, then switch everything
-        // this calls SwitchToState() on all entities in the scene,
-        // changing everything to the originalState
-        isGameShifted = false;
     }
 
     public void ShiftWorld()

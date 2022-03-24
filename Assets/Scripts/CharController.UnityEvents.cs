@@ -165,9 +165,8 @@ public partial class CharController
         float xVel = v.x;
         float yVel = v.y;
 
-        bool isHorizWind = (currentWindZone.currentWind == WindState.Left ||
-                            currentWindZone.currentWind == WindState.Right);
-        float horizWindSpeed = isHorizWind? currentWindZone.windSpeedOnPlayer : 0;
+        WindEmitter.WindInfo wind = currentWindZone.currentWind;
+        float horizWindSpeed = currentWindZone.enabled && wind.isHorizontal? wind.speedOnPlayer : 0;
         // float vertWindSpeed = isHorizWind? 0 : currentWindZone.windSpeedOnPlayer;
         // TODO: vertical wind
 
@@ -220,28 +219,23 @@ public partial class CharController
             }
         }
         
-
-        if (currentWindZone.currentWind == WindState.Up || 
-            currentWindZone.currentWind == WindState.Down || 
-            currentWindZone.currentWind == WindState.None)
+        // if vertical wind or no wind,
+        if (!wind.isHorizontal || !currentWindZone.isWindEnabled)
         {
-            
             // apply normal max velocity
-            if (Mathf.Abs(xVel) > speed) // if newXVel != xVel
+            if (Mathf.Abs(xVel) > speed)
             {
                 Rigidbody.velocity = new Vector2(Mathf.Clamp(xVel, -speed, speed), yVel);
             }
         }
-        // if sideways wind,
-        else if (currentWindZone.currentWind == WindState.Left || 
-                 currentWindZone.currentWind == WindState.Right)
+        // else if sideways wind,
+        else if (wind.isHorizontal)
         {
             // apply wind max velocity
-            int windDir = (int) currentWindZone.currentWind; // -1 if left, 1 if right,
-            // something else otherwise
+            int windDir = (wind.speedOnPlayer < 0)? -1 : 1; // -1 if left, 1 if right
             int velDir = Math.Sign(xVel);
-            float maxSpeedSameDir = speed + currentWindZone.windSpeedOnPlayer;
-            float maxSpeedOppDir = speed - currentWindZone.windSpeedOnPlayer;
+            float maxSpeedSameDir = speed + Mathf.Abs(wind.speedOnPlayer);
+            float maxSpeedOppDir = speed - Mathf.Abs(wind.speedOnPlayer);
                 
             if (windDir == velDir && Mathf.Abs(xVel) > maxSpeedSameDir) 
             {

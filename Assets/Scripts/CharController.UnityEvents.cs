@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public partial class CharController
 {
@@ -269,9 +270,10 @@ public partial class CharController
         }
     }
 
-    private void Update() {
+    private void Update()
+    {
         if (Input.GetKeyDown(KeyCode.P))
-            Debug.Log("grounded? " + isGrounded + "; wall sliding? " + isWallSliding);
+            SceneManager.LoadScene("BaseScene");
         
         
         CheckGrounded_Update();

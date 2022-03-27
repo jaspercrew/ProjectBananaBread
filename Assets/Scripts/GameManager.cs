@@ -32,15 +32,22 @@ public class GameManager : MonoBehaviour
 
     public void ShiftWorld()
     {
+        isGameShifted = !isGameShifted;
+        
+        // shift entities
         Entity[] entities = FindObjectsOfType<Entity>();
         
         foreach (Entity entity in entities)
         {
             entity.Shift();
         }
-        AudioManager.Instance.OnShift(!isGameShifted);
         
-        isGameShifted = !isGameShifted;
+        // shift tiles
+        TileStateManager t = TileStateManager.Instance;
+        t.ShiftTilesTo(isGameShifted);
+        
+        // play sound
+        AudioManager.Instance.OnShift(isGameShifted);
     }
 
     public void FreezeFrame()

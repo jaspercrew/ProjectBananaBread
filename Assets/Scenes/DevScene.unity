@@ -584,10 +584,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c93de436c277c59438eb28494282b35a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  realStateWind: 1
-  altStateWind: -1
-  currentWind: 0
-  windSpeedOnPlayer: 2
+  isWindEnabled: 1
+  realStateWind:
+    forceStrength: 3
+    speedOnPlayer: 3
+    isHorizontal: 1
+  altStateWind:
+    forceStrength: -3
+    speedOnPlayer: -3
+    isHorizontal: 1
+  currentWind:
+    forceStrength: 0
+    speedOnPlayer: 0
+    isHorizontal: 0
 --- !u!4 &299645595 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7176562353918822500, guid: 0a2711ba1793bcd4b8991bd6684fd625, type: 3}

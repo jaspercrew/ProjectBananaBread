@@ -81,6 +81,7 @@ public partial class CharController
         }
         else
         {
+            Rigidbody.gravityScale = 1;
             StandardMovement_FixedUpdate();
         }
 
@@ -125,7 +126,9 @@ public partial class CharController
             }
 
             // apply max velocity
-            Rigidbody.velocity = new Vector2(Mathf.Clamp(xVel, -speed, speed), yVel);
+            Rigidbody.velocity = new Vector2(
+                Mathf.Clamp(xVel, -speed, speed),
+                Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
 
             // apply min velocity
             if (Mathf.Abs(xVel) < MinGroundSpeed)
@@ -153,8 +156,9 @@ public partial class CharController
             // apply max velocity if not grappling
             if (!isLineGrappling)
             {
-                Vector2 vel = Rigidbody.velocity;
-                Rigidbody.velocity = new Vector2(Mathf.Clamp(vel.x, -speed, speed), yVel);
+                Rigidbody.velocity = new Vector2(
+                    Mathf.Clamp(xVel, -speed, speed),
+                    Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
             }
         }
     }
@@ -170,7 +174,6 @@ public partial class CharController
         WindEmitter.WindInfo wind = currentWindZone.currentWind;
         float horizWindSpeed = currentWindZone.enabled && wind.isHorizontal? wind.speedOnPlayer : 0;
         // float vertWindSpeed = isHorizWind? 0 : currentWindZone.windSpeedOnPlayer;
-        // TODO: vertical wind
 
         // regular ground movement
         if (isGrounded)
@@ -221,34 +224,106 @@ public partial class CharController
             }
         }
         
-        // if vertical wind or no wind,
-        if (!wind.isHorizontal || !currentWindZone.isWindEnabled)
+        // if no wind,
+        if (!currentWindZone.isWindEnabled)
         {
-            // apply normal max velocity
-            if (Mathf.Abs(xVel) > speed)
-            {
-                Rigidbody.velocity = new Vector2(Mathf.Clamp(xVel, -speed, speed), yVel);
-            }
+            // TODO: if yVel out of range, use a force to slow down, don't just clamp
+            // TODO: also apply this in non-wind movement
+            Rigidbody.velocity = new Vector2(
+                Mathf.Clamp(xVel, -speed, speed),
+                Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
         }
         // else if sideways wind,
         else if (wind.isHorizontal)
         {
-            // apply wind max velocity
+            // apply horizontal wind max velocity
             int windDir = (wind.speedOnPlayer < 0)? -1 : 1; // -1 if left, 1 if right
             int velDir = Math.Sign(xVel);
             float maxSpeedSameDir = speed + Mathf.Abs(wind.speedOnPlayer);
             float maxSpeedOppDir = speed - Mathf.Abs(wind.speedOnPlayer);
-                
-            if (windDir == velDir && Mathf.Abs(xVel) > maxSpeedSameDir) 
+            float maxLeft, maxRight;
+            if (windDir == 1) // if right wind
             {
-                Rigidbody.velocity = new Vector2(
-                    Mathf.Clamp(xVel, -maxSpeedSameDir, maxSpeedSameDir), yVel);
+                maxLeft = -maxSpeedOppDir;
+                maxRight = maxSpeedSameDir;
             }
-            else if (windDir == -velDir && Mathf.Abs(xVel) > maxSpeedOppDir) 
+            else
             {
-                Rigidbody.velocity = new Vector2(
-                    Mathf.Clamp(xVel, -maxSpeedOppDir, maxSpeedOppDir), yVel);
+                maxLeft = -maxSpeedSameDir;
+                maxRight = maxSpeedOppDir;
             }
+
+            Rigidbody.velocity = new Vector2(
+                Mathf.Clamp(xVel, maxLeft, maxRight),
+                Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
+            
+            // if (windDir == velDir) 
+            // {
+            //     Rigidbody.velocity = new Vector2(
+            //         Mathf.Clamp(xVel, -maxSpeedSameDir, maxSpeedSameDir), 
+            //         Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
+            // }
+            // else if (windDir == -velDir) 
+            // {
+            //     Rigidbody.velocity = new Vector2(
+            //         Mathf.Clamp(xVel, -maxSpeedOppDir, maxSpeedOppDir), 
+            //         Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
+            // }
+        }
+        // else if vertical wind
+        else
+        {
+            // apply vertical wind max velocity
+            
+            // affect gravity
+            float windSpeed = wind.speedOnPlayer;
+            float gravChange = -0.1f * windSpeed; // TODO: constant
+            Rigidbody.gravityScale = 1 + gravChange; // TODO: change back
+            
+            // apply max vel
+            int windDir = (windSpeed < 0)? -1 : 1; // -1 if left, 1 if right
+            int velDir = Math.Sign(yVel);
+            float maxSpeedSameDir = MaxYSpeed + Mathf.Abs(windSpeed);
+            float maxSpeedOppDir = MaxYSpeed - Mathf.Abs(windSpeed);
+            float maxDown, maxUp;
+            if (windDir == 1) // if up wind
+            {
+                maxDown = -maxSpeedOppDir;
+                maxUp = maxSpeedSameDir;
+            }
+            else
+            {
+                maxDown = -maxSpeedSameDir;
+                maxUp = maxSpeedOppDir;
+            }
+
+            Rigidbody.velocity = new Vector2(
+                Mathf.Clamp(xVel, -speed, speed),
+                Mathf.Clamp(yVel, maxDown, maxUp));
+
+            // max velocity but approach it rather than clamp it
+            // if (yVel < maxDown || yVel > maxUp)
+            // {
+                // Debug.Log("applying drag");
+                // float g = Physics2D.gravity.y;
+                // float vMax = (velDir == 1) ? maxUp : maxDown;
+                // float drag = -g / vMax;
+                // float dir = (yVel < 0) ? 1 : -1;
+                // Rigidbody.AddForce(dir * VerticalDrag * Vector2.up);
+            // }
+
+            // if (windDir == velDir) 
+            // {
+            //     Rigidbody.velocity = new Vector2(
+            //         Mathf.Clamp(xVel, -speed, speed), 
+            //         Mathf.Clamp(yVel, -maxSpeedSameDir, maxSpeedSameDir));
+            // }
+            // else if (windDir == -velDir) 
+            // {
+            //     Rigidbody.velocity = new Vector2(
+            //         Mathf.Clamp(xVel, -speed, speed), 
+            //         Mathf.Clamp(yVel, -maxSpeedOppDir, maxSpeedOppDir));
+            // }
         }
     }
 

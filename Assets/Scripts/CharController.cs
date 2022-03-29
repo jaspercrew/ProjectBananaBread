@@ -86,8 +86,22 @@ public partial class CharController : LivingThing
     
     private bool canYoink;
     private bool canCast;
-    
-    private bool isWallSliding;
+
+    private bool wallJumpAvailable;
+    private bool _isWallSliding;
+    private bool isWallSliding
+    {
+        get {return _isWallSliding;}
+        set
+        {
+            if (_isWallSliding && !value)
+            {
+                StartCoroutine(WallJumpBufferCoroutine());
+            }
+            //Update the boolean variable
+            _isWallSliding = value;
+        }
+    }
     private int wallJumpDir;
     //private int wallJumpFramesLeft;
     public WindEmitter currentWindZone;
@@ -156,7 +170,7 @@ public partial class CharController : LivingThing
             {Event.EventTypes.Dash, @this =>
                 (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown},
             {Event.EventTypes.Jump, @this => 
-                @this.IsAbleToMove() && (@this.isGrounded || @this.isWallSliding)},
+                @this.IsAbleToMove() && (@this.isGrounded || @this.isWallSliding || @this.wallJumpAvailable)},
             {Event.EventTypes.DoubleJump, @this => 
                 @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && 
                 @this.canDoubleJump && Input.GetKeyDown(KeyCode.Space)},
@@ -215,6 +229,14 @@ public partial class CharController : LivingThing
         yield return new WaitForSeconds(time);
         ps.Stop();
         ps.Clear();
+    }
+
+    private IEnumerator WallJumpBufferCoroutine()
+    {
+        const float buffer = .5f;
+        wallJumpAvailable = true;
+        yield return new WaitForSeconds(buffer);
+        wallJumpAvailable = false;
     }
 
     private bool IsAbleToAct() {

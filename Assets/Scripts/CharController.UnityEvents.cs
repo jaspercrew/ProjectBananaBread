@@ -592,11 +592,12 @@ public partial class CharController
 
         isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) 
                                      || (moveVector < 0 && isNearWallOnLeft)) && IsAbleToMove();
+        Debug.Log(wallJumpAvailable);
 
         if (isNearWallOnLeft)
         {
             wallJumpDir = +1;
-            canDoubleJump = false;
+            canDoubleJump = false; //TODO: should these be true?
         }
         else if (isNearWallOnRight)
         {

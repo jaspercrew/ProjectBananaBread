@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
         
         // shift tiles
         TileStateManager t = TileStateManager.Instance;
-        t.ShiftTilesTo(isGameShifted);
+        //t.ShiftTilesTo(isGameShifted);
         
         // play sound
         AudioManager.Instance.OnShift(isGameShifted);

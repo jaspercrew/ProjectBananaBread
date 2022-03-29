@@ -41,9 +41,10 @@ public partial class CharController
         int jumpDir = 0;
         const float horizontalJumpForce = 2f;
 
-        if (isWallSliding && !isGrounded)
+        if ((isWallSliding || wallJumpAvailable) && !isGrounded)
         {
-            forcedMoveTime = .1f;
+            //Debug.Log("WALLJUMP");
+            forcedMoveTime = .07f;
             if (wallJumpDir == -1)
             {
                 FaceLeft();

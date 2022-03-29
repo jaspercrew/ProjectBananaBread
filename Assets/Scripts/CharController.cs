@@ -66,7 +66,21 @@ public partial class CharController : LivingThing
     public bool isInverted;
     
     private bool isGrounded;
-    
+    private bool _isGrounded
+    {
+        get {return _isGrounded;}
+        set
+        {
+            if (_isGrounded && !value)
+            {
+                StartCoroutine(JumpBufferCoroutine());
+            }
+            //Update the boolean variable
+            _isGrounded = value;
+        }
+    }
+
+    private bool jumpAvailable;
     private bool isInvincible;
     
     private bool isGrappleLaunched;
@@ -170,7 +184,7 @@ public partial class CharController : LivingThing
             {Event.EventTypes.Dash, @this =>
                 (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown},
             {Event.EventTypes.Jump, @this => 
-                @this.IsAbleToMove() && (@this.isGrounded || @this.isWallSliding || @this.wallJumpAvailable)},
+                @this.IsAbleToMove() && (@this.isGrounded || @this.jumpAvailable || @this.isWallSliding || @this.wallJumpAvailable)},
             {Event.EventTypes.DoubleJump, @this => 
                 @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && 
                 @this.canDoubleJump && Input.GetKeyDown(KeyCode.Space)},
@@ -237,6 +251,14 @@ public partial class CharController : LivingThing
         wallJumpAvailable = true;
         yield return new WaitForSeconds(buffer);
         wallJumpAvailable = false;
+    }
+    
+    private IEnumerator JumpBufferCoroutine()
+    {
+        const float buffer = .5f;
+        jumpAvailable = true;
+        yield return new WaitForSeconds(buffer);
+        jumpAvailable = false;
     }
 
     private bool IsAbleToAct() {

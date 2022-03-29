@@ -347,6 +347,7 @@ public partial class CharController
 
     private void Update()
     {
+        currentWindZone = WindEmitterChild.targetWind.GetComponentInParent<WindEmitter>();
         if (Input.GetKeyDown(KeyCode.P))
             SceneManager.LoadScene("BaseScene");
         

@@ -6,6 +6,7 @@ using UnityEngine.Serialization;
 public class WindEmitterChild : MonoBehaviour
 {
     private WindEmitter parent;
+    public static WindEmitterChild targetWind;
     private BoxCollider2D boxCollider;
     private BoxCollider2D parentBoxCollider;
 
@@ -20,13 +21,26 @@ public class WindEmitterChild : MonoBehaviour
         parentBoxCollider = parent.transform.GetComponent<BoxCollider2D>();
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void Update()
     {
-        CharController.Instance.currentWindZone = parent;
+        Vector3 charPosition = CharController.Instance.transform.position;
+        if (boxCollider.contains(charPosition))
+        {
+            targetWind = this;
+        }
+        else
+        {
+            targetWind = null;
+        }
     }
-    
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        CharController.Instance.currentWindZone = null;
-    }
+
+    // private void OnTriggerEnter2D(Collider2D other)
+    // {
+    //     CharController.Instance.currentWindZone = parent;
+    // }
+    //
+    // private void OnTriggerExit2D(Collider2D other)
+    // {
+    //     CharController.Instance.currentWindZone = null;
+    // }
 }

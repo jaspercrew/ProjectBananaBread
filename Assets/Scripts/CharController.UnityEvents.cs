@@ -347,7 +347,15 @@ public partial class CharController
 
     private void Update()
     {
-        currentWindZone = WindEmitterChild.targetWind.GetComponentInParent<WindEmitter>();
+        if (WindEmitterChild.targetWind == null)
+        {
+            currentWindZone = null;
+        }
+        else
+        {
+            currentWindZone = WindEmitterChild.targetWind.GetComponentInParent<WindEmitter>();
+        }
+      
         if (Input.GetKeyDown(KeyCode.P))
             SceneManager.LoadScene("BaseScene");
         
@@ -593,7 +601,7 @@ public partial class CharController
 
         isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) 
                                      || (moveVector < 0 && isNearWallOnLeft)) && IsAbleToMove();
-        Debug.Log(wallJumpAvailable);
+        //Debug.Log(wallJumpAvailable);
 
         if (isNearWallOnLeft)
         {

@@ -65,8 +65,8 @@ public partial class CharController : LivingThing
     
     public bool isInverted;
     
-    private bool isGrounded;
-    private bool _isGrounded
+    private bool _isGrounded;
+    private bool isGrounded
     {
         get {return _isGrounded;}
         set
@@ -255,7 +255,7 @@ public partial class CharController : LivingThing
     
     private IEnumerator JumpBufferCoroutine()
     {
-        const float buffer = .5f;
+        const float buffer = .2f;
         jumpAvailable = true;
         yield return new WaitForSeconds(buffer);
         jumpAvailable = false;

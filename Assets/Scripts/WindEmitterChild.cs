@@ -24,7 +24,7 @@ public class WindEmitterChild : MonoBehaviour
     private void Update()
     {
         Vector3 charPosition = CharController.Instance.transform.position;
-        if (boxCollider.contains(charPosition))
+        if (boxCollider.bounds.Contains(charPosition))
         {
             targetWind = this;
         }

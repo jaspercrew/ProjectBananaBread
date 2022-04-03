@@ -21,11 +21,11 @@ public partial class CharController : LivingThing
     private LineRenderer grappleLOSRenderer;
     private LineRenderer grappleClearRenderer;
 
-    private Transform parentWindFX;
-    private ParticleSystem leftWindFX;
-    private ParticleSystem rightWindFX;
-    private ParticleSystem upWindFX;
-    private ParticleSystem downWindFX;
+    // private Transform parentWindFX;
+    // private ParticleSystem leftWindFX;
+    // private ParticleSystem rightWindFX;
+    // private ParticleSystem upWindFX;
+    // private ParticleSystem downWindFX;
 
     // Configurable player control values
     public float speed = 10f;
@@ -102,7 +102,7 @@ public partial class CharController : LivingThing
     private bool justJumped;
 
     public bool isCrouching;
-    private bool canDoubleJump;
+    //private bool canDoubleJump;
     
     private bool canYoink;
     private bool canCast;
@@ -147,7 +147,7 @@ public partial class CharController : LivingThing
         
         public enum EventTypes
         {
-            Dash, Jump, DoubleJump, Attack, Parry, Interact, SwitchState, SliceDash, Crouch, Cast, Yoink, Grapple
+            Dash, Jump, /*DoubleJump,*/ Attack, Parry, Interact, SwitchState, SliceDash, Crouch, Cast, Yoink, Grapple
         }
 
         public Event(EventTypes type, float time)
@@ -164,7 +164,7 @@ public partial class CharController : LivingThing
         {
             {() => Input.GetKeyDown(KeyCode.LeftShift), Event.EventTypes.Dash},
             {() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.Jump},
-            {() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.DoubleJump},
+            //{() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.DoubleJump},
             {() => Input.GetMouseButtonDown(0), Event.EventTypes.Attack},
             {() => Input.GetMouseButtonDown(1), Event.EventTypes.Parry},
             {() => Input.GetKeyDown(KeyCode.E), Event.EventTypes.Interact},
@@ -190,10 +190,10 @@ public partial class CharController : LivingThing
             {Event.EventTypes.Dash, @this =>
                 (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown},
             {Event.EventTypes.Jump, @this => 
-                @this.IsAbleToMove() && (@this.isGrounded || @this.jumpAvailable || @this.isWallSliding || @this.wallJumpAvailable)},
-            {Event.EventTypes.DoubleJump, @this => 
-                @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && 
-                @this.canDoubleJump && Input.GetKeyDown(KeyCode.Space)},
+                @this.IsAbleToMove() && (@this.isGrounded || (@this.jumpAvailable && !@this.justJumped)|| @this.isWallSliding || @this.wallJumpAvailable)},
+            // {Event.EventTypes.DoubleJump, @this => 
+            //     @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && 
+            //     @this.canDoubleJump && Input.GetKeyDown(KeyCode.Space)},
             {Event.EventTypes.Attack, @this => 
                 @this.IsAbleToAct() && Time.time > @this.lastAttackTime + AttackCooldown},
             {Event.EventTypes.Parry, @this =>
@@ -221,7 +221,7 @@ public partial class CharController : LivingThing
         {
             {Event.EventTypes.Dash, @this => @this.DoDash()},
             {Event.EventTypes.Jump, @this => @this.DoJump()},
-            {Event.EventTypes.DoubleJump, @this => @this.DoDoubleJump()},
+            //{Event.EventTypes.DoubleJump, @this => @this.DoDoubleJump()},
             {Event.EventTypes.Attack, @this => @this.AttemptAttack()},
             {Event.EventTypes.Parry, @this => @this.DoParry()},
             {Event.EventTypes.Interact, @this => @this.DoInteract()},
@@ -272,7 +272,6 @@ public partial class CharController : LivingThing
     }
 
     public void Invert() {
-        
         Rigidbody.gravityScale = -Mathf.Abs(Rigidbody.gravityScale);
         if (!isInverted)
         {

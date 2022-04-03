@@ -21,6 +21,12 @@ public partial class CharController : LivingThing
     private LineRenderer grappleLOSRenderer;
     private LineRenderer grappleClearRenderer;
 
+    private Transform parentWindFX;
+    private ParticleSystem leftWindFX;
+    private ParticleSystem rightWindFX;
+    private ParticleSystem upWindFX;
+    private ParticleSystem downWindFX;
+
     // Configurable player control values
     public float speed = 10f;
     private const int SliceDamage = 100;

@@ -180,10 +180,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Wind exists in this stage.
-
-
-    Shifting will affect wind. '
+  m_text: "Wind exists in this stage.\n\nShifting will affect wind. \nWind affects
+    the player + other entities."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -559,7 +557,7 @@ RectTransform:
   - {fileID: 652186058}
   - {fileID: 65871475}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1332,6 +1330,63 @@ Camera:
   m_CorrespondingSourceObject: {fileID: 1005183157539919043, guid: f7cf8868528f3834da37602cbfe6ac5e, type: 3}
   m_PrefabInstance: {fileID: 479301025}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &497286147
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2735590256494130776, guid: 21e8e938c51ed9a44942b63499f7e97c, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2735590256494130776, guid: 21e8e938c51ed9a44942b63499f7e97c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -49.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2735590256494130776, guid: 21e8e938c51ed9a44942b63499f7e97c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -9.39
+      objectReference: {fileID: 0}
+    - target: {fileID: 2735590256494130776, guid: 21e8e938c51ed9a44942b63499f7e97c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2735590256494130776, guid: 21e8e938c51ed9a44942b63499f7e97c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2735590256494130776, guid: 21e8e938c51ed9a44942b63499f7e97c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2735590256494130776, guid: 21e8e938c51ed9a44942b63499f7e97c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2735590256494130776, guid: 21e8e938c51ed9a44942b63499f7e97c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2735590256494130776, guid: 21e8e938c51ed9a44942b63499f7e97c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2735590256494130776, guid: 21e8e938c51ed9a44942b63499f7e97c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2735590256494130776, guid: 21e8e938c51ed9a44942b63499f7e97c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2735590256494130780, guid: 21e8e938c51ed9a44942b63499f7e97c, type: 3}
+      propertyPath: m_Name
+      value: Barrel
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 21e8e938c51ed9a44942b63499f7e97c, type: 3}
 --- !u!1 &652186057
 GameObject:
   m_ObjectHideFlags: 0
@@ -1994,7 +2049,7 @@ Transform:
   - {fileID: 1218821979}
   - {fileID: 285694381}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1603352379
 GameObject:
@@ -2065,7 +2120,7 @@ Transform:
   m_Children:
   - {fileID: 1257287575}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1653699764
 GameObject:
@@ -2096,7 +2151,7 @@ Transform:
   m_Children:
   - {fileID: 1455382646}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1706496152
 PrefabInstance:

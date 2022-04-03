@@ -3,7 +3,18 @@ using UnityEngine;
 
 public class FluidGravitySetter : BinaryEntity
 {
+    [Serializable]
+    public class GravityInfo
+    {
+        public bool isDown;
+        public bool isEnabled;
+    }
     // private Collider2D collider;
+    public GravityInfo realStateGravity;
+    public GravityInfo altStateGravity;
+    
+    [HideInInspector]
+    public GravityInfo currentGravity;
     
     protected override void Awake()
     {
@@ -11,7 +22,7 @@ public class FluidGravitySetter : BinaryEntity
     }
 
     protected override void TurnShifted()
-    {
+    { // set current gravity in these to be correct
         base.TurnShifted();
     }
     
@@ -22,6 +33,8 @@ public class FluidGravitySetter : BinaryEntity
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        Rigidbody2D rb = other.gameObject.GetComponent<Rigidbody2D>();
+    
         if (other.CompareTag("Player"))
         {
             if (GameManager.Instance.isGameShifted)
@@ -34,18 +47,14 @@ public class FluidGravitySetter : BinaryEntity
             }
             
         }
-        
-        else if (other.gameObject.GetComponent<Rigidbody2D>() != null)
+        else if (rb != null)
         {
-            if (GameManager.Instance.isGameShifted)
+            GravityInfo toSetTo = GameManager.Instance.isGameShifted ? altStateGravity : realStateGravity;
+            if (toSetTo.isEnabled)
             {
-                other.gameObject.GetComponent<Rigidbody2D>().gravityScale =
-                    Mathf.Abs(other.gameObject.GetComponent<Rigidbody2D>().gravityScale);
-            }
-            else
-            {
-                other.gameObject.GetComponent<Rigidbody2D>().gravityScale =
-                    -Mathf.Abs(other.gameObject.GetComponent<Rigidbody2D>().gravityScale);
+                int dir = toSetTo.isDown ? 1 : -1;
+                float strength = Mathf.Abs(rb.gravityScale);
+                rb.gravityScale = dir * strength;
             }
         }
     }

@@ -14,6 +14,7 @@ public class FluidGravitySetter : BinaryEntity
     public GravityInfo altStateGravity;
 
     private Transform arrowTransform;
+    private SpriteRenderer arrowSprite;
     private readonly Vector3 upArrow = new Vector3(.5f, .5f, 0);
     private readonly Vector3 downArrow = new Vector3(.5f, -.5f, 0);
     
@@ -25,7 +26,8 @@ public class FluidGravitySetter : BinaryEntity
     {
         base.Start();
         arrowTransform = transform.parent.Find("Arrow");
-        Debug.Log(arrowTransform.position);
+        arrowSprite = arrowTransform.GetComponent<SpriteRenderer>();
+        //Debug.Log(arrowTransform.position);
         CheckArrow();
     }
 
@@ -52,40 +54,56 @@ public class FluidGravitySetter : BinaryEntity
 
     private void CheckArrow()
     {
-        if (currentGravity.isDown)
+        if (!arrowSprite)
         {
-            arrowTransform.localScale = downArrow;
+            arrowSprite = arrowTransform.GetComponent<SpriteRenderer>();
+        }
+        if (!currentGravity.isEnabled)
+        {
+            arrowSprite.enabled = false;
         }
         else
         {
-            arrowTransform.localScale = upArrow;
+            arrowSprite.enabled = true;
+            if (currentGravity.isDown)
+            {
+                arrowTransform.localScale = downArrow;
+            }
+            else
+            {
+                arrowTransform.localScale = upArrow;
+            }
         }
+
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Rigidbody2D rb = other.gameObject.GetComponent<Rigidbody2D>();
-    
-        if (other.CompareTag("Player"))
+        if (currentGravity.isEnabled)
         {
-            if (!currentGravity.isDown)
+            Rigidbody2D rb = other.gameObject.GetComponent<Rigidbody2D>();
+
+            if (other.CompareTag("Player"))
             {
-                CharController.Instance.Invert();
+                if (!currentGravity.isDown)
+                {
+                    CharController.Instance.Invert();
+                }
+                else
+                {
+                    CharController.Instance.DeInvert();
+                }
             }
-            else
+            else if (rb != null)
             {
-                CharController.Instance.DeInvert();
-            }
-        }
-        else if (rb != null)
-        {
-            Debug.Log("rb is NOT null, not player");
-            GravityInfo toSetTo = currentGravity;
-            if (toSetTo.isEnabled)
-            {
-                int dir = toSetTo.isDown ? 1 : -1;
-                float strength = Mathf.Abs(rb.gravityScale);
-                rb.gravityScale = dir * strength;
+                Debug.Log("rb is NOT null, not player");
+                GravityInfo toSetTo = currentGravity;
+                if (toSetTo.isEnabled)
+                {
+                    int dir = toSetTo.isDown ? 1 : -1;
+                    float strength = Mathf.Abs(rb.gravityScale);
+                    rb.gravityScale = dir * strength;
+                }
             }
         }
     }

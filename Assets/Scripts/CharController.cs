@@ -31,7 +31,7 @@ public partial class CharController : LivingThing
     public float speed = 10f;
     private const int SliceDamage = 100;
     private const float MinGroundSpeed = 0.5f;
-    private const float OnGroundAcceleration = 28f;
+    private const float OnGroundAcceleration = 38f;
     private const float OnGroundDeceleration = 30f;
     private const float InAirAcceleration = 10f;
     private const float InAirDrag = 1.5f;

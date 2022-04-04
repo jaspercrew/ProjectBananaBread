@@ -45,11 +45,11 @@ public class WindEmitter : BinaryEntity
     }
     
     // Start is called before the first frame update
-    protected override void Awake()
+    protected override void Start()
     {
         areaEffector = GetComponent<AreaEffector2D>();
         // boxCollider = GetComponent<BoxCollider2D>();
-        base.Awake();
+        base.Start();
     }
 
     // moved to WindEmitterChild.cs

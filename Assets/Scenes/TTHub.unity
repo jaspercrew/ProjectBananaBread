@@ -1506,6 +1506,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoorPortal (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 3983763667167455291, guid: 9fe0f35f0232cb745a76cd113eaaac88, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9fe0f35f0232cb745a76cd113eaaac88, type: 3}
 --- !u!1001 &661778933
@@ -2886,7 +2890,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Combat
+  m_text: Combat (soon)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

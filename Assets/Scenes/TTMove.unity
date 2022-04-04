@@ -965,9 +965,6 @@ MonoBehaviour:
 
     Space - Jump
 
-    Space (Again) - Double
-    Jump
-
     Shift - Dash'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -12212,6 +12209,10 @@ PrefabInstance:
       propertyPath: scene
       value: 
       objectReference: {fileID: 102900000, guid: 96c5b7a9caee0b74182348c43509742a, type: 3}
+    - target: {fileID: 3983763667167455284, guid: 9fe0f35f0232cb745a76cd113eaaac88, type: 3}
+      propertyPath: sceneIndex
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3983763667167455287, guid: 9fe0f35f0232cb745a76cd113eaaac88, type: 3}
       propertyPath: m_RootOrder
       value: 5

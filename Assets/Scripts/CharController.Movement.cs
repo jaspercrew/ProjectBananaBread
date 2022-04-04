@@ -37,6 +37,7 @@ public partial class CharController
 
     private void DoJump()
     {
+        justJumped = true;
         dust.Play();
         int jumpDir = 0;
         const float horizontalJumpForce = 2f;

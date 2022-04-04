@@ -13,8 +13,9 @@ public class MusicBox : Interactor
 
 
     // Update is called once per frame
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
         if (isInteractable)
         {
             highlightFX.gameObject.transform.Rotate(Vector3.forward, 150 * Time.deltaTime);

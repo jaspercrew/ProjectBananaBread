@@ -17,7 +17,7 @@ public partial class CharController
         {
             Instance = this;
         }
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
         PrepForScene();
     }
 
@@ -49,7 +49,7 @@ public partial class CharController
         switchPS = particleChild.Find("SwitchPS").GetComponent<ParticleSystem>();
         trailRenderer = particleChild.Find("FX").GetComponent<TrailRenderer>();
         //fadePS = particleChild.Find("FadePS").GetComponent<ParticleSystem>();
-        obstacleLayerMask = LayerMask.GetMask("Obstacle");
+        obstacleLayerMask = LayerMask.GetMask("Obstacle", "Entity");
 
         // parentWindFX = transform.Find("ParentWindFX");
         // upWindFX = parentWindFX.Find("FX-Up").GetComponent<ParticleSystem>();
@@ -399,8 +399,16 @@ public partial class CharController
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.P))
-            SceneManager.LoadScene("BaseScene");
-                
+            SceneManager.LoadScene("TTHub");
+        
+        if (WindEmitterChild.targetWind == null) {
+            currentWindZone = null;
+        }
+        else
+        {
+            currentWindZone = WindEmitterChild.targetWind.GetComponentInParent<WindEmitter>();
+        }
+
         //WindDetectionCheck();
         //WindDetectionUpdate();
         CheckGrounded_Update();

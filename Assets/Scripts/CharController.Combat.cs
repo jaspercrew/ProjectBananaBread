@@ -71,12 +71,14 @@ public partial class CharController
 
     private void CauseSwitch()
     {
+        
         lastShiftTime = Time.time;
         PPManager.Instance.ShiftEffect(!GameManager.Instance.isGameShifted);
         transform.Find("ShiftCD").GetComponent<ShiftCD>().image.fillAmount = 1; //TODO: FIX
         switchPS.Play();
         
         GameManager.Instance.ShiftWorld();
+        //StartCoroutine(WindDetectionCheck());
     }
     
     // Take damage, knock away from point

@@ -46,4 +46,11 @@ public abstract class Interactor : Entity {
         }
     }
 
+    protected virtual void Update()
+    {
+        // if (!Collider2D.bounds.Contains(CharController.Instance.transform.position))
+        // {
+        //     interactors.Remove(this);
+        // }
+    }
 }

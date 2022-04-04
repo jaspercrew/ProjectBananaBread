@@ -30,7 +30,7 @@ public class Parallax : MonoBehaviour
     void Update()
     {
         if (cam == null)
-            return;
+            cam = GameObject.FindWithTag("MainCamera");
     
         float temp = (cam.transform.position.x * (1 - parallaxEffect));
         float dist = (cam.transform.position.x * parallaxEffect);

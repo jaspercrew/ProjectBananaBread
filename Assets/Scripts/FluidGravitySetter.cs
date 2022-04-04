@@ -3,49 +3,107 @@ using UnityEngine;
 
 public class FluidGravitySetter : BinaryEntity
 {
-    // private Collider2D collider;
-    
-    protected override void Awake()
+    [Serializable]
+    public class GravityInfo
     {
-        CheckEntity();
+        public bool isDown;
+        public bool isEnabled;
+    }
+    // private Collider2D collider;
+    public GravityInfo realStateGravity;
+    public GravityInfo altStateGravity;
+
+    private Transform arrowTransform;
+    private SpriteRenderer arrowSprite;
+    private readonly Vector3 upArrow = new Vector3(.5f, .5f, 0);
+    private readonly Vector3 downArrow = new Vector3(.5f, -.5f, 0);
+    
+    
+    [HideInInspector]
+    public GravityInfo currentGravity;
+    
+    protected override void Start()
+    {
+        base.Start();
+        arrowTransform = transform.parent.Find("Arrow");
+        arrowSprite = arrowTransform.GetComponent<SpriteRenderer>();
+        //Debug.Log(arrowTransform.position);
+        CheckArrow();
     }
 
     protected override void TurnShifted()
     {
-        base.TurnShifted();
+        if (!arrowTransform)
+        {
+            arrowTransform = transform.parent.Find("Arrow");
+        }
+
+        currentGravity = realStateGravity;
+        CheckArrow();
     }
-    
+
     protected override void TurnUnshifted()
     {
-        base.TurnUnshifted();
+        if (!arrowTransform)
+        {
+            arrowTransform = transform.parent.Find("Arrow");
+        }
+        currentGravity = altStateGravity;
+        CheckArrow();
+    }
+
+    private void CheckArrow()
+    {
+        if (!arrowSprite)
+        {
+            arrowSprite = arrowTransform.GetComponent<SpriteRenderer>();
+        }
+        if (!currentGravity.isEnabled)
+        {
+            arrowSprite.enabled = false;
+        }
+        else
+        {
+            arrowSprite.enabled = true;
+            if (currentGravity.isDown)
+            {
+                arrowTransform.localScale = downArrow;
+            }
+            else
+            {
+                arrowTransform.localScale = upArrow;
+            }
+        }
+
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (currentGravity.isEnabled)
         {
-            if (GameManager.Instance.isGameShifted)
+            Rigidbody2D rb = other.gameObject.GetComponent<Rigidbody2D>();
+
+            if (other.CompareTag("Player"))
             {
-                CharController.Instance.Invert();
+                if (!currentGravity.isDown)
+                {
+                    CharController.Instance.Invert();
+                }
+                else
+                {
+                    CharController.Instance.DeInvert();
+                }
             }
-            else
+            else if (rb != null)
             {
-                CharController.Instance.DeInvert();
-            }
-            
-        }
-        
-        else if (other.gameObject.GetComponent<Rigidbody2D>() != null)
-        {
-            if (GameManager.Instance.isGameShifted)
-            {
-                other.gameObject.GetComponent<Rigidbody2D>().gravityScale =
-                    Mathf.Abs(other.gameObject.GetComponent<Rigidbody2D>().gravityScale);
-            }
-            else
-            {
-                other.gameObject.GetComponent<Rigidbody2D>().gravityScale =
-                    -Mathf.Abs(other.gameObject.GetComponent<Rigidbody2D>().gravityScale);
+                Debug.Log("rb is NOT null, not player");
+                GravityInfo toSetTo = currentGravity;
+                if (toSetTo.isEnabled)
+                {
+                    int dir = toSetTo.isDown ? 1 : -1;
+                    float strength = Mathf.Abs(rb.gravityScale);
+                    rb.gravityScale = dir * strength;
+                }
             }
         }
     }

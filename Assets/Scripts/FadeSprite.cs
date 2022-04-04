@@ -24,7 +24,7 @@ public class FadeSprite : MonoBehaviour
             Color c = spriteRenderer.color;
             c.a -= 1 / fadeTime;
             spriteRenderer.color = c;
-            timeLeft -= 1;
+            timeLeft -= Time.deltaTime;
         }
         else
         {

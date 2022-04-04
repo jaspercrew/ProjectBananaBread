@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,7 +17,7 @@ public partial class CharController
         {
             Instance = this;
         }
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
         PrepForScene();
     }
 
@@ -25,7 +26,7 @@ public partial class CharController
         lastShiftTime = 0f;
         
         canCast = true;
-        canDoubleJump = false;
+        //canDoubleJump = false;
         fadeSpriteIterator = 0;
         
         grappleLineRenderer = transform.GetComponent<LineRenderer>();
@@ -48,7 +49,15 @@ public partial class CharController
         switchPS = particleChild.Find("SwitchPS").GetComponent<ParticleSystem>();
         trailRenderer = particleChild.Find("FX").GetComponent<TrailRenderer>();
         //fadePS = particleChild.Find("FadePS").GetComponent<ParticleSystem>();
-        obstacleLayerMask = LayerMask.GetMask("Obstacle");
+        obstacleLayerMask = LayerMask.GetMask("Obstacle", "Entity");
+
+        // parentWindFX = transform.Find("ParentWindFX");
+        // upWindFX = parentWindFX.Find("FX-Up").GetComponent<ParticleSystem>();
+        // downWindFX = parentWindFX.Find("FX-Down").GetComponent<ParticleSystem>();
+        // leftWindFX = parentWindFX.Find("FX-Left").GetComponent<ParticleSystem>();
+        // rightWindFX = parentWindFX.Find("FX-Right").GetComponent<ParticleSystem>();
+
+        //StartCoroutine(WindDetectionCheck());
         
         screenShakeController = ScreenShakeController.Instance;
         // grappleController = GetComponent<RadialGrapple>();
@@ -56,6 +65,54 @@ public partial class CharController
         
         trailRenderer.emitting = false;
     }
+    
+    // private void WindDetectionCheck()
+    // {
+    //     //yield return new WaitForEndOfFrame();
+    //     if (WindEmitterChild.targetWind == null)
+    //     {
+    //         Debug.Log("windcheck - stop");
+    //         downWindFX.Stop();
+    //         upWindFX.Stop();
+    //         leftWindFX.Stop();
+    //         rightWindFX.Stop();
+    //         currentWindZone = null;
+    //         
+    //     }
+    //     else
+    //     {
+    //         Debug.Log("windcheck - play");
+    //         currentWindZone = WindEmitterChild.targetWind.GetComponentInParent<WindEmitter>();
+    //         if (currentWindZone.currentWind.isHorizontal && currentWindZone.currentWind.speedOnPlayer > 0)
+    //         {
+    //             // downWindFX.Stop();
+    //             // upWindFX.Stop();
+    //             // leftWindFX.Stop();
+    //             rightWindFX.Play();
+    //         }
+    //         else if (currentWindZone.currentWind.isHorizontal && currentWindZone.currentWind.speedOnPlayer < 0)
+    //         {
+    //             // downWindFX.Stop();
+    //             // upWindFX.Stop();
+    //             // rightWindFX.Stop();
+    //             leftWindFX.Play();
+    //         }
+    //         else if (!currentWindZone.currentWind.isHorizontal && currentWindZone.currentWind.speedOnPlayer > 0)
+    //         {
+    //             // downWindFX.Stop();
+    //             // leftWindFX.Stop();
+    //             // rightWindFX.Stop();
+    //             upWindFX.Play();
+    //         }
+    //         else if (!currentWindZone.currentWind.isHorizontal && currentWindZone.currentWind.speedOnPlayer < 0)
+    //         {
+    //             // upWindFX.Stop();
+    //             // leftWindFX.Stop();
+    //             // rightWindFX.Stop();
+    //             downWindFX.Play();
+    //         }
+    //     }
+    // }
     
     private void FixedUpdate() {
         // Debug.Log("touching" + isWallTouching);
@@ -66,13 +123,6 @@ public partial class CharController
         // movement animations
         Animator.SetInteger(AnimState, Mathf.Abs(moveVector) > float.Epsilon? 2 : 0);
         
-        // if (in wind)
-        //      wind_movement()
-        // else if (in water)
-        //      water_movement()
-        // else
-        //      standard_movement()
-        
         ApplyForcedMovement_FixedUpdate();
 
         if (!(currentWindZone is null))
@@ -81,7 +131,7 @@ public partial class CharController
         }
         else
         {
-            Rigidbody.gravityScale = 1;
+            Rigidbody.gravityScale = isInverted? -1 : 1;
             StandardMovement_FixedUpdate();
         }
 
@@ -331,6 +381,7 @@ public partial class CharController
         // feet dust logic
         if (Math.Abs(prevMoveVector - moveVector) > 0.01f && isGrounded && moveVector != 0) {
             dust.Play();
+            //parentWindFX.transform.localScale = new Vector3(-parentWindFX.transform.localScale.x, 1, 1);
         }
         
         prevMoveVector = moveVector;
@@ -347,40 +398,36 @@ public partial class CharController
 
     private void Update()
     {
-        if (WindEmitterChild.targetWind == null)
-        {
+        if (Input.GetKeyDown(KeyCode.P))
+            SceneManager.LoadScene("TTHub");
+        
+        if (WindEmitterChild.targetWind == null) {
             currentWindZone = null;
         }
         else
         {
             currentWindZone = WindEmitterChild.targetWind.GetComponentInParent<WindEmitter>();
         }
-      
-        if (Input.GetKeyDown(KeyCode.P))
-            SceneManager.LoadScene("BaseScene");
-        
-        
+
+        //WindDetectionCheck();
+        //WindDetectionUpdate();
         CheckGrounded_Update();
-        
         EventHandling_Update();
         
         // jump animation
         if (isGrounded) {
             Animator.SetBool(Jump, false);
         }
-        // short jump
-        ShortJumpDetection_Update();
-        JumpCooldown_Update();
-        // wall slide detection
-        WallSlideDetection_Update();
         
+        ShortJumpDetection_Update();
+        //JumpCooldown_Update();
+        WallSlideDetection_Update();
         FadeParticle_Update();
-        // slice-dash detection
         SliceDashDetection_Update();
         LineGrappleUpdate();
-        //WallJumpDetection_FixedUpdate();
-
     }
+
+
 
     private void LineGrappleUpdate()
     {
@@ -540,15 +587,15 @@ public partial class CharController
             Rigidbody.velocity = Vector2.Scale(Rigidbody.velocity, new Vector2(1f, 0.5f));
         }
     }
-    private void JumpCooldown_Update()
-    {
-        //Debug.Log(justJumped);
-        if (Input.GetKeyUp(KeyCode.Space) && justJumped)
-        {
-            canDoubleJump = true;
-            justJumped = false;
-        }
-    }
+    // private void JumpCooldown_Update()
+    // {
+    //     //Debug.Log(justJumped);
+    //     if (Input.GetKeyUp(KeyCode.Space) && justJumped)
+    //     {
+    //         //canDoubleJump = true;
+    //         justJumped = false;
+    //     }
+    // }
 
     private void FadeParticle_Update()
     {
@@ -606,12 +653,12 @@ public partial class CharController
         if (isNearWallOnLeft)
         {
             wallJumpDir = +1;
-            canDoubleJump = false; //TODO: should these be true?
+            //canDoubleJump = false; //TODO: should these be true?
         }
         else if (isNearWallOnRight)
         {
             wallJumpDir = -1;
-            canDoubleJump = false;
+            //canDoubleJump = false;
         }
 
         

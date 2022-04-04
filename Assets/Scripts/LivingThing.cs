@@ -26,13 +26,15 @@ public abstract class LivingThing : Entity {
     protected void FaceLeft()
     {
         Transform t = transform; // more efficient, according to Rider
-        t.localScale = new Vector3(1, t.localScale.y, 0);
+        Vector3 s = t.localScale;
+        t.localScale = new Vector3(1, s.y, s.z);
     }
 
     protected void FaceRight()
     {
         Transform t = transform; // more efficient, according to Rider
-        t.localScale = new Vector3(-1, t.localScale.y, 0);
+        Vector3 s = t.localScale;
+        t.localScale = new Vector3(-1, s.y, s.z);
     }
     
     // boosts the game object in a certain cardinal direction 

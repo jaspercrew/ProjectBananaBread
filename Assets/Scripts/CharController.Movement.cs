@@ -37,6 +37,7 @@ public partial class CharController
 
     private void DoJump()
     {
+        justJumped = true;
         dust.Play();
         int jumpDir = 0;
         const float horizontalJumpForce = 2f;
@@ -70,16 +71,16 @@ public partial class CharController
     }
 
     
-    private void DoDoubleJump()
-    {
-        dust.Play();
-        float doubleJumpForce = JumpForce * .9f;
-        canDoubleJump = false;
-        
-        Rigidbody.AddForce(new Vector2(0, isInverted ? -doubleJumpForce : doubleJumpForce), ForceMode2D.Impulse);
-        Animator.SetBool(Grounded, false);
-        Animator.SetTrigger(Jump);
-    }
+    // private void DoDoubleJump()
+    // {
+    //     dust.Play();
+    //     float doubleJumpForce = JumpForce * .9f;
+    //     //canDoubleJump = false;
+    //     
+    //     Rigidbody.AddForce(new Vector2(0, isInverted ? -doubleJumpForce : doubleJumpForce), ForceMode2D.Impulse);
+    //     Animator.SetBool(Grounded, false);
+    //     Animator.SetTrigger(Jump);
+    // }
     
 
     // TODO: add variable isCrouching and set to true/false here instead of changing speed directly
@@ -93,7 +94,8 @@ public partial class CharController
     }
     
     private void OnLanding() {
-        canDoubleJump = false;
+        //canDoubleJump = false;
+        justJumped = false;
         isRecentlyGrappled = false;
         dust.Play();
         Animator.SetBool(Grounded, true);

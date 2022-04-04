@@ -12,15 +12,15 @@ public class WindParticlesManager : MonoBehaviour
     private class WindParticle
     {
         public Transform Transform;
-        public Vector3 ViewportPosition;
-        public float OriginalY;
+        // public Vector3 ViewportPosition;
+        // public float OriginalY;
         // public float SpawnTime;
     }
 
     private LinkedList<WindParticle> windParticles = new LinkedList<WindParticle>();
     // private SpriteRenderer normalSquare;
 
-    private const int FramesBetweenParticles = 120;
+    private const int FramesBetweenParticles = 80; // TODO: dependent on speed?
     private int framesSinceLastParticle = 0;
     
     // private readonly Vector3 particleViewportVelocity = new Vector3(0.001f, 0, 0);
@@ -29,13 +29,15 @@ public class WindParticlesManager : MonoBehaviour
     private new Camera camera;
     // private float origCamY;
     private const float WindParticleZ = -3; // TODO
-
-    private enum WindParticlesState
-    {
-        Turning, Stopping, Normal
-    }
-
-    private WindParticlesState state = WindParticlesState.Normal;
+    private const float SpeedToWidth = 0.3f;
+    
+    // TODO: 2d
+    private bool isTurning = false;
+    private float prevSpeed = 0;
+    private float turnStartTime;
+    private float turnDuration = CharController.ShiftCooldown / 3;
+    private float turnStartSpeed;
+    private float turnEndSpeed;
 
     // Start is called before the first frame update
     private void Start()
@@ -50,11 +52,6 @@ public class WindParticlesManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        // track camera position's x, but not y, and keep z constant
-        // Vector3 camPos = camera.transform.position;
-        // transform.position = new Vector3(camPos.x, origCamY, WindParticleZ);
-        // transform.localPosition = Vector3.zero;
-        
         framesSinceLastParticle++;
         if (framesSinceLastParticle >= FramesBetweenParticles)
             framesSinceLastParticle = FramesBetweenParticles;
@@ -66,12 +63,21 @@ public class WindParticlesManager : MonoBehaviour
             framesSinceLastParticle = 0;
             SpawnParticle();
         }
+        
+        float newSpeed = (windZone == null)? 0 : windZone.currentWind.speedOnPlayer;
+
+        // print("prev: " + prevSpeed + ", new: " + newSpeed);
+        if (Math.Abs(prevSpeed - newSpeed) > float.Epsilon)
+        {
+            // print("turned!");
+            isTurning = true;
+            turnStartSpeed = prevSpeed;
+            turnEndSpeed = newSpeed;
+            turnStartTime = Time.time;
+        }
 
         // go through existing particles, remove ones out of frame
         LinkedListNode<WindParticle> node = windParticles.First;
-
-        float particleXSpeed = (WindEmitterChild.targetWind == null) ?
-            0 : BaseParticleXSpeed * windZone.currentWind.speedOnPlayer;
         
         while (node != null)
         {
@@ -81,7 +87,7 @@ public class WindParticlesManager : MonoBehaviour
             {
                 windParticles.Remove(node);
             }
-            else if (!IsParticleOnScreen(node.Value))
+            else if (!IsParticleOnScreen(node.Value) || (!isTurning && newSpeed == 0))
             {
                 // destroy and remove offscreen particles
                 // print("wp died with lifetime " + (Time.time - node.Value.SpawnTime) + "s");
@@ -90,24 +96,35 @@ public class WindParticlesManager : MonoBehaviour
             }
             else
             {
-                switch (state)
+                float windSpeed = (windZone == null) ? 0 : windZone.currentWind.speedOnPlayer;
+                
+                if (isTurning)
                 {
-                    case WindParticlesState.Turning:
-                        break;
-                    case WindParticlesState.Stopping:
-                        break;
-                    case WindParticlesState.Normal:
-                        Vector3 pos = node.Value.Transform.position;
-                        node.Value.Transform.position =
-                            new Vector3(pos.x + particleXSpeed, node.Value.OriginalY, pos.z);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                    float t = (Time.time - turnStartTime) / turnDuration;
+                    // print("in process of turning: " + (t * 100) + "%");
+                    if (t >= 1)
+                        t = 1;
+
+                    windSpeed = Mathf.Lerp(turnStartSpeed, turnEndSpeed, t);
+                    
+                    if (t >= 1)
+                    {
+                        isTurning = false;
+                    }
+                } 
+                
+                Vector3 pos = node.Value.Transform.position;
+                Vector3 scale = node.Value.Transform.localScale;
+                node.Value.Transform.position =
+                    new Vector3(pos.x + BaseParticleXSpeed * windSpeed, pos.y, pos.z);
+                node.Value.Transform.localScale =
+                    new Vector3(SpeedToWidth * windSpeed, scale.y, scale.z);
             }
 
             node = next;
         }
+
+        prevSpeed = newSpeed;
     }
 
     // private bool IsTransformOnScreen(Transform t)
@@ -130,9 +147,10 @@ public class WindParticlesManager : MonoBehaviour
     //            IsViewportPointOnScreen(camera.WorldToViewportPoint(bottomRight));
     // }
 
-    private static bool IsParticleOnScreen(WindParticle wp)
+    private bool IsParticleOnScreen(WindParticle wp)
     {
-        return 0 <= wp.ViewportPosition.x && wp.ViewportPosition.x <= 1;
+        Vector2 vp = camera.WorldToViewportPoint(wp.Transform.position);
+        return 0 <= vp.x && vp.x <= 1;
         // && 
         // 0 <= wp.viewportPosition.y && wp.viewportPosition.y <= 1;
     }
@@ -162,8 +180,8 @@ public class WindParticlesManager : MonoBehaviour
         WindParticle wp = new WindParticle
         {
             Transform = newParticle.transform,
-            ViewportPosition = viewportPos,
-            OriginalY = spawnPos.y,
+            // ViewportPosition = viewportPos,
+            // OriginalY = spawnPos.y,
             // SpawnTime = Time.time
         };
         windParticles.AddLast(wp);

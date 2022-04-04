@@ -27,10 +27,12 @@ public class WindEmitterChild : MonoBehaviour
         if (boxCollider.bounds.Contains(charPosition))
         {
             targetWind = this;
+            CharController.Instance.currentWindZone = parent; // TODO: xd
         }
         else
         {
             targetWind = null;
+            CharController.Instance.currentWindZone = null;
         }
     }
 

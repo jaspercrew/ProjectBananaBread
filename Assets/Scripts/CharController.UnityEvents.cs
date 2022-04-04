@@ -399,7 +399,7 @@ public partial class CharController
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.P))
-            SceneManager.LoadScene("BaseScene");
+            SceneManager.LoadScene("TTHub");
         
         if (WindEmitterChild.targetWind == null) {
             currentWindZone = null;

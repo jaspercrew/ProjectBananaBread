@@ -5,21 +5,15 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/DevScene.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 1
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
     path: Assets/Scenes/SceneT1.unity
     guid: f64cb69f86b53924a9ea1cddbe56c5a3
   - enabled: 1
     path: Assets/Scenes/TTHub.unity
     guid: a722a9c9cbaad064095fb6c402e48ab0
-  - enabled: 1
-    path: Assets/Scenes/TTCombat.unity
-    guid: 8d733a88779cfc049bd971a10524d638
-  - enabled: 1
-    path: Assets/Scenes/TTGrapple.unity
-    guid: d0e894a6155930b42a2d2a9f64536cb1
   - enabled: 1
     path: Assets/Scenes/TTMove.unity
     guid: 96c5b7a9caee0b74182348c43509742a
@@ -30,9 +24,15 @@ EditorBuildSettings:
     path: Assets/Scenes/TTWall.unity
     guid: cff286e0d72adbb409a7def510219181
   - enabled: 1
+    path: Assets/Scenes/TTGrapple.unity
+    guid: d0e894a6155930b42a2d2a9f64536cb1
+  - enabled: 1
     path: Assets/Scenes/TTWind.unity
     guid: 7e99a926f19f1c04cbdf001954ed5dd3
   - enabled: 1
     path: Assets/Scenes/TTGrav.unity
     guid: b12a0a81ac69b664ba128273b082c8ee
+  - enabled: 0
+    path: Assets/Scenes/TTCombat.unity
+    guid: 8d733a88779cfc049bd971a10524d638
   m_configObjects: {}

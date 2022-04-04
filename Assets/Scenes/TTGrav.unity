@@ -857,6 +857,10 @@ PrefabInstance:
       propertyPath: scene
       value: 
       objectReference: {fileID: 102900000, guid: b12a0a81ac69b664ba128273b082c8ee, type: 3}
+    - target: {fileID: 3983763667167455284, guid: 9fe0f35f0232cb745a76cd113eaaac88, type: 3}
+      propertyPath: sceneIndex
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 3983763667167455285, guid: 9fe0f35f0232cb745a76cd113eaaac88, type: 3}
       propertyPath: m_SortingOrder
       value: -1

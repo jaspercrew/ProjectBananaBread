@@ -190,7 +190,7 @@ public partial class CharController : LivingThing
             {Event.EventTypes.Dash, @this =>
                 (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown},
             {Event.EventTypes.Jump, @this => 
-                @this.IsAbleToMove() && (@this.isGrounded || (@this.jumpAvailable && !@this.justJumped)|| @this.isWallSliding || @this.wallJumpAvailable)},
+                @this.IsAbleToMove() && (@this.isGrounded || (@this.jumpAvailable && !@this.justJumped)|| @this.isWallSliding || (@this.wallJumpAvailable && !@this.justJumped))},
             // {Event.EventTypes.DoubleJump, @this => 
             //     @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && 
             //     @this.canDoubleJump && Input.GetKeyDown(KeyCode.Space)},

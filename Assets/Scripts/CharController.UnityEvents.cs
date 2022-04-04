@@ -400,7 +400,15 @@ public partial class CharController
     {
         if (Input.GetKeyDown(KeyCode.P))
             SceneManager.LoadScene("BaseScene");
-                
+        
+        if (WindEmitterChild.targetWind == null) {
+            currentWindZone = null;
+        }
+        else
+        {
+            currentWindZone = WindEmitterChild.targetWind.GetComponentInParent<WindEmitter>();
+        }
+
         //WindDetectionCheck();
         //WindDetectionUpdate();
         CheckGrounded_Update();

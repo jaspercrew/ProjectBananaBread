@@ -70,7 +70,7 @@ public class WindParticlesManager : MonoBehaviour
         // go through existing particles, remove ones out of frame
         LinkedListNode<WindParticle> node = windParticles.First;
 
-        float particleXSpeed = (WindEmitterChild.targetWind == null) ?
+        float particleXSpeed = (windZone == null) ?
             0 : BaseParticleXSpeed * windZone.currentWind.speedOnPlayer;
         
         while (node != null)

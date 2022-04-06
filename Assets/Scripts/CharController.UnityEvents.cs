@@ -427,6 +427,19 @@ public partial class CharController
         LineGrappleUpdate();
     }
 
+    private void LightCheckUpdate()
+    {
+        if (lightBuffer < 0)
+        {
+            TakeDamage(5, 0f, Vector2.zero);
+        }
+        else
+        {
+            lightBuffer -= Time.deltaTime;
+        }
+        
+    }
+
 
 
     private void LineGrappleUpdate()

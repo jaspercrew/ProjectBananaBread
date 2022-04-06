@@ -17,7 +17,7 @@ public class FadeSprite : MonoBehaviour
         //fadeSpriteIterator = 0;
     }
     
-    void FixedUpdate()
+    void Update()
     {
         if (timeLeft > 0)
         {
@@ -26,8 +26,7 @@ public class FadeSprite : MonoBehaviour
             spriteRenderer.color = c;
             timeLeft -= Time.deltaTime;
         }
-        else
-        {
+        else {
             Destroy(gameObject);
         }
     }

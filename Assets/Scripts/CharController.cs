@@ -44,6 +44,7 @@ public partial class CharController : LivingThing
     private const float DashCooldown = 1f;
     public const float ShiftCooldown = 1f;
     private const int AttackDamage = 10;
+    public const float maxLightBuffer = 10f;
     private const float ComboResetThreshold = 1f;
     public float attackRange = .25f;
     public LayerMask enemyLayers;
@@ -55,6 +56,8 @@ public partial class CharController : LivingThing
     private Transform particleChild;
     
     // Trackers
+    public float lightBuffer;
+    
     private float lastAttackTime;
     private bool isAttacking;
     private int comboCounter;

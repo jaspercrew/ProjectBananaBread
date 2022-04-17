@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        Application.targetFrameRate = 144;
     }
 
     public void ShiftWorld()
@@ -44,7 +45,11 @@ public class GameManager : MonoBehaviour
         
         // shift tiles
         TileStateManager t = TileStateManager.Instance;
-        //t.ShiftTilesTo(isGameShifted);
+        if (t != null)
+        {
+            t.ShiftTilesTo(isGameShifted);
+        }
+        
         
         // play sound
         AudioManager.Instance.OnShift(isGameShifted);

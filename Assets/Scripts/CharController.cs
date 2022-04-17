@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public partial class CharController : LivingThing
 {
@@ -37,7 +38,7 @@ public partial class CharController : LivingThing
     private const float InAirDrag = 1.5f;
     private const float MaxYSpeed = 20f;
     private const float VerticalDrag = 10f;
-    private const float JumpForce = 6.3f;
+    private const float JumpForce = 6f;
     private const int HeavyAttackBuildup = 4;
     private const float AttackCooldown = 0.5f;
     private const float ParryCooldown = 1f;
@@ -130,7 +131,7 @@ public partial class CharController : LivingThing
     public WindEmitter currentWindZone;
     
     private int fadeSpriteIterator;
-    public float fadeTime;
+    [FormerlySerializedAs("fadeTime")] public float emitFadesTime;
     
     private float moveVector;
     private float inputVector;

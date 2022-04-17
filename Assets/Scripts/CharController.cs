@@ -147,7 +147,8 @@ public partial class CharController : LivingThing
         
         public enum EventTypes
         {
-            Dash, Jump, /*DoubleJump,*/ Attack, Parry, Interact, SwitchState, SliceDash, Crouch, Cast, Yoink, Grapple
+            Dash, Jump, /*DoubleJump,*/ Attack, Parry, Interact, SwitchState, 
+            SliceDash, Crouch, Cast, Yoink, Grapple
         }
 
         public Event(EventTypes type, float time)
@@ -190,7 +191,8 @@ public partial class CharController : LivingThing
             {Event.EventTypes.Dash, @this =>
                 (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown},
             {Event.EventTypes.Jump, @this => 
-                @this.IsAbleToMove() && (@this.isGrounded || (@this.jumpAvailable && !@this.justJumped)|| @this.isWallSliding || (@this.wallJumpAvailable && !@this.justJumped))},
+                @this.IsAbleToMove() && (@this.isGrounded || (@this.jumpAvailable && !@this.justJumped) ||
+                                         @this.isWallSliding || (@this.wallJumpAvailable && !@this.justJumped))},
             // {Event.EventTypes.DoubleJump, @this => 
             //     @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && 
             //     @this.canDoubleJump && Input.GetKeyDown(KeyCode.Space)},

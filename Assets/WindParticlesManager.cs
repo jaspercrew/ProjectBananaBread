@@ -17,14 +17,16 @@ public class WindParticlesManager : MonoBehaviour
         // public float SpawnTime;
     }
 
-    private LinkedList<WindParticle> windParticles = new LinkedList<WindParticle>();
+    private readonly LinkedList<WindParticle> windParticles = new LinkedList<WindParticle>();
     // private SpriteRenderer normalSquare;
 
-    private const int FramesBetweenParticles = 80; // TODO: dependent on speed?
-    private int framesSinceLastParticle = 0;
+    // private const int FramesBetweenParticles = 80; // TODO: dependent on speed?
+    private const float TimeBetweenParticles = 0.2f;
+    // private int framesSinceLastParticle = 0;
+    private float timeSinceLastParticle;
     
     // private readonly Vector3 particleViewportVelocity = new Vector3(0.001f, 0, 0);
-    private const float BaseParticleXSpeed = 0.01f;
+    private const float BaseParticleXSpeed = 0.1f;
     
     private new Camera camera;
     // private float origCamY;
@@ -42,6 +44,7 @@ public class WindParticlesManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        // Application.targetFrameRate = 30;
         // normalSquare = GetComponent<SpriteRenderer>();
         // ComponentUtility.CopyComponent(GetComponent<SpriteRenderer>());
         camera = Camera.main;
@@ -50,17 +53,17 @@ public class WindParticlesManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    private void Update()
+    private void FixedUpdate()
     {
-        framesSinceLastParticle++;
-        if (framesSinceLastParticle >= FramesBetweenParticles)
-            framesSinceLastParticle = FramesBetweenParticles;
+        timeSinceLastParticle += Time.fixedDeltaTime;
+        if (timeSinceLastParticle >= TimeBetweenParticles)
+            timeSinceLastParticle = TimeBetweenParticles;
 
         WindEmitter windZone = CharController.Instance.currentWindZone;
         // spawn new particle
-        if (framesSinceLastParticle == FramesBetweenParticles && windZone != null)
+        if (Mathf.Approximately(timeSinceLastParticle, TimeBetweenParticles) && windZone != null)
         {
-            framesSinceLastParticle = 0;
+            timeSinceLastParticle = 0;
             SpawnParticle();
         }
         

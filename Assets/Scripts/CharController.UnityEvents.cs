@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -90,21 +89,24 @@ public partial class CharController
     //             // leftWindFX.Stop();
     //             rightWindFX.Play();
     //         }
-    //         else if (currentWindZone.currentWind.isHorizontal && currentWindZone.currentWind.speedOnPlayer < 0)
+    //         else if (currentWindZone.currentWind.isHorizontal &&
+    // currentWindZone.currentWind.speedOnPlayer < 0)
     //         {
     //             // downWindFX.Stop();
     //             // upWindFX.Stop();
     //             // rightWindFX.Stop();
     //             leftWindFX.Play();
     //         }
-    //         else if (!currentWindZone.currentWind.isHorizontal && currentWindZone.currentWind.speedOnPlayer > 0)
+    //         else if (!currentWindZone.currentWind.isHorizontal &&
+    // currentWindZone.currentWind.speedOnPlayer > 0)
     //         {
     //             // downWindFX.Stop();
     //             // leftWindFX.Stop();
     //             // rightWindFX.Stop();
     //             upWindFX.Play();
     //         }
-    //         else if (!currentWindZone.currentWind.isHorizontal && currentWindZone.currentWind.speedOnPlayer < 0)
+    //         else if (!currentWindZone.currentWind.isHorizontal &&
+    // currentWindZone.currentWind.speedOnPlayer < 0)
     //         {
     //             // upWindFX.Stop();
     //             // leftWindFX.Stop();
@@ -230,7 +232,7 @@ public partial class CharController
         {
             int moveDir = Math.Sign(moveVector);
             // if user is not moving and has speed, then slow down
-            if (moveDir == 0 && Mathf.Abs(xVel - horizWindSpeed) >= MinGroundSpeed)
+            if (moveDir == 0 && !Mathf.Approximately(xVel, horizWindSpeed))
             {
                 int antiMoveDir = -Math.Sign(xVel - horizWindSpeed);
 
@@ -244,10 +246,11 @@ public partial class CharController
             }
 
             // apply min velocity
-            if (Mathf.Abs(xVel - horizWindSpeed) < MinGroundSpeed)
-            {
-                Rigidbody.velocity = new Vector2(horizWindSpeed, yVel);
-            }
+            // if (Math.Sign(xVel) == Math.Sign(horizWindSpeed) && Mathf.Abs(xVel) < Math.Abs(horizWindSpeed))
+            // {
+            //     Rigidbody.velocity = new Vector2(horizWindSpeed, yVel);
+            //     // Debug.Log("applied min vel, new x vel is " + Rigidbody.velocity.x);
+            // }
         }
         // in-air movement
         else
@@ -288,7 +291,7 @@ public partial class CharController
         {
             // apply horizontal wind max velocity
             int windDir = (wind.speedOnPlayer < 0)? -1 : 1; // -1 if left, 1 if right
-            int velDir = Math.Sign(xVel);
+            // int velDir = Math.Sign(xVel);
             float maxSpeedSameDir = speed + Mathf.Abs(wind.speedOnPlayer);
             float maxSpeedOppDir = speed - Mathf.Abs(wind.speedOnPlayer);
             float maxLeft, maxRight;
@@ -332,7 +335,7 @@ public partial class CharController
             
             // apply max vel
             int windDir = (windSpeed < 0)? -1 : 1; // -1 if left, 1 if right
-            int velDir = Math.Sign(yVel);
+            // int velDir = Math.Sign(yVel);
             float maxSpeedSameDir = MaxYSpeed + Mathf.Abs(windSpeed);
             float maxSpeedOppDir = MaxYSpeed - Mathf.Abs(windSpeed);
             float maxDown, maxUp;
@@ -413,6 +416,19 @@ public partial class CharController
         //WindDetectionUpdate();
         CheckGrounded_Update();
         EventHandling_Update();
+
+        // apply wind min velocity lolol
+        if (!(currentWindZone is null) && Math.Sign(moveVector) == 0)
+        {
+            float xVel = Rigidbody.velocity.x;
+            float horizWindSpeed = currentWindZone.currentWind.speedOnPlayer;
+            // apply min velocity
+            if (Math.Sign(xVel) == Math.Sign(horizWindSpeed) && Mathf.Abs(xVel) < Math.Abs(horizWindSpeed))
+            {
+                Rigidbody.velocity = new Vector2(horizWindSpeed, Rigidbody.velocity.y);
+                // Debug.Log("applied min vel, new x vel is " + Rigidbody.velocity.x);
+            }
+        }
         
         // jump animation
         if (isGrounded) {

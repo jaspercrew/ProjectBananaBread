@@ -10056,7 +10056,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 1.4
   m_Material: {fileID: 6200000, guid: d46a7a5876a92e6418ee7721fc625b25, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -10135,6 +10135,7 @@ MonoBehaviour:
     m_Bits: 64
   attackPoint: {fileID: 7265325464984090082}
   slicePoint: {fileID: 7265325464034420409}
+  lightBuffer: 0
   isParrying: 0
   isInverted: 0
   grappleProjectile: {fileID: 1920082404479384334, guid: 7f946ab064a4c614a865b845260eaef6, type: 3}

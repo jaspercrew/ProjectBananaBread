@@ -120,7 +120,9 @@ public partial class CharController
         // Debug.Log("touching" + isWallTouching);
         // Debug.Log("sliding" + isWallSliding);
         
+        
         inputVector = Input.GetAxisRaw("Horizontal");
+        FadeParticle_FixedUpdate();
         if (!IsAbleToMove()) return;
         // movement animations
         Animator.SetInteger(AnimState, Mathf.Abs(moveVector) > float.Epsilon? 2 : 0);
@@ -438,9 +440,22 @@ public partial class CharController
         ShortJumpDetection_Update();
         //JumpCooldown_Update();
         WallSlideDetection_Update();
-        FadeParticle_Update();
+        
         SliceDashDetection_Update();
         LineGrappleUpdate();
+    }
+
+    private void LightCheckUpdate()
+    {
+        if (lightBuffer < 0)
+        {
+            TakeDamage(5, 0f, Vector2.zero);
+        }
+        else
+        {
+            lightBuffer -= Time.deltaTime;
+        }
+        
     }
 
 
@@ -613,13 +628,13 @@ public partial class CharController
     //     }
     // }
 
-    private void FadeParticle_Update()
+    private void FadeParticle_FixedUpdate()
     {
-        if (fadeTime > 0)
+        if (emitFadesTime > 0)
         {
-            const int fadeSpriteLimiter = 23;
+            const int fadeSpriteLimiter = 5;
             fadeSpriteIterator += 1;
-            fadeTime -= Time.deltaTime;
+            emitFadesTime -= Time.deltaTime;
             if (fadeSpriteIterator == fadeSpriteLimiter)
             {
                 fadeSpriteIterator = 0;

@@ -9,7 +9,7 @@ public class Parallax : MonoBehaviour
     [SerializeField]
     public GameObject cam;
 
-    private const float parallaxEffect = .3f;
+    public float parallaxEffect = .3f;
 
     void Start()
     {

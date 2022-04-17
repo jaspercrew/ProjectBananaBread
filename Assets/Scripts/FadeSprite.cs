@@ -5,7 +5,7 @@ using UnityEngine;
 public class FadeSprite : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
-    private const float fadeTime = 15f;
+    private const float fadeTime = .3f;
     private float timeLeft;
     
 
@@ -22,12 +22,11 @@ public class FadeSprite : MonoBehaviour
         if (timeLeft > 0)
         {
             Color c = spriteRenderer.color;
-            c.a -= 1 / fadeTime;
+            c.a -= 1 * Time.fixedDeltaTime / fadeTime;
             spriteRenderer.color = c;
             timeLeft -= Time.deltaTime;
         }
-        else
-        {
+        else {
             Destroy(gameObject);
         }
     }

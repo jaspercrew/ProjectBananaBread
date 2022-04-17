@@ -16,7 +16,7 @@ public partial class CharController
         float dashSpeed = 9f * dashDir;
         const float dashTime = .23f;
 
-        fadeTime = .28f;
+        emitFadesTime = .28f;
         isDashing = true;
         trailRenderer.emitting = true;
         StartCoroutine(DashCoroutine(dashTime, dashSpeed));
@@ -39,8 +39,8 @@ public partial class CharController
     {
         justJumped = true;
         dust.Play();
-        int jumpDir = 0;
-        const float horizontalJumpForce = 2f;
+        const float wallJumpModX = .2f;
+        const float wallJumpModY = 1.2f;
 
         if ((isWallSliding || wallJumpAvailable) && !isGrounded)
         {
@@ -50,24 +50,29 @@ public partial class CharController
             {
                 FaceLeft();
                 forcedMoveVector = -1;
-                jumpDir = -1;
             }
             else if (wallJumpDir == 1)
             {
                 FaceRight();
                 forcedMoveVector = 1;
-                jumpDir = 1;
             }
             else
+            {
                 Debug.LogError("wall jump dir is bad");
+            }
+            
+            Rigidbody.AddForce(new Vector2(JumpForce * wallJumpModX, 
+                    (isInverted ? -JumpForce : JumpForce) * wallJumpModY), ForceMode2D.Impulse);
+        }
+        else
+        {
+            Rigidbody.AddForce(new Vector2(0, isInverted ? -JumpForce : JumpForce), 
+                ForceMode2D.Impulse); 
         }
         
-        Rigidbody.AddForce(new Vector2(jumpDir * horizontalJumpForce, isInverted ? -JumpForce : JumpForce), 
-            ForceMode2D.Impulse);
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
         justJumped = true;
-
     }
 
     
@@ -112,18 +117,34 @@ public partial class CharController
 
     private void LaunchLine(GrapplePoint point)
     {
+        StartCoroutine(LaunchLineCoroutine());
         launchedPoint = point;
         isGrappleLaunched = true;
         grappleLineRenderer.enabled = true;
         const float launchSpeed = 25f;
-        const float offset = 2f;
+        const float offset = 1f;
         Vector3 direction = (point.transform.position - transform.position).normalized;
         sentProjectile = Instantiate(grappleProjectile, transform.position + (direction * offset), transform.rotation);
         sentProjectile.gameObject.GetComponent<GrappleProjectile>().SetStats(direction, launchSpeed);
     }
 
+    private IEnumerator LaunchLineCoroutine()
+    {
+        const float maxGrappleLaunchTime = 2f;
+        yield return new WaitForSeconds(maxGrappleLaunchTime);
+        if (!isLineGrappling)
+        {
+            launchedPoint = null;
+            hookedPoint = null;
+            grappleLineRenderer.enabled = false;
+            isLineGrappling = false;
+            isGrappleLaunched = false;
+        }
+    }
+
     public void StartLineGrapple(GrapplePoint point)
     {
+        StopCoroutine(LaunchLineCoroutine());
         hookedPoint = point;
         isGrappleLaunched = false;
         grappleLineRenderer.enabled = true;
@@ -138,7 +159,7 @@ public partial class CharController
         //Debug.Log("Disconnect");
         grappleLineRenderer.enabled = false;
         isLineGrappling = false;
-        Rigidbody.velocity = Vector2.ClampMagnitude(Rigidbody.velocity, 3f);
+        Rigidbody.velocity = Vector2.ClampMagnitude(Rigidbody.velocity, speed * 2);
     }
     
 }

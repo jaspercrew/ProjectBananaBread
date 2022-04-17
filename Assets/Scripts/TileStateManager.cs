@@ -42,6 +42,7 @@ public class TileStateManager : MonoBehaviour
 
     public void ShiftTilesTo(bool isAlt)
     {
+        Debug.Log("shifttiles");
         realLayerRenderer.enabled = !isAlt;
         realLayerCollider.enabled = !isAlt;
         altLayerRenderer.enabled = isAlt;

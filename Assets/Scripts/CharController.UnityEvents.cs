@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.SceneManagement;
 
 public partial class CharController
@@ -34,8 +35,9 @@ public partial class CharController
         grappleLOSRenderer.enabled = false;
         grappleClearRenderer = transform.Find("GrappleClear").GetComponent<LineRenderer>();
         grappleClearRenderer.enabled = false;
-        
-        
+
+        light = GetComponent<Light2D>();
+        lightBuffer = maxLightBuffer;
         particleChild = transform.Find("Particles");
         CurrentHealth = MaxHealth;
         Rigidbody = transform.GetComponent<Rigidbody2D>();
@@ -49,14 +51,7 @@ public partial class CharController
         trailRenderer = particleChild.Find("FX").GetComponent<TrailRenderer>();
         //fadePS = particleChild.Find("FadePS").GetComponent<ParticleSystem>();
         obstacleLayerMask = LayerMask.GetMask("Obstacle", "Entity");
-
-        // parentWindFX = transform.Find("ParentWindFX");
-        // upWindFX = parentWindFX.Find("FX-Up").GetComponent<ParticleSystem>();
-        // downWindFX = parentWindFX.Find("FX-Down").GetComponent<ParticleSystem>();
-        // leftWindFX = parentWindFX.Find("FX-Left").GetComponent<ParticleSystem>();
-        // rightWindFX = parentWindFX.Find("FX-Right").GetComponent<ParticleSystem>();
-
-        //StartCoroutine(WindDetectionCheck());
+        
         
         screenShakeController = ScreenShakeController.Instance;
         // grappleController = GetComponent<RadialGrapple>();
@@ -64,58 +59,7 @@ public partial class CharController
         
         trailRenderer.emitting = false;
     }
-    
-    // private void WindDetectionCheck()
-    // {
-    //     //yield return new WaitForEndOfFrame();
-    //     if (WindEmitterChild.targetWind == null)
-    //     {
-    //         Debug.Log("windcheck - stop");
-    //         downWindFX.Stop();
-    //         upWindFX.Stop();
-    //         leftWindFX.Stop();
-    //         rightWindFX.Stop();
-    //         currentWindZone = null;
-    //         
-    //     }
-    //     else
-    //     {
-    //         Debug.Log("windcheck - play");
-    //         currentWindZone = WindEmitterChild.targetWind.GetComponentInParent<WindEmitter>();
-    //         if (currentWindZone.currentWind.isHorizontal && currentWindZone.currentWind.speedOnPlayer > 0)
-    //         {
-    //             // downWindFX.Stop();
-    //             // upWindFX.Stop();
-    //             // leftWindFX.Stop();
-    //             rightWindFX.Play();
-    //         }
-    //         else if (currentWindZone.currentWind.isHorizontal &&
-    // currentWindZone.currentWind.speedOnPlayer < 0)
-    //         {
-    //             // downWindFX.Stop();
-    //             // upWindFX.Stop();
-    //             // rightWindFX.Stop();
-    //             leftWindFX.Play();
-    //         }
-    //         else if (!currentWindZone.currentWind.isHorizontal &&
-    // currentWindZone.currentWind.speedOnPlayer > 0)
-    //         {
-    //             // downWindFX.Stop();
-    //             // leftWindFX.Stop();
-    //             // rightWindFX.Stop();
-    //             upWindFX.Play();
-    //         }
-    //         else if (!currentWindZone.currentWind.isHorizontal &&
-    // currentWindZone.currentWind.speedOnPlayer < 0)
-    //         {
-    //             // upWindFX.Stop();
-    //             // leftWindFX.Stop();
-    //             // rightWindFX.Stop();
-    //             downWindFX.Play();
-    //         }
-    //     }
-    // }
-    
+
     private void FixedUpdate() {
         // Debug.Log("touching" + isWallTouching);
         // Debug.Log("sliding" + isWallSliding);
@@ -139,8 +83,6 @@ public partial class CharController
             StandardMovement_FixedUpdate();
         }
 
-        // WallJumpDetection_FixedUpdate();
-        
         TurnAround_FixedUpdate();
         
     }
@@ -246,13 +188,7 @@ public partial class CharController
             {
                 Rigidbody.AddForce(moveDir * OnGroundAcceleration * Vector2.right, ForceMode2D.Force);
             }
-
-            // apply min velocity
-            // if (Math.Sign(xVel) == Math.Sign(horizWindSpeed) && Mathf.Abs(xVel) < Math.Abs(horizWindSpeed))
-            // {
-            //     Rigidbody.velocity = new Vector2(horizWindSpeed, yVel);
-            //     // Debug.Log("applied min vel, new x vel is " + Rigidbody.velocity.x);
-            // }
+            
         }
         // in-air movement
         else
@@ -311,19 +247,6 @@ public partial class CharController
             Rigidbody.velocity = new Vector2(
                 Mathf.Clamp(xVel, maxLeft, maxRight),
                 Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
-            
-            // if (windDir == velDir) 
-            // {
-            //     Rigidbody.velocity = new Vector2(
-            //         Mathf.Clamp(xVel, -maxSpeedSameDir, maxSpeedSameDir), 
-            //         Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
-            // }
-            // else if (windDir == -velDir) 
-            // {
-            //     Rigidbody.velocity = new Vector2(
-            //         Mathf.Clamp(xVel, -maxSpeedOppDir, maxSpeedOppDir), 
-            //         Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
-            // }
         }
         // else if vertical wind
         else
@@ -413,9 +336,6 @@ public partial class CharController
         {
             currentWindZone = WindEmitterChild.targetWind.GetComponentInParent<WindEmitter>();
         }
-
-        //WindDetectionCheck();
-        //WindDetectionUpdate();
         CheckGrounded_Update();
         EventHandling_Update();
 
@@ -436,13 +356,12 @@ public partial class CharController
         if (isGrounded) {
             Animator.SetBool(Jump, false);
         }
-        
         ShortJumpDetection_Update();
         //JumpCooldown_Update();
         WallSlideDetection_Update();
-        
         SliceDashDetection_Update();
         LineGrappleUpdate();
+        LightCheckUpdate();
     }
 
     private void LightCheckUpdate()
@@ -454,8 +373,8 @@ public partial class CharController
         else
         {
             lightBuffer -= Time.deltaTime;
+            light.intensity = maxLightIntensity * (lightBuffer / maxLightBuffer);
         }
-        
     }
 
 
@@ -497,8 +416,6 @@ public partial class CharController
             //Debug.Log("red off");
             grappleLOSRenderer.enabled = false;
             grappleClearRenderer.enabled = false;
-
-
         }
         
         if (isGrappleLaunched && sentProjectile != null)
@@ -522,9 +439,7 @@ public partial class CharController
             {
                 DisconnectGrapple();
             }
-
         }
-        
     }
 
 

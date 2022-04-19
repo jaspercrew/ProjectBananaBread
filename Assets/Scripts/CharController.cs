@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.Serialization;
 
 public partial class CharController : LivingThing
@@ -15,6 +16,7 @@ public partial class CharController : LivingThing
     private ParticleSystem switchPS;
     private TrailRenderer trailRenderer;
     private ScreenShakeController screenShakeController;
+    private Light2D light;
     // private RadialGrapple grappleController;
     private SpriteRenderer spriteRenderer;
     private LineRenderer grappleLineRenderer;
@@ -46,6 +48,7 @@ public partial class CharController : LivingThing
     public const float ShiftCooldown = 1f;
     private const int AttackDamage = 10;
     public const float maxLightBuffer = 10f;
+    private const float maxLightIntensity = 1f;
     private const float ComboResetThreshold = 1f;
     public float attackRange = .25f;
     public LayerMask enemyLayers;
@@ -313,9 +316,6 @@ public partial class CharController : LivingThing
     {
         Interrupt();
         currentWindZone = null;
-        
     }
-    
-
 
 }

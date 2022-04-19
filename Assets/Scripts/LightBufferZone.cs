@@ -25,6 +25,7 @@ public class LightBufferZone : BinaryEntity
         if (activeInAlt)
         {
             isActive = true;
+            
         }
     }
 

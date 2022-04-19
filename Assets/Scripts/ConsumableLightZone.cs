@@ -2,10 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.Serialization;
 
 public class ConsumableLightZone : BinaryEntity
 {
+    private const float intensity = 1f;
     public bool beenConsumed;
     public float radius;
     
@@ -14,29 +16,46 @@ public class ConsumableLightZone : BinaryEntity
     private bool isActive;
 
     private Collider2D collider2D;
+    private Light2D light;
 
     protected override void Start()
     {
-        base.Start();
         beenConsumed = false;
         collider2D = transform.GetComponent<Collider2D>();
+        light = transform.Find("Light").GetComponent<Light2D>();
+        base.Start();
     }
+    
     
     protected override void TurnShifted()
     {
         base.TurnShifted();
-        if (activeInAlt)
+        if (!beenConsumed)
         {
-            isActive = true;
+            if (activeInAlt)
+            {
+                Activate();
+            }
+            else
+            {
+                Deactivate();
+            }
         }
     }
 
     protected override void TurnUnshifted()
     {
         base.TurnUnshifted();
-        if (activeInReal)
+        if (!beenConsumed)
         {
-            isActive = true;
+            if (activeInReal)
+            {
+                Activate();
+            }
+            else
+            {
+                Deactivate();
+            }
         }
     }
     
@@ -50,8 +69,21 @@ public class ConsumableLightZone : BinaryEntity
         }
     }
 
+    private void Activate()
+    {
+        light.intensity = intensity;
+        isActive = true;
+    }
+
+    private void Deactivate()
+    {
+        light.intensity = 0f;
+        isActive = false;
+    }
+
     private void Extinguish()
     {
+        light.intensity = 0f;
         beenConsumed = true;
     }
 }

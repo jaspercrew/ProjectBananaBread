@@ -33,6 +33,11 @@ public class MeleeEnemy : CloseAttackerEnemy
         StartCoroutine(attackCo = AttackCoroutine());
     }
 
+    protected override bool AttackConditions()
+    {
+        return base.AttackConditions() && !isAttacking;
+    }
+
     protected IEnumerator AttackCoroutine()
     {
         Rigidbody.velocity = Vector2.ClampMagnitude(Rigidbody.velocity, .01f);

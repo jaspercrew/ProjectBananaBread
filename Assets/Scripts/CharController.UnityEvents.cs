@@ -140,10 +140,10 @@ public partial class CharController
         else
         {
             // move if not wall sliding (?)
-            if (!isWallSliding)
-            {
-                Rigidbody.AddForce(Math.Sign(moveVector) * InAirAcceleration * Vector2.right, ForceMode2D.Force);
-            }
+            //if (!isWallSliding)
+            //{
+            Rigidbody.AddForce(Math.Sign(moveVector) * InAirAcceleration * Vector2.right, ForceMode2D.Force);
+            //}
 
             // slow down if player is not inputting horizontal movement
             // and don't apply if grappling

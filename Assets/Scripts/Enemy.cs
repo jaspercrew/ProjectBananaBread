@@ -2,35 +2,37 @@ using System;
 using System.Collections;
 using Pathfinding;
 using UnityEngine;
-
 public class Enemy : LivingThing
 {
-    // Attacking
-    protected float speed = 3f;
-    // [SerializeField] private int moveState; // determines movement behavior
+    public float speed = 3f;
+    public float aggroDist = 10f;
+
+    public float attackCD;
+    protected float lastAttackTime;
     
-    // Trackers
-    // private float moveVector = 0f;
     protected bool canFunction;
     protected bool movementDisabledAirborne;
     protected bool movementDisabledTimed;
-
+    protected bool playerInRange;
+    
     protected AIPath aiPath;
     protected CharController charController;
+    protected LayerMask playerMask;
 
     // Start is called before the first frame update
-
-    protected void InitializeEnemy()
+    protected virtual void Start()
     {
+        playerInRange = false;
         canFunction = true;
         CurrentHealth = MaxHealth;
         aiPath = GetComponent<AIPath>();
         Animator = transform.GetComponentInChildren<Animator>();
         Rigidbody = transform.GetComponent<Rigidbody2D>();
         charController = FindObjectOfType<CharController>();
+        playerMask = LayerMask.GetMask("Player");
     }
 
-    public void TakeDamage(int damage, float knockback = 0f) { // assumes damage is taken from PLAYER
+    public void TakeDamage(int damage) { // assumes damage is taken from PLAYER
         if (canFunction) {
             Stun(.2f);
             GameObject player = GameObject.FindWithTag("Player");
@@ -41,16 +43,20 @@ public class Enemy : LivingThing
             // damage animation
             Animator.SetTrigger(Hurt);
             ParticleSystem gorePS = transform.Find("Particles").Find("GorePS").GetComponent<ParticleSystem>();
-            ParticleSystem.ShapeModule shape = gorePS.shape;
-            if (transform.position.x < charController.transform.position.x)
+            if (gorePS != null)
             {
-                shape.rotation = new Vector3(0, 0, 145);
+                ParticleSystem.ShapeModule shape = gorePS.shape;
+                if (transform.position.x < charController.transform.position.x)
+                {
+                    shape.rotation = new Vector3(0, 0, 145);
+                }
+                else
+                {
+                    shape.rotation = new Vector3(0, 0, 0);
+                }
+
+                gorePS.Play();
             }
-            else
-            {
-                shape.rotation = new Vector3(0, 0, 0);
-            }
-            gorePS.Play();
 
             if (CurrentHealth <= 0) {
                 Die();
@@ -58,17 +64,46 @@ public class Enemy : LivingThing
         }
     }
     
-    
-
     protected virtual bool AbleToMove()
     {
         return canFunction && !movementDisabledAirborne && !movementDisabledTimed;
     }
 
-    protected void Pathfind_Update()
+    protected void PlayerScan_Update()
+    {
+        if (Physics.OverlapSphere(transform.position, aggroDist, playerMask).Length > 0)
+        {
+            playerInRange = true;
+        }
+        else
+        {
+            playerInRange = false;
+        }
+    }
+
+    protected void AttackLoop_Update()
+    {
+        if (playerInRange && AttackConditions())
+        {
+            lastAttackTime = Time.time;
+            DoAttack();
+        }
+    }
+
+    protected virtual bool AttackConditions()
+    {
+        return Time.time > lastAttackTime;
+    }
+
+    protected virtual void DoAttack()
+    {
+        
+    }
+
+    protected virtual void Pathfind_Update()
     {
         //Debug.Log(movementDisabledAirborne);
-        if (AbleToMove())
+        if (AbleToMove() && !playerInRange)
         {
             float thisXPos = transform.position.x;
             float charXPos = charController.transform.position.x;

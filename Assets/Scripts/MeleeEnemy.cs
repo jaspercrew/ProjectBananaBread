@@ -3,37 +3,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MeleeEnemy : Enemy
+public class MeleeEnemy : CloseAttackerEnemy
 {
     [SerializeField] protected Transform attackPoint;
     [SerializeField] protected float knockbackVal = 2f;
     [SerializeField] protected float attackRange = .25f;
     protected bool isAttacking;
-    protected const float AttackRate = .75f;
     protected const int AttackDamage = 10;
     [SerializeField] protected LayerMask playerLayers;
-    protected float nextAttackTime;
     protected IEnumerator attackCo;
     
     // Start is called before the first frame update
-    private void Start()
+    protected override void Start()
     {
-        InitializeEnemy();
+        base.Start();
+        attackCD = 2f;
     }
-
-    private void Update()
-    {
-        Pathfind_Update();
-        ScanForAttack_Update();
-        TurnAround_Update();
-    }
+    
 
     protected override bool AbleToMove()
     {
         return base.AbleToMove() && !isAttacking;
     }
 
-    protected void DoAttack()
+    protected override void DoAttack()
     {
         isAttacking = true;
         Animator.SetTrigger(Attack);
@@ -46,7 +39,6 @@ public class MeleeEnemy : Enemy
         // enemy attack modifiers
         // float attackBoost = 1.5f;
         const float beginAttackDelay = .55f;
-        //const float hitConfirmDelay = .20f;
         const float hitEndDelay = .4f;
 
         yield return new WaitForSeconds(beginAttackDelay);
@@ -72,18 +64,7 @@ public class MeleeEnemy : Enemy
         yield return new WaitForSeconds(hitEndDelay);
         isAttacking = false;
     }
-    
-    protected void ScanForAttack_Update() {
-        const int maxHits = 20;
-        Collider2D[] hitColliders = new Collider2D[maxHits];
-        int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange,
-            hitColliders, playerLayers);
-        if (numHits > 0 && Time.time >= nextAttackTime) {
-            DoAttack();
-            nextAttackTime = Time.time + 1f / AttackRate;
-        }
-    }
-    
+
     public override void Interrupt() { // should stop all relevant coroutines
         if (attackCo != null) {
             StopCoroutine(attackCo); // interrupt attack if take damage
@@ -94,18 +75,10 @@ public class MeleeEnemy : Enemy
     protected override void DisableFunctionality() {
         StopAllCoroutines();
         canFunction = false;
-        
     }
 
     protected override void EnableFunctionality() {
         canFunction = true;
         isAttacking = false;
     }
-    // public override void Stun(float stunTime) {
-    //     Interrupt();
-    //     //Rigidbody.velocity = Vector2.zero;
-    //     DisableFunctionality();
-    //     Rigidbody.velocity = Vector2.zero;
-    //     StartCoroutine(StunCoroutine(stunTime));
-    // }
 }

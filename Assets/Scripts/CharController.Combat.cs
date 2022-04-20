@@ -168,7 +168,7 @@ public partial class CharController
             if (enemy is null)
                 break;
             if (enemy.GetComponent<Enemy>() != null)
-                enemy.GetComponent<Enemy>().TakeDamage(AttackDamage, isHeavyAttack ? 2f : 1f);
+                enemy.GetComponent<Enemy>().TakeDamage(AttackDamage);
             else if (enemy.GetComponent<HittableEntity>() != null)
                 enemy.GetComponent<HittableEntity>().GetHit();
             hit = true;
@@ -228,7 +228,7 @@ public partial class CharController
         yield return new WaitForSeconds(counterTime);
         screenShakeController.MediumShake();
         AudioManager.Instance.Play(SoundName.Hit, .5f);
-        enemy.TakeDamage(20, 2);
+        enemy.TakeDamage(20);
         isAttacking = false;
     }
 

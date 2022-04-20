@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -50,8 +52,6 @@ public class GameManager : MonoBehaviour
         {
             t.ShiftTilesTo(isGameShifted);
         }
-        
-        
         // play sound
         AudioManager.Instance.OnShift(isGameShifted);
     }
@@ -60,6 +60,17 @@ public class GameManager : MonoBehaviour
     {
         const float freezeTime = 0.1f;
         StartCoroutine(FreezeFrameCoroutine(freezeTime));
+    }
+
+    public void PlayerDeath()
+    {
+        StartCoroutine(PlayerDeathCoroutine());
+    }
+
+    private IEnumerator PlayerDeathCoroutine()
+    {
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene("TTHub");
     }
 
     private IEnumerator FreezeFrameCoroutine(float time)

@@ -86,13 +86,10 @@ public partial class CharController
         if (!IsAbleToBeDamaged()) {
             return;
         }
-        // GameManager.Instance.FreezeFrame();
+        GameManager.Instance.FreezeFrame();
         screenShakeController.MediumShake();
-        //GameManager.Instance.FreezeFrame();
         StartCoroutine(TakeDamageCoroutine());
-        //KnockAwayFromPoint(knockback, point);
         CurrentHealth -= damage;
-        // damage animation
         Animator.SetTrigger(Hurt);
         
         if (CurrentHealth <= 0) {
@@ -101,7 +98,6 @@ public partial class CharController
     }
 
     private IEnumerator TakeDamageCoroutine() {
-        //screenShakeController.MediumShake();
         isInvincible = true;
         const float invFrames = .5f;
         yield return new WaitForSeconds(invFrames);
@@ -113,6 +109,7 @@ public partial class CharController
         Animator.SetTrigger(Death);
         transform.GetComponent<Collider>().enabled = false;
         Rigidbody.gravityScale = 0;
+        GameManager.Instance.PlayerDeath();
     }
 
     // handles combo count for attacking 

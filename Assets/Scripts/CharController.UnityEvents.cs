@@ -36,7 +36,7 @@ public partial class CharController
         grappleClearRenderer = transform.Find("GrappleClear").GetComponent<LineRenderer>();
         grappleClearRenderer.enabled = false;
 
-        light = GetComponent<Light2D>();
+        light = transform.Find("Light").GetComponent<Light2D>();
         lightBuffer = maxLightBuffer;
         particleChild = transform.Find("Particles");
         CurrentHealth = MaxHealth;
@@ -58,6 +58,10 @@ public partial class CharController
         spriteRenderer = GetComponent<SpriteRenderer>();
         
         trailRenderer.emitting = false;
+        if (!GameManager.Instance.isDarkScene)
+        {
+            light.enabled = false;
+        }
     }
 
     private void FixedUpdate() {
@@ -307,19 +311,19 @@ public partial class CharController
 
     private void TurnAround_FixedUpdate() {
         // feet dust logic
-        if (Math.Abs(prevMoveVector - moveVector) > 0.01f && isGrounded && moveVector != 0) {
+        if (Math.Abs(prevInVector - inputVector) > 0.01f && isGrounded && inputVector != 0) {
             dust.Play();
             //parentWindFX.transform.localScale = new Vector3(-parentWindFX.transform.localScale.x, 1, 1);
         }
         
-        prevMoveVector = moveVector;
+        prevInVector = inputVector;
 
         Vector3 scale = transform.localScale;
         // direction switching
-        if (moveVector > 0 && Math.Abs(scale.x + 1) > float.Epsilon) {
+        if (inputVector > 0 && Math.Abs(scale.x + 1) > float.Epsilon) {
             FaceRight();
         }
-        else if (moveVector < 0 && Math.Abs(scale.x - 1) > float.Epsilon) {
+        else if (inputVector < 0 && Math.Abs(scale.x - 1) > float.Epsilon) {
             FaceLeft();
         }
     }
@@ -361,18 +365,23 @@ public partial class CharController
         WallSlideDetection_Update();
         SliceDashDetection_Update();
         LineGrappleUpdate();
-        LightCheckUpdate();
+        if (GameManager.Instance.isDarkScene)
+        {
+            LightCheckUpdate();
+        }
     }
 
     private void LightCheckUpdate()
     {
         if (lightBuffer < 0)
         {
-            TakeDamage(5, 0f, Vector2.zero);
+            TakeDamage(5);
         }
         else
         {
             lightBuffer -= Time.deltaTime;
+            light.pointLightOuterRadius = maxOuterLightRadius * (lightBuffer / maxLightBuffer);
+            light.pointLightInnerRadius = maxInnerLightRadius * (lightBuffer / maxLightBuffer);
             light.intensity = maxLightIntensity * (lightBuffer / maxLightBuffer);
         }
     }
@@ -592,14 +601,16 @@ public partial class CharController
             Physics2D.Linecast(bottomRight, bottomRight + aLittleRight, obstacleLayerMask);
         bool isNearWallOnRight = bottomRightHit;
 
-        isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) 
-                                     || (moveVector < 0 && isNearWallOnLeft)) && IsAbleToMove();
+        // isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) 
+        //                              || (moveVector < 0 && isNearWallOnLeft)) && IsAbleToMove();
+        isWallSliding = v.y <= 0 && (isNearWallOnRight
+                                     || isNearWallOnLeft) && IsAbleToMove();
         //Debug.Log(wallJumpAvailable);
 
         if (isNearWallOnLeft)
         {
             wallJumpDir = +1;
-            //canDoubleJump = false; //TODO: should these be true?
+
         }
         else if (isNearWallOnRight)
         {

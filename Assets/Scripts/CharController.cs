@@ -47,8 +47,10 @@ public partial class CharController : LivingThing
     private const float DashCooldown = 1f;
     public const float ShiftCooldown = 1f;
     private const int AttackDamage = 10;
-    public const float maxLightBuffer = 10f;
-    private const float maxLightIntensity = 1f;
+    public const float maxLightBuffer = 7f;
+    private const float maxLightIntensity = .5f;
+    private const float maxOuterLightRadius = 5;
+    private const float maxInnerLightRadius = 3;
     private const float ComboResetThreshold = 1f;
     public float attackRange = .25f;
     public LayerMask enemyLayers;
@@ -138,7 +140,7 @@ public partial class CharController : LivingThing
     
     private float moveVector;
     private float inputVector;
-    private float prevMoveVector = 2;
+    private float prevInVector = 2;
     private int forcedMoveVector;
     private float forcedMoveTime;
 

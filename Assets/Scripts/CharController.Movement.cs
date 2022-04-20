@@ -45,7 +45,7 @@ public partial class CharController
         if ((isWallSliding || wallJumpAvailable) && !isGrounded)
         {
             //Debug.Log("WALLJUMP");
-            forcedMoveTime = .07f;
+            forcedMoveTime = .10f;
             if (wallJumpDir == -1)
             {
                 FaceLeft();
@@ -61,7 +61,7 @@ public partial class CharController
                 Debug.LogError("wall jump dir is bad");
             }
             
-            Rigidbody.AddForce(new Vector2(JumpForce * wallJumpModX, 
+            Rigidbody.AddForce(new Vector2(JumpForce * wallJumpModX * wallJumpDir, 
                     (isInverted ? -JumpForce : JumpForce) * wallJumpModY), ForceMode2D.Impulse);
         }
         else

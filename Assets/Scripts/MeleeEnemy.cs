@@ -56,7 +56,7 @@ public class MeleeEnemy : CloseAttackerEnemy
                 }
                 else if (p != null && p.gameObject.GetComponent<CharController>() != null)
                 {
-                    charController.TakeDamage(AttackDamage, knockbackVal, transform.position);
+                    charController.TakeDamage(AttackDamage);
                 }
             }
         }

@@ -82,7 +82,7 @@ public partial class CharController
     }
     
     // Take damage, knock away from point
-    public void TakeDamage(int damage, float knockback, Vector2 point) {
+    public void TakeDamage(int damage) {
         if (!IsAbleToBeDamaged()) {
             return;
         }
@@ -101,9 +101,9 @@ public partial class CharController
     }
 
     private IEnumerator TakeDamageCoroutine() {
-        screenShakeController.MediumShake();
+        //screenShakeController.MediumShake();
         isInvincible = true;
-        const float invFrames = .2f;
+        const float invFrames = .5f;
         yield return new WaitForSeconds(invFrames);
         isInvincible = false;
     }
@@ -234,7 +234,7 @@ public partial class CharController
 
     private void DoCast()
     {
-        const float castSpeed = 35f;
+        const float castSpeed = 65f;
         castProjectileRb = Instantiate(castProjectileInput, attackPoint.position, transform.rotation);
         if (Camera.main is null)
             return;

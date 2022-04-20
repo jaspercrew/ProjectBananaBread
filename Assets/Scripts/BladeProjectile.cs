@@ -5,7 +5,7 @@ using UnityEngine;
 public class BladeProjectile : Projectile
 {
     //private float outSpeed = 3f;
-    private float inSpeed = 35f;
+    private float inSpeed = 65f;
     //private Vector3 dir;
 
     public bool isStuck;

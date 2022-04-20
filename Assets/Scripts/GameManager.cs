@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public bool isGameShifted;
+    public bool isDarkScene;
     private int frozenFrames;
 
     public Dictionary<string, bool> leverDict = new Dictionary<string, bool>();

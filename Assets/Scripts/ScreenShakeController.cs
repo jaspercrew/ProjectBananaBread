@@ -12,9 +12,12 @@ public class ScreenShakeController : MonoBehaviour {
     private float shakeTimerTotal;
     
     //public float rotationMultiplier = 10f;
+    void Awake()
+    {
+        Instance = this;
+    }
     // Start is called before the first frame update
     private void Start() {
-        Instance = this;
         StartCoroutine(LateStart());
     }
 

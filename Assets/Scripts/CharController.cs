@@ -36,11 +36,11 @@ public partial class CharController : LivingThing
     private const float MinGroundSpeed = 0.5f;
     private const float OnGroundAcceleration = 38f;
     private const float OnGroundDeceleration = 30f;
-    private const float InAirAcceleration = 10f;
+    private const float InAirAcceleration = 18f;
     private const float InAirDrag = 1.5f;
     private const float MaxYSpeed = 20f;
     private const float VerticalDrag = 10f;
-    private const float JumpForce = 6f;
+    private const float JumpForce = 7f;
     private const int HeavyAttackBuildup = 4;
     private const float AttackCooldown = 0.5f;
     private const float ParryCooldown = 1f;
@@ -96,7 +96,7 @@ public partial class CharController : LivingThing
     }
 
     private bool jumpAvailable;
-    private bool isInvincible;
+    public bool isInvincible;
     
     private bool isGrappleLaunched;
     private bool isLineGrappling;
@@ -311,7 +311,11 @@ public partial class CharController : LivingThing
         isParrying = false;
         isSliceDashing = false;
         isDashing = false;
-        
+    }
+
+    public bool IFrames()
+    {
+        return isDashing || isInvincible || isSliceDashing;
     }
 
     public void PrepForScene()

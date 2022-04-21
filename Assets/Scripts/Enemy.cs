@@ -4,8 +4,11 @@ using Pathfinding;
 using UnityEngine;
 public class Enemy : LivingThing
 {
+    [Tooltip("Speed is only for moving enemies")]
     public float speed = 3f;
-    public float aggroDist = 10f;
+    [Tooltip("Aggrodist is only for moving enemies")]
+    public float aggroDist;
+    public float attackRange;
 
     public float attackCD;
     protected float lastAttackTime;
@@ -13,7 +16,7 @@ public class Enemy : LivingThing
     protected bool canFunction;
     protected bool movementDisabledAirborne;
     protected bool movementDisabledTimed;
-    protected bool playerInRange;
+    protected bool playerInAttackRange;
     
     protected AIPath aiPath;
     protected CharController charController;
@@ -22,7 +25,7 @@ public class Enemy : LivingThing
     // Start is called before the first frame update
     protected virtual void Start()
     {
-        playerInRange = false;
+        playerInAttackRange = false;
         canFunction = true;
         CurrentHealth = MaxHealth;
         aiPath = GetComponent<AIPath>();
@@ -71,19 +74,20 @@ public class Enemy : LivingThing
 
     protected void PlayerScan_Update()
     {
-        if (Physics.OverlapSphere(transform.position, aggroDist, playerMask).Length > 0)
+        float dist = Vector2.Distance(charController.transform.position, transform.position);
+        if (dist < attackRange)
         {
-            playerInRange = true;
+            playerInAttackRange = true;
         }
         else
         {
-            playerInRange = false;
+            playerInAttackRange = false;
         }
     }
 
     protected void AttackLoop_Update()
     {
-        if (playerInRange && AttackConditions())
+        if (playerInAttackRange && AttackConditions())
         {
             lastAttackTime = Time.time;
             DoAttack();
@@ -92,7 +96,7 @@ public class Enemy : LivingThing
 
     protected virtual bool AttackConditions()
     {
-        return Time.time > lastAttackTime;
+        return Time.time > lastAttackTime + attackCD;
     }
 
     protected virtual void DoAttack()
@@ -103,7 +107,8 @@ public class Enemy : LivingThing
     protected virtual void Pathfind_Update()
     {
         //Debug.Log(movementDisabledAirborne);
-        if (AbleToMove() && !playerInRange)
+        float dist = Vector2.Distance(charController.transform.position, transform.position);
+        if (AbleToMove() && !playerInAttackRange && dist < aggroDist)
         {
             float thisXPos = transform.position.x;
             float charXPos = charController.transform.position.x;
@@ -135,7 +140,7 @@ public class Enemy : LivingThing
         Destroy(gameObject, deathTime);
     }
     
-    protected void TurnAround_Update() {
+    protected virtual void TurnAround_Update() {
         if (Rigidbody.velocity.x > 0) {
             FaceRight();
         }
@@ -147,7 +152,7 @@ public class Enemy : LivingThing
 
 
     public void Stun(float stunTime) {
-        Debug.Log("stun");
+        //Debug.Log("stun");
         Interrupt();
         DisableFunctionality();
         StartCoroutine(StunCoroutine(stunTime));

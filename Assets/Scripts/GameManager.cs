@@ -13,12 +13,7 @@ public class GameManager : MonoBehaviour
     private int frozenFrames;
 
     public Dictionary<string, bool> leverDict = new Dictionary<string, bool>();
-
-    private GameManager()
-    {
-        if (Instance == null)
-            Instance = this;
-    }
+    
 
     private void Awake()
     {
@@ -26,6 +21,7 @@ public class GameManager : MonoBehaviour
         // this calls SwitchToState() on all entities in the scene,
         // changing everything to the originalState
         isGameShifted = false;
+        Instance = this;
     }
 
     // Start is called before the first frame update
@@ -69,8 +65,8 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator PlayerDeathCoroutine()
     {
-        yield return new WaitForSeconds(2f);
-        SceneManager.LoadScene("TTHub");
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private IEnumerator FreezeFrameCoroutine(float time)

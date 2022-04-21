@@ -119,8 +119,7 @@ public partial class CharController
                 // TODO change this if we choose to add ice or something
                 Rigidbody.AddForce(antiMoveDir * OnGroundDeceleration * Vector2.right, ForceMode2D.Force);
             }
-            // otherwise move the player in the direction
-            else if (moveDir != 0)
+            // otherwise move the player in the direction 
             {
                 Rigidbody.AddForce(moveDir * OnGroundAcceleration * Vector2.right, ForceMode2D.Force);
             }

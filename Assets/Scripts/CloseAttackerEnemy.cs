@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 public class CloseAttackerEnemy : Enemy {
     
+    
+    
     protected virtual void Update()
     {
         PlayerScan_Update();

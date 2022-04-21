@@ -44,6 +44,7 @@ public partial class CharController : LivingThing
     private const int HeavyAttackBuildup = 4;
     private const float AttackCooldown = 0.5f;
     private const float ParryCooldown = 1f;
+    const float parryTime = .4f;
     private const float DashCooldown = 1f;
     public const float ShiftCooldown = 1f;
     private const int AttackDamage = 10;

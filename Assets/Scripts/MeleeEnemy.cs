@@ -5,12 +5,18 @@ using UnityEngine;
 
 public class MeleeEnemy : CloseAttackerEnemy
 {
-    [SerializeField] protected Transform attackPoint;
-    [SerializeField] protected float knockbackVal = 2f;
-    //[SerializeField] protected float attackRange = .25f;
+    
+    //public float meleeRadius = .25f;
+    //public float knockbackVal = 2f;
+    public float yOffset = .5f;
+    public int AttackDamage = 10;
+    public LayerMask playerLayers;
+    
+    const int maxHits = 20;
+    protected Vector2 attackPoint;
     protected bool isAttacking;
-    protected const int AttackDamage = 10;
-    [SerializeField] protected LayerMask playerLayers;
+    
+    
     protected IEnumerator attackCo;
     
     // Start is called before the first frame update
@@ -19,6 +25,22 @@ public class MeleeEnemy : CloseAttackerEnemy
         base.Start();
         attackCD = 2f;
     }
+    protected override void PlayerScan_Update()
+    {
+        attackPoint = new Vector2(transform.position.x + (transform.localScale.x < 0 ? attackRange : -attackRange), transform.position.y + yOffset);
+        Collider2D[] hitColliders = new Collider2D[maxHits];
+        int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint, attackRange,
+            hitColliders, playerLayers);
+        if (numHits > 0)
+        {
+            playerInAttackRange = true;
+        }
+        else
+        {
+            playerInAttackRange = false;
+        }
+    }
+    
     
 
     protected override bool AbleToMove()
@@ -42,30 +64,31 @@ public class MeleeEnemy : CloseAttackerEnemy
     {
         Rigidbody.velocity = Vector2.ClampMagnitude(Rigidbody.velocity, .01f);
         // enemy attack modifiers
-        // float attackBoost = 1.5f;
         const float beginAttackDelay = .55f;
         const float hitEndDelay = .4f;
 
         yield return new WaitForSeconds(beginAttackDelay);
 
-        const int maxHits = 20;
+        
         Collider2D[] hitColliders = new Collider2D[maxHits];
-        int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange,
+        int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint, attackRange,
             hitColliders, playerLayers);
 
-        if (numHits > 0) {
-            foreach (Collider2D p in hitColliders) {
-                if (p != null && p.gameObject.GetComponent<CharController>() != null && charController.isParrying) {
-                    // StartCoroutine(PauseAnimatorCoroutine(.2f));
+        if (numHits > 0)
+        {
+            foreach (Collider2D col in hitColliders)
+            {
+                if (col.gameObject.GetComponent<CharController>() != null && charController.isParrying) {
                     charController.CounterStrike(GetComponent<Enemy>());
+                    break;
                 }
-                else if (p != null && p.gameObject.GetComponent<CharController>() != null)
+                if (col.gameObject.GetComponent<CharController>() != null)
                 {
                     charController.TakeDamage(AttackDamage);
+                    break;
                 }
             }
         }
-        
         yield return new WaitForSeconds(hitEndDelay);
         isAttacking = false;
     }

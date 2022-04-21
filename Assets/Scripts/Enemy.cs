@@ -72,7 +72,7 @@ public class Enemy : LivingThing
         return canFunction && !movementDisabledAirborne && !movementDisabledTimed;
     }
 
-    protected void PlayerScan_Update()
+    protected virtual void PlayerScan_Update()
     {
         float dist = Vector2.Distance(charController.transform.position, transform.position);
         if (dist < attackRange)

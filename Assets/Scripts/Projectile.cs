@@ -5,7 +5,7 @@ public abstract class Projectile : Entity {
     // protected float GravityScale = 0f;
 
     // trackers
-    protected BoxCollider2D Collider2D;
+    protected Collider2D Collider2D;
     protected Rigidbody2D Rigidbody2D;
 
 

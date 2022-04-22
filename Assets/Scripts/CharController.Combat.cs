@@ -52,14 +52,13 @@ public partial class CharController
     }
     
     private void DoParry() {
-        Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
         if (!IsAbleToAct())
             return;
+        isParrying = true;
+        Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
         // start parry animation
         Animator.SetTrigger(Parry);
-        isParrying = true;
         StartCoroutine(ParryCoroutine());
-        
         lastParryTime = Time.time;
     }
 
@@ -107,7 +106,7 @@ public partial class CharController
     protected void Die() 
     {
         Animator.SetTrigger(Death);
-        transform.GetComponent<Collider>().enabled = false;
+        //transform.GetComponent<Collider>().enabled = false;
         Rigidbody.gravityScale = 0;
         GameManager.Instance.PlayerDeath();
     }
@@ -201,7 +200,6 @@ public partial class CharController
     }
 
     private IEnumerator ParryCoroutine() {
-        const float parryTime = .7f;
         yield return new WaitForSeconds(parryTime);
         isParrying = false;
         //transform.GetComponent<SpriteRenderer>().flipY = false;

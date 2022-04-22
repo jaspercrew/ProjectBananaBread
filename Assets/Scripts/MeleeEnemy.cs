@@ -7,10 +7,10 @@ public class MeleeEnemy : CloseAttackerEnemy
 {
     [SerializeField] protected Transform attackPoint;
     [SerializeField] protected float knockbackVal = 2f;
-    [SerializeField] protected float attackRange = .25f;
+    //[SerializeField] protected float attackRange = .25f;
     protected bool isAttacking;
     protected const int AttackDamage = 10;
-    [SerializeField] protected LayerMask playerLayers;
+    //[SerializeField] protected LayerMask playerLayers;
     protected IEnumerator attackCo;
     
     // Start is called before the first frame update
@@ -51,7 +51,7 @@ public class MeleeEnemy : CloseAttackerEnemy
         const int maxHits = 20;
         Collider2D[] hitColliders = new Collider2D[maxHits];
         int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange,
-            hitColliders, playerLayers);
+            hitColliders, playerMask);
 
         if (numHits > 0) {
             foreach (Collider2D p in hitColliders) {

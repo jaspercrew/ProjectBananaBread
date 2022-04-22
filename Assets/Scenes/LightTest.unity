@@ -1044,6 +1044,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1005183157547161419, guid: f7cf8868528f3834da37602cbfe6ac5e, type: 3}
+      propertyPath: isDarkScene
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1005183158177665718, guid: f7cf8868528f3834da37602cbfe6ac5e, type: 3}
       propertyPath: m_Intensity
       value: 0

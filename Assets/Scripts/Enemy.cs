@@ -2,18 +2,21 @@ using System;
 using System.Collections;
 using Pathfinding;
 using UnityEngine;
+using UnityEngine.Serialization;
+
 public class Enemy : LivingThing
 {
     public float speed = 3f;
-    public float aggroDist = 10f;
-
+    public float aggroRange = 10f;
+    public float attackRange;
     public float attackCD;
     protected float lastAttackTime;
     
     protected bool canFunction;
     protected bool movementDisabledAirborne;
     protected bool movementDisabledTimed;
-    protected bool playerInRange;
+    protected bool playerInAggroRange;
+    protected bool playerInAttackRange;
     
     protected AIPath aiPath;
     protected CharController charController;
@@ -22,7 +25,7 @@ public class Enemy : LivingThing
     // Start is called before the first frame update
     protected virtual void Start()
     {
-        playerInRange = false;
+        playerInAggroRange = false;
         canFunction = true;
         CurrentHealth = MaxHealth;
         aiPath = GetComponent<AIPath>();
@@ -71,19 +74,21 @@ public class Enemy : LivingThing
 
     protected void PlayerScan_Update()
     {
-        if (Physics.OverlapSphere(transform.position, aggroDist, playerMask).Length > 0)
-        {
-            playerInRange = true;
-        }
-        else
-        {
-            playerInRange = false;
-        }
+        const int maxHits = 20;
+        Collider2D[] hitCollidersAggro = new Collider2D[maxHits];
+        Collider2D[] hitCollidersAttack = new Collider2D[maxHits];
+        int numHitsAggro = Physics2D.OverlapCircleNonAlloc(transform.position, aggroRange,
+            hitCollidersAggro, playerMask);
+        int numHitsAttack = Physics2D.OverlapCircleNonAlloc(transform.position, attackRange,
+            hitCollidersAttack, playerMask);
+
+        playerInAttackRange = numHitsAttack > 0;
+        playerInAggroRange = numHitsAggro > 0;
     }
 
     protected void AttackLoop_Update()
     {
-        if (playerInRange && AttackConditions())
+        if (AttackConditions())
         {
             lastAttackTime = Time.time;
             DoAttack();
@@ -103,7 +108,7 @@ public class Enemy : LivingThing
     protected virtual void Pathfind_Update()
     {
         //Debug.Log(movementDisabledAirborne);
-        if (AbleToMove() && !playerInRange)
+        if (AbleToMove() && playerInAggroRange)
         {
             float thisXPos = transform.position.x;
             float charXPos = charController.transform.position.x;
@@ -184,7 +189,7 @@ public class Enemy : LivingThing
 
     }
 
-    protected void OnCollisionEnter2D(Collision2D other)
+    protected virtual void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.GetComponent<Platform>() != null)
         {

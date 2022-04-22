@@ -58,10 +58,13 @@ public partial class CharController
         spriteRenderer = GetComponent<SpriteRenderer>();
         
         trailRenderer.emitting = false;
-        if (!GameManager.Instance.isDarkScene)
+        light.enabled = false;
+        if (GameManager.Instance.isDarkScene)
         {
-            light.enabled = false;
+            Debug.Log("light true");
+            light.enabled = true;
         }
+
     }
 
     private void FixedUpdate() {

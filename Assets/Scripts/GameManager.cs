@@ -13,18 +13,18 @@ public class GameManager : MonoBehaviour
     private int frozenFrames;
 
     public Dictionary<string, bool> leverDict = new Dictionary<string, bool>();
-
-    private GameManager()
-    {
-        if (Instance == null)
-            Instance = this;
-    }
+    // private GameManager()
+    // {
+    //     if (Instance == null)
+    //         Instance = this;
+    // }
 
     private void Awake()
     {
         // set current state to alt, then switch everything
         // this calls SwitchToState() on all entities in the scene,
         // changing everything to the originalState
+        Instance = this;
         isGameShifted = false;
     }
 

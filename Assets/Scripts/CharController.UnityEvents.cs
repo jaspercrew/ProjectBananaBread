@@ -24,7 +24,7 @@ public partial class CharController
     private void Start()
     {
         lastShiftTime = 0f;
-        
+        Interactor.interactors.Clear();
         canCast = true;
         //canDoubleJump = false;
         fadeSpriteIterator = 0;

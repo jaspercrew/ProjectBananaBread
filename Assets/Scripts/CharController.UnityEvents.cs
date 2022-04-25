@@ -377,7 +377,7 @@ public partial class CharController
     {
         if (lightBuffer < 0)
         {
-            TakeDamage(5);
+            TakeDamage(1);
         }
         else
         {

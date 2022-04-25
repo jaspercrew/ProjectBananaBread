@@ -49,7 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canHitPlayer: 1
   canHitEnemy: 0
-  damage: 5
+  damage: 1
 --- !u!61 &5429991611489875164
 BoxCollider2D:
   m_ObjectHideFlags: 0

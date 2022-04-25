@@ -70,7 +70,6 @@ public partial class CharController
 
     private void CauseSwitch()
     {
-        
         lastShiftTime = Time.time;
         PPManager.Instance.ShiftEffect(!GameManager.Instance.isGameShifted);
         transform.Find("ShiftCD").GetComponent<ShiftCD>().image.fillAmount = 1; //TODO: FIX
@@ -85,10 +84,11 @@ public partial class CharController
         if (!IsAbleToBeDamaged()) {
             return;
         }
+        CurrentHealth -= damage;
         GameManager.Instance.FreezeFrame();
+        UIManager.Instance.CheckHealth();
         screenShakeController.MediumShake();
         StartCoroutine(TakeDamageCoroutine());
-        CurrentHealth -= damage;
         Animator.SetTrigger(Hurt);
         
         if (CurrentHealth <= 0) {

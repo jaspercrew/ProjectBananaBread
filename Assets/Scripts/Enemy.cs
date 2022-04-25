@@ -97,7 +97,7 @@ public class Enemy : LivingThing
 
     protected virtual bool AttackConditions()
     {
-        return Time.time > lastAttackTime;
+        return Time.time > lastAttackTime + attackCD;
     }
 
     protected virtual void DoAttack()

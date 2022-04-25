@@ -24,7 +24,7 @@ public partial class CharController
     private void Start()
     {
         lastShiftTime = 0f;
-        
+        Interactor.interactors.Clear();
         canCast = true;
         //canDoubleJump = false;
         fadeSpriteIterator = 0;
@@ -377,7 +377,7 @@ public partial class CharController
     {
         if (lightBuffer < 0)
         {
-            TakeDamage(5);
+            TakeDamage(1);
         }
         else
         {

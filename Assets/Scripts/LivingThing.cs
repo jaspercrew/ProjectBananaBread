@@ -3,7 +3,7 @@ using UnityEngine;
 
 public abstract class LivingThing : Entity {
     // Configurable values 
-    protected const int MaxHealth = 100;
+    public const int MaxHealth = 10;
     protected bool isStunned;
 
     // Trackers

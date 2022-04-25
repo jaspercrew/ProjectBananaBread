@@ -47,7 +47,7 @@ public partial class CharController : LivingThing
     const float parryTime = .4f;
     private const float DashCooldown = 1f;
     public const float ShiftCooldown = 1f;
-    private const int AttackDamage = 10;
+    private const int AttackDamage = 1;
     public const float maxLightBuffer = 7f;
     private const float maxLightIntensity = .5f;
     private const float maxOuterLightRadius = 5;

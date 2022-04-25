@@ -7,6 +7,7 @@ public class TrackerMoverEnemy : Enemy
     {
         Pathfind_Update();
         TurnAround_Update();
+        
     }
     protected override void Pathfind_Update()
     {

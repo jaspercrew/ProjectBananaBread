@@ -21,9 +21,6 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        // set current state to alt, then switch everything
-        // this calls SwitchToState() on all entities in the scene,
-        // changing everything to the originalState
         Instance = this;
         isGameShifted = false;
     }

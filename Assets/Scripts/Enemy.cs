@@ -140,7 +140,7 @@ public class Enemy : LivingThing
         Destroy(gameObject, deathTime);
     }
     
-    protected void TurnAround_Update() {
+    protected virtual void TurnAround_Update() {
         if (Rigidbody.velocity.x > 0) {
             FaceRight();
         }

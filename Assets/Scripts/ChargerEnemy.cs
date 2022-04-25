@@ -54,7 +54,7 @@ public class ChargerEnemy : CloseAttackerEnemy
 
     protected override bool AbleToMove()
     {
-        return base.AbleToMove() && !isCharging && !isWaiting;
+        return base.AbleToMove() && !isCharging && !isWaiting && !playerInAttackRange;
     }
 
     protected virtual void CheckCollision_Update()

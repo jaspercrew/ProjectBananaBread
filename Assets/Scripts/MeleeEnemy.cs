@@ -7,10 +7,8 @@ public class MeleeEnemy : CloseAttackerEnemy
 {
     [SerializeField] protected Transform attackPoint;
     [SerializeField] protected float knockbackVal = 2f;
-    //[SerializeField] protected float attackRange = .25f;
     protected bool isAttacking;
     protected const int AttackDamage = 10;
-    //[SerializeField] protected LayerMask playerLayers;
     protected IEnumerator attackCo;
     
     // Start is called before the first frame update

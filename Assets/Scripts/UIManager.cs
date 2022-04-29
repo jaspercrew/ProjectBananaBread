@@ -11,8 +11,8 @@ public class UIManager : MonoBehaviour
     private Transform mainParent;
     public GameObject healthObject;
     private const float healthYOffset = -2.5f;
-    private const float healthXOffset = -1.75f;
-    private const float healthXGap = 1f;
+    private const float healthXOffset = -1.05f;
+    private const float healthXGap = .875f;
 
     private void Awake()
     {

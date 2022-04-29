@@ -10,6 +10,8 @@ public class Enemy : LivingThing
     public float aggroRange = 10f;
     public float attackRange;
     public float attackCD;
+    public bool LOS_Aggro;
+    public bool LOS_Attack;
     protected float lastAttackTime;
     
     protected bool canFunction;
@@ -97,6 +99,14 @@ public class Enemy : LivingThing
 
     protected virtual bool AttackConditions()
     {
+        if (LOS_Attack)
+        {
+            if (!Utils.LOSCheck(transform, charController.transform))
+            {
+                return false;
+            }
+        }
+        
         return Time.time > lastAttackTime + attackCD;
     }
 
@@ -108,6 +118,13 @@ public class Enemy : LivingThing
     protected virtual void Pathfind_Update()
     {
         //Debug.Log(movementDisabledAirborne);
+        if (LOS_Aggro)
+        {
+            if (!Utils.LOSCheck(transform, charController.transform))
+            {
+                return;
+            }
+        }
         if (AbleToMove() && playerInAggroRange)
         {
             float thisXPos = transform.position.x;

@@ -36,7 +36,7 @@ public partial class CharController
         grappleClearRenderer = transform.Find("GrappleClear").GetComponent<LineRenderer>();
         grappleClearRenderer.enabled = false;
 
-        light = transform.Find("Light").GetComponent<Light2D>();
+        charLight = transform.Find("Light").GetComponent<Light2D>();
         lightBuffer = maxLightBuffer;
         particleChild = transform.Find("Particles");
         CurrentHealth = MaxHealth;
@@ -58,11 +58,11 @@ public partial class CharController
         spriteRenderer = GetComponent<SpriteRenderer>();
         
         trailRenderer.emitting = false;
-        light.enabled = false;
+        charLight.enabled = false;
         if (GameManager.Instance.isDarkScene)
         {
             Debug.Log("light true");
-            light.enabled = true;
+            charLight.enabled = true;
         }
 
     }
@@ -382,9 +382,9 @@ public partial class CharController
         else
         {
             lightBuffer -= Time.deltaTime;
-            light.pointLightOuterRadius = maxOuterLightRadius * (lightBuffer / maxLightBuffer);
-            light.pointLightInnerRadius = maxInnerLightRadius * (lightBuffer / maxLightBuffer);
-            light.intensity = maxLightIntensity * (lightBuffer / maxLightBuffer);
+            charLight.pointLightOuterRadius = maxOuterLightRadius * (lightBuffer / maxLightBuffer);
+            charLight.pointLightInnerRadius = maxInnerLightRadius * (lightBuffer / maxLightBuffer);
+            charLight.intensity = maxLightIntensity * (lightBuffer / maxLightBuffer);
         }
     }
 

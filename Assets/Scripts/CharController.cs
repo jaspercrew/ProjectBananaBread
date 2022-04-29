@@ -16,7 +16,7 @@ public partial class CharController : LivingThing
     private ParticleSystem switchPS;
     private TrailRenderer trailRenderer;
     private ScreenShakeController screenShakeController;
-    private Light2D light;
+    private Light2D charLight;
     // private RadialGrapple grappleController;
     private SpriteRenderer spriteRenderer;
     private LineRenderer grappleLineRenderer;

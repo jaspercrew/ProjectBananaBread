@@ -194,6 +194,7 @@ public partial class CharController
         }
 
         attackCoroutine = AttackCoroutine(isHeavy);
+        toInterrupt.Add(attackCoroutine);
         StartCoroutine(attackCoroutine);
         
         lastAttackTime = Time.time;

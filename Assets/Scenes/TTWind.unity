@@ -1189,11 +1189,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6416348133037687767, guid: 2d60016638de45f418ef70e1ccf7953f, type: 3}
       propertyPath: altStateWind.forceStrength
-      value: 1
+      value: -3
       objectReference: {fileID: 0}
     - target: {fileID: 6416348133037687767, guid: 2d60016638de45f418ef70e1ccf7953f, type: 3}
       propertyPath: altStateWind.speedOnPlayer
-      value: 1
+      value: -3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2d60016638de45f418ef70e1ccf7953f, type: 3}

@@ -87,6 +87,9 @@ public partial class CharController : LivingThing
     private float lastAttackTime;
     private bool isAttacking;
     private int comboCounter;
+
+    private HashSet<IEnumerator> toInterrupt = new HashSet<IEnumerator>();
+    private IEnumerator dashCoroutine;
     private IEnumerator attackCoroutine;
 
     private float lastShiftTime;
@@ -324,7 +327,14 @@ public partial class CharController : LivingThing
     }
 
     private void Interrupt() {
-        StopAllCoroutines();
+        foreach (IEnumerator co in toInterrupt)
+        {
+            if (co != null)
+            {
+                StopCoroutine(co);
+            }
+        }
+        
         //Rigidbody.velocity = Vector2.zero;
         isAttacking = false;
         isCrouching = false;

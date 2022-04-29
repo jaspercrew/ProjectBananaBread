@@ -19,7 +19,9 @@ public partial class CharController
         emitFadesTime = .28f;
         isDashing = true;
         trailRenderer.emitting = true;
-        StartCoroutine(DashCoroutine(dashTime, dashSpeed));
+        dashCoroutine = DashCoroutine(dashTime, dashSpeed);
+        toInterrupt.Add(dashCoroutine);
+        StartCoroutine(dashCoroutine);
         Rigidbody.velocity = new Vector2(Rigidbody.velocity.x + dashSpeed, Rigidbody.velocity.y);
         dust.Play();
         Animator.SetTrigger(Dash);
@@ -30,7 +32,7 @@ public partial class CharController
     private IEnumerator DashCoroutine(float dashTime, float dashSpeed) {
         //Debug.Log(savedVel);
         yield return new WaitForSeconds(dashTime);
-        Rigidbody.velocity = new Vector2(Rigidbody.velocity.x - dashSpeed, Rigidbody.velocity.y);
+        //Rigidbody.velocity = new Vector2(Rigidbody.velocity.x - dashSpeed, Rigidbody.velocity.y);
         isDashing = false;
         trailRenderer.emitting = false;
     }

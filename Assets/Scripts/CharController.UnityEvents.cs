@@ -28,7 +28,8 @@ public partial class CharController
         canCast = true;
         //canDoubleJump = false;
         fadeSpriteIterator = 0;
-        
+        capeAnchor = transform.Find("Cape").Find("CapeAnchor").GetComponent<CapeController>();
+        capeOutlineAnchor = transform.Find("Cape").Find("CapeAnchor1").GetComponent<CapeController>();
         grappleLineRenderer = transform.GetComponent<LineRenderer>();
         grappleLineRenderer.enabled = false;
         grappleLOSRenderer = transform.Find("GrappleLOS").GetComponent<LineRenderer>();
@@ -74,6 +75,7 @@ public partial class CharController
         
         inputVector = Input.GetAxisRaw("Horizontal");
         FadeParticle_FixedUpdate();
+        AdjustCape_FixedUpdate();
         if (!IsAbleToMove()) return;
         // movement animations
         Animator.SetInteger(AnimState, Mathf.Abs(moveVector) > float.Epsilon? 2 : 0);
@@ -92,6 +94,41 @@ public partial class CharController
 
         TurnAround_FixedUpdate();
         
+    }
+
+    private void AdjustCape_FixedUpdate()
+    {
+        Vector2 currentOffset = Vector2.zero;
+        if (Rigidbody.velocity.x == 0 && Rigidbody.velocity.y == 0)
+        {
+            Debug.Log("idle");
+            currentOffset = idleOffset;
+        }
+        else if (Rigidbody.velocity.y > .1f)
+        {
+            Debug.Log("jump");
+            currentOffset = jumpOffset;
+        }
+        else if (Rigidbody.velocity.y < -.1f)
+        {
+            Debug.Log("fall");
+            currentOffset = fallOffset;
+        }
+        else if (Rigidbody.velocity.x != 0)
+        {
+            Debug.Log("run");
+            currentOffset = runOffset;
+        }
+
+        if (transform.localScale.x < 0)
+        {
+            currentOffset.x = currentOffset.x * -1;
+        }
+        
+        capeAnchor.partOffset = currentOffset;
+        capeOutlineAnchor.partOffset = currentOffset;
+
+
     }
 
     private void ApplyForcedMovement_FixedUpdate()

@@ -30,6 +30,25 @@ public partial class CharController : LivingThing
     // private ParticleSystem upWindFX;
     // private ParticleSystem downWindFX;
 
+    // Cape Config
+    [Header("Cape Offsets")] 
+    
+    [SerializeField]
+    private Vector2 idleOffset;
+    
+    [SerializeField]
+    private Vector2 runOffset;
+    
+    [SerializeField]
+    private Vector2 jumpOffset;
+    
+    [SerializeField]
+    private Vector2 fallOffset;
+    
+    private CapeController capeAnchor;
+    private CapeController capeOutlineAnchor;
+    
+    [Header("Configurable player control values")] 
     // Configurable player control values
     public float speed = 10f;
     private const int SliceDamage = 100;

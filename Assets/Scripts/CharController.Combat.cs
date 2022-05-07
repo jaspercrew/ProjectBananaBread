@@ -172,6 +172,12 @@ public partial class CharController
 
         if (hit)
         {
+            fury += FuryIncrement;
+            if (fury > MaxFury)
+            {
+                fury = MaxFury;
+            }
+            UIManager.Instance.CheckFury();
             screenShakeController.MediumShake();
             AudioManager.Instance.Play(SoundName.Hit, .5f);
         }

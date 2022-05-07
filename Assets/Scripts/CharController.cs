@@ -59,13 +59,15 @@ public partial class CharController : LivingThing
     private const float InAirDrag = 1.5f;
     private const float MaxYSpeed = 20f;
     private const float VerticalDrag = 10f;
-    private const float JumpForce = 7f;
+    private const float JumpForce = 6f;
     private const int HeavyAttackBuildup = 4;
     private const float AttackCooldown = 0.5f;
     private const float ParryCooldown = 1f;
     const float parryTime = .4f;
     private const float DashCooldown = 1f;
     public const float ShiftCooldown = 1f;
+    public const float MaxFury = 100;
+    public const float FuryIncrement = 10;
     private const int AttackDamage = 1;
     public const float maxLightBuffer = 7f;
     private const float maxLightIntensity = .5f;
@@ -87,6 +89,8 @@ public partial class CharController : LivingThing
     private float lastAttackTime;
     private bool isAttacking;
     private int comboCounter;
+
+    public float fury;
 
     private HashSet<IEnumerator> toInterrupt = new HashSet<IEnumerator>();
     private IEnumerator dashCoroutine;

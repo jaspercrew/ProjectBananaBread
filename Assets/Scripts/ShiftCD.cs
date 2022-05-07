@@ -18,6 +18,7 @@ public class ShiftCD : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        
         if (image.fillAmount > 0)
         {
             image.fillAmount -= Time.fixedDeltaTime / cooldown;

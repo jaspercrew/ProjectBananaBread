@@ -23,6 +23,7 @@ public partial class CharController
 
     private void Start()
     {
+        fury = 0;
         lastShiftTime = 0f;
         Interactor.interactors.Clear();
         canCast = true;

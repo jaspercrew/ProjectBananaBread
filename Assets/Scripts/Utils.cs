@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.AssetImporters;
+using UnityEditor.SceneTemplate;
 using UnityEngine;
 
 public static class Utils
@@ -19,6 +22,8 @@ public static class Utils
             Vector2.Distance(a, b), LayerMask.GetMask("Obstacle"));
         return hit.collider == null;
     }
+    
+
 
 }
 

@@ -52,6 +52,7 @@ public partial class CharController : LivingThing
     // Configurable player control values
     public float speed = 10f;
     private const int SliceDamage = 100;
+    
     private const float MinGroundSpeed = 0.5f;
     private const float OnGroundAcceleration = 38f;
     private const float OnGroundDeceleration = 30f;
@@ -79,7 +80,7 @@ public partial class CharController : LivingThing
     [SerializeField] private Transform attackPoint;
     [SerializeField] private Transform slicePoint;
     
-    
+    public float GravityValue = 2.0f;
     //Children
     private Transform particleChild;
     
@@ -310,7 +311,7 @@ public partial class CharController : LivingThing
     }
 
     public void Invert() {
-        Rigidbody.gravityScale = -Mathf.Abs(Rigidbody.gravityScale);
+        GravityValue = -Mathf.Abs(Rigidbody.gravityScale);
         if (!isInverted)
         {
             transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
@@ -321,7 +322,7 @@ public partial class CharController : LivingThing
     }
     
     public void DeInvert() {
-        Rigidbody.gravityScale = Mathf.Abs(Rigidbody.gravityScale);
+        GravityValue = Mathf.Abs(Rigidbody.gravityScale);
         if (isInverted)
         {
             transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);

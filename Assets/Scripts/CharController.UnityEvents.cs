@@ -385,6 +385,8 @@ public partial class CharController
         {
             currentWindZone = WindEmitterChild.targetWind.GetComponentInParent<WindEmitter>();
         }
+
+        Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, Rigidbody.velocity.y - (GravityValue * Time.deltaTime));
         CheckGrounded_Update();
         EventHandling_Update();
 

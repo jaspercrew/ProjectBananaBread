@@ -59,28 +59,28 @@ public partial class CharController : LivingThing
     private const float InAirAcceleration = 18f;
     private const float InAirDrag = 1.5f;
     private const float MaxYSpeed = 20f;
-    private const float VerticalDrag = 10f;
+    // private const float VerticalDrag = 10f;
     private const float JumpForce = 6f;
     private const int HeavyAttackBuildup = 4;
     private const float AttackCooldown = 0.5f;
     private const float ParryCooldown = 1f;
-    const float parryTime = .4f;
+    private const float ParryTime = .4f;
     private const float DashCooldown = 1f;
     public const float ShiftCooldown = 1f;
     public const float MaxFury = 100;
     public const float FuryIncrement = 10;
     private const int AttackDamage = 1;
-    public const float maxLightBuffer = 7f;
-    private const float maxLightIntensity = .5f;
-    private const float maxOuterLightRadius = 5;
-    private const float maxInnerLightRadius = 3;
+    public const float MaxLightBuffer = 7f;
+    private const float MaxLightIntensity = .5f;
+    private const float MaxOuterLightRadius = 5;
+    private const float MaxInnerLightRadius = 3;
     private const float ComboResetThreshold = 1f;
     public float attackRange = .25f;
     public LayerMask enemyLayers;
     [SerializeField] private Transform attackPoint;
     [SerializeField] private Transform slicePoint;
     
-    public float GravityValue = 2.0f;
+    public float gravityValue = 2.0f;
     //Children
     private Transform particleChild;
     
@@ -111,7 +111,7 @@ public partial class CharController : LivingThing
     private bool _isGrounded;
     private bool isGrounded
     {
-        get {return _isGrounded;}
+        get => _isGrounded;
         set
         {
             if (_isGrounded && !value)
@@ -311,7 +311,7 @@ public partial class CharController : LivingThing
     }
 
     public void Invert() {
-        GravityValue = -Mathf.Abs(Rigidbody.gravityScale);
+        gravityValue = -Mathf.Abs(Rigidbody.gravityScale);
         if (!isInverted)
         {
             transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
@@ -322,7 +322,7 @@ public partial class CharController : LivingThing
     }
     
     public void DeInvert() {
-        GravityValue = Mathf.Abs(Rigidbody.gravityScale);
+        gravityValue = Mathf.Abs(Rigidbody.gravityScale);
         if (isInverted)
         {
             transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);

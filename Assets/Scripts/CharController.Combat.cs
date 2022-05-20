@@ -207,7 +207,7 @@ public partial class CharController
     }
 
     private IEnumerator ParryCoroutine() {
-        yield return new WaitForSeconds(parryTime);
+        yield return new WaitForSeconds(ParryTime);
         isParrying = false;
         //transform.GetComponent<SpriteRenderer>().flipY = false;
     }

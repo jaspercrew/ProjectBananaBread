@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class LightBufferZone : BinaryEntity
 {
@@ -42,7 +39,7 @@ public class LightBufferZone : BinaryEntity
     {
         if (other.CompareTag("Player") && isActive)
         {
-            CharController.Instance.lightBuffer = CharController.maxLightBuffer;
+            CharController.Instance.lightBuffer = CharController.MaxLightBuffer;
         }
     }
 }

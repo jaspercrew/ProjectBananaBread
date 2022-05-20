@@ -39,7 +39,7 @@ public partial class CharController
         grappleClearRenderer.enabled = false;
 
         charLight = transform.Find("Light").GetComponent<Light2D>();
-        lightBuffer = maxLightBuffer;
+        lightBuffer = MaxLightBuffer;
         particleChild = transform.Find("Particles");
         CurrentHealth = MaxHealth;
         Rigidbody = transform.GetComponent<Rigidbody2D>();
@@ -386,7 +386,7 @@ public partial class CharController
             currentWindZone = WindEmitterChild.targetWind.GetComponentInParent<WindEmitter>();
         }
 
-        Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, Rigidbody.velocity.y - (GravityValue * Time.deltaTime));
+        Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, Rigidbody.velocity.y - (gravityValue * Time.deltaTime));
         CheckGrounded_Update();
         EventHandling_Update();
 
@@ -427,9 +427,9 @@ public partial class CharController
         else
         {
             lightBuffer -= Time.deltaTime;
-            charLight.pointLightOuterRadius = maxOuterLightRadius * (lightBuffer / maxLightBuffer);
-            charLight.pointLightInnerRadius = maxInnerLightRadius * (lightBuffer / maxLightBuffer);
-            charLight.intensity = maxLightIntensity * (lightBuffer / maxLightBuffer);
+            charLight.pointLightOuterRadius = MaxOuterLightRadius * (lightBuffer / MaxLightBuffer);
+            charLight.pointLightInnerRadius = MaxInnerLightRadius * (lightBuffer / MaxLightBuffer);
+            charLight.intensity = MaxLightIntensity * (lightBuffer / MaxLightBuffer);
         }
     }
 

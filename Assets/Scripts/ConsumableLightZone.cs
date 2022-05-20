@@ -64,7 +64,7 @@ public class ConsumableLightZone : BinaryEntity
     {
         if (other.CompareTag("Player") && !beenConsumed && isActive)
         {
-            CharController.Instance.lightBuffer = CharController.maxLightBuffer;
+            CharController.Instance.lightBuffer = CharController.MaxLightBuffer;
             Extinguish();
         }
     }

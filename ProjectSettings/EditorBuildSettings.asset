@@ -35,4 +35,16 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/TTCombat.unity
     guid: 8d733a88779cfc049bd971a10524d638
+  - enabled: 1
+    path: Assets/Scenes/Moving Test/top right.unity
+    guid: 5027c8eb8fe93d144b6d4f66d7f7d2ba
+  - enabled: 1
+    path: Assets/Scenes/Moving Test/bottom left.unity
+    guid: 7ce6d19f5dadca84185d800d439c0c53
+  - enabled: 1
+    path: Assets/Scenes/Moving Test/bottom right.unity
+    guid: eaf923d1bf2fc454ea0e20770eda73b4
+  - enabled: 1
+    path: Assets/Scenes/Moving Test/top left.unity
+    guid: 8aacebc4a86882445accad42ab7402f1
   m_configObjects: {}

@@ -5,18 +5,20 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
-public class LoadZone : MonoBehaviour
+public class SceneExitLoadZone : MonoBehaviour
 {
+    public string exitName;
     public Object scene;
     
     private void SwitchScene()
     {
-        SceneManager.LoadScene(scene.name);
+        SceneManager.LoadSceneAsync(scene.name); // TODO wtf async wtf?? (in wayne voice)
     }
     
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        GameManager.Instance.lastExitTouched = exitName;
         SwitchScene();
     }
 }

@@ -61,12 +61,14 @@ public partial class CharController
         
         trailRenderer.emitting = false;
         charLight.enabled = false;
-        if (GameManager.Instance.isDarkScene)
+        if (SceneInformation.Instance.isDarkScene)
         {
             Debug.Log("light true");
             charLight.enabled = true;
         }
 
+        // set char's spawn
+        transform.position = SceneInformation.Instance.GetSpawnPos();
     }
 
     private void FixedUpdate() {
@@ -412,7 +414,7 @@ public partial class CharController
         WallSlideDetection_Update();
         SliceDashDetection_Update();
         LineGrappleUpdate();
-        if (GameManager.Instance.isDarkScene)
+        if (SceneInformation.Instance.isDarkScene)
         {
             LightCheckUpdate();
         }

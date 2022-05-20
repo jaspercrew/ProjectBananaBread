@@ -11,7 +11,9 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public bool isGameShifted;
-    public bool isDarkScene;
+    public string lastExitTouched;
+    
+    // public bool isDarkScene;
     private int frozenFrames;
 
     public Dictionary<string, bool> leverDict = new Dictionary<string, bool>();
@@ -23,7 +25,8 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
+        if (Instance is null)
+            Instance = this;
         isGameShifted = false;
     }
 

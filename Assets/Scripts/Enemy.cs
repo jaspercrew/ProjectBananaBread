@@ -156,6 +156,11 @@ public class Enemy : LivingThing
         Animator.SetTrigger(Death);
         Destroy(gameObject, deathTime);
     }
+
+    protected void Animation_Check_Update()
+    {
+        
+    }
     
     protected virtual void TurnAround_Update() {
         if (Rigidbody.velocity.x > 0) {

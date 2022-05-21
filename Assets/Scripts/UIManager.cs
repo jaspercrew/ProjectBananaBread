@@ -49,7 +49,7 @@ public class UIManager : MonoBehaviour
         createdFury = Instantiate(furyObject, mainParent);
         ball = createdFury.transform.Find("Ball").GetComponent<UnityEngine.UI.Image>();
         createdFury.transform.position = new Vector3(healthXOffset + furyXOffset, healthYOffset + furyYOffset, 5);
-        for (int i = 0; i < CharController.MaxHealth; i++)
+        for (int i = 0; i < CharController.Instance.MaxHealth; i++)
         {
             GameObject g = Instantiate(healthObject, mainParent);
             //Debug.Log( new Vector3(healthXOffset + (healthXGap * i), healthYOffset, -15));
@@ -58,7 +58,7 @@ public class UIManager : MonoBehaviour
         }
 
         GameObject end = Instantiate(healthEnd, mainParent);
-        end.transform.position = new Vector3(healthXOffset + healthEndXOffset + (healthXGap * CharController.MaxHealth), healthYOffset, 5);
+        end.transform.position = new Vector3(healthXOffset + healthEndXOffset + (healthXGap * CharController.Instance.MaxHealth), healthYOffset, 5);
         mainParent.transform.localScale = new Vector3(mainParent.transform.localScale.x * parentScale, mainParent.transform.localScale.y * parentScale, 1);
         mainParent.transform.position = new Vector3(mainParent.transform.position.x + parentXOffset, mainParent.transform.position.y + parentYOffset, 5);
 
@@ -68,7 +68,7 @@ public class UIManager : MonoBehaviour
 
     public void CheckHealth()
     {
-        for (int i = 0; i < CharController.MaxHealth; i++)
+        for (int i = 0; i < CharController.Instance.MaxHealth; i++)
         {
             if (i < CharController.Instance.CurrentHealth)
             {

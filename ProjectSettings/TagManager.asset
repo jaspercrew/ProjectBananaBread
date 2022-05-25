@@ -15,8 +15,8 @@ TagManager:
   - Enemy
   - Player
   - Obstacle
-  - Entity
-  - 
+  - Moveable
+  - Projectile
   - 
   - 
   - 
@@ -39,6 +39,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background-
+    uniqueID: 1209551193
+    locked: 0
   - name: Background
     uniqueID: 2247197613
     locked: 0

@@ -5,10 +5,11 @@ using UnityEngine;
 
 public class MeleeEnemy : CloseAttackerEnemy
 {
-    [SerializeField] protected Transform attackPoint;
+    //[SerializeField] protected Transform attackPoint;
     [SerializeField] protected float knockbackVal = 2f;
     protected bool isAttacking;
-    protected const int AttackDamage = 10;
+    [SerializeField]
+    protected int AttackDamage = 10;
     protected IEnumerator attackCo;
     
     // Start is called before the first frame update
@@ -21,7 +22,7 @@ public class MeleeEnemy : CloseAttackerEnemy
 
     protected override bool AbleToMove()
     {
-        return base.AbleToMove() && !isAttacking;
+        return base.AbleToMove() && !isAttacking && !playerInAttackRange;
     }
 
     protected override void DoAttack()
@@ -67,6 +68,8 @@ public class MeleeEnemy : CloseAttackerEnemy
         yield return new WaitForSeconds(hitEndDelay);
         isAttacking = false;
     }
+    
+    
 
     public override void Interrupt() { // should stop all relevant coroutines
         if (attackCo != null) {

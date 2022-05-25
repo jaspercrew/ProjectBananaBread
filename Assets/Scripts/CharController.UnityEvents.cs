@@ -29,8 +29,8 @@ public partial class CharController
         canCast = true;
         //canDoubleJump = false;
         fadeSpriteIterator = 0;
-        capeAnchor = transform.Find("Cape").Find("CapeAnchor").GetComponent<CapeController>();
-        capeOutlineAnchor = transform.Find("Cape").Find("CapeAnchor1").GetComponent<CapeController>();
+        //capeAnchor = transform.Find("Cape").Find("CapeAnchor").GetComponent<CapeController>();
+        //capeOutlineAnchor = transform.Find("Cape").Find("CapeAnchor1").GetComponent<CapeController>();
         grappleLineRenderer = transform.GetComponent<LineRenderer>();
         grappleLineRenderer.enabled = false;
         grappleLOSRenderer = transform.Find("GrappleLOS").GetComponent<LineRenderer>();
@@ -60,12 +60,12 @@ public partial class CharController
         spriteRenderer = GetComponent<SpriteRenderer>();
         
         trailRenderer.emitting = false;
-        charLight.enabled = false;
-        if (SceneInformation.Instance.isDarkScene)
-        {
-            Debug.Log("light true");
-            charLight.enabled = true;
-        }
+        // charLight.enabled = false;
+        // if (SceneInformation.Instance.isDarkScene)
+        // {
+        //     Debug.Log("light true");
+        //     charLight.enabled = true;
+        // }
 
         // set char's spawn
         transform.position = SceneInformation.Instance.GetSpawnPos();
@@ -78,7 +78,7 @@ public partial class CharController
         
         inputVector = Input.GetAxisRaw("Horizontal");
         FadeParticle_FixedUpdate();
-        AdjustCape_FixedUpdate();
+        // AdjustCape_FixedUpdate();
         if (!IsAbleToMove()) return;
         // movement animations
         Animator.SetInteger(AnimState, Mathf.Abs(moveVector) > float.Epsilon? 2 : 0);
@@ -101,43 +101,43 @@ public partial class CharController
 
     private const float verticalConst = .35f;
     private const float horizontalConst = .35f;
-    private void AdjustCape_FixedUpdate()
-    {
-        Vector2 currentOffset = Vector2.zero;
-        if (Rigidbody.velocity.x == 0 && Rigidbody.velocity.y == 0)
-        {
-            //Debug.Log("idle");
-            currentOffset = idleOffset;
-        }
-        else if (Rigidbody.velocity.y > .1f)
-        {
-            //Debug.Log("jump");
-            currentOffset = new Vector2( jumpOffset.x, jumpOffset.y * 
-                                                       Mathf.Abs(Rigidbody.velocity.y) * verticalConst);
-        }
-        else if (Rigidbody.velocity.y < -.1f)
-        {
-            //Debug.Log("fall");
-            currentOffset = new Vector2( fallOffset.x, fallOffset.y * 
-                                                       Mathf.Abs(Rigidbody.velocity.y) * verticalConst);
-        }
-        else if (Rigidbody.velocity.x != 0)
-        {
-            //Debug.Log("run");
-            currentOffset = new Vector2( runOffset.x * 
-                                         Mathf.Abs(Rigidbody.velocity.x) * horizontalConst, runOffset.y);
-        }
-
-        if (transform.localScale.x < 0)
-        {
-            currentOffset.x = currentOffset.x * -1;
-        }
-        
-        capeAnchor.partOffset = currentOffset;
-        capeOutlineAnchor.partOffset = currentOffset;
-
-
-    }
+    // private void AdjustCape_FixedUpdate()
+    // {
+    //     Vector2 currentOffset = Vector2.zero;
+    //     if (Rigidbody.velocity.x == 0 && Rigidbody.velocity.y == 0)
+    //     {
+    //         //Debug.Log("idle");
+    //         currentOffset = idleOffset;
+    //     }
+    //     else if (Rigidbody.velocity.y > .1f)
+    //     {
+    //         //Debug.Log("jump");
+    //         currentOffset = new Vector2( jumpOffset.x, jumpOffset.y * 
+    //                                                    Mathf.Abs(Rigidbody.velocity.y) * verticalConst);
+    //     }
+    //     else if (Rigidbody.velocity.y < -.1f)
+    //     {
+    //         //Debug.Log("fall");
+    //         currentOffset = new Vector2( fallOffset.x, fallOffset.y * 
+    //                                                    Mathf.Abs(Rigidbody.velocity.y) * verticalConst);
+    //     }
+    //     else if (Rigidbody.velocity.x != 0)
+    //     {
+    //         //Debug.Log("run");
+    //         currentOffset = new Vector2( runOffset.x * 
+    //                                      Mathf.Abs(Rigidbody.velocity.x) * horizontalConst, runOffset.y);
+    //     }
+    //
+    //     if (transform.localScale.x < 0)
+    //     {
+    //         currentOffset.x = currentOffset.x * -1;
+    //     }
+    //     
+    //     //capeAnchor.partOffset = currentOffset;
+    //     //capeOutlineAnchor.partOffset = currentOffset;
+    //
+    //
+    // }
 
     private void ApplyForcedMovement_FixedUpdate()
     {
@@ -416,7 +416,7 @@ public partial class CharController
         LineGrappleUpdate();
         if (SceneInformation.Instance.isDarkScene)
         {
-            LightCheckUpdate();
+            //LightCheckUpdate();
         }
     }
 

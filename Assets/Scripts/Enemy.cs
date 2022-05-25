@@ -12,6 +12,7 @@ public class Enemy : LivingThing
     public float attackCD;
     public bool LOS_Aggro;
     public bool LOS_Attack;
+    public Transform attackPoint;
     protected float lastAttackTime;
     
     protected bool canFunction;
@@ -81,7 +82,9 @@ public class Enemy : LivingThing
         Collider2D[] hitCollidersAttack = new Collider2D[maxHits];
         int numHitsAggro = Physics2D.OverlapCircleNonAlloc(transform.position, aggroRange,
             hitCollidersAggro, playerMask);
-        int numHitsAttack = Physics2D.OverlapCircleNonAlloc(transform.position, attackRange,
+        
+        Transform attackScanPoint = attackPoint == null ? transform : attackPoint;
+        int numHitsAttack = Physics2D.OverlapCircleNonAlloc(attackScanPoint.position, attackRange,
             hitCollidersAttack, playerMask);
 
         playerInAttackRange = numHitsAttack > 0;
@@ -117,6 +120,10 @@ public class Enemy : LivingThing
 
     protected virtual void Pathfind_Update()
     {
+        if (!AbleToMove())
+        {
+            Rigidbody.velocity = Vector2.zero;
+        }
         //Debug.Log(movementDisabledAirborne);
         if (LOS_Aggro)
         {

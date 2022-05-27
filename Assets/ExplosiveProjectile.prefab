@@ -47,11 +47,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9ca25f2057eb79419eb769ed4e71efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifetime: 10
+  lifetime: 5
   canHitPlayer: 1
   canHitEnemy: 0
   damage: 1
-  radius: 5
+  radius: 3
   explodeFX: {fileID: 1848924253904985503, guid: e43afb3976ccb9740a90e030a8ff620d, type: 3}
 --- !u!61 &4544046901306840317
 BoxCollider2D:

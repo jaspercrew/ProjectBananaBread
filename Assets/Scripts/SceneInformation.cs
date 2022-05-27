@@ -7,6 +7,8 @@ public class SceneInformation : MonoBehaviour
     public static SceneInformation Instance;
 
     public bool isDarkScene;
+    public bool isGravityScene;
+    public bool isWindScene;
     public Transform defaultSpawn;
 
     [Serializable]

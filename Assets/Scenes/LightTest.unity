@@ -1071,7 +1071,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1005183158177665718, guid: f7cf8868528f3834da37602cbfe6ac5e, type: 3}
       propertyPath: m_Intensity
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1005183158465598756, guid: f7cf8868528f3834da37602cbfe6ac5e, type: 3}
       propertyPath: m_RootOrder
@@ -1123,12 +1123,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3628343474672114316, guid: f7cf8868528f3834da37602cbfe6ac5e, type: 3}
       propertyPath: isDarkScene
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3628343474672114316, guid: f7cf8868528f3834da37602cbfe6ac5e, type: 3}
       propertyPath: defaultSpawn
       value: 
       objectReference: {fileID: 1903743043}
+    - target: {fileID: 3628343474672114316, guid: f7cf8868528f3834da37602cbfe6ac5e, type: 3}
+      propertyPath: isGravityScene
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f7cf8868528f3834da37602cbfe6ac5e, type: 3}
 --- !u!1 &965768561
@@ -17779,7 +17783,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7265325464268355320, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
       propertyPath: MaxHealth
-      value: 50
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7265325464268355321, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
       propertyPath: m_RootOrder
@@ -23089,7 +23093,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1668334565}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a88919a735ce2224e9fa4e4e4dd96c84, type: 3}
   m_Name: 

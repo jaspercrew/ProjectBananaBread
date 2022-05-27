@@ -14,18 +14,6 @@ public class ExplosiveProjectile : Projectile
     private SpriteRenderer instantiatedExplodeFX;
     
     
-    // protected void Start()
-    // {
-    //     Collider2D = GetComponent<Collider2D>();
-    //     StartCoroutine(ProjectileLifetimeCheck());
-    // }
-    //
-    // public void Initialize(Vector2 velocity)
-    // {
-    //     Rigidbody2D = GetComponent<Rigidbody2D>();
-    //     Rigidbody2D.velocity = velocity;
-    //     transform.eulerAngles = new Vector3(0, 0, Mathf.Rad2Deg * (Mathf.Atan2(velocity.y, velocity.x)));
-    // }
 
     protected override IEnumerator ProjectileLifetimeCheck()
     {
@@ -47,13 +35,11 @@ public class ExplosiveProjectile : Projectile
             }
             else
             {
-                //CharController.Instance.TakeDamage(damage);
                 Explode();
             }
         }
         else if (canHitEnemy && other.gameObject.GetComponent<Enemy>() != null)
         {
-            //other.gameObject.GetComponent<Enemy>().TakeDamage(damage);
             Explode();
         }
         else if (other.gameObject.GetComponent<Platform>() != null)
@@ -74,7 +60,6 @@ public class ExplosiveProjectile : Projectile
         Collider2D[] hitColliders = new Collider2D[maxHits];
         int numHits = Physics2D.OverlapCircleNonAlloc(transform.position, radius,
             hitColliders);
-        //Debug.Log(explosionMask.value);
         foreach (Collider2D col in hitColliders)
         {
             if (col != null)

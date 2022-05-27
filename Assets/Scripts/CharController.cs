@@ -332,6 +332,43 @@ public partial class CharController : LivingThing
         isInverted = false;
     }
 
+    protected override void TurnShifted()
+    {
+        base.TurnShifted();
+        if (SceneInformation.Instance.isGravityScene)
+        {
+            Invert();
+        }
+        if (SceneInformation.Instance.isWindScene)
+        {
+            
+        }
+        if (SceneInformation.Instance.isDarkScene)
+        {
+            
+        }
+    }
+
+    protected override void TurnUnshifted()
+    {
+        base.TurnUnshifted();
+        if (SceneInformation.Instance.isGravityScene)
+        {
+            DeInvert();
+        }
+        if (SceneInformation.Instance.isWindScene)
+        {
+            
+        }
+        if (SceneInformation.Instance.isDarkScene)
+        {
+            
+        }
+    }
+
+
+
+
     private void Interrupt() {
         foreach (IEnumerator co in toInterrupt)
         {

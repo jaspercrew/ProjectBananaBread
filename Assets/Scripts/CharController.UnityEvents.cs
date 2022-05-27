@@ -60,12 +60,12 @@ public partial class CharController
         spriteRenderer = GetComponent<SpriteRenderer>();
         
         trailRenderer.emitting = false;
-        // charLight.enabled = false;
-        // if (SceneInformation.Instance.isDarkScene)
-        // {
-        //     Debug.Log("light true");
-        //     charLight.enabled = true;
-        // }
+        charLight.enabled = false;
+        if (SceneInformation.Instance.isDarkScene)
+        {
+            Debug.Log("light true");
+            charLight.enabled = true;
+        }
 
         // set char's spawn
         transform.position = SceneInformation.Instance.GetSpawnPos();
@@ -420,20 +420,20 @@ public partial class CharController
         }
     }
 
-    private void LightCheckUpdate()
-    {
-        if (lightBuffer < 0)
-        {
-            TakeDamage(1);
-        }
-        else
-        {
-            lightBuffer -= Time.deltaTime;
-            charLight.pointLightOuterRadius = MaxOuterLightRadius * (lightBuffer / MaxLightBuffer);
-            charLight.pointLightInnerRadius = MaxInnerLightRadius * (lightBuffer / MaxLightBuffer);
-            charLight.intensity = MaxLightIntensity * (lightBuffer / MaxLightBuffer);
-        }
-    }
+    // private void LightCheckUpdate()
+    // {
+    //     if (lightBuffer < 0)
+    //     {
+    //         TakeDamage(1);
+    //     }
+    //     else
+    //     {
+    //         lightBuffer -= Time.deltaTime;
+    //         charLight.pointLightOuterRadius = MaxOuterLightRadius * (lightBuffer / MaxLightBuffer);
+    //         charLight.pointLightInnerRadius = MaxInnerLightRadius * (lightBuffer / MaxLightBuffer);
+    //         charLight.intensity = MaxLightIntensity * (lightBuffer / MaxLightBuffer);
+    //     }
+    // }
 
 
 
@@ -652,7 +652,7 @@ public partial class CharController
 
         // isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) 
         //                              || (moveVector < 0 && isNearWallOnLeft)) && IsAbleToMove();
-        isWallSliding = v.y <= 0 && (isNearWallOnRight
+        isWallSliding = (isInverted ? -v.y : v.y) <= 0 && (isNearWallOnRight
                                      || isNearWallOnLeft) && IsAbleToMove();
         //Debug.Log(wallJumpAvailable);
 
@@ -670,7 +670,7 @@ public partial class CharController
         
         if (isWallSliding)
             
-            Rigidbody.velocity = new Vector2(v.x, Mathf.Max(v.y, -wallSlideSpeed));
+            Rigidbody.velocity = new Vector2(v.x, isInverted ? Mathf.Max(-v.y, wallSlideSpeed) : Mathf.Max(v.y, -wallSlideSpeed));
     }
     
 }

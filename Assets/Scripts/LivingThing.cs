@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public abstract class LivingThing : Entity {
+public abstract class LivingThing : BinaryEntity {
     // Configurable values 
     public int MaxHealth;
     protected bool isStunned;

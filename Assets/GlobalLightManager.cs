@@ -16,12 +16,16 @@ public class GlobalLightManager : BinaryEntity
     protected override void TurnShifted()
     {
         base.TurnShifted();
-        lightComponent.enabled = false;
+
+        
     }
     
     protected override void TurnUnshifted()
     {
         base.TurnUnshifted();
-        lightComponent.enabled = true;
+        if (SceneInformation.Instance.isDarkScene)
+        {
+            lightComponent.enabled = true;
+        }
     }
 }

@@ -14,7 +14,8 @@ public class Enemy : LivingThing
     public bool LOS_Attack;
     public Transform attackPoint;
     protected float lastAttackTime;
-    
+
+    //protected bool animationLocked = false;
     protected bool canFunction;
     protected bool movementDisabledAirborne;
     protected bool movementDisabledTimed;
@@ -39,7 +40,9 @@ public class Enemy : LivingThing
     }
 
     public void TakeDamage(int damage) { // assumes damage is taken from PLAYER
-        if (canFunction) {
+        if (canFunction)
+        {
+            
             Stun(.2f);
             GameObject player = GameObject.FindWithTag("Player");
             //KnockAwayFromPoint(knockback, player.transform.position);
@@ -48,6 +51,7 @@ public class Enemy : LivingThing
             
             // damage animation
             Animator.SetTrigger(Hurt);
+            //StartCoroutine(AnimationLockCoroutine(.3f));
             ParticleSystem gorePS = transform.Find("Particles").Find("GorePS").GetComponent<ParticleSystem>();
             if (gorePS != null)
             {
@@ -164,10 +168,13 @@ public class Enemy : LivingThing
         Destroy(gameObject, deathTime);
     }
 
-    protected void Animation_Check_Update()
-    {
-        
-    }
+    // protected IEnumerator AnimationLockCoroutine(float time)
+    // {
+    //     animationLocked = true;
+    //     yield return new WaitForSeconds(time);
+    //     animationLocked = false;
+    //
+    // }
     
     protected virtual void TurnAround_Update() {
         if (Rigidbody.velocity.x > 0) {
@@ -176,7 +183,18 @@ public class Enemy : LivingThing
         else if (Rigidbody.velocity.x < 0) {
             FaceLeft();
         }
+
+        // if (Rigidbody.velocity.x > .1)
+        // {
+        //     Animator.SetInteger(AnimState, 2);
+        // }
         Animator.SetInteger(AnimState, Mathf.Abs(Rigidbody.velocity.x) > .1 ? 2 : 0);
+        
+
+        // if (!animationLocked)
+        // {
+        //     Animator.SetInteger(AnimState, Mathf.Abs(Rigidbody.velocity.x) > .1 ? 2 : 0);
+        // }
     }
 
 

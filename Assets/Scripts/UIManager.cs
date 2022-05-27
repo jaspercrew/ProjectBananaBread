@@ -19,8 +19,8 @@ public class UIManager : MonoBehaviour
     public GameObject healthEnd;
 
     private const float parentScale = .7f;
-    private const float parentXOffset = -3.75f;
-    private const float parentYOffset = 4.25f;
+    private const float parentXOffset = -46.75f;
+    private const float parentYOffset = 4.5f;
     private const float healthYOffset = -2.5f;
     private const float healthXOffset = 0.5f;
     private const float healthXGap = 1.25f;

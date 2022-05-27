@@ -4,7 +4,7 @@ using Pathfinding;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class Enemy : LivingThing
+public class Enemy : LivingThing , IHittableEntity
 {
     public float speed = 3f;
     public float aggroRange = 10f;
@@ -37,6 +37,11 @@ public class Enemy : LivingThing
         Rigidbody = transform.GetComponent<Rigidbody2D>();
         charController = FindObjectOfType<CharController>();
         playerMask = LayerMask.GetMask("Player");
+    }
+
+    public void GetHit(int damage)
+    {
+        TakeDamage(damage);
     }
 
     public void TakeDamage(int damage) { // assumes damage is taken from PLAYER
@@ -199,7 +204,7 @@ public class Enemy : LivingThing
 
 
     public void Stun(float stunTime) {
-        Debug.Log("stun");
+        //Debug.Log("stun");
         Interrupt();
         DisableFunctionality();
         StartCoroutine(StunCoroutine(stunTime));

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,32 +6,37 @@ using UnityEngine;
 public class Gate : MonoBehaviour
 {
     private bool isOpen;
-    // private bool prevOpened;
-    public Lever lever;
+    public List<ActivatorTrigger> triggers;
 
-    // private Rigidbody2D rigidbody;
-    // private BoxCollider2D boxCollider2D;
-    
+
     // Start is called before the first frame update
     private void Start()
     {
-        isOpen = false;
-        // rigidbody = GetComponent<Rigidbody2D>();
-        // boxCollider2D = GetComponent<BoxCollider2D>();
+        
     }
 
-    // Update is called once per frame
     private void Update()
     {
-        if (!isOpen && lever.isActive)
+        if (!isOpen)
         {
-            Open();
+            bool allActive = true;
+            foreach (ActivatorTrigger trigger in triggers)
+            {
+                allActive &= trigger.isActivated;
+            }
+
+            if (allActive)
+            {
+                Open();
+            }
         }
+
     }
+
 
     public void Open()
     {
+        Debug.Log("OPENED");
         isOpen = true;
-        // prevOpened = true;
     }
 }

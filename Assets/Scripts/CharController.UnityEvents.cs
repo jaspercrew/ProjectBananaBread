@@ -52,7 +52,7 @@ public partial class CharController
         switchPS = particleChild.Find("SwitchPS").GetComponent<ParticleSystem>();
         trailRenderer = particleChild.Find("FX").GetComponent<TrailRenderer>();
         //fadePS = particleChild.Find("FadePS").GetComponent<ParticleSystem>();
-        obstacleLayerMask = LayerMask.GetMask("Obstacle", "Entity");
+        obstacleLayerMask = LayerMask.GetMask("Obstacle", "Moveable");
         
         
         screenShakeController = ScreenShakeController.Instance;

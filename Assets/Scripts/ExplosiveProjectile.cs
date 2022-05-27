@@ -64,15 +64,15 @@ public class ExplosiveProjectile : Projectile
         {
             if (col != null)
             {
-                Debug.Log(col.gameObject.name);
+                //Debug.Log(col.gameObject.name);
                 if (canHitPlayer && col.gameObject.GetComponent<CharController>() != null)
                 {
-                    Debug.Log("char damage");
+                    //Debug.Log("char damage");
                     CharController.Instance.TakeDamage(damage);
                 }
                 else if (canHitEnemy && col.gameObject.GetComponent<Enemy>() != null)
                 {
-                    Debug.Log("enemy dmg");
+                    //Debug.Log("enemy dmg");
                     col.gameObject.GetComponent<Enemy>().TakeDamage(damage);
                 }
             }

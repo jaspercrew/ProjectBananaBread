@@ -379,6 +379,11 @@ public partial class CharController
     {
         if (Input.GetKeyDown(KeyCode.P))
             SceneManager.LoadScene("TTHub");
+        if (Input.GetKeyDown(KeyCode.LeftBracket))
+            SaveData.SaveToFile(1);
+        if (Input.GetKeyDown(KeyCode.RightBracket))
+            SaveData.LoadFromFile(1);
+        
         
         if (WindEmitterChild.targetWind == null) {
             currentWindZone = null;
@@ -388,7 +393,8 @@ public partial class CharController
             currentWindZone = WindEmitterChild.targetWind.GetComponentInParent<WindEmitter>();
         }
 
-        Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, Rigidbody.velocity.y - (gravityValue * Time.deltaTime));
+        Vector2 v = Rigidbody.velocity;
+        Rigidbody.velocity = new Vector2(v.x, v.y - (gravityValue * Time.deltaTime));
         CheckGrounded_Update();
         EventHandling_Update();
 

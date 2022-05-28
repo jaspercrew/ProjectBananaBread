@@ -6,9 +6,10 @@ public class SceneInformation : MonoBehaviour
 {
     public static SceneInformation Instance;
 
-    public Transform defaultSpawn;
     public bool isDarkScene;
-    public bool isGravScene;
+    public bool isGravityScene;
+    public bool isWindScene;
+    public Transform defaultSpawn;
 
     [Serializable]
     public class ExitToSpawn

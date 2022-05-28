@@ -31,22 +31,22 @@ public partial class CharController : LivingThing
     // private ParticleSystem downWindFX;
 
     // Cape Config
-    [Header("Cape Offsets")] 
+    // [Header("Cape Offsets")] 
+    //
+    // [SerializeField]
+    // private Vector2 idleOffset;
+    //
+    // [SerializeField]
+    // private Vector2 runOffset;
+    //
+    // [SerializeField]
+    // private Vector2 jumpOffset;
+    //
+    // [SerializeField]
+    // private Vector2 fallOffset;
     
-    [SerializeField]
-    private Vector2 idleOffset;
-    
-    [SerializeField]
-    private Vector2 runOffset;
-    
-    [SerializeField]
-    private Vector2 jumpOffset;
-    
-    [SerializeField]
-    private Vector2 fallOffset;
-    
-    private CapeController capeAnchor;
-    private CapeController capeOutlineAnchor;
+    //private CapeController capeAnchor;
+    //private CapeController capeOutlineAnchor;
     
     [Header("Configurable player control values")] 
     // Configurable player control values
@@ -60,7 +60,8 @@ public partial class CharController : LivingThing
     private const float InAirDrag = 1.5f;
     private const float MaxYSpeed = 20f;
     // private const float VerticalDrag = 10f;
-    private const float JumpForce = 12f;
+    [SerializeField]
+    private float JumpForce = 12f;
     private const int HeavyAttackBuildup = 4;
     private const float AttackCooldown = 0.5f;
     private const float ParryCooldown = 1f;
@@ -330,6 +331,43 @@ public partial class CharController : LivingThing
         spriteRenderer.flipX = false;
         isInverted = false;
     }
+
+    protected override void TurnShifted()
+    {
+        base.TurnShifted();
+        if (SceneInformation.Instance.isGravityScene)
+        {
+            Invert();
+        }
+        if (SceneInformation.Instance.isWindScene)
+        {
+            
+        }
+        if (SceneInformation.Instance.isDarkScene)
+        {
+            
+        }
+    }
+
+    protected override void TurnUnshifted()
+    {
+        base.TurnUnshifted();
+        if (SceneInformation.Instance.isGravityScene)
+        {
+            DeInvert();
+        }
+        if (SceneInformation.Instance.isWindScene)
+        {
+            
+        }
+        if (SceneInformation.Instance.isDarkScene)
+        {
+            
+        }
+    }
+
+
+
 
     private void Interrupt() {
         foreach (IEnumerator co in toInterrupt)

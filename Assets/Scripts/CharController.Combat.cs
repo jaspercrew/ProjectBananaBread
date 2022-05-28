@@ -159,15 +159,27 @@ public partial class CharController
             attackPoint.position, attackRange, hitColliders, enemyLayers);
 
         bool hit = false;
-        foreach (Collider2D enemy in hitColliders)
+        foreach (Collider2D obj in hitColliders)
         {
-            if (enemy is null)
+            if (obj == null)
+            {
                 break;
-            if (enemy.GetComponent<Enemy>() != null)
-                enemy.GetComponent<Enemy>().TakeDamage(AttackDamage);
-            else if (enemy.GetComponent<HittableEntity>() != null)
-                enemy.GetComponent<HittableEntity>().GetHit();
-            hit = true;
+            }
+            IHittableEntity hitComponent = obj.GetComponent<IHittableEntity>();
+            if (hitComponent != null)
+            {
+                hitComponent.GetHit(AttackDamage);
+                hit = true;
+            }
+
+            
+            // if (enemy is null)
+            //     break;
+            // if (enemy.GetComponent<Enemy>() != null)
+            //     enemy.GetComponent<Enemy>().TakeDamage(AttackDamage);
+            // else if (enemy.GetComponent<HittableEntity>() != null)
+            //     enemy.GetComponent<HittableEntity>().GetHit();
+            // hit = true;
         }
 
         if (hit)

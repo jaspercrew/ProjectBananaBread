@@ -4,7 +4,7 @@ using Pathfinding;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class Enemy : LivingThing
+public class Enemy : LivingThing , IHittableEntity
 {
     public float speed = 3f;
     public float aggroRange = 10f;
@@ -12,8 +12,10 @@ public class Enemy : LivingThing
     public float attackCD;
     public bool LOS_Aggro;
     public bool LOS_Attack;
+    public Transform attackPoint;
     protected float lastAttackTime;
-    
+
+    //protected bool animationLocked = false;
     protected bool canFunction;
     protected bool movementDisabledAirborne;
     protected bool movementDisabledTimed;
@@ -37,8 +39,15 @@ public class Enemy : LivingThing
         playerMask = LayerMask.GetMask("Player");
     }
 
+    public void GetHit(int damage)
+    {
+        TakeDamage(damage);
+    }
+
     public void TakeDamage(int damage) { // assumes damage is taken from PLAYER
-        if (canFunction) {
+        if (canFunction)
+        {
+            
             Stun(.2f);
             GameObject player = GameObject.FindWithTag("Player");
             //KnockAwayFromPoint(knockback, player.transform.position);
@@ -47,6 +56,7 @@ public class Enemy : LivingThing
             
             // damage animation
             Animator.SetTrigger(Hurt);
+            //StartCoroutine(AnimationLockCoroutine(.3f));
             ParticleSystem gorePS = transform.Find("Particles").Find("GorePS").GetComponent<ParticleSystem>();
             if (gorePS != null)
             {
@@ -81,7 +91,9 @@ public class Enemy : LivingThing
         Collider2D[] hitCollidersAttack = new Collider2D[maxHits];
         int numHitsAggro = Physics2D.OverlapCircleNonAlloc(transform.position, aggroRange,
             hitCollidersAggro, playerMask);
-        int numHitsAttack = Physics2D.OverlapCircleNonAlloc(transform.position, attackRange,
+        
+        Transform attackScanPoint = attackPoint == null ? transform : attackPoint;
+        int numHitsAttack = Physics2D.OverlapCircleNonAlloc(attackScanPoint.position, attackRange,
             hitCollidersAttack, playerMask);
 
         playerInAttackRange = numHitsAttack > 0;
@@ -117,6 +129,10 @@ public class Enemy : LivingThing
 
     protected virtual void Pathfind_Update()
     {
+        if (!AbleToMove())
+        {
+            Rigidbody.velocity = Vector2.zero;
+        }
         //Debug.Log(movementDisabledAirborne);
         if (LOS_Aggro)
         {
@@ -157,10 +173,13 @@ public class Enemy : LivingThing
         Destroy(gameObject, deathTime);
     }
 
-    protected void Animation_Check_Update()
-    {
-        
-    }
+    // protected IEnumerator AnimationLockCoroutine(float time)
+    // {
+    //     animationLocked = true;
+    //     yield return new WaitForSeconds(time);
+    //     animationLocked = false;
+    //
+    // }
     
     protected virtual void TurnAround_Update() {
         if (Rigidbody.velocity.x > 0) {
@@ -169,12 +188,23 @@ public class Enemy : LivingThing
         else if (Rigidbody.velocity.x < 0) {
             FaceLeft();
         }
+
+        // if (Rigidbody.velocity.x > .1)
+        // {
+        //     Animator.SetInteger(AnimState, 2);
+        // }
         Animator.SetInteger(AnimState, Mathf.Abs(Rigidbody.velocity.x) > .1 ? 2 : 0);
+        
+
+        // if (!animationLocked)
+        // {
+        //     Animator.SetInteger(AnimState, Mathf.Abs(Rigidbody.velocity.x) > .1 ? 2 : 0);
+        // }
     }
 
 
     public void Stun(float stunTime) {
-        Debug.Log("stun");
+        //Debug.Log("stun");
         Interrupt();
         DisableFunctionality();
         StartCoroutine(StunCoroutine(stunTime));

@@ -29,8 +29,8 @@ public partial class CharController
         canCast = true;
         //canDoubleJump = false;
         fadeSpriteIterator = 0;
-        capeAnchor = transform.Find("Cape").Find("CapeAnchor").GetComponent<CapeController>();
-        capeOutlineAnchor = transform.Find("Cape").Find("CapeAnchor1").GetComponent<CapeController>();
+        //capeAnchor = transform.Find("Cape").Find("CapeAnchor").GetComponent<CapeController>();
+        //capeOutlineAnchor = transform.Find("Cape").Find("CapeAnchor1").GetComponent<CapeController>();
         grappleLineRenderer = transform.GetComponent<LineRenderer>();
         grappleLineRenderer.enabled = false;
         grappleLOSRenderer = transform.Find("GrappleLOS").GetComponent<LineRenderer>();
@@ -52,7 +52,7 @@ public partial class CharController
         switchPS = particleChild.Find("SwitchPS").GetComponent<ParticleSystem>();
         trailRenderer = particleChild.Find("FX").GetComponent<TrailRenderer>();
         //fadePS = particleChild.Find("FadePS").GetComponent<ParticleSystem>();
-        obstacleLayerMask = LayerMask.GetMask("Obstacle", "Entity");
+        obstacleLayerMask = LayerMask.GetMask("Obstacle", "Moveable");
         
         
         screenShakeController = ScreenShakeController.Instance;
@@ -78,7 +78,7 @@ public partial class CharController
         
         inputVector = Input.GetAxisRaw("Horizontal");
         FadeParticle_FixedUpdate();
-        AdjustCape_FixedUpdate();
+        // AdjustCape_FixedUpdate();
         if (!IsAbleToMove()) return;
         // movement animations
         Animator.SetInteger(AnimState, Mathf.Abs(moveVector) > float.Epsilon? 2 : 0);
@@ -101,43 +101,43 @@ public partial class CharController
 
     private const float verticalConst = .35f;
     private const float horizontalConst = .35f;
-    private void AdjustCape_FixedUpdate()
-    {
-        Vector2 currentOffset = Vector2.zero;
-        if (Rigidbody.velocity.x == 0 && Rigidbody.velocity.y == 0)
-        {
-            //Debug.Log("idle");
-            currentOffset = idleOffset;
-        }
-        else if (Rigidbody.velocity.y > .1f)
-        {
-            //Debug.Log("jump");
-            currentOffset = new Vector2( jumpOffset.x, jumpOffset.y * 
-                                                       Mathf.Abs(Rigidbody.velocity.y) * verticalConst);
-        }
-        else if (Rigidbody.velocity.y < -.1f)
-        {
-            //Debug.Log("fall");
-            currentOffset = new Vector2( fallOffset.x, fallOffset.y * 
-                                                       Mathf.Abs(Rigidbody.velocity.y) * verticalConst);
-        }
-        else if (Rigidbody.velocity.x != 0)
-        {
-            //Debug.Log("run");
-            currentOffset = new Vector2( runOffset.x * 
-                                         Mathf.Abs(Rigidbody.velocity.x) * horizontalConst, runOffset.y);
-        }
-
-        if (transform.localScale.x < 0)
-        {
-            currentOffset.x = currentOffset.x * -1;
-        }
-        
-        capeAnchor.partOffset = currentOffset;
-        capeOutlineAnchor.partOffset = currentOffset;
-
-
-    }
+    // private void AdjustCape_FixedUpdate()
+    // {
+    //     Vector2 currentOffset = Vector2.zero;
+    //     if (Rigidbody.velocity.x == 0 && Rigidbody.velocity.y == 0)
+    //     {
+    //         //Debug.Log("idle");
+    //         currentOffset = idleOffset;
+    //     }
+    //     else if (Rigidbody.velocity.y > .1f)
+    //     {
+    //         //Debug.Log("jump");
+    //         currentOffset = new Vector2( jumpOffset.x, jumpOffset.y * 
+    //                                                    Mathf.Abs(Rigidbody.velocity.y) * verticalConst);
+    //     }
+    //     else if (Rigidbody.velocity.y < -.1f)
+    //     {
+    //         //Debug.Log("fall");
+    //         currentOffset = new Vector2( fallOffset.x, fallOffset.y * 
+    //                                                    Mathf.Abs(Rigidbody.velocity.y) * verticalConst);
+    //     }
+    //     else if (Rigidbody.velocity.x != 0)
+    //     {
+    //         //Debug.Log("run");
+    //         currentOffset = new Vector2( runOffset.x * 
+    //                                      Mathf.Abs(Rigidbody.velocity.x) * horizontalConst, runOffset.y);
+    //     }
+    //
+    //     if (transform.localScale.x < 0)
+    //     {
+    //         currentOffset.x = currentOffset.x * -1;
+    //     }
+    //     
+    //     //capeAnchor.partOffset = currentOffset;
+    //     //capeOutlineAnchor.partOffset = currentOffset;
+    //
+    //
+    // }
 
     private void ApplyForcedMovement_FixedUpdate()
     {
@@ -422,24 +422,24 @@ public partial class CharController
         LineGrappleUpdate();
         if (SceneInformation.Instance.isDarkScene)
         {
-            LightCheckUpdate();
+            //LightCheckUpdate();
         }
     }
 
-    private void LightCheckUpdate()
-    {
-        if (lightBuffer < 0)
-        {
-            TakeDamage(1);
-        }
-        else
-        {
-            lightBuffer -= Time.deltaTime;
-            charLight.pointLightOuterRadius = MaxOuterLightRadius * (lightBuffer / MaxLightBuffer);
-            charLight.pointLightInnerRadius = MaxInnerLightRadius * (lightBuffer / MaxLightBuffer);
-            charLight.intensity = MaxLightIntensity * (lightBuffer / MaxLightBuffer);
-        }
-    }
+    // private void LightCheckUpdate()
+    // {
+    //     if (lightBuffer < 0)
+    //     {
+    //         TakeDamage(1);
+    //     }
+    //     else
+    //     {
+    //         lightBuffer -= Time.deltaTime;
+    //         charLight.pointLightOuterRadius = MaxOuterLightRadius * (lightBuffer / MaxLightBuffer);
+    //         charLight.pointLightInnerRadius = MaxInnerLightRadius * (lightBuffer / MaxLightBuffer);
+    //         charLight.intensity = MaxLightIntensity * (lightBuffer / MaxLightBuffer);
+    //     }
+    // }
 
 
 
@@ -658,7 +658,7 @@ public partial class CharController
 
         // isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) 
         //                              || (moveVector < 0 && isNearWallOnLeft)) && IsAbleToMove();
-        isWallSliding = v.y <= 0 && (isNearWallOnRight
+        isWallSliding = (isInverted ? -v.y : v.y) <= 0 && (isNearWallOnRight
                                      || isNearWallOnLeft) && IsAbleToMove();
         //Debug.Log(wallJumpAvailable);
 
@@ -676,7 +676,7 @@ public partial class CharController
         
         if (isWallSliding)
             
-            Rigidbody.velocity = new Vector2(v.x, Mathf.Max(v.y, -wallSlideSpeed));
+            Rigidbody.velocity = new Vector2(v.x, isInverted ? Mathf.Max(-v.y, wallSlideSpeed) : Mathf.Max(v.y, -wallSlideSpeed));
     }
     
 }

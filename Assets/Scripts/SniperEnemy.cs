@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Assertions;
 
 public class SniperEnemy : Enemy
 {
@@ -36,6 +37,7 @@ public class SniperEnemy : Enemy
         Animator.SetTrigger(Attack);
         Vector2 direction = ((charController.transform.position + new Vector3(0, .5f, 0)) - transform.position).normalized;
         sentProjectile = Instantiate(projectilePrefab, transform.position, transform.rotation);
-        sentProjectile.GetComponent<DamageProjectile>().Initialize(direction * projSpeed);
+        //Debug.Log(sentProjectile.GetComponent<Projectile>().lifetime);
+        sentProjectile.gameObject.GetComponent<Projectile>().Initialize(direction * projSpeed);
     }
 }

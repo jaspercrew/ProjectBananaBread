@@ -2,10 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HittableEntity : Entity
+public interface IHittableEntity
 {
-    public virtual void GetHit()
-    {
-        
-    }
+    public void GetHit(int damage);
+
 }

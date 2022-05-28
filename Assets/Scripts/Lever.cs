@@ -2,16 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Lever : HittableEntity
+public class Lever : ActivatorTrigger , IHittableEntity
 {
-    public bool isActive;
     public string leverName;
     private Dictionary<string, bool> leverDict;
 
-    public void Activate()
+    public override void Activate()
     {
-        isActive = true;
-        leverDict[leverName] = isActive;
+        isActivated  = true;
+        leverDict[leverName] = isActivated;
     }
     // Start is called before the first frame update
     void Start()
@@ -21,13 +20,16 @@ public class Lever : HittableEntity
         {
             leverDict.Add(leverName, false);
         }
-        isActive = leverDict[leverName];
+        isActivated = leverDict[leverName];
     }
 
-    // Update is called once per frame
-    void Update()
+    public void GetHit(int damage)
     {
-        
+        if (!isActivated )
+        {
+            Activate();
+        }
     }
+
     
 }

@@ -62,6 +62,7 @@ public partial class CharController : LivingThing
     // private const float VerticalDrag = 10f;
     [SerializeField]
     private float JumpForce = 12f;
+    private const float baseGravity = 9.0f;
     private const int HeavyAttackBuildup = 4;
     private const float AttackCooldown = 0.5f;
     private const float ParryCooldown = 1f;
@@ -81,7 +82,7 @@ public partial class CharController : LivingThing
     [SerializeField] private Transform attackPoint;
     [SerializeField] private Transform slicePoint;
     
-    public float gravityValue = 9.0f;
+    public float gravityValue = baseGravity;
     //Children
     private Transform particleChild;
     
@@ -313,7 +314,7 @@ public partial class CharController : LivingThing
     }
 
     public void Invert() {
-        gravityValue = -Mathf.Abs(Rigidbody.gravityScale);
+        gravityValue = -Mathf.Abs(gravityValue);
         if (!isInverted)
         {
             transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
@@ -324,7 +325,7 @@ public partial class CharController : LivingThing
     }
     
     public void DeInvert() {
-        gravityValue = Mathf.Abs(Rigidbody.gravityScale);
+        gravityValue = Mathf.Abs(gravityValue);
         if (isInverted)
         {
             transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);

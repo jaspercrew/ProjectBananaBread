@@ -37,8 +37,12 @@ public class SceneInformation : MonoBehaviour
         // Debug.Log("loading exit info");
         foreach (ExitToSpawn exitMapping in exitMappings)
         {
-            print(exitMapping.exitName + " maps to " + exitMapping.spawnObj.name);
-            spawnPositions[exitMapping.exitName] = exitMapping.spawnObj.transform.position;
+            if (exitMapping != null)
+            {
+                print(exitMapping.exitName + " maps to " + exitMapping.spawnObj.name);
+                spawnPositions[exitMapping.exitName] = exitMapping.spawnObj.transform.position;
+            }
+            
         }
     }
 

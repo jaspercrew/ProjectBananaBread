@@ -1274,10 +1274,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Managers
       objectReference: {fileID: 0}
-    - target: {fileID: 3628343474672114316, guid: f7cf8868528f3834da37602cbfe6ac5e, type: 3}
-      propertyPath: isWindScene
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f7cf8868528f3834da37602cbfe6ac5e, type: 3}
 --- !u!1 &965768561
@@ -17406,7 +17402,7 @@ GameObject:
   - component: {fileID: 997503365}
   - component: {fileID: 997503368}
   - component: {fileID: 997503367}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Gate
   m_TagString: Untagged
   m_Icon: {fileID: 0}

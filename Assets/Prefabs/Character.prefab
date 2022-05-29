@@ -38,14 +38,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 313368980}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_LightType: 3
   m_BlendStyleIndex: 0
-  m_FalloffIntensity: 0.7
+  m_FalloffIntensity: 0.6
   m_Color: {r: 0.7490566, g: 0.92992353, b: 1, a: 1}
   m_Intensity: 0.5
   m_LightVolumeOpacity: 0
@@ -58,8 +58,8 @@ MonoBehaviour:
   m_ShadowVolumeIntensity: 0
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
-  m_PointLightInnerRadius: 3
-  m_PointLightOuterRadius: 5
+  m_PointLightInnerRadius: 2
+  m_PointLightOuterRadius: 3
   m_PointLightDistance: 3
   m_PointLightQuality: 1
   m_ShapeLightParametricSides: 5
@@ -10129,7 +10129,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1.7
+  m_GravityScale: 0
   m_Material: {fileID: 6200000, guid: d46a7a5876a92e6418ee7721fc625b25, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 0
@@ -10198,22 +10198,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08a7d1987b3e94147a0a507912e574c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHealth: 0
+  Invertable: 1
+  MaxHealth: 5
   CurrentHealth: 0
   castProjectileInput: {fileID: 3870309991120366406, guid: e5443d9096a73484db468b02fc57e85b, type: 3}
   fadeSprite: {fileID: 849027303211011230, guid: 3e65f913ebec9664da23f573e81e5867, type: 3}
-  idleOffset: {x: 0.05, y: -0.1}
-  runOffset: {x: 0.13, y: -0.1}
-  jumpOffset: {x: 0.05, y: -0.2}
-  fallOffset: {x: 0.05, y: 0.15}
   speed: 4
+  JumpForce: 8
   attackRange: 0.25
   enemyLayers:
     serializedVersion: 2
     m_Bits: 64
   attackPoint: {fileID: 7265325464984090082}
   slicePoint: {fileID: 7265325464034420409}
-  gravityValue: 2
+  gravityValue: 15
   lightBuffer: 0
   fury: 0
   isParrying: 0
@@ -10222,7 +10220,10 @@ MonoBehaviour:
   grappleProjectile: {fileID: 1920082404479384334, guid: 7f946ab064a4c614a865b845260eaef6, type: 3}
   isRecentlyGrappled: 0
   isCrouching: 0
-  currentWindZone: {fileID: 0}
+  currentWind:
+    forceStrength: 0
+    speedOnPlayer: 0
+    isHorizontal: 0
   emitFadesTime: 0
 --- !u!1 &7265325464391700459
 GameObject:

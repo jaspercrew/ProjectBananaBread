@@ -93,7 +93,7 @@ public partial class CharController
         }
         else
         {
-            Rigidbody.gravityScale = isInverted? -1 : 1;
+            gravityValue = isInverted ? -Mathf.Abs(gravityValue) : Mathf.Abs(gravityValue);
             StandardMovement_FixedUpdate();
         }
 
@@ -316,7 +316,7 @@ public partial class CharController
             // affect gravity
             float windSpeed = currentWind.speedOnPlayer;
             float gravChange = -0.1f * windSpeed; // TODO: constant
-            Rigidbody.gravityScale = 1 + gravChange; // TODO: change back
+            gravityValue = (isInverted ? -Math.Abs(gravityValue) : Math.Abs(gravityValue)) + gravChange; // TODO: change back
             
             // apply max vel
             int windDir = (windSpeed < 0)? -1 : 1; // -1 if left, 1 if right

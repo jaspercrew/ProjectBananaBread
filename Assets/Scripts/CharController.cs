@@ -81,7 +81,7 @@ public partial class CharController : LivingThing
     [SerializeField] private Transform attackPoint;
     [SerializeField] private Transform slicePoint;
     
-    public float gravityValue = 2.0f;
+    public float gravityValue = 9.0f;
     //Children
     private Transform particleChild;
     

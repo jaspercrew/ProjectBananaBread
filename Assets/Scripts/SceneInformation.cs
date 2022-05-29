@@ -1,7 +1,13 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
+[Serializable]
+public class WindInfo
+{ 
+    public float forceStrength; 
+    public float speedOnPlayer; 
+    public bool isHorizontal;
+}
 public class SceneInformation : MonoBehaviour
 {
     public static SceneInformation Instance;
@@ -10,6 +16,8 @@ public class SceneInformation : MonoBehaviour
     public bool isGravityScene;
     public bool isWindScene;
     public Transform defaultSpawn;
+    public WindInfo realStateWind;
+    public WindInfo altStateWind;
 
     [Serializable]
     public class ExitToSpawn

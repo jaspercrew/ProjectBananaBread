@@ -77,6 +77,50 @@ MonoBehaviour:
   healthObject: {fileID: 2138097378332063590, guid: 29ad4e4330e9d1646bb0b204882934f6, type: 3}
   furyObject: {fileID: 7616210729734926719, guid: 2cfb8cbb82c1f0843bba9036b18ee34a, type: 3}
   healthEnd: {fileID: 1464292598645589107, guid: 0afe58ebadd5ac1458eecb463cb48643, type: 3}
+--- !u!1 &1906406487
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1906406488}
+  - component: {fileID: 1906406489}
+  m_Layer: 0
+  m_Name: WindParticlesManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1906406488
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1906406487}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1005183158465598756}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1906406489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1906406487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78a87d054e453c549b39bffb9168de6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  windParticlePrefab: {fileID: 1491858717129484093, guid: 88d62cc2501a73e418894e6f1393c06f, type: 3}
 --- !u!1 &1005183157471693745
 GameObject:
   m_ObjectHideFlags: 0
@@ -678,6 +722,7 @@ Transform:
   - {fileID: 1005183157539919045}
   - {fileID: 1005183158479881877}
   - {fileID: 1005183159387925886}
+  - {fileID: 1906406488}
   - {fileID: 7116273879812406448}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -1318,7 +1363,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1005183158465598756}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3628343474672114316
 MonoBehaviour:
@@ -1333,7 +1378,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDarkScene: 0
+  isGravityScene: 0
+  isWindScene: 0
   defaultSpawn: {fileID: 0}
+  realStateWind:
+    forceStrength: 0
+    speedOnPlayer: 0
+    isHorizontal: 0
+  altStateWind:
+    forceStrength: 0
+    speedOnPlayer: 0
+    isHorizontal: 0
   exitMappings:
   - exitName: 
     spawnObj: {fileID: 0}

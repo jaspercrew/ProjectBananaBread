@@ -55,24 +55,28 @@ public class WindParticlesManager : MonoBehaviour
     // Update is called once per frame
     private void FixedUpdate()
     {
+        if (!SceneInformation.Instance.isWindScene)
+        {
+            return;
+        }
         timeSinceLastParticle += Time.fixedDeltaTime;
         if (timeSinceLastParticle >= TimeBetweenParticles)
             timeSinceLastParticle = TimeBetweenParticles;
 
-        WindEmitter windZone = CharController.Instance.currentWindZone;
+        //WindEmitter windZone = CharController.Instance.currentWind;
         // spawn new particle
-        if (Mathf.Approximately(timeSinceLastParticle, TimeBetweenParticles) && windZone != null)
+        if (Mathf.Approximately(timeSinceLastParticle, TimeBetweenParticles) && SceneInformation.Instance.isWindScene)
         {
             timeSinceLastParticle = 0;
             SpawnParticle();
         }
         
-        float newSpeed = (windZone == null)? 0 : windZone.currentWind.speedOnPlayer;
+        float newSpeed = !SceneInformation.Instance.isWindScene ? 0 : CharController.Instance.currentWind.speedOnPlayer;
 
-        // print("prev: " + prevSpeed + ", new: " + newSpeed);
+        //print("prev: " + prevSpeed + ", new: " + newSpeed);
         if (Math.Abs(prevSpeed - newSpeed) > float.Epsilon)
         {
-            // print("turned!");
+            //print("turned!");
             isTurning = true;
             turnStartSpeed = prevSpeed;
             turnEndSpeed = newSpeed;
@@ -88,18 +92,21 @@ public class WindParticlesManager : MonoBehaviour
             
             if (node.Value == null) // shouldn't happen
             {
+                print("WIND NODE FAIL");
                 windParticles.Remove(node);
             }
-            else if (!IsParticleOnScreen(node.Value) || (!isTurning && newSpeed == 0))
+            else if (!IsParticleOnScreen(node.Value))
             {
                 // destroy and remove offscreen particles
-                // print("wp died with lifetime " + (Time.time - node.Value.SpawnTime) + "s");
+                //print("wp died with lifetime " + (Time.time - node.Value.SpawnTime) + "s");
+                //print(IsParticleOnScreen(node.Value));
                 Destroy(node.Value.Transform.gameObject);
                 windParticles.Remove(node);
             }
             else
             {
-                float windSpeed = (windZone == null) ? 0 : windZone.currentWind.speedOnPlayer;
+                float windSpeed = (!SceneInformation.Instance.isWindScene) ? 0 : 
+                    CharController.Instance.currentWind.speedOnPlayer;
                 
                 if (isTurning)
                 {
@@ -167,11 +174,12 @@ public class WindParticlesManager : MonoBehaviour
 
     private void SpawnParticle()
     {
-        WindEmitter wind = CharController.Instance.currentWindZone;
-        if (wind == null)
+        
+        WindInfo wind = CharController.Instance.currentWind;
+        if (!SceneInformation.Instance.isWindScene)
             return;
-
-        int side = (wind.currentWind.speedOnPlayer < 0) ? 1 : 0;
+        //("pspawn run");
+        int side = (wind.speedOnPlayer < 0) ? 1 : 0;
         Vector3 viewportPos = new Vector3(side, Random.value);
         Vector3 spawnPos = ViewportToPosition(viewportPos);
         spawnPos.z = WindParticleZ;

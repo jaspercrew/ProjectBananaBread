@@ -7,9 +7,17 @@ public class BinaryEntity : Entity
 {
 
     // Start is called before the first frame update
-    protected virtual void Start() {
+    protected virtual void Start()
+    {
         CheckEntity();
+        //StartCoroutine(LateStart());
     }
+
+    // protected IEnumerator LateStart()
+    // {
+    //     yield return new WaitForEndOfFrame();
+    //     
+    // }
 
     protected virtual void TurnShifted()
     {
@@ -26,7 +34,7 @@ public class BinaryEntity : Entity
         CheckEntity();
     }
 
-    protected void CheckEntity() {
+    protected virtual void CheckEntity() {
         if (GameManager.Instance.isGameShifted)
         {
             TurnShifted();

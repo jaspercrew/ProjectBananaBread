@@ -162,7 +162,7 @@ public partial class CharController : LivingThing
     }
     private int wallJumpDir;
     //private int wallJumpFramesLeft;
-    public WindEmitter currentWindZone;
+    public WindInfo currentWind;
     
     private int fadeSpriteIterator;
     [FormerlySerializedAs("fadeTime")] public float emitFadesTime;
@@ -174,6 +174,7 @@ public partial class CharController : LivingThing
     private float forcedMoveTime;
 
     private LayerMask obstacleLayerMask;
+    private LayerMask obstaclePlusLayerMask;
     
     private readonly LinkedList<Event> eventQueue = new LinkedList<Event>();
 
@@ -341,7 +342,8 @@ public partial class CharController : LivingThing
         }
         if (SceneInformation.Instance.isWindScene)
         {
-            
+            currentWind = SceneInformation.Instance.altStateWind;
+
         }
         if (SceneInformation.Instance.isDarkScene)
         {
@@ -349,8 +351,17 @@ public partial class CharController : LivingThing
         }
     }
 
+    // protected override void CheckEntity()
+    // {
+    //     base.CheckEntity();
+    //     Debug.Log("char checked");
+    // }
+    
+    
+
     protected override void TurnUnshifted()
     {
+        //Debug.Log("char unshifted");
         base.TurnUnshifted();
         if (SceneInformation.Instance.isGravityScene)
         {
@@ -358,6 +369,7 @@ public partial class CharController : LivingThing
         }
         if (SceneInformation.Instance.isWindScene)
         {
+            currentWind = SceneInformation.Instance.realStateWind;
             
         }
         if (SceneInformation.Instance.isDarkScene)
@@ -394,7 +406,7 @@ public partial class CharController : LivingThing
     public void PrepForScene()
     {
         Interrupt();
-        currentWindZone = null;
+        currentWind = null;
     }
 
 }

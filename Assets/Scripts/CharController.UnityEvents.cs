@@ -21,7 +21,7 @@ public partial class CharController
         PrepForScene();
     }
 
-    private void Start()
+    protected override void Start()
     {
         fury = 0;
         lastShiftTime = 0f;
@@ -52,7 +52,8 @@ public partial class CharController
         switchPS = particleChild.Find("SwitchPS").GetComponent<ParticleSystem>();
         trailRenderer = particleChild.Find("FX").GetComponent<TrailRenderer>();
         //fadePS = particleChild.Find("FadePS").GetComponent<ParticleSystem>();
-        obstacleLayerMask = LayerMask.GetMask("Obstacle", "Moveable");
+        obstacleLayerMask = LayerMask.GetMask("Obstacle");
+        obstaclePlusLayerMask = LayerMask.GetMask("Obstacle", "Moveable");
         
         
         screenShakeController = ScreenShakeController.Instance;
@@ -69,6 +70,7 @@ public partial class CharController
 
         // set char's spawn
         transform.position = SceneInformation.Instance.GetSpawnPos();
+        base.Start();
     }
 
     private void FixedUpdate() {
@@ -85,7 +87,7 @@ public partial class CharController
         
         ApplyForcedMovement_FixedUpdate();
 
-        if (!(currentWindZone is null))
+        if (SceneInformation.Instance.isWindScene)
         {
             WindMovement_FixedUpdate();
         }
@@ -171,6 +173,7 @@ public partial class CharController
             {
                 Rigidbody.AddForce(moveDir * OnGroundAcceleration * Vector2.right, ForceMode2D.Force);
             }
+            
 
             // apply max velocity
             Rigidbody.velocity = new Vector2(
@@ -212,14 +215,19 @@ public partial class CharController
 
     private void WindMovement_FixedUpdate()
     {
-        Debug.Assert(!(currentWindZone is null));
+        if (currentWind == null)
+        {
+            currentWind = GameManager.Instance.isGameShifted
+                ? SceneInformation.Instance.altStateWind
+                : SceneInformation.Instance.realStateWind;
+        }
+        Debug.Assert(SceneInformation.Instance.isWindScene);
         
         Vector2 v = Rigidbody.velocity;
         float xVel = v.x;
         float yVel = v.y;
-
-        WindEmitter.WindInfo wind = currentWindZone.currentWind;
-        float horizWindSpeed = currentWindZone.enabled && wind.isHorizontal? wind.speedOnPlayer : 0;
+        
+        float horizWindSpeed = currentWind.isHorizontal ? currentWind.speedOnPlayer : 0;
         // float vertWindSpeed = isHorizWind? 0 : currentWindZone.windSpeedOnPlayer;
 
         // regular ground movement
@@ -267,22 +275,22 @@ public partial class CharController
         }
         
         // if no wind,
-        if (!currentWindZone.isWindEnabled)
-        {
-            // TODO: if yVel out of range, use a force to slow down, don't just clamp
-            // TODO: also apply this in non-wind movement
-            Rigidbody.velocity = new Vector2(
-                Mathf.Clamp(xVel, -speed, speed),
-                Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
-        }
+        // if (!SceneInformation.Instance.isWindScene)
+        // {
+        //     // TODO: if yVel out of range, use a force to slow down, don't just clamp
+        //     // TODO: also apply this in non-wind movement
+        //     Rigidbody.velocity = new Vector2(
+        //         Mathf.Clamp(xVel, -speed, speed),
+        //         Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
+        // }
         // else if sideways wind,
-        else if (wind.isHorizontal)
+        if (currentWind.isHorizontal)
         {
             // apply horizontal wind max velocity
-            int windDir = (wind.speedOnPlayer < 0)? -1 : 1; // -1 if left, 1 if right
+            int windDir = (currentWind.speedOnPlayer < 0)? -1 : 1; // -1 if left, 1 if right
             // int velDir = Math.Sign(xVel);
-            float maxSpeedSameDir = speed + Mathf.Abs(wind.speedOnPlayer);
-            float maxSpeedOppDir = speed - Mathf.Abs(wind.speedOnPlayer);
+            float maxSpeedSameDir = speed + Mathf.Abs(currentWind.speedOnPlayer);
+            float maxSpeedOppDir = speed - Mathf.Abs(currentWind.speedOnPlayer);
             float maxLeft, maxRight;
             if (windDir == 1) // if right wind
             {
@@ -302,10 +310,11 @@ public partial class CharController
         // else if vertical wind
         else
         {
+            Debug.Log("vertical wind");
             // apply vertical wind max velocity
             
             // affect gravity
-            float windSpeed = wind.speedOnPlayer;
+            float windSpeed = currentWind.speedOnPlayer;
             float gravChange = -0.1f * windSpeed; // TODO: constant
             Rigidbody.gravityScale = 1 + gravChange; // TODO: change back
             
@@ -385,13 +394,13 @@ public partial class CharController
             SaveData.LoadFromFile(1);
         
         
-        if (WindEmitterChild.targetWind == null) {
-            currentWindZone = null;
-        }
-        else
-        {
-            currentWindZone = WindEmitterChild.targetWind.GetComponentInParent<WindEmitter>();
-        }
+        // if (WindEmitterChild.targetWind == null) {
+        //     currentWind = null;
+        // }
+        // else
+        // {
+        //     currentWind = WindEmitterChild.targetWind.GetComponentInParent<WindEmitter>();
+        // }
 
         Vector2 v = Rigidbody.velocity;
         Rigidbody.velocity = new Vector2(v.x, v.y - (gravityValue * Time.deltaTime));
@@ -399,10 +408,10 @@ public partial class CharController
         EventHandling_Update();
 
         // apply wind min velocity lolol
-        if (!(currentWindZone is null) && Math.Sign(moveVector) == 0)
+        if (!(currentWind is null) && Math.Sign(moveVector) == 0)
         {
             float xVel = Rigidbody.velocity.x;
-            float horizWindSpeed = currentWindZone.currentWind.speedOnPlayer;
+            float horizWindSpeed = currentWind.speedOnPlayer;
             // apply min velocity
             if (Math.Sign(xVel) == Math.Sign(horizWindSpeed) && Mathf.Abs(xVel) < Math.Abs(horizWindSpeed))
             {
@@ -524,9 +533,9 @@ public partial class CharController
         Debug.DrawLine(bottomRight, bottomRight + aLittleDown, Color.magenta);
 
         RaycastHit2D hit1 = 
-            Physics2D.Linecast(bottomLeft, bottomLeft + aLittleDown, obstacleLayerMask);
+            Physics2D.Linecast(bottomLeft, bottomLeft + aLittleDown, obstaclePlusLayerMask);
         RaycastHit2D hit2 = 
-            Physics2D.Linecast(bottomRight, bottomRight + aLittleDown, obstacleLayerMask);
+            Physics2D.Linecast(bottomRight, bottomRight + aLittleDown, obstaclePlusLayerMask);
 
         bool newlyGrounded = hit1 || hit2;
         if (!isGrounded && newlyGrounded){
@@ -593,6 +602,7 @@ public partial class CharController
     private void ShortJumpDetection_Update() {
         if (Input.GetButtonUp("Jump") && !isGrounded && 
             ((!isInverted && Rigidbody.velocity.y > 0) || (isInverted && Rigidbody.velocity.y < 0))) {
+            //print("short");
             
             Rigidbody.velocity = Vector2.Scale(Rigidbody.velocity, new Vector2(1f, 0.5f));
         }

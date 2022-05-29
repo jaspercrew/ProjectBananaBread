@@ -943,11 +943,36 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9fe0f35f0232cb745a76cd113eaaac88, type: 3}
---- !u!4 &817372369 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1005183158465598756, guid: f7cf8868528f3834da37602cbfe6ac5e, type: 3}
-  m_PrefabInstance: {fileID: 479301025}
+--- !u!1 &1104020872
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1104020873}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1104020873
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104020872}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8.632197, y: 0.46420532, z: -52.73001}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1257287574
 GameObject:
   m_ObjectHideFlags: 0
@@ -1197,50 +1222,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2d60016638de45f418ef70e1ccf7953f, type: 3}
---- !u!1 &1906406487
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1906406488}
-  - component: {fileID: 1906406489}
-  m_Layer: 0
-  m_Name: WindParticlesManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1906406488
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1906406487}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 817372369}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1906406489
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1906406487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78a87d054e453c549b39bffb9168de6d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  windParticlePrefab: {fileID: 1491858717129484093, guid: 88d62cc2501a73e418894e6f1393c06f, type: 3}
 --- !u!1001 &1960437762
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1350,6 +1331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8e45a6e32504bc49ab272cd7f5cceff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Invertable: 1
   isGrappleable: 1
 --- !u!19719996 &1995117703
 TilemapCollider2D:

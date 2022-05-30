@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 [Serializable]
 public class WindInfo
@@ -8,6 +9,7 @@ public class WindInfo
     public float speedOnPlayer; 
     public bool isHorizontal;
 }
+
 public class SceneInformation : MonoBehaviour
 {
     public static SceneInformation Instance;
@@ -15,7 +17,6 @@ public class SceneInformation : MonoBehaviour
     public bool isDarkScene;
     public bool isGravityScene;
     public bool isWindScene;
-    public Transform defaultSpawn;
     public WindInfo realStateWind;
     public WindInfo altStateWind;
 
@@ -26,6 +27,7 @@ public class SceneInformation : MonoBehaviour
         public GameObject spawnObj;
     }
 
+    public Transform defaultSpawn;
     public List<ExitToSpawn> exitMappings;
     private readonly Dictionary<string, Vector3> spawnPositions = new Dictionary<string, Vector3>();
 
@@ -49,14 +51,17 @@ public class SceneInformation : MonoBehaviour
     public Vector3 GetSpawnPos()
     {
         string e = GameManager.Instance.lastExitTouched;
+        
         if (spawnPositions.ContainsKey(e))
         {
             // Debug.LogWarning("exit " + e + " maps to " + spawnPositions[e]);
             return spawnPositions[e];
         }
 
-        Debug.LogError("exit " + e + " is not present in this scene's " +
-                       "exit-to-spawn mapping -- using default!");
+        if (e != "")  {
+            Debug.LogError("exit " + e + " is not present in this scene's " +
+                           "exit-to-spawn mapping -- using default!");
+        }
         return defaultSpawn.position;
     }
 }

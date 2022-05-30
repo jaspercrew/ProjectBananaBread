@@ -25,8 +25,11 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance is null)
+        if (Instance == null)
+        {
+            // Debug.Log("setting gm instance");
             Instance = this;
+        }
         isGameShifted = false;
     }
 

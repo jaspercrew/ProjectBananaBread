@@ -28,7 +28,7 @@ public class GrapplePoint : MonoBehaviour
         Vector3 mousePos = camera.ScreenToWorldPoint(Input.mousePosition);
 
         float thisDist = Vector2.Distance(mousePos, transform.position);
-        float currDist = (targetPoint is null) ? float.MaxValue :
+        float currDist = (targetPoint == null) ? float.MaxValue :
             Vector2.Distance(mousePos, targetPoint.transform.position);
         // Debug.Log(thisDist);
         // Debug.Log(currDist);

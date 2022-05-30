@@ -251,7 +251,7 @@ public partial class CharController
     {
         const float castSpeed = 65f;
         castProjectileRb = Instantiate(castProjectileInput, attackPoint.position, transform.rotation);
-        if (Camera.main is null)
+        if (Camera.main == null)
             return;
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         castProjectileRb.GetComponentInParent<BladeProjectile>()

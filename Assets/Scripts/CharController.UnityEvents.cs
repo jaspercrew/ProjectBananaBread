@@ -41,7 +41,7 @@ public partial class CharController
         charLight = transform.Find("Light").GetComponent<Light2D>();
         lightBuffer = MaxLightBuffer;
         particleChild = transform.Find("Particles");
-        CurrentHealth = MaxHealth;
+        // CurrentHealth = MaxHealth;
         Rigidbody = transform.GetComponent<Rigidbody2D>();
         Animator = transform.GetComponent<Animator>();
         charCollider = transform.GetComponent<BoxCollider2D>();
@@ -101,8 +101,8 @@ public partial class CharController
         
     }
 
-    private const float verticalConst = .35f;
-    private const float horizontalConst = .35f;
+    // private const float verticalConst = .35f;
+    // private const float horizontalConst = .35f;
     // private void AdjustCape_FixedUpdate()
     // {
     //     Vector2 currentOffset = Vector2.zero;
@@ -408,7 +408,7 @@ public partial class CharController
         EventHandling_Update();
 
         // apply wind min velocity lolol
-        if (!(currentWind is null) && Math.Sign(moveVector) == 0)
+        if (!(currentWind == null) && Math.Sign(moveVector) == 0)
         {
             float xVel = Rigidbody.velocity.x;
             float horizWindSpeed = currentWind.speedOnPlayer;

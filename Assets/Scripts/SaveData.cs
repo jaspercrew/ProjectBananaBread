@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [Serializable]
-public class SaveData
+public class SaveData 
 {
     // this is the only place the constructor should ever be called
     private static SaveData instance = new SaveData();
@@ -21,7 +21,7 @@ public class SaveData
 
     public static void SaveToFile(int saveNum)
     {
-        if (instance is null)
+        if (instance == null)
         {
             Debug.LogWarning("SaveData instance was null, this shouldn't happen");
             instance = new SaveData();
@@ -59,6 +59,15 @@ public class SaveData
         }
 
         instance = (SaveData) jsonSerializer.ReadObject(fileStream);
+
+        AsyncOperation op = SceneManager.LoadSceneAsync(instance.playerScene);
+        // apply save data to player and world here
+        op.completed += (asyncOp) =>
+        {
+            CharController.Instance.CurrentHealth = instance.playerHealth;
+            UIManager.Instance.PopulateHealthBarPublic();
+            // Debug.Log("finished loading new scene");
+        };
     }
 
     public static void OpenDoor(string door)

@@ -403,7 +403,7 @@ public partial class CharController : LivingThing
             }
 
             elapsedTime += blinkTime;
-            Debug.Log(elapsedTime);
+            // Debug.Log(elapsedTime);
         }  
         // Make sure we got there
         spriteRenderer.forceRenderingOff = false;

@@ -5,9 +5,8 @@ using UnityEngine.UIElements;
 
 public class UIManager : MonoBehaviour
 {
-
     public static UIManager Instance;
-    public static List<GameObject> HealthList;
+    public List<GameObject> healthList;
     private Transform mainParent;
     private UnityEngine.UI.Image ball;
     private GameObject createdFury;
@@ -39,12 +38,27 @@ public class UIManager : MonoBehaviour
         back = Resources.Load<Sprite>("Sprites/RageBack");
         backFull = Resources.Load<Sprite>("Sprites/RageBackFull");
         mainParent = transform.Find("MainParent");
-        HealthList = new List<GameObject>();
-        StartCoroutine(LateStart());
+        healthList = new List<GameObject>();
+        StartCoroutine(PopulateHealthBar());
     }
-    IEnumerator LateStart()
+
+    private bool hasPopulated = false;
+
+    public void PopulateHealthBarPublic()
+    {
+        StartCoroutine(PopulateHealthBar());
+    }
+    
+    private IEnumerator PopulateHealthBar()
     {
         yield return new WaitForEndOfFrame();
+
+
+        if (hasPopulated)
+            yield break;
+        hasPopulated = true;
+        
+        healthList.Clear();
         
         createdFury = Instantiate(furyObject, mainParent);
         ball = createdFury.transform.Find("Ball").GetComponent<UnityEngine.UI.Image>();
@@ -54,7 +68,7 @@ public class UIManager : MonoBehaviour
             GameObject g = Instantiate(healthObject, mainParent);
             //Debug.Log( new Vector3(healthXOffset + (healthXGap * i), healthYOffset, -15));
             g.transform.position = new Vector3(healthXOffset + (healthXGap * i), healthYOffset, 5);
-            HealthList.Add(g);
+            healthList.Add(g);
         }
 
         GameObject end = Instantiate(healthEnd, mainParent);
@@ -72,11 +86,11 @@ public class UIManager : MonoBehaviour
         {
             if (i < CharController.Instance.CurrentHealth)
             {
-                HealthList[i].GetComponent<HealthUnit>().Fill();
+                healthList[i].GetComponent<HealthUnit>().Fill();
             }
             else
             {
-                HealthList[i].GetComponent<HealthUnit>().Empty();
+                healthList[i].GetComponent<HealthUnit>().Empty();
             }
         }
     }

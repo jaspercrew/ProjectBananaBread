@@ -90,6 +90,7 @@ public partial class CharController
         screenShakeController.MediumShake();
         StartCoroutine(TakeDamageCoroutine());
         Animator.SetTrigger(Hurt);
+        StartCoroutine(InvFrameCoroutine(InvFrames));
         
         if (CurrentHealth <= 0) {
             Die();
@@ -98,8 +99,8 @@ public partial class CharController
 
     private IEnumerator TakeDamageCoroutine() {
         isInvincible = true;
-        const float invFrames = .5f;
-        yield return new WaitForSeconds(invFrames);
+        
+        yield return new WaitForSeconds(InvFrames);
         isInvincible = false;
     }
 

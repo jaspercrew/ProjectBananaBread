@@ -2,55 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExplosiveProjectile : Projectile
+public class ExplosiveBomb : Projectile
 {
     public bool canHitPlayer;
     public bool canHitEnemy;
     public int damage;
     public float radius = 3f;
+
     //protected float lifetime = 10f;
 
     public SpriteRenderer explodeFX;
     private SpriteRenderer instantiatedExplodeFX;
 
-
-
-
-    
-    
+    public void Initialize(Vector2 dir, float magnitude)
+    {
+        Debug.Log(dir);
+        Collider2D = GetComponent<Collider2D>();
+        Rigidbody2D = GetComponent<Rigidbody2D>();
+        Rigidbody2D.velocity = dir * Mathf.Abs(magnitude);
+    }
 
     protected override IEnumerator ProjectileLifetimeCheck()
     {
         yield return new WaitForSeconds(lifetime);
         Explode();
     }
-
-    protected void OnTriggerEnter2D(Collider2D other)
-    {
-        if (canHitPlayer && other.gameObject.GetComponent<CharController>() != null) {
-            if (CharController.Instance.isParrying)
-            {
-                Initialize(new Vector2(-Rigidbody2D.velocity.x, -Rigidbody2D.velocity.y));
-                canHitEnemy = true;
-            }
-            else if (CharController.Instance.IFrames())
-            {
-                return;
-            }
-            else
-            {
-                Explode();
-            }
-        }
-        else if (canHitEnemy && other.gameObject.GetComponent<Enemy>() != null)
-        {
-            Explode();
-        }
-        else if (other.gameObject.GetComponent<Platform>() != null)
-        {
-            Explode();
-        }
-    }
+    
 
     private void Explode()
     {
@@ -83,5 +60,6 @@ public class ExplosiveProjectile : Projectile
 
         }
         Destroy(gameObject);
+        
     }
 }

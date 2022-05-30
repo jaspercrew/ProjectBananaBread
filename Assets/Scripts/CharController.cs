@@ -69,6 +69,7 @@ public partial class CharController : LivingThing
     private const float ParryTime = .4f;
     private const float DashCooldown = 1f;
     public const float ShiftCooldown = 1f;
+    const float InvFrames = .5f;
     public const float MaxFury = 100;
     public const float FuryIncrement = 10;
     private const int AttackDamage = 1;
@@ -377,6 +378,36 @@ public partial class CharController : LivingThing
         {
             
         }
+    }
+
+    public IEnumerator InvFrameCoroutine(float time)
+    {
+        float blinkTime = .15f;
+        float elapsedTime = 0;
+        float waitTime = time;
+        bool isHidden = false;
+
+        while (elapsedTime < waitTime)
+        {
+            if (isHidden)
+            {
+                yield return new WaitForSeconds(blinkTime);
+                isHidden = false;
+                spriteRenderer.forceRenderingOff = false;
+            }
+            else
+            {
+                yield return new WaitForSeconds(blinkTime); 
+                isHidden = true;
+                spriteRenderer.forceRenderingOff = true;
+            }
+
+            elapsedTime += blinkTime;
+            Debug.Log(elapsedTime);
+        }  
+        // Make sure we got there
+        spriteRenderer.forceRenderingOff = false;
+        yield return null;
     }
 
 

@@ -12,7 +12,13 @@ public class WindForce : BinaryEntity
     {
         areaEffector = GetComponent<AreaEffector2D>();
         moveableMask = LayerMask.NameToLayer("Moveable");
+        areaEffector.useColliderMask = true;
+        areaEffector.colliderMask = moveableMask;
         base.Start();
+        if (!SceneInformation.Instance.isWindScene)
+        {
+            areaEffector.forceMagnitude = 0;
+        }
     }
     
     private void ChangeWind(WindInfo wind)

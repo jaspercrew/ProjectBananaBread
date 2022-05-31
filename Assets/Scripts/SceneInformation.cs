@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 [Serializable]
 public class WindInfo
 { 
@@ -19,6 +21,9 @@ public class SceneInformation : MonoBehaviour
     public bool isWindScene;
     public WindInfo realStateWind;
     public WindInfo altStateWind;
+    public SoundName songA;
+    public SoundName songB;
+    public bool playMusic;
 
     [Serializable]
     public class ExitToSpawn
@@ -45,6 +50,14 @@ public class SceneInformation : MonoBehaviour
                 spawnPositions[exitMapping.exitName] = exitMapping.spawnObj.transform.position;
             }
             
+        }
+    }
+
+    private void Start()
+    {
+        if (playMusic)
+        {
+            AudioManager.Instance.PlaySong(songA, songB);
         }
     }
 

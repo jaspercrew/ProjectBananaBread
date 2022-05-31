@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -15,6 +16,9 @@ public class AudioManager : MonoBehaviour
     private AudioSource primarySource;
     private AudioSource altSource;
     private Dictionary<SoundName, AudioClip> soundToClip = new Dictionary<SoundName, AudioClip>();
+
+    private SoundName savedA;
+    private SoundName savedB;
     
 
     // public AudioMixerGroup mixerGroup;
@@ -38,16 +42,14 @@ public class AudioManager : MonoBehaviour
             soundToClip[sound] = clip;
         }
         
-        
-    }
-
-    private void Start()
-    {
         AudioSource[] sources = GetComponents<AudioSource>();
         effectSource = sources[0];
         primarySource = sources[1];
         altSource = sources[2];
-        
+    }
+
+    private void Start()
+    {
         if (GameManager.Instance.isGameShifted)
         {
             primarySource.volume = 0f;
@@ -75,13 +77,21 @@ public class AudioManager : MonoBehaviour
     
     public void PlaySong(SoundName primary, SoundName alt)
     {
+        if (savedA == primary && savedB == alt) //if the song is already playing, do nothing
+        {
+            return;
+        }
         AudioClip primaryClip = soundToClip[primary];
         AudioClip altClip = soundToClip[alt];
         primarySource.clip = primaryClip;
         altSource.clip = altClip;
         primarySource.Play();
         altSource.Play();
+        savedA = primary;
+        savedB = alt;
     }
+
+
 
     public void OnShift(bool toAlt)
     {

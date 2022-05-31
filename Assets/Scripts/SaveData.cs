@@ -59,15 +59,17 @@ public class SaveData
         }
 
         instance = (SaveData) jsonSerializer.ReadObject(fileStream);
+        CharController.Instance.CurrentHealth = instance.playerHealth;
+        UIManager.Instance.PopulateHealthBarPublic();
 
-        AsyncOperation op = SceneManager.LoadSceneAsync(instance.playerScene);
-        // apply save data to player and world here
-        op.completed += (asyncOp) =>
-        {
-            CharController.Instance.CurrentHealth = instance.playerHealth;
-            UIManager.Instance.PopulateHealthBarPublic();
-            // Debug.Log("finished loading new scene");
-        };
+        // AsyncOperation op = SceneManager.LoadSceneAsync(instance.playerScene);
+        // // apply save data to player and world here
+        // op.completed += (asyncOp) =>
+        // {
+        //     CharController.Instance.CurrentHealth = instance.playerHealth;
+        //     UIManager.Instance.PopulateHealthBarPublic();
+        //     // Debug.Log("finished loading new scene");
+        // };
     }
 
     public static void OpenDoor(string door)

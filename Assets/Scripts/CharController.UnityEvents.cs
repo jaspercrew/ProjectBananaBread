@@ -23,6 +23,7 @@ public partial class CharController
 
     protected override void Start()
     {
+        SaveData.LoadFromFile(1);
         fury = 0;
         lastShiftTime = 0f;
         Interactor.interactors.Clear();

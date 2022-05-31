@@ -12,13 +12,17 @@ public class SceneExitLoadZone : MonoBehaviour
     
     private void SwitchScene()
     {
+        SaveData.SaveToFile(1);
         SceneManager.LoadSceneAsync(scene.name); // TODO wtf async wtf?? (in wayne voice)
     }
     
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        GameManager.Instance.lastExitTouched = exitName;
-        SwitchScene();
+        if (other.gameObject.GetComponent<CharController>() != null)
+        {
+            GameManager.Instance.lastExitTouched = exitName;
+            SwitchScene();
+        }
     }
 }

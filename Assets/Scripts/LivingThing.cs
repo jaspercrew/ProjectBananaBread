@@ -20,11 +20,15 @@ public abstract class LivingThing : BinaryEntity {
     protected static readonly int Death = Animator.StringToHash("Death");
     protected static readonly int Grounded = Animator.StringToHash("Grounded");
     protected static readonly int Attack = Animator.StringToHash("Attack");
+    protected static readonly int AttackA = Animator.StringToHash("AttackA");
+    protected static readonly int AttackB = Animator.StringToHash("AttackB");
+    protected static readonly int AttackC = Animator.StringToHash("AttackC");
     protected static readonly int Parry = Animator.StringToHash("Parry");
-    protected static readonly int Dash = Animator.StringToHash("Recover");
+    protected static readonly int Dash = Animator.StringToHash("Dash");
     
     protected void FaceLeft()
     {
+        Debug.Log("face left");
         Transform t = transform; // more efficient, according to Rider
         Vector3 s = t.localScale;
         t.localScale = new Vector3(1, s.y, s.z);
@@ -32,6 +36,7 @@ public abstract class LivingThing : BinaryEntity {
 
     protected void FaceRight()
     {
+        Debug.Log("face right");
         Transform t = transform; // more efficient, according to Rider
         Vector3 s = t.localScale;
         t.localScale = new Vector3(-1, s.y, s.z);

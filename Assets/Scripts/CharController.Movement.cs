@@ -13,7 +13,7 @@ public partial class CharController
         float xScale = transform.localScale.x;
         //float dashDir = moveVector == 0 ? -xScale : moveVector;
         float dashDir = inputVector;
-        float dashSpeed = 9f * dashDir;
+        float dashSpeed = dashBoost * dashDir;
         const float dashTime = .23f;
 
         emitFadesTime = .28f;
@@ -43,19 +43,21 @@ public partial class CharController
         dust.Play();
         const float wallJumpModX = .2f;
         const float wallJumpModY = 1.2f;
+        Animator.SetBool(Grounded, false);
+        Animator.SetTrigger(Jump);
 
         if ((isWallSliding || wallJumpAvailable) && !isGrounded)
         {
             //Debug.Log("WALLJUMP");
-            forcedMoveTime = .10f;
+            forcedMoveTime = .15f;
             if (wallJumpDir == -1)
             {
-                FaceLeft();
+                //FaceLeft();
                 forcedMoveVector = -1;
             }
             else if (wallJumpDir == 1)
             {
-                FaceRight();
+                //FaceRight();
                 forcedMoveVector = 1;
             }
             else
@@ -72,8 +74,7 @@ public partial class CharController
                 ForceMode2D.Impulse); 
         }
         
-        Animator.SetBool(Grounded, false);
-        Animator.SetTrigger(Jump);
+        
         justJumped = true;
     }
 

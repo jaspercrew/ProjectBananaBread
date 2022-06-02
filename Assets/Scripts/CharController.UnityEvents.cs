@@ -44,7 +44,7 @@ public partial class CharController
         particleChild = transform.Find("Particles");
         // CurrentHealth = MaxHealth;
         Rigidbody = transform.GetComponent<Rigidbody2D>();
-        Animator = transform.GetComponent<Animator>();
+        Animator = transform.Find("SpriteHandler").GetComponent<Animator>();
         charCollider = transform.GetComponent<BoxCollider2D>();
         
         dust = particleChild.Find("DustPS").GetComponent<ParticleSystem>();
@@ -59,7 +59,7 @@ public partial class CharController
         
         screenShakeController = ScreenShakeController.Instance;
         // grappleController = GetComponent<RadialGrapple>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = transform.Find("SpriteHandler").GetComponent<SpriteRenderer>();
         
         trailRenderer.emitting = false;
         charLight.enabled = false;
@@ -77,6 +77,7 @@ public partial class CharController
     private void FixedUpdate() {
         // Debug.Log("touching" + isWallTouching);
         // Debug.Log("sliding" + isWallSliding);
+        Animstate_FixedUpdate();
         
         
         inputVector = Input.GetAxisRaw("Horizontal");
@@ -84,7 +85,7 @@ public partial class CharController
         // AdjustCape_FixedUpdate();
         if (!IsAbleToMove()) return;
         // movement animations
-        Animator.SetInteger(AnimState, Mathf.Abs(moveVector) > float.Epsilon? 2 : 0);
+        
         
         ApplyForcedMovement_FixedUpdate();
 
@@ -100,6 +101,25 @@ public partial class CharController
 
         TurnAround_FixedUpdate();
         
+    }
+
+    private void Animstate_FixedUpdate()
+    {
+        if (isWallSliding)
+        {
+            //Debug.Log("wallslide anim");
+            Animator.SetInteger(AnimState, 3);
+        }
+        else if (isGrounded && Mathf.Abs(moveVector) > float.Epsilon)
+        {
+            //Debug.Log("run anim");
+            Animator.SetInteger(AnimState, 2);
+        }
+        else
+        {
+            //Debug.Log("idle anim");
+            Animator.SetInteger(AnimState, 1);
+        }
     }
 
     // private const float verticalConst = .35f;
@@ -377,10 +397,10 @@ public partial class CharController
 
         Vector3 scale = transform.localScale;
         // direction switching
-        if (inputVector > 0 && Math.Abs(scale.x + 1) > float.Epsilon) {
+        if (moveVector > 0 && Math.Abs(scale.x + 1) > float.Epsilon) {
             FaceRight();
         }
-        else if (inputVector < 0 && Math.Abs(scale.x - 1) > float.Epsilon) {
+        else if (moveVector < 0 && Math.Abs(scale.x - 1) > float.Epsilon) {
             FaceLeft();
         }
     }
@@ -421,10 +441,10 @@ public partial class CharController
             }
         }
         
-        // jump animation
-        if (isGrounded) {
-            Animator.SetBool(Jump, false);
-        }
+        // // jump animation
+        // if (isGrounded) {
+        //     Animator.SetBool(Jump, false);
+        // }
         ShortJumpDetection_Update();
         //JumpCooldown_Update();
         WallSlideDetection_Update();
@@ -544,6 +564,7 @@ public partial class CharController
         }
 
         isGrounded = newlyGrounded;
+        Animator.SetBool(Grounded, isGrounded);
     }
 
     private void EventHandling_Update() {
@@ -630,7 +651,7 @@ public partial class CharController
                 fadeSpriteIterator = 0;
                 GameObject newFadeSprite = Instantiate(fadeSprite, transform.position, transform.rotation);
                 newFadeSprite.GetComponent<FadeSprite>()
-                    .Initialize(spriteRenderer.sprite, transform.localScale.x < 0);
+                    .Initialize(spriteRenderer.sprite, transform.localScale.x > 0);
             }
         }
     }
@@ -669,8 +690,8 @@ public partial class CharController
 
         // isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) 
         //                              || (moveVector < 0 && isNearWallOnLeft)) && IsAbleToMove();
-        isWallSliding = (isInverted ? -v.y : v.y) <= 0 && (isNearWallOnRight
-                                     || isNearWallOnLeft) && IsAbleToMove();
+        isWallSliding = (isInverted ? -v.y : v.y) <= 0 && 
+                        ((isNearWallOnRight && moveVector >= 0)|| (isNearWallOnLeft && moveVector <= 0)) && IsAbleToMove();
         //Debug.Log(wallJumpAvailable);
 
         if (isNearWallOnLeft)
@@ -684,10 +705,15 @@ public partial class CharController
             //canDoubleJump = false;
         }
 
-        
+
         if (isWallSliding)
-            
-            Rigidbody.velocity = new Vector2(v.x, isInverted ? Mathf.Max(-v.y, wallSlideSpeed) : Mathf.Max(v.y, -wallSlideSpeed));
+        {
+            Rigidbody.velocity = new Vector2(v.x,
+                isInverted ? Mathf.Max(-v.y, wallSlideSpeed) : Mathf.Max(v.y, -wallSlideSpeed));
+        }
+        else
+        {
+        }
     }
     
 }

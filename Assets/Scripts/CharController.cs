@@ -59,6 +59,7 @@ public partial class CharController : LivingThing
     private const float InAirAcceleration = 18f;
     private const float InAirDrag = 1.5f;
     private const float MaxYSpeed = 20f;
+    private const float dashBoost = 15f;
     // private const float VerticalDrag = 10f;
     [SerializeField]
     private float JumpForce = 12f;

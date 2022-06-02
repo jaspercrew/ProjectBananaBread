@@ -123,35 +123,51 @@ public partial class CharController
             comboCounter = 0;
         }
 
-        comboCounter++;
-        bool isHeavy = Math.DivRem(comboCounter, HeavyAttackBuildup, out comboCounter) > 0;
+        
+        //bool isHeavy = Math.DivRem(comboCounter, HeavyAttackBuildup, out comboCounter) > 0;
 
-        DoAttack(isHeavy);
+        DoAttack(comboCounter % 3);
+        comboCounter++;
     }
 
-    private IEnumerator AttackCoroutine(bool isHeavyAttack) {
+    private IEnumerator AttackCoroutine(int combo) {
+        print("attackco" + combo);
         // light attack modifiers
-        float attackBoost = 1.5f;
-        float beginAttackDelay = .12f;
-        float endAttackDelay = .35f;
-        // float hitConfirmDelay = .20f;
-        
-        // heavy attack modifiers
-        if (isHeavyAttack) { 
-            attackBoost = 2.0f;
+        float attackBoost = 3.0f;
+        float beginAttackDelay = .32f;
+        float endAttackDelay = .45f;
+
+        if (combo == 1) { 
+            attackBoost = 3.0f;
+            beginAttackDelay = .25f;
+            endAttackDelay = .3f;
+        }
+
+        else if (combo == 2) { 
+            attackBoost = 7.0f;
             beginAttackDelay = .25f;
             endAttackDelay = .5f;
-            // hitConfirmDelay = .30f;
         }
-    
+
+        if (Rigidbody.velocity.x > 0)
+        {
+            Rigidbody.velocity = 
+                new Vector2(Math.Min(Rigidbody.velocity.x, .01f), Rigidbody.velocity.y);
+        }
+        else
+        {
+            Rigidbody.velocity = 
+                new Vector2(Math.Max(Rigidbody.velocity.x, -.01f), Rigidbody.velocity.y);
+        }
+        
+        if (isGrounded) {
+            Rigidbody.AddForce(new Vector2(moveVector * attackBoost, 0), ForceMode2D.Impulse);
+            //Rigidbody.velocity = new Vector2(moveVector * attackBoost, Rigidbody.velocity.y);
+        }
+        
         yield return new WaitForSeconds(beginAttackDelay);
         
-        // move while attacking TODO : change this functionality
-        if (isGrounded) {
-            Rigidbody.velocity = new Vector2(moveVector * attackBoost, Rigidbody.velocity.y);
-        }
         
-
         const int maxEnemiesHit = 20;
         Collider2D[] hitColliders = new Collider2D[maxEnemiesHit];
         
@@ -195,24 +211,50 @@ public partial class CharController
             AudioManager.Instance.Play(SoundName.Hit, .5f);
         }
         
-        yield return new WaitForSeconds(endAttackDelay);
+        yield return new WaitForSeconds(3 * endAttackDelay / 4);
+        
+        if (Rigidbody.velocity.x > 0)
+        {
+            Rigidbody.velocity = 
+                new Vector2(Math.Min(Rigidbody.velocity.x, .1f), Rigidbody.velocity.y);
+        }
+        else
+        {
+            Rigidbody.velocity = 
+                new Vector2(Math.Max(Rigidbody.velocity.x, -.1f), Rigidbody.velocity.y);
+        }
+        yield return new WaitForSeconds(1 * endAttackDelay / 4);
+        
         isAttacking = false;
     }
 
-    private void DoAttack(bool isHeavy) {
+    private void DoAttack(int combo) {
         // _screenShakeController.LightShake();
         isAttacking = true;
         //Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
         Animator.speed = 1;
         // Assert.IsTrue(comboCount <= HeavyAttackBuildup);
-        
-        Animator.SetTrigger(Attack);
-        // TODO: remove when we have actual animations
-        if (isHeavy) { // heavy attack?
-            Animator.speed = .5f;
+        switch (combo) {
+            case 0:
+                Animator.SetTrigger(AttackA);
+                break;
+            case 1:
+                Animator.SetTrigger(AttackB);
+                break;
+            case 2:
+                Animator.SetTrigger(AttackC);
+                break;
+            default:
+                break;
         }
+        
+        
+        // TODO: remove when we have actual animations
+        // if (isHeavy) { // heavy attack?
+        //     Animator.speed = .5f;
+        // }
 
-        attackCoroutine = AttackCoroutine(isHeavy);
+        attackCoroutine = AttackCoroutine(combo);
         toInterrupt.Add(attackCoroutine);
         StartCoroutine(attackCoroutine);
         

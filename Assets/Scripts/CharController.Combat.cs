@@ -135,17 +135,17 @@ public partial class CharController
         // light attack modifiers
         float attackBoost = 3.0f;
         float beginAttackDelay = .32f;
-        float endAttackDelay = .45f;
+        float endAttackDelay = .30f;
 
         if (combo == 1) { 
             attackBoost = 3.0f;
-            beginAttackDelay = .25f;
-            endAttackDelay = .3f;
+            beginAttackDelay = .2f;
+            endAttackDelay = .15f;
         }
 
         else if (combo == 2) { 
-            attackBoost = 7.0f;
-            beginAttackDelay = .25f;
+            attackBoost = 6.0f;
+            beginAttackDelay = .35f;
             endAttackDelay = .5f;
         }
 

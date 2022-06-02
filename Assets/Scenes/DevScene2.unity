@@ -18479,7 +18479,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7811712953924589793, guid: ef954ea09b3d0374889ca55a796390cd, type: 3}
       propertyPath: playMusic
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7811712953924589793, guid: ef954ea09b3d0374889ca55a796390cd, type: 3}
       propertyPath: isWindScene
@@ -24982,6 +24982,10 @@ PrefabInstance:
     - target: {fileID: 2439222725432436424, guid: d9589447b7390dc41b2029f130acfaab, type: 3}
       propertyPath: m_Name
       value: ExplosiveBomb
+      objectReference: {fileID: 0}
+    - target: {fileID: 2439222725432436424, guid: d9589447b7390dc41b2029f130acfaab, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2439222725432436468, guid: d9589447b7390dc41b2029f130acfaab, type: 3}
       propertyPath: m_RootOrder

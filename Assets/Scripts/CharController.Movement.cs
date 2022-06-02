@@ -19,9 +19,11 @@ public partial class CharController
         emitFadesTime = .28f;
         isDashing = true;
         trailRenderer.emitting = true;
+        
         dashCoroutine = DashCoroutine(dashTime, dashSpeed);
         toInterrupt.Add(dashCoroutine);
         StartCoroutine(dashCoroutine);
+        
         Rigidbody.velocity = new Vector2(Rigidbody.velocity.x + dashSpeed, Rigidbody.velocity.y);
         dust.Play();
         Animator.SetTrigger(Dash);

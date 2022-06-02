@@ -18563,6 +18563,42 @@ PrefabInstance:
       propertyPath: m_Name
       value: Character
       objectReference: {fileID: 0}
+    - target: {fileID: 7265325464548819041, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
+      propertyPath: m_Parameters.colorGradient.atime1
+      value: 1349
+      objectReference: {fileID: 0}
+    - target: {fileID: 7265325464548819041, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
+      propertyPath: m_Parameters.colorGradient.atime2
+      value: 6746
+      objectReference: {fileID: 0}
+    - target: {fileID: 7265325464548819041, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7265325464548819041, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.g
+      value: 0.12725489
+      objectReference: {fileID: 0}
+    - target: {fileID: 7265325464548819041, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.r
+      value: 0.21698111
+      objectReference: {fileID: 0}
+    - target: {fileID: 7265325464548819041, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
+      propertyPath: m_Parameters.colorGradient.key1.a
+      value: 0.98926115
+      objectReference: {fileID: 0}
+    - target: {fileID: 7265325464548819041, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
+      propertyPath: m_Parameters.colorGradient.key2.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7265325464548819041, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
+      propertyPath: m_Parameters.colorGradient.m_NumAlphaKeys
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7265325464548819043, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
 --- !u!1 &1299661169

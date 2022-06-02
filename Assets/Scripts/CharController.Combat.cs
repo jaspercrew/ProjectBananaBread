@@ -139,7 +139,7 @@ public partial class CharController
 
         if (combo == 1) { 
             attackBoost = 3.0f;
-            beginAttackDelay = .2f;
+            beginAttackDelay = .25f;
             endAttackDelay = .15f;
         }
 

@@ -133,20 +133,20 @@ public partial class CharController
     private IEnumerator AttackCoroutine(int combo) {
         print("attackco" + combo);
         // light attack modifiers
-        float attackBoost = 3.0f;
-        float beginAttackDelay = .32f;
-        float endAttackDelay = .30f;
+        float attackBoost = 5.0f;
+        float beginAttackDelay = .2f;
+        float endAttackDelay = .45f;
 
         if (combo == 1) { 
-            attackBoost = 3.0f;
-            beginAttackDelay = .25f;
-            endAttackDelay = .15f;
+            attackBoost = 4.0f;
+            beginAttackDelay = .2f;
+            endAttackDelay = .2f;
         }
 
         else if (combo == 2) { 
             attackBoost = 6.0f;
-            beginAttackDelay = .35f;
-            endAttackDelay = .5f;
+            beginAttackDelay = .4f;
+            endAttackDelay = .4f;
         }
 
         if (Rigidbody.velocity.x > 0)
@@ -160,12 +160,14 @@ public partial class CharController
                 new Vector2(Math.Max(Rigidbody.velocity.x, -.01f), Rigidbody.velocity.y);
         }
         
+
+        
+        yield return new WaitForSeconds(beginAttackDelay);
+        
         if (isGrounded) {
             Rigidbody.AddForce(new Vector2(moveVector * attackBoost, 0), ForceMode2D.Impulse);
             //Rigidbody.velocity = new Vector2(moveVector * attackBoost, Rigidbody.velocity.y);
         }
-        
-        yield return new WaitForSeconds(beginAttackDelay);
         
         
         const int maxEnemiesHit = 20;

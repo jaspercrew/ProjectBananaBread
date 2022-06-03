@@ -21,7 +21,7 @@ public class SceneExitLoadZone : MonoBehaviour
     {
         if (other.gameObject.GetComponent<CharController>() != null)
         {
-            GameManager.Instance.lastExitTouched = exitName;
+            SceneTransitionManager.Instance.lastExitTouched = exitName;
             SwitchScene();
         }
     }

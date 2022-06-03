@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -63,11 +64,14 @@ public class SceneInformation : MonoBehaviour
 
     public Vector3 GetSpawnPos()
     {
+        //print(spawnPositions);
+        
         string e = GameManager.Instance.lastExitTouched;
+        //print(e);
         
         if (spawnPositions.ContainsKey(e))
         {
-            // Debug.LogWarning("exit " + e + " maps to " + spawnPositions[e]);
+            Debug.LogWarning("exit " + e + " maps to " + spawnPositions[e]);
             return spawnPositions[e];
         }
 

@@ -70,11 +70,17 @@ public partial class CharController
         }
 
         // set char's spawn
+        Debug.Log(SceneInformation.Instance.GetSpawnPos());
         transform.position = SceneInformation.Instance.GetSpawnPos();
         base.Start();
     }
 
     private void FixedUpdate() {
+        // if (wallJumpAvailable && !justJumped)
+        // {
+        //     Debug.Log("wj aiv");
+        // }
+        
         // Debug.Log("touching" + isWallTouching);
         // Debug.Log("sliding" + isWallSliding);
         Animstate_FixedUpdate();
@@ -87,7 +93,7 @@ public partial class CharController
         // movement animations
         
         
-        ApplyForcedMovement_FixedUpdate();
+        
 
         if (SceneInformation.Instance.isWindScene)
         {
@@ -98,6 +104,7 @@ public partial class CharController
             gravityValue = isInverted ? -Mathf.Abs(gravityValue) : Mathf.Abs(gravityValue);
             StandardMovement_FixedUpdate();
         }
+        ApplyForcedMovement_FixedUpdate();
 
         TurnAround_FixedUpdate();
         
@@ -397,6 +404,10 @@ public partial class CharController
 
         Vector3 scale = transform.localScale;
         // direction switching
+        // if (isWallSliding || (wallJumpAvailable && !justJumped))
+        // {
+        //     return;
+        // }
         if (moveVector > 0 && Math.Abs(scale.x + 1) > float.Epsilon) {
             FaceRight();
         }
@@ -690,8 +701,10 @@ public partial class CharController
 
         // isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) 
         //                              || (moveVector < 0 && isNearWallOnLeft)) && IsAbleToMove();
+        // isWallSliding = (isInverted ? -v.y : v.y) <= 0 && 
+        //                 ((isNearWallOnRight && moveVector >= 0)|| (isNearWallOnLeft && moveVector <= 0)) && IsAbleToMove();
         isWallSliding = (isInverted ? -v.y : v.y) <= 0 && 
-                        ((isNearWallOnRight && moveVector >= 0)|| (isNearWallOnLeft && moveVector <= 0)) && IsAbleToMove();
+                        ((isNearWallOnRight)|| (isNearWallOnLeft)) && IsAbleToMove() && !isGrounded;
         //Debug.Log(wallJumpAvailable);
 
         if (isNearWallOnLeft)
@@ -708,6 +721,7 @@ public partial class CharController
 
         if (isWallSliding)
         {
+            justJumped = false;
             Rigidbody.velocity = new Vector2(v.x,
                 isInverted ? Mathf.Max(-v.y, wallSlideSpeed) : Mathf.Max(v.y, -wallSlideSpeed));
         }

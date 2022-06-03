@@ -28,7 +28,7 @@ public abstract class LivingThing : BinaryEntity {
     
     protected void FaceLeft()
     {
-        Debug.Log("face left");
+        //Debug.Log("face left");
         Transform t = transform; // more efficient, according to Rider
         Vector3 s = t.localScale;
         t.localScale = new Vector3(1, s.y, s.z);
@@ -36,7 +36,7 @@ public abstract class LivingThing : BinaryEntity {
 
     protected void FaceRight()
     {
-        Debug.Log("face right");
+        //Debug.Log("face right");
         Transform t = transform; // more efficient, according to Rider
         Vector3 s = t.localScale;
         t.localScale = new Vector3(-1, s.y, s.z);

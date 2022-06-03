@@ -69,7 +69,7 @@ public partial class CharController : LivingThing
     private const float ParryCooldown = 1f;
     private const float ParryTime = .4f;
     private const float DashCooldown = 1f;
-    public const float ShiftCooldown = 1f;
+    public const float ShiftCooldown = 0.5f;
     const float InvTime = .85f;
     public const float MaxFury = 100;
     public const float FuryIncrement = 10;
@@ -297,7 +297,8 @@ public partial class CharController : LivingThing
 
     private IEnumerator WallJumpBufferCoroutine()
     {
-        const float buffer = .5f;
+        
+        const float buffer = .15f;
         wallJumpAvailable = true;
         yield return new WaitForSeconds(buffer);
         wallJumpAvailable = false;
@@ -305,7 +306,7 @@ public partial class CharController : LivingThing
     
     private IEnumerator JumpBufferCoroutine()
     {
-        const float buffer = .2f;
+        const float buffer = .15f;
         jumpAvailable = true;
         yield return new WaitForSeconds(buffer);
         jumpAvailable = false;

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1848924253904985496}
   - component: {fileID: 1848924253904985503}
   - component: {fileID: 1848924253904985502}
+  - component: {fileID: 5695700849485872180}
   m_Layer: 0
   m_Name: ExplodeFX
   m_TagString: Untagged
@@ -96,3 +97,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fadeTime: 1
+--- !u!114 &5695700849485872180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848924253904985501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54cbbe365f81c6b43a3ceb089112fdfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lifetime: 10
+  canHitPlayer: 0
+  canHitEnemy: 0
+  damage: 0
+  radius: 3
+  explodeFX: {fileID: 0}

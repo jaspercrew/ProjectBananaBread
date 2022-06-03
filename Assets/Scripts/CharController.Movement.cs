@@ -41,17 +41,18 @@ public partial class CharController
 
     private void DoJump()
     {
+        //print("jumpcall");
         justJumped = true;
         dust.Play();
-        const float wallJumpModX = .2f;
-        const float wallJumpModY = 1.2f;
+        const float wallJumpModX = .8f;
+        const float wallJumpModY = 1.1f;
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
 
         if ((isWallSliding || wallJumpAvailable) && !isGrounded)
         {
             //Debug.Log("WALLJUMP");
-            forcedMoveTime = .15f;
+            forcedMoveTime = .17f;
             if (wallJumpDir == -1)
             {
                 //FaceLeft();

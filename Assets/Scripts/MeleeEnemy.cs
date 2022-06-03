@@ -16,7 +16,7 @@ public class MeleeEnemy : CloseAttackerEnemy
     protected override void Start()
     {
         base.Start();
-        attackCD = 2f;
+        //attackCD = 2f;
     }
     
 
@@ -29,7 +29,8 @@ public class MeleeEnemy : CloseAttackerEnemy
     {
         isAttacking = true;
         Animator.SetTrigger(Attack);
-        StartCoroutine(attackCo = AttackCoroutine());
+        attackCo = AttackCoroutine();
+        StartCoroutine(attackCo);
     }
 
     protected override bool AttackConditions()
@@ -73,18 +74,19 @@ public class MeleeEnemy : CloseAttackerEnemy
 
     public override void Interrupt() { // should stop all relevant coroutines
         if (attackCo != null) {
+            print("stopped AttackCoroutine");
             StopCoroutine(attackCo); // interrupt attack if take damage
             Rigidbody.velocity = Vector2.zero;
             isAttacking = false;
         }
     }
-    protected override void DisableFunctionality() {
-        StopAllCoroutines();
-        canFunction = false;
-    }
-
-    protected override void EnableFunctionality() {
-        canFunction = true;
-        isAttacking = false;
-    }
+    // protected override void DisableFunctionality() {
+    //     //StopAllCoroutines();
+    //     isAlive = false;
+    // }
+    //
+    // protected override void EnableFunctionality() {
+    //     isAlive = true;
+    //     isAttacking = false;
+    // }
 }

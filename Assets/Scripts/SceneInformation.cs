@@ -47,7 +47,7 @@ public class SceneInformation : MonoBehaviour
         {
             if (exitMapping != null)
             {
-                print(exitMapping.exitName + " maps to " + exitMapping.spawnObj.name);
+                //print(exitMapping.exitName + " maps to " + exitMapping.spawnObj.name);
                 spawnPositions[exitMapping.exitName] = exitMapping.spawnObj.transform.position;
             }
             

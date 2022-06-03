@@ -284,7 +284,7 @@ public partial class CharController : LivingThing
     }
 
     private bool IsAbleToBeDamaged() {
-        return !isInvincible && !isDashing;
+        return !isInvincible && !isDashing && canFunction;
     }
 
     private IEnumerator ParticleBurstCoroutine(ParticleSystem ps, float time)
@@ -432,7 +432,7 @@ public partial class CharController : LivingThing
 
     public bool IFrames()
     {
-        return isDashing || isInvincible || isSliceDashing;
+        return isDashing || isInvincible || isSliceDashing || !canFunction;
     }
 
     public void PrepForScene()

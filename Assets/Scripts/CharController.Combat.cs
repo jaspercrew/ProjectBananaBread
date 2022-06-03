@@ -108,8 +108,8 @@ public partial class CharController
     {
         Animator.SetTrigger(Death);
         canFunction = false;
-        //transform.GetComponent<Collider>().enabled = false;
         Rigidbody.gravityScale = 0;
+        Rigidbody.velocity = Vector2.zero;
         GameManager.Instance.PlayerDeath();
     }
 
@@ -132,10 +132,10 @@ public partial class CharController
     }
 
     private IEnumerator AttackCoroutine(int combo) {
-        print("attackco" + combo);
+        //print("attackco" + combo);
         // light attack modifiers
         float attackBoost = 5.0f;
-        float beginAttackDelay = .2f;
+        float beginAttackDelay = .4f;
         float endAttackDelay = .45f;
 
         if (combo == 1) { 
@@ -163,12 +163,11 @@ public partial class CharController
         
 
         
-        yield return new WaitForSeconds(beginAttackDelay);
-        
         if (isGrounded) {
             Rigidbody.AddForce(new Vector2(moveVector * attackBoost, 0), ForceMode2D.Impulse);
             //Rigidbody.velocity = new Vector2(moveVector * attackBoost, Rigidbody.velocity.y);
         }
+        yield return new WaitForSeconds(beginAttackDelay);
         
         
         const int maxEnemiesHit = 20;
@@ -181,17 +180,16 @@ public partial class CharController
         bool hit = false;
         foreach (Collider2D obj in hitColliders)
         {
-            if (obj == null)
+            if (obj != null)
             {
-                break;
+                IHittableEntity hitComponent = obj.GetComponent<IHittableEntity>();
+                if (hitComponent != null)
+                {
+                    hitComponent.GetHit(AttackDamage);
+                    hit = true;
+                }
             }
-            IHittableEntity hitComponent = obj.GetComponent<IHittableEntity>();
-            if (hitComponent != null)
-            {
-                hitComponent.GetHit(AttackDamage);
-                hit = true;
-            }
-
+            
             
             // if (enemy is null)
             //     break;

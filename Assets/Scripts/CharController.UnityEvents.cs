@@ -70,7 +70,7 @@ public partial class CharController
         }
 
         // set char's spawn
-        Debug.Log(SceneInformation.Instance.GetSpawnPos());
+        //Debug.Log(SceneInformation.Instance.GetSpawnPos());
         transform.position = SceneInformation.Instance.GetSpawnPos();
         base.Start();
     }

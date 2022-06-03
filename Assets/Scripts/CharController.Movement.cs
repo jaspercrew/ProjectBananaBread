@@ -31,9 +31,11 @@ public partial class CharController
     }
 
     // dash coroutine handles stopping the dash
-    private IEnumerator DashCoroutine(float dashTime, float dashSpeed) {
-        //Debug.Log(savedVel);
+    private IEnumerator DashCoroutine(float dashTime, float dashSpeed)
+    {
+        charCollider.enabled = false;
         yield return new WaitForSeconds(dashTime);
+        charCollider.enabled = true;
         //Rigidbody.velocity = new Vector2(Rigidbody.velocity.x - dashSpeed, Rigidbody.velocity.y);
         isDashing = false;
         trailRenderer.emitting = false;

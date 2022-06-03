@@ -4,7 +4,7 @@ using UnityEngine;
 public abstract class LivingThing : BinaryEntity {
     // Configurable values 
     public int MaxHealth;
-    protected bool isStunned;
+    //protected bool isStunned;
 
     // Trackers
     public int CurrentHealth;
@@ -31,7 +31,7 @@ public abstract class LivingThing : BinaryEntity {
         //Debug.Log("face left");
         Transform t = transform; // more efficient, according to Rider
         Vector3 s = t.localScale;
-        t.localScale = new Vector3(1, s.y, s.z);
+        t.localScale = new Vector3(Mathf.Abs(s.x), s.y, s.z);
     }
 
     protected void FaceRight()
@@ -39,7 +39,7 @@ public abstract class LivingThing : BinaryEntity {
         //Debug.Log("face right");
         Transform t = transform; // more efficient, according to Rider
         Vector3 s = t.localScale;
-        t.localScale = new Vector3(-1, s.y, s.z);
+        t.localScale = new Vector3(-Mathf.Abs(s.x), s.y, s.z);
     }
     
     // boosts the game object in a certain cardinal direction 
@@ -67,10 +67,6 @@ public abstract class LivingThing : BinaryEntity {
     //     Animator.speed = temp;
     // }
     
-    public virtual IEnumerator StunCoroutine(float stunTime) {
-        yield return new WaitForSeconds(stunTime);
-        isStunned = false;
-    }
 
 
 

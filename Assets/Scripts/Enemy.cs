@@ -16,7 +16,8 @@ public class Enemy : LivingThing , IHittableEntity
     protected float lastAttackTime;
 
     //protected bool animationLocked = false;
-    protected bool canFunction;
+    protected bool isAlive;
+    protected bool isStunned;
     protected bool movementDisabledAirborne;
     protected bool movementDisabledTimed;
     protected bool playerInAggroRange;
@@ -29,8 +30,10 @@ public class Enemy : LivingThing , IHittableEntity
     // Start is called before the first frame update
     protected virtual void Start()
     {
+        print("start");
         playerInAggroRange = false;
-        canFunction = true;
+        isAlive = true;
+        isStunned = false;
         CurrentHealth = MaxHealth;
         aiPath = GetComponent<AIPath>();
         Animator = transform.GetComponentInChildren<Animator>();
@@ -42,12 +45,13 @@ public class Enemy : LivingThing , IHittableEntity
     public void GetHit(int damage)
     {
         TakeDamage(damage);
+        print("get hit - enemy");
     }
 
     public void TakeDamage(int damage) { // assumes damage is taken from PLAYER
-        if (canFunction)
+        print(isAlive);
+        if (isAlive)
         {
-            
             Stun(.2f);
             GameObject player = GameObject.FindWithTag("Player");
             //KnockAwayFromPoint(knockback, player.transform.position);
@@ -81,11 +85,12 @@ public class Enemy : LivingThing , IHittableEntity
     
     protected virtual bool AbleToMove()
     {
-        return canFunction && !movementDisabledAirborne && !movementDisabledTimed;
+        return isAlive && !movementDisabledAirborne && !movementDisabledTimed && !isStunned;
     }
 
     protected void PlayerScan_Update()
     {
+        //print(isAlive);
         const int maxHits = 20;
         Collider2D[] hitCollidersAggro = new Collider2D[maxHits];
         Collider2D[] hitCollidersAttack = new Collider2D[maxHits];
@@ -163,12 +168,14 @@ public class Enemy : LivingThing , IHittableEntity
     }
 
     public virtual void Interrupt() { // should stop all relevant coroutines
+        
     }
     
 
     protected void Die() {
+        print("enemy death");
         const float deathTime = 1f;
-        DisableFunctionality();
+        isAlive = false;
         Animator.SetTrigger(Death);
         Destroy(gameObject, deathTime);
     }
@@ -188,40 +195,32 @@ public class Enemy : LivingThing , IHittableEntity
         else if (Rigidbody.velocity.x < 0) {
             FaceLeft();
         }
-
-        // if (Rigidbody.velocity.x > .1)
-        // {
-        //     Animator.SetInteger(AnimState, 2);
-        // }
+        
         Animator.SetInteger(AnimState, Mathf.Abs(Rigidbody.velocity.x) > .1 ? 2 : 0);
         
-
-        // if (!animationLocked)
-        // {
-        //     Animator.SetInteger(AnimState, Mathf.Abs(Rigidbody.velocity.x) > .1 ? 2 : 0);
-        // }
     }
 
 
     public void Stun(float stunTime) {
         //Debug.Log("stun");
         Interrupt();
-        DisableFunctionality();
         StartCoroutine(StunCoroutine(stunTime));
     }
 
-    public override IEnumerator StunCoroutine(float stunTime) {
+    public IEnumerator StunCoroutine(float stunTime) {
+        BeginStun();
         yield return new WaitForSeconds(stunTime);
-        EnableFunctionality();
+        EndStun();
     }
 
-    protected virtual void DisableFunctionality() {
-        StopAllCoroutines();
-        canFunction = false;
+    protected virtual void BeginStun() {
+        //StopAllCoroutines();
+        isStunned = true;
     }
 
-    protected virtual void EnableFunctionality() {
-        canFunction = true;
+    protected virtual void EndStun()
+    {
+        isStunned = false;
     }
 
     public override void Yoink(float yoinkForce)

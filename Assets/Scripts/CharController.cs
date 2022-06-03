@@ -90,7 +90,7 @@ public partial class CharController : LivingThing
     
     // Trackers
     public float lightBuffer;
-    
+    private bool canFunction = true;
     private float lastAttackTime;
     private bool isAttacking;
     private int comboCounter;
@@ -280,7 +280,7 @@ public partial class CharController : LivingThing
 
     private bool IsAbleToMove()
     {
-        return !isAttacking && !isDashing && !isParrying && !isLineGrappling;
+        return !isAttacking && !isDashing && !isParrying && !isLineGrappling && canFunction;
     }
 
     private bool IsAbleToBeDamaged() {
@@ -313,7 +313,7 @@ public partial class CharController : LivingThing
     }
 
     private bool IsAbleToAct() {
-        return !isDashing && !isAttacking && !isParrying && !isSliceDashing;
+        return !isDashing && !isAttacking && !isParrying && !isSliceDashing && canFunction;
     }
 
     public void Invert() {

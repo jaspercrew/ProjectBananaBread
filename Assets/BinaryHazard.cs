@@ -13,6 +13,7 @@ public class BinaryHazard : BinaryEntity
     
     private bool isActive;
     public bool activeInReal;
+    public bool activeInAlt;
     public HazardBehavior behavior;
     public int damage;
     public Transform destination;
@@ -27,15 +28,15 @@ public class BinaryHazard : BinaryEntity
     protected override void TurnShifted()
     {
         base.TurnShifted();
-        if (activeInReal)
-        {
-            isActive = false;
-            spriteRenderer.enabled = false;
-        }
-        else
+        if (activeInAlt)
         {
             isActive = true;
             spriteRenderer.enabled = true;
+        }
+        if (!activeInAlt)
+        {
+            isActive = false;
+            spriteRenderer.enabled = false;
         }
     }
 
@@ -47,7 +48,7 @@ public class BinaryHazard : BinaryEntity
             isActive = true;
             spriteRenderer.enabled = true;
         }
-        else
+        if (!activeInReal)
         {
             isActive = false;
             spriteRenderer.enabled = false;

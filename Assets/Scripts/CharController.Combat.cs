@@ -107,6 +107,7 @@ public partial class CharController
     protected void Die() 
     {
         Animator.SetTrigger(Death);
+        canFunction = false;
         //transform.GetComponent<Collider>().enabled = false;
         Rigidbody.gravityScale = 0;
         GameManager.Instance.PlayerDeath();

@@ -83,7 +83,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator PlayerDeathCoroutine()
     {
         yield return new WaitForSeconds(2f);
-        SceneManager.LoadScene("TTHub");
+        SceneManager.LoadScene("DemoA");
     }
 
     private IEnumerator FreezeFrameCoroutine(float time)

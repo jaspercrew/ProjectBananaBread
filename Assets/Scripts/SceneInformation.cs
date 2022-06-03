@@ -66,7 +66,7 @@ public class SceneInformation : MonoBehaviour
     {
         //print(spawnPositions);
         
-        string e = GameManager.Instance.lastExitTouched;
+        string e = SceneTransitionManager.Instance.lastExitTouched;
         //print(e);
         
         if (spawnPositions.ContainsKey(e))

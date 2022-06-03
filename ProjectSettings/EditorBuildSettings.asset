@@ -9,10 +9,10 @@ EditorBuildSettings:
     path: 
     guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/Scenes/SceneT1.unity
+    path: Assets/Scenes/To be removed/SceneT1.unity
     guid: f64cb69f86b53924a9ea1cddbe56c5a3
   - enabled: 1
-    path: Assets/Scenes/TTHub.unity
+    path: Assets/Scenes/To be removed/TTHub.unity
     guid: a722a9c9cbaad064095fb6c402e48ab0
   - enabled: 1
     path: Assets/Scenes/DemoA.unity
@@ -21,39 +21,39 @@ EditorBuildSettings:
     path: Assets/Scenes/DemoB.unity
     guid: c317f727c5957384d9b16121ae03ec44
   - enabled: 1
-    path: Assets/Scenes/TTMove.unity
+    path: Assets/Scenes/To be removed/TTMove.unity
     guid: 96c5b7a9caee0b74182348c43509742a
   - enabled: 1
-    path: Assets/Scenes/TTShift.unity
+    path: Assets/Scenes/To be removed/TTShift.unity
     guid: b05820265d33ee246a90e7a859214208
   - enabled: 1
-    path: Assets/Scenes/TTWall.unity
+    path: Assets/Scenes/To be removed/TTWall.unity
     guid: cff286e0d72adbb409a7def510219181
   - enabled: 1
-    path: Assets/Scenes/TTGrapple.unity
+    path: Assets/Scenes/To be removed/TTGrapple.unity
     guid: d0e894a6155930b42a2d2a9f64536cb1
   - enabled: 1
-    path: Assets/Scenes/TTWind.unity
+    path: Assets/Scenes/To be removed/TTWind.unity
     guid: 7e99a926f19f1c04cbdf001954ed5dd3
   - enabled: 1
-    path: Assets/Scenes/TTGrav.unity
+    path: Assets/Scenes/To be removed/TTGrav.unity
     guid: b12a0a81ac69b664ba128273b082c8ee
   - enabled: 0
-    path: Assets/Scenes/TTCombat.unity
+    path: Assets/Scenes/To be removed/TTCombat.unity
     guid: 8d733a88779cfc049bd971a10524d638
   - enabled: 1
-    path: Assets/Scenes/Moving Test/top right.unity
+    path: Assets/Scenes/To be removed/Moving Test/top right.unity
     guid: 5027c8eb8fe93d144b6d4f66d7f7d2ba
   - enabled: 1
-    path: Assets/Scenes/Dev4.unity
+    path: Assets/Scenes/To be removed/Dev4.unity
     guid: b59c3fda08118df42aae13846ac9f06e
   - enabled: 1
-    path: Assets/Scenes/Moving Test/bottom left.unity
+    path: Assets/Scenes/To be removed/Moving Test/bottom left.unity
     guid: 7ce6d19f5dadca84185d800d439c0c53
   - enabled: 1
-    path: Assets/Scenes/Moving Test/bottom right.unity
+    path: Assets/Scenes/To be removed/Moving Test/bottom right.unity
     guid: eaf923d1bf2fc454ea0e20770eda73b4
   - enabled: 1
-    path: Assets/Scenes/Moving Test/top left.unity
+    path: Assets/Scenes/To be removed/Moving Test/top left.unity
     guid: 8aacebc4a86882445accad42ab7402f1
   m_configObjects: {}

@@ -11,7 +11,6 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public bool isGameShifted;
-    public string lastExitTouched;
     
     // public bool isDarkScene;
     private int frozenFrames;
@@ -36,6 +35,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        // TODO
         Application.targetFrameRate = 144;
     }
 

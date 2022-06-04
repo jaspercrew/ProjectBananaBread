@@ -90,6 +90,7 @@ public partial class CharController
         screenShakeController.MediumShake();
         StartCoroutine(TakeDamageCoroutine());
         Animator.SetTrigger(Hurt);
+        Interrupt();
         StartCoroutine(InvFrameCoroutine(InvTime));
         
         if (CurrentHealth <= 0) {
@@ -134,12 +135,12 @@ public partial class CharController
     private IEnumerator AttackCoroutine(int combo) {
         //print("attackco" + combo);
         // light attack modifiers
-        float attackBoost = 5.0f;
-        float beginAttackDelay = .4f;
+        float attackBoost = 3.0f;
+        float beginAttackDelay = .5f;
         float endAttackDelay = .45f;
 
         if (combo == 1) { 
-            attackBoost = 4.0f;
+            attackBoost = 3.0f;
             beginAttackDelay = .2f;
             endAttackDelay = .2f;
         }

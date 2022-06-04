@@ -356,7 +356,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7265325464984090082, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.13
+      value: -1.34
       objectReference: {fileID: 0}
     - target: {fileID: 7265325464984090082, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5930,10 +5930,12 @@ MonoBehaviour:
   Invertable: 1
   MaxHealth: 50
   CurrentHealth: 50
+  knocktime: 0.5
   speed: 5
   aggroRange: 10
   attackRange: 1
   attackCD: 4
+  knockbackMult: 4
   LOS_Aggro: 1
   LOS_Attack: 1
   attackPoint: {fileID: 1829154970}
@@ -6032,7 +6034,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 884480266}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: f7e9e0ccc833b3c48866f495215825f6, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -6065,7 +6067,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: f7e9e0ccc833b3c48866f495215825f6, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -6172,7 +6174,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1033829206}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -47.54, y: -7.39, z: 0}
+  m_LocalPosition: {x: -56.93, y: -7.39, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1245819113}

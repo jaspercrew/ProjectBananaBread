@@ -74,7 +74,7 @@ public class MeleeEnemy : CloseAttackerEnemy
 
     public override void Interrupt() { // should stop all relevant coroutines
         if (attackCo != null) {
-            print("stopped AttackCoroutine");
+            //print("stopped AttackCoroutine");
             StopCoroutine(attackCo); // interrupt attack if take damage
             Rigidbody.velocity = Vector2.zero;
             isAttacking = false;

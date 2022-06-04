@@ -78,8 +78,8 @@ public partial class CharController : LivingThing
     private const float MaxLightIntensity = .5f;
     private const float MaxOuterLightRadius = 5;
     private const float MaxInnerLightRadius = 3;
-    private const float ComboResetThreshold = 1f;
-    public float attackRange = .25f;
+    private const float ComboResetThreshold = 1.2f;
+    public float attackRange = .45f;
     public LayerMask enemyLayers;
     [SerializeField] private Transform attackPoint;
     [SerializeField] private Transform slicePoint;

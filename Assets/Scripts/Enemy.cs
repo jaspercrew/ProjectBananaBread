@@ -6,10 +6,12 @@ using UnityEngine.Serialization;
 
 public class Enemy : LivingThing , IHittableEntity
 {
+    public float knocktime = .2f;
     public float speed = 3f;
     public float aggroRange = 10f;
     public float attackRange;
     public float attackCD;
+    public float knockbackMult = 4f;
     public bool LOS_Aggro;
     public bool LOS_Attack;
     public Transform attackPoint;
@@ -22,7 +24,8 @@ public class Enemy : LivingThing , IHittableEntity
     protected bool movementDisabledTimed;
     protected bool playerInAggroRange;
     protected bool playerInAttackRange;
-    
+    protected bool beingKnocked;
+
     protected AIPath aiPath;
     protected CharController charController;
     protected LayerMask playerMask;
@@ -45,22 +48,24 @@ public class Enemy : LivingThing , IHittableEntity
     public void GetHit(int damage)
     {
         TakeDamage(damage);
-        print("get hit - enemy");
+        //print("get hit - enemy");
     }
 
     public void TakeDamage(int damage) { // assumes damage is taken from PLAYER
-        print(isAlive);
+        //print(isAlive);
         if (isAlive)
         {
-            Stun(.2f);
-            GameObject player = GameObject.FindWithTag("Player");
-            //KnockAwayFromPoint(knockback, player.transform.position);
-            StartCoroutine(DisableMoveCoroutine(.2f));
+            Stun(knocktime);
+
+            StartCoroutine(KnockbackCoroutine(CharController.Instance.transform.position.x > transform.position.x
+                ? Vector2.left
+                : Vector2.right));
+            //StartCoroutine(DisableMoveCoroutine(.2f));
             CurrentHealth -= damage;
             
             // damage animation
             Animator.SetTrigger(Hurt);
-            //StartCoroutine(AnimationLockCoroutine(.3f));
+
             ParticleSystem gorePS = transform.Find("Particles").Find("GorePS").GetComponent<ParticleSystem>();
             if (gorePS != null)
             {
@@ -81,6 +86,16 @@ public class Enemy : LivingThing , IHittableEntity
                 Die();
             }
         }
+    }
+
+    protected IEnumerator KnockbackCoroutine(Vector2 dir)
+    {
+        beingKnocked = true;
+        //Rigidbody.velocity = dir * knockbackMult;
+        Rigidbody.AddForce(dir * knockbackMult, ForceMode2D.Impulse);
+        yield return new WaitForSeconds(knocktime);
+        beingKnocked = false;
+        Rigidbody.velocity = Vector2.zero;
     }
     
     protected virtual bool AbleToMove()
@@ -134,6 +149,10 @@ public class Enemy : LivingThing , IHittableEntity
 
     protected virtual void Pathfind_Update()
     {
+        if (beingKnocked)
+        {
+            return;
+        }
         if (!AbleToMove())
         {
             Rigidbody.velocity = Vector2.zero;
@@ -189,6 +208,10 @@ public class Enemy : LivingThing , IHittableEntity
     // }
     
     protected virtual void TurnAround_Update() {
+        if (beingKnocked)
+        {
+            return;
+        }
         if (Rigidbody.velocity.x > 0) {
             FaceRight();
         }

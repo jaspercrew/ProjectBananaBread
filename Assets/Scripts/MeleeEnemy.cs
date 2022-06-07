@@ -20,9 +20,9 @@ public class MeleeEnemy : CloseAttackerEnemy
     }
     
 
-    protected override bool AbleToMove()
+    protected override bool IsUnfrozen()
     {
-        return base.AbleToMove() && !isAttacking && !playerInAttackRange;
+        return base.IsUnfrozen() && !isAttacking && !playerInAttackRange;
     }
 
     protected override void DoAttack()

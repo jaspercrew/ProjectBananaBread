@@ -45,7 +45,7 @@ public class Enemy : LivingThing , IHittableEntity
         playerMask = LayerMask.GetMask("Player");
     }
 
-    public void GetHit(int damage)
+    public virtual void GetHit(int damage)
     {
         TakeDamage(damage);
         //print("get hit - enemy");
@@ -98,9 +98,14 @@ public class Enemy : LivingThing , IHittableEntity
         Rigidbody.velocity = Vector2.zero;
     }
     
-    protected virtual bool AbleToMove()
+    protected virtual bool IsUnfrozen() //Set velocity to ZERO
     {
         return isAlive && !movementDisabledAirborne && !movementDisabledTimed && !isStunned;
+    }
+
+    protected virtual bool CanMove() //can begin new movements
+    {
+        return !beingKnocked && IsUnfrozen();
     }
 
     protected void PlayerScan_Update()
@@ -149,13 +154,15 @@ public class Enemy : LivingThing , IHittableEntity
 
     protected virtual void Pathfind_Update()
     {
-        if (beingKnocked)
+        if (!CanMove() && IsUnfrozen())
         {
+            print("a");
             return;
         }
-        if (!AbleToMove())
+        if (!IsUnfrozen())
         {
-            Rigidbody.velocity = Vector2.zero;
+            //print("b");
+            Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
         }
         //Debug.Log(movementDisabledAirborne);
         if (LOS_Aggro)
@@ -165,7 +172,7 @@ public class Enemy : LivingThing , IHittableEntity
                 return;
             }
         }
-        if (AbleToMove() && playerInAggroRange)
+        if (IsUnfrozen() && playerInAggroRange)
         {
             float thisXPos = transform.position.x;
             float charXPos = charController.transform.position.x;

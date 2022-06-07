@@ -424,6 +424,11 @@ public partial class CharController
             SaveData.SaveToFile(1);
         if (Input.GetKeyDown(KeyCode.RightBracket))
             SaveData.LoadFromFile(1);
+
+        if (!isAttacking)
+        {
+            Animator.speed = 1;
+        }
         
         
         // if (WindEmitterChild.targetWind == null) {

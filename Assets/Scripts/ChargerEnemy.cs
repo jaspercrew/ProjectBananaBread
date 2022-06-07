@@ -52,9 +52,9 @@ public class ChargerEnemy : CloseAttackerEnemy
         return base.AttackConditions() && !isCharging && !isWaiting;
     }
 
-    protected override bool AbleToMove()
+    protected override bool IsUnfrozen()
     {
-        return base.AbleToMove() && !isCharging && !isWaiting && !playerInAttackRange;
+        return base.IsUnfrozen() && !isCharging && !isWaiting && !playerInAttackRange;
     }
 
     protected virtual void CheckCollision_Update()

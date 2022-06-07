@@ -58,7 +58,7 @@ public partial class CharController : LivingThing
     private const float OnGroundDeceleration = 30f;
     private const float InAirAcceleration = 18f;
     private const float InAirDrag = 1.5f;
-    private const float MaxYSpeed = 20f;
+    private const float MaxYSpeed = 30f;
     private const float dashBoost = 15f;
     // private const float VerticalDrag = 10f;
     [SerializeField]
@@ -69,7 +69,7 @@ public partial class CharController : LivingThing
     private const float ParryCooldown = 1f;
     private const float ParryTime = .4f;
     private const float DashCooldown = 1f;
-    public const float ShiftCooldown = 0.5f;
+    public const float ShiftCooldown = 1f;
     const float InvTime = .85f;
     public const float MaxFury = 100;
     public const float FuryIncrement = 10;

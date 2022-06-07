@@ -7,6 +7,7 @@ public partial class CharController
 {
     private Rigidbody2D castProjectileRb;
     public Rigidbody2D castProjectileInput;
+    private const float attackTimeMultiplier = .75f;
     private void DoSliceDash() {
         if (!IsAbleToAct()) {
              return;
@@ -136,19 +137,19 @@ public partial class CharController
         //print("attackco" + combo);
         // light attack modifiers
         float attackBoost = 3.0f;
-        float beginAttackDelay = .5f;
-        float endAttackDelay = .45f;
+        float beginAttackDelay = .45f;
+        float endAttackDelay = .2f;
 
         if (combo == 1) { 
             attackBoost = 3.0f;
             beginAttackDelay = .2f;
-            endAttackDelay = .2f;
+            endAttackDelay = .1f;
         }
 
         else if (combo == 2) { 
             attackBoost = 6.0f;
-            beginAttackDelay = .37f;
-            endAttackDelay = .4f;
+            beginAttackDelay = .27f;
+            endAttackDelay = .3f;
         }
 
         if (Rigidbody.velocity.x > 0)
@@ -168,12 +169,13 @@ public partial class CharController
             Rigidbody.AddForce(new Vector2(moveVector * attackBoost, 0), ForceMode2D.Impulse);
             //Rigidbody.velocity = new Vector2(moveVector * attackBoost, Rigidbody.velocity.y);
         }
-        yield return new WaitForSeconds(beginAttackDelay);
+        yield return new WaitForSeconds(beginAttackDelay * attackTimeMultiplier);
         
         
         const int maxEnemiesHit = 20;
         Collider2D[] hitColliders = new Collider2D[maxEnemiesHit];
-        
+
+        print("scanattack");
         // scan for hit enemies
         Physics2D.OverlapCircleNonAlloc(
             attackPoint.position, attackRange, hitColliders, enemyLayers);
@@ -213,7 +215,7 @@ public partial class CharController
             AudioManager.Instance.Play(SoundName.Hit, .5f);
         }
         
-        yield return new WaitForSeconds(3 * endAttackDelay / 4);
+        yield return new WaitForSeconds(endAttackDelay * attackTimeMultiplier);
         
         if (Rigidbody.velocity.x > 0)
         {
@@ -225,7 +227,7 @@ public partial class CharController
             Rigidbody.velocity = 
                 new Vector2(Math.Max(Rigidbody.velocity.x, -.1f), Rigidbody.velocity.y);
         }
-        yield return new WaitForSeconds(1 * endAttackDelay / 4);
+        //yield return new WaitForSeconds(1 * endAttackDelay / 4);
         
         isAttacking = false;
     }
@@ -234,7 +236,7 @@ public partial class CharController
         // _screenShakeController.LightShake();
         isAttacking = true;
         //Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
-        Animator.speed = 1;
+        Animator.speed = 1 / attackTimeMultiplier;
         // Assert.IsTrue(comboCount <= HeavyAttackBuildup);
         switch (combo) {
             case 0:

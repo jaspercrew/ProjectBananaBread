@@ -14,5 +14,9 @@ public class SceneTransitionManager : MonoBehaviour
         {
             Instance = this;
         }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 }

@@ -9,13 +9,21 @@ public class SceneExitLoadZone : MonoBehaviour
 {
     public string exitName;
     public Object scene;
-    
+    private static readonly int Start = Animator.StringToHash("Start");
+
     private void SwitchScene()
     {
         SaveData.SaveToFile(1);
-        SceneManager.LoadSceneAsync(scene.name); // TODO wtf async wtf?? (in wayne voice)
+        StartCoroutine(LoadScene());
     }
-    
+
+    private IEnumerator LoadScene()
+    {
+        SceneInformation.Instance.sceneFadeAnim.speed = 1 / SceneInformation.SceneTransitionTime;
+        SceneInformation.Instance.sceneFadeAnim.SetTrigger(Start);
+        yield return new WaitForSeconds(SceneInformation.SceneTransitionTime);
+        SceneManager.LoadSceneAsync(scene.name);
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {

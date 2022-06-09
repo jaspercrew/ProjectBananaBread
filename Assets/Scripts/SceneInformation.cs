@@ -17,6 +17,11 @@ public class SceneInformation : MonoBehaviour
 {
     public static SceneInformation Instance;
 
+    public const float SceneTransitionTime = 0.75f;
+
+    [HideInInspector]
+    public Animator sceneFadeAnim;
+
     public bool isDarkScene;
     public bool isGravityScene;
     public bool isWindScene;
@@ -41,6 +46,7 @@ public class SceneInformation : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        sceneFadeAnim = GetComponentInChildren<Animator>();
         
         // Debug.Log("loading exit info");
         foreach (ExitToSpawn exitMapping in exitMappings)
@@ -71,7 +77,7 @@ public class SceneInformation : MonoBehaviour
         
         if (spawnPositions.ContainsKey(e))
         {
-            Debug.LogWarning("exit " + e + " maps to " + spawnPositions[e]);
+            Debug.Log("exit " + e + " maps to " + spawnPositions[e]);
             return spawnPositions[e];
         }
 

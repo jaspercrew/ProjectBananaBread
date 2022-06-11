@@ -88,7 +88,7 @@ public partial class CharController
         CurrentHealth -= damage;
         GameManager.Instance.FreezeFrame();
         UIManager.Instance.CheckHealth();
-        screenShakeController.MediumShake();
+        screenShakeController.LargeShake();
         StartCoroutine(TakeDamageCoroutine());
         Animator.SetTrigger(Hurt);
         Interrupt();
@@ -112,6 +112,7 @@ public partial class CharController
         canFunction = false;
         Rigidbody.gravityScale = 0;
         Rigidbody.velocity = Vector2.zero;
+        Rigidbody.bodyType = RigidbodyType2D.Static;
         GameManager.Instance.PlayerDeath();
     }
 
@@ -175,7 +176,7 @@ public partial class CharController
         const int maxEnemiesHit = 20;
         Collider2D[] hitColliders = new Collider2D[maxEnemiesHit];
 
-        print("scanattack");
+        //print("scanattack");
         // scan for hit enemies
         Physics2D.OverlapCircleNonAlloc(
             attackPoint.position, attackRange, hitColliders, enemyLayers);

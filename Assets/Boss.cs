@@ -99,11 +99,11 @@ public class Boss : Enemy
     private IEnumerator SlashLoop()
     {
 
-        yield return StartCoroutine(Slash(1, 10.0f, .3f, 
+        yield return StartCoroutine(Slash(1, 15.0f, .3f, 
             .2f, 1f, "Attack1"));
-        yield return StartCoroutine(Slash(1, 10.0f, .3f, 
+        yield return StartCoroutine(Slash(1, 15.0f, .3f, 
             .2f, 1f, "Attack2"));
-        yield return StartCoroutine(Slash(1, 10.0f, .3f, 
+        yield return StartCoroutine(Slash(1, 15.0f, .3f, 
             .2f, 1f, "Attack3"));
 
     }

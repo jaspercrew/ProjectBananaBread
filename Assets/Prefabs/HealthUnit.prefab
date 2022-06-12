@@ -95,5 +95,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26e1091ebb43ea74c81db567f437697f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filledSprite: {fileID: 21300000, guid: a591e51adf27ac64186f57a2c425de5e, type: 3}
-  emptySprite: {fileID: 21300000, guid: ad9398e44891d464fa273abbcd33fee7, type: 3}
+  filledSprite: {fileID: 21300000, guid: 719dd0013749d66488c4b5360086d20d, type: 3}
+  emptySprite: {fileID: 21300000, guid: 2d004ae2589bd9941a6b5a0a0308ac5c, type: 3}

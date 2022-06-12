@@ -38,6 +38,7 @@ public partial class CharController
         grappleLOSRenderer.enabled = false;
         grappleClearRenderer = transform.Find("GrappleClear").GetComponent<LineRenderer>();
         grappleClearRenderer.enabled = false;
+        groundCheck = transform.Find("GroundCheck").GetComponent<BoxCollider2D>();
 
         charLight = transform.Find("Light").GetComponent<Light2D>();
         lightBuffer = MaxLightBuffer;
@@ -471,6 +472,10 @@ public partial class CharController
             //LightCheckUpdate();
         }
     }
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
 
     // private void LightCheckUpdate()
     // {
@@ -685,24 +690,32 @@ public partial class CharController
         Vector2 center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
         
         // left points
+        
         Vector2 middleLeft = center + halfWidth * Vector2.left;
+        Vector2 topLeft = middleLeft + halfHeight * Vector2.up;
         Vector2 bottomLeft = middleLeft + halfHeight * Vector2.down;
         Vector2 aLittleLeft = 2 * groundDistance * Vector2.left;
         
         // right points
         Vector2 middleRight = center + halfWidth * Vector2.right;
+        Vector2 topRight = middleRight + halfHeight * Vector2.up;
         Vector2 bottomRight = middleRight + halfHeight * Vector2.down;
         Vector2 aLittleRight = 2 * groundDistance * Vector2.right;
 
         // left linecasts
         RaycastHit2D bottomLeftHit = 
             Physics2D.Linecast(bottomLeft, bottomLeft + aLittleLeft, obstacleLayerMask);
-        bool isNearWallOnLeft = bottomLeftHit;
+        RaycastHit2D topLeftHit = 
+            Physics2D.Linecast(topLeft, topLeft + aLittleLeft, obstacleLayerMask);
+        bool isNearWallOnLeft = bottomLeftHit && topLeftHit;
+        
 
         // right linecasts
         RaycastHit2D bottomRightHit = 
             Physics2D.Linecast(bottomRight, bottomRight + aLittleRight, obstacleLayerMask);
-        bool isNearWallOnRight = bottomRightHit;
+        RaycastHit2D topRightHit = 
+            Physics2D.Linecast(topRight, topRight + aLittleRight, obstacleLayerMask);
+        bool isNearWallOnRight = bottomRightHit && topRightHit;
 
         // isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) 
         //                              || (moveVector < 0 && isNearWallOnLeft)) && IsAbleToMove();

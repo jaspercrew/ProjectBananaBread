@@ -17,7 +17,7 @@ public class SceneInformation : MonoBehaviour
 {
     public static SceneInformation Instance;
 
-    public const float SceneTransitionTime = 0.75f;
+    public const float SceneTransitionTime = 0.55f;
 
     [HideInInspector]
     public Animator sceneFadeAnim;

@@ -98,14 +98,14 @@ public class Enemy : LivingThing , IHittableEntity
         Rigidbody.velocity = Vector2.zero;
     }
     
-    protected virtual bool IsUnfrozen() //Set velocity to ZERO
+    protected virtual bool IsFrozen() //Set velocity to ZERO
     {
-        return isAlive && !movementDisabledAirborne && !movementDisabledTimed && !isStunned;
+        return !isAlive || movementDisabledAirborne || movementDisabledTimed || isStunned;
     }
 
     protected virtual bool CanMove() //can begin new movements
     {
-        return !beingKnocked && IsUnfrozen();
+        return !beingKnocked && !IsFrozen();
     }
 
     protected void PlayerScan_Update()
@@ -154,15 +154,16 @@ public class Enemy : LivingThing , IHittableEntity
 
     protected virtual void Pathfind_Update()
     {
-        if (!CanMove() && IsUnfrozen())
+        if (!CanMove())
         {
-            print("a");
+            //print("a");
             return;
         }
-        if (!IsUnfrozen())
+        if (IsFrozen())
         {
             //print("b");
             Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
+            return;
         }
         //Debug.Log(movementDisabledAirborne);
         if (LOS_Aggro)
@@ -172,8 +173,9 @@ public class Enemy : LivingThing , IHittableEntity
                 return;
             }
         }
-        if (IsUnfrozen() && playerInAggroRange)
+        if (playerInAggroRange)
         {
+            //print("c");
             float thisXPos = transform.position.x;
             float charXPos = charController.transform.position.x;
             const float buffer = .5f;
@@ -215,7 +217,7 @@ public class Enemy : LivingThing , IHittableEntity
     // }
     
     protected virtual void TurnAround_Update() {
-        if (beingKnocked)
+        if (!CanMove())
         {
             return;
         }

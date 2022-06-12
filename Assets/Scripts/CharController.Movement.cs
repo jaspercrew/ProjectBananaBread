@@ -33,12 +33,18 @@ public partial class CharController
     // dash coroutine handles stopping the dash
     private IEnumerator DashCoroutine(float dashTime, float dashSpeed)
     {
+        Vector2 tempSize = groundCheck.size;
+        Vector2 tempOffset = groundCheck.offset;
+        groundCheck.size = new Vector2(groundCheck.size.x, groundCheck.size.y / 2);
+        groundCheck.offset = new Vector2(groundCheck.offset.x, groundCheck.offset.y - groundCheck.size.y / 2);
         charCollider.enabled = false;
         yield return new WaitForSeconds(dashTime);
         charCollider.enabled = true;
         //Rigidbody.velocity = new Vector2(Rigidbody.velocity.x - dashSpeed, Rigidbody.velocity.y);
         isDashing = false;
         trailRenderer.emitting = false;
+        groundCheck.size = tempSize;
+        groundCheck.offset = tempOffset;
     }
 
     private void DoJump()
@@ -46,15 +52,15 @@ public partial class CharController
         //print("jumpcall");
         justJumped = true;
         dust.Play();
-        const float wallJumpModX = .8f;
-        const float wallJumpModY = 1.1f;
+        const float wallJumpModX = 1.0f;
+        const float wallJumpModY = 1.4f;
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
 
         if ((isWallSliding || wallJumpAvailable) && !isGrounded)
         {
             //Debug.Log("WALLJUMP");
-            forcedMoveTime = .17f;
+            forcedMoveTime = .25f;
             if (wallJumpDir == -1)
             {
                 //FaceLeft();

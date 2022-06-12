@@ -55,6 +55,10 @@ public class ScreenShakeController : MonoBehaviour {
         StartShake(.1f, 4f);
     }
     
+    public void LargeShake() {
+        StartShake(.13f, 6f);
+    }
+    
     public void LightShake() {
         StartShake(.1f, 1.6f);
     }

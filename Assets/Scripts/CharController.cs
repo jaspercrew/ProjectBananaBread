@@ -23,6 +23,7 @@ public partial class CharController : LivingThing
     // ReSharper disable once InconsistentNaming
     private LineRenderer grappleLOSRenderer;
     private LineRenderer grappleClearRenderer;
+    private BoxCollider2D groundCheck;
 
     // private Transform parentWindFX;
     // private ParticleSystem leftWindFX;
@@ -69,8 +70,8 @@ public partial class CharController : LivingThing
     private const float ParryCooldown = 1f;
     private const float ParryTime = .4f;
     private const float DashCooldown = 1f;
-    public const float ShiftCooldown = 1f;
-    const float InvTime = .85f;
+    public const float ShiftCooldown = 1.5f;
+    const float InvTime = 1.25f;
     public const float MaxFury = 100;
     public const float FuryIncrement = 10;
     private const int AttackDamage = 1;
@@ -79,7 +80,7 @@ public partial class CharController : LivingThing
     private const float MaxOuterLightRadius = 5;
     private const float MaxInnerLightRadius = 3;
     private const float ComboResetThreshold = 1.2f;
-    public float attackRange = .45f;
+    private const float attackRange = 1.15f;
     public LayerMask enemyLayers;
     [SerializeField] private Transform attackPoint;
     [SerializeField] private Transform slicePoint;

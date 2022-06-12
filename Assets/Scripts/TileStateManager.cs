@@ -15,7 +15,13 @@ public class TileStateManager : MonoBehaviour
     private Grid real;
     private Grid alt;
 
-    private TileStateManager()
+    // private TileStateManager()
+    // {
+    //     if (Instance == null)
+    //         Instance = this;
+    // }
+
+    void Awake()
     {
         if (Instance == null)
             Instance = this;

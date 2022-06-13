@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,7 +14,7 @@ public class SaveData
     
     private int playerHealth;
     private string playerScene;
-    private Dictionary<string, bool> doors = new Dictionary<string, bool>();
+    private Dictionary<string, bool> levers = new Dictionary<string, bool>();
 
     private SaveData()
     {
@@ -32,9 +33,10 @@ public class SaveData
             // update stuff here, then save to object file
             playerHealth = CharController.Instance.CurrentHealth,
             playerScene = SceneManager.GetActiveScene().name,
-            doors = new Dictionary<string, bool>(instance.doors)
+            levers = GameManager.Instance.leverDict
         };
 
+        // write to file
         DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(SaveData));
         MemoryStream jsonStream = new MemoryStream();
         jsonSerializer.WriteObject(jsonStream, instance);
@@ -58,9 +60,21 @@ public class SaveData
             return;
         }
 
-        instance = (SaveData) jsonSerializer.ReadObject(fileStream);
+        try
+        {
+            instance = (SaveData) jsonSerializer.ReadObject(fileStream);
+        }
+        catch (SerializationException)
+        {
+            Debug.LogError("something is wrong with the save file, ignoring it");
+            return;
+        }
+        
         CharController.Instance.CurrentHealth = instance.playerHealth;
         UIManager.Instance.PopulateHealthBarPublic();
+        GameManager.Instance.leverDict = instance.levers;
+        GameManager.Instance.isReady = true;
+        // SceneManager.LoadSceneAsync(instance.playerScene); // TODO ??
 
         // AsyncOperation op = SceneManager.LoadSceneAsync(instance.playerScene);
         // // apply save data to player and world here
@@ -70,15 +84,5 @@ public class SaveData
         //     UIManager.Instance.PopulateHealthBarPublic();
         //     // Debug.Log("finished loading new scene");
         // };
-    }
-
-    public static void OpenDoor(string door)
-    {
-        instance.doors[door] = true;
-    }
-
-    public static void CloseDoor(string door)
-    {
-        instance.doors[door] = false;
     }
 }

@@ -2,30 +2,52 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Lever : ActivatorTrigger , IHittableEntity
+public class Lever : ActivatorTrigger, IHittableEntity
 {
     public string leverName;
     private Dictionary<string, bool> leverDict;
+    private SpriteRenderer sr;
+    
+    private Sprite offSprite;
+    private Sprite onSprite;
 
     public override void Activate()
     {
-        isActivated  = true;
-        leverDict[leverName] = isActivated;
+        base.Activate();
+        Debug.Log("lever activated");
+        sr.sprite = onSprite;
+        leverDict[leverName] = true;
     }
-    // Start is called before the first frame update
-    void Start()
+
+    private void Start()
     {
+        StartCoroutine(CoStart());
+    }
+
+    private IEnumerator CoStart()
+    {
+        // TODO: this is stinky
+        Sprite[] leverSprites = Resources.LoadAll<Sprite>("Sprites/lever");
+        offSprite = leverSprites[0];
+        onSprite = leverSprites[1];
+        sr = GetComponent<SpriteRenderer>();
+
+        yield return new WaitUntil(() => GameManager.Instance.isReady);
         leverDict = GameManager.Instance.leverDict;
+        
         if (!leverDict.ContainsKey(leverName))
         {
+            Debug.Log("lever not detected");
             leverDict.Add(leverName, false);
         }
+        
         isActivated = leverDict[leverName];
+        sr.sprite = isActivated? onSprite : offSprite;
     }
 
     public void GetHit(int damage)
     {
-        if (!isActivated )
+        if (!isActivated)
         {
             Activate();
         }

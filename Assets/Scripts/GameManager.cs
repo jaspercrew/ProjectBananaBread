@@ -16,11 +16,7 @@ public class GameManager : MonoBehaviour
     private int frozenFrames;
 
     public Dictionary<string, bool> leverDict = new Dictionary<string, bool>();
-    // private GameManager()
-    // {
-    //     if (Instance == null)
-    //         Instance = this;
-    // }
+    public bool isReady = false;
 
     private void Awake()
     {

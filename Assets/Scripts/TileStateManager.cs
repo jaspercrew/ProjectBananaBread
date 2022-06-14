@@ -1,25 +1,19 @@
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class TileStateManager : MonoBehaviour
 {
     public static TileStateManager Instance;
+    public GameObject lineRendererPrefab;
     
-    // need both renderers to switch graphics and colliders to switch collisions
-    // private TilemapRenderer bothLayersRenderer;
-    // private TilemapRenderer realLayerRenderer;
-    // private TilemapRenderer altLayerRenderer;
-    // private TilemapCollider2D bothLayersCollider;
-    // private TilemapCollider2D realLayerCollider;
-    // private TilemapCollider2D altLayerCollider;
-    private Grid real;
-    private Grid alt;
+    private Transform realGround;
+    private Transform altGround;
+    private Grid realGrid;
+    private Grid altGrid;
 
-    // private TileStateManager()
-    // {
-    //     if (Instance == null)
-    //         Instance = this;
-    // }
+    private GameObject realLrParent;
+    private GameObject altLrParent;
+    private CompositeCollider2D realCc;
+    private CompositeCollider2D altCc;
 
     void Awake()
     {
@@ -31,37 +25,59 @@ public class TileStateManager : MonoBehaviour
     private void Start()
     {
         Grid both = transform.Find("GridMain").GetComponent<Grid>();
-        real = transform.Find("GridA").GetComponent<Grid>();
-        alt = transform.Find("GridB").GetComponent<Grid>();
+        realGrid = transform.Find("GridA").GetComponent<Grid>();
+        altGrid = transform.Find("GridB").GetComponent<Grid>();
         
-        // Transform both = transform.Find("BothLayer");
-        // Transform real = transform.Find("RealLayer");
-        // Transform alt = transform.Find("AltLayer");
-        //
-        // bothLayersRenderer = both.GetComponent<TilemapRenderer>();
-        // realLayerRenderer = real.GetComponent<TilemapRenderer>();
-        // altLayerRenderer = alt.GetComponent<TilemapRenderer>();
-        //
-        // bothLayersCollider = both.GetComponent<TilemapCollider2D>();
-        // realLayerCollider = real.GetComponent<TilemapCollider2D>();
-        // altLayerCollider = alt.GetComponent<TilemapCollider2D>();
-        //
-        // bothLayersRenderer.enabled = true;
-        // bothLayersCollider.enabled = true;
         both.enabled = true;
+
+        realGround = realGrid.transform.Find("A-Ground");
+        altGround = altGrid.transform.Find("B-Ground");
+        realCc = realGround.gameObject.GetComponent<CompositeCollider2D>();
+        altCc = altGround.gameObject.GetComponent<CompositeCollider2D>();
+
+        CalculateAndSpawnOutlines("A", out realLrParent, realCc, realGround);
+        CalculateAndSpawnOutlines("B", out altLrParent, altCc, altGround);
         
         ShiftTilesTo(GameManager.Instance.isGameShifted);
     }
 
     public void ShiftTilesTo(bool isAlt)
     {
-        //Debug.Log("shifttiles");
-        // realLayerRenderer.enabled = !isAlt;
-        // realLayerCollider.enabled = !isAlt;
-        // altLayerRenderer.enabled = isAlt;
-        // altLayerCollider.enabled = isAlt;
-        real.enabled = !isAlt;
-        alt.enabled = isAlt;
+        realGrid.enabled = !isAlt;
+        realLrParent.SetActive(isAlt);
+        altGrid.enabled = isAlt;
+        altLrParent.SetActive(!isAlt);
+    }
 
+    private void CalculateAndSpawnOutlines(string prefix, out GameObject lrParent, 
+        CompositeCollider2D cc, Transform groundParent)
+    {
+        lrParent = new GameObject(prefix + "-Ground-Outline")
+        {
+            transform =
+            {
+                parent = groundParent
+            }
+        };
+
+        for (int path = 0; path < cc.pathCount; path++)
+        {
+            GameObject outline = Instantiate(lineRendererPrefab, lrParent.transform);
+            outline.name = prefix + "-Ground-Outline-" + path;
+            LineRenderer lr = outline.GetComponent<LineRenderer>();
+            
+            Vector2[] pathPoints2 = new Vector2[cc.GetPathPointCount(path) + 1];
+            cc.GetPath(path, pathPoints2);
+            pathPoints2[pathPoints2.Length - 1] = pathPoints2[0];
+            
+            Vector3[] pathPoints3 = new Vector3[pathPoints2.Length];
+            for (int i = 0; i < pathPoints2.Length; i++)
+            {
+                pathPoints3[i] = pathPoints2[i];
+            }
+
+            lr.positionCount = pathPoints3.Length;
+            lr.SetPositions(pathPoints3);
+        }
     }
 }

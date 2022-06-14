@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4978747005358058878}
   - component: {fileID: 7003878052467744176}
   m_Layer: 6
-  m_Name: LineRenderer
+  m_Name: TileOutlineLineRenderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -71,9 +71,7 @@ LineRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Positions:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 1}
+  m_Positions: []
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1

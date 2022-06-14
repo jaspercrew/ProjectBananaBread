@@ -569,7 +569,7 @@ public partial class CharController
         Vector2 bottomMiddle = center + halfHeight * Vector2.down;
         Vector2 bottomLeft = bottomMiddle + halfWidth * Vector2.left;
         Vector2 bottomRight = bottomMiddle + halfWidth * Vector2.right;
-        Vector2 aLittleDown = 2 * groundDistance * Vector2.down;
+        Vector2 aLittleDown = 5 * groundDistance * Vector2.down;
         
         Debug.DrawLine(bottomLeft, bottomLeft + aLittleDown, Color.magenta);
         Debug.DrawLine(bottomRight, bottomRight + aLittleDown, Color.magenta);

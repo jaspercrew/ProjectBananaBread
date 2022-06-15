@@ -1,13 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using PathCreation;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace PathCreation.Examples {
+namespace PathCreator.Examples.Scripts {
 
     public class PathSpawner : MonoBehaviour {
 
-        public PathCreator pathPrefab;
+        public PathCreation.PathCreator pathPrefab;
         public PathFollower followerPrefab;
         public Transform[] spawnPoints;
 

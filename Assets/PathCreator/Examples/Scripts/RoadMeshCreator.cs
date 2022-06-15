@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using PathCreation.Utility;
+﻿using PathCreation;
 using UnityEngine;
 
-namespace PathCreation.Examples {
+namespace PathCreator.Examples.Scripts {
     public class RoadMeshCreator : PathSceneTool {
         [Header ("Road settings")]
         public float roadWidth = .4f;
@@ -146,7 +145,7 @@ namespace PathCreation.Examples {
 
         void AssignMaterials () {
             if (roadMaterial != null && undersideMaterial != null) {
-                meshRenderer.sharedMaterials = new Material[] { roadMaterial, undersideMaterial, undersideMaterial };
+                meshRenderer.sharedMaterials = new[] { roadMaterial, undersideMaterial, undersideMaterial };
                 meshRenderer.sharedMaterials[0].mainTextureScale = new Vector3 (1, textureTiling);
             }
         }

@@ -1,17 +1,14 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class TPBox : MonoBehaviour
+public class TeleportBox : MonoBehaviour
 {
-    private BoxCollider2D boxCollider;
+    // private BoxCollider2D boxCollider;
 
     private Vector3 point;
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        boxCollider = GetComponent<BoxCollider2D>();
+        // boxCollider = GetComponent<BoxCollider2D>();
         point = transform.Find("TPPoint").transform.position;
     }
 

@@ -3,14 +3,14 @@ using UnityEngine;
 
 public abstract class LivingThing : BinaryEntity {
     // Configurable values 
-    public int MaxHealth;
+    public int maxHealth;
     //protected bool isStunned;
 
     // Trackers
-    public int CurrentHealth;
+    public int currentHealth;
     protected Animator Animator;
     protected Rigidbody2D Rigidbody;
-    protected bool isDashing;
+    protected bool IsDashing;
 
     // animator values beforehand to save time later
     protected static readonly int AnimState = Animator.StringToHash("AnimState");
@@ -44,7 +44,7 @@ public abstract class LivingThing : BinaryEntity {
     
     // boosts the game object in a certain cardinal direction 
     protected void VelocityDash(float dashSpeed, float dashTime) {
-        isDashing = true;
+        IsDashing = true;
         StartCoroutine(DashCoroutine(dashTime, dashSpeed));
         // monstrosity removed
         Rigidbody.velocity = new Vector2(Rigidbody.velocity.x + dashSpeed, Rigidbody.velocity.y);
@@ -55,7 +55,7 @@ public abstract class LivingThing : BinaryEntity {
         //Debug.Log(savedVel);
         yield return new WaitForSeconds(dashTime);
         Rigidbody.velocity = new Vector2(Rigidbody.velocity.x - dashSpeed, Rigidbody.velocity.y);
-        isDashing = false;
+        IsDashing = false;
     }
 
     // pauses the animator for pauseTime

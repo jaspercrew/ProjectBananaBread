@@ -1,21 +1,18 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ActivatorHolder : ActivatorTrigger
 {
-    
-    private Collider2D Collider2D;
     private SpriteRenderer spriteRenderer;
+    // ReSharper disable once NotAccessedField.Local
+    private new Collider2D collider2D;
     public float yLockOffset = .5f;
     public Sprite offSprite;
     public Sprite onSprite;
     
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        Collider2D = GetComponent<Collider2D>();
+        collider2D = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = offSprite;
     }

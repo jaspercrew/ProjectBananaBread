@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using Cinemachine;
-using Unity.Mathematics;
 using UnityEngine;
-using Random = UnityEngine.Random;
+
 public class ScreenShakeController : MonoBehaviour {
     public static ScreenShakeController Instance;
     public CinemachineVirtualCamera virtualCamera;

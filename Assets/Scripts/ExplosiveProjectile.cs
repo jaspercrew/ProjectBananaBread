@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ExplosiveProjectile : Projectile
@@ -12,13 +11,7 @@ public class ExplosiveProjectile : Projectile
 
     public SpriteRenderer explodeFX;
     private SpriteRenderer instantiatedExplodeFX;
-
-
-
-
     
-    
-
     protected override IEnumerator ProjectileLifetimeCheck()
     {
         yield return new WaitForSeconds(lifetime);
@@ -34,9 +27,9 @@ public class ExplosiveProjectile : Projectile
                 Initialize(new Vector2(-v.x, -v.y));
                 canHitEnemy = true;
             }
-            else if (CharController.Instance.IFrames())
+            else if (CharController.Instance.CanGetIFrames())
             {
-                return;
+                // return;
             }
             else
             {
@@ -63,10 +56,11 @@ public class ExplosiveProjectile : Projectile
  
         const int maxHits = 20;
         Collider2D[] hitColliders = new Collider2D[maxHits];
-        int numHits = Physics2D.OverlapCircleNonAlloc(transform.position, radius,
-            hitColliders);
-        foreach (Collider2D col in hitColliders)
+        int numHits = Physics2D.OverlapCircleNonAlloc(transform.position, radius, hitColliders);
+        
+        for (int i = 0; i < numHits; i++)
         {
+            Collider2D col = hitColliders[i];
             if (col != null)
             {
                 //Debug.Log(col.gameObject.name);

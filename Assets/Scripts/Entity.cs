@@ -1,12 +1,12 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
-    public bool Invertable = true;
+    public bool invertible = true;
+    
     public virtual void Shift()
     {
-        if (SceneInformation.Instance.isGravityScene && Invertable && GetComponent<Rigidbody2D>() != null)
+        if (SceneInformation.Instance.isGravityScene && invertible && GetComponent<Rigidbody2D>() != null)
         {
             GetComponent<Rigidbody2D>().gravityScale *= -1;
         }

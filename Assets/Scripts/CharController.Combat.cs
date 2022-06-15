@@ -1,13 +1,12 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Android;
 
 public partial class CharController
 {
     private Rigidbody2D castProjectileRb;
     public Rigidbody2D castProjectileInput;
-    private const float attackTimeMultiplier = .75f;
+    private const float AttackTimeMultiplier = .75f;
     private void DoSliceDash() {
         if (!IsAbleToAct()) {
              return;
@@ -36,13 +35,13 @@ public partial class CharController
         Rigidbody.velocity = Vector2.zero;
         Transform t = transform; // more efficient, according to Rider
         t.localScale = new Vector3(-t.localScale.x, t.localScale.y, 0);
-        isDashing = false;
+        IsDashing = false;
         isSliceDashing = false;
         isAttacking = true;
         
         yield return new WaitForSeconds(1.25f);
         Animator.SetTrigger(Attack);
-        if (enemy.CurrentHealth < SliceDamage) { //execute
+        if (enemy.currentHealth < SliceDamage) { //execute
                 
         }
         else {
@@ -72,8 +71,8 @@ public partial class CharController
     private void CauseSwitch()
     {
         lastShiftTime = Time.time;
-        PPManager.Instance.ShiftEffect(!GameManager.Instance.isGameShifted);
-        transform.Find("ShiftCD").GetComponent<ShiftCD>().image.fillAmount = 1; //TODO: FIX
+        PpManager.Instance.ShiftEffect(!GameManager.Instance.isGameShifted);
+        transform.Find("ShiftCD").GetComponent<ShiftCooldown>().image.fillAmount = 1; //TODO: FIX
         switchPS.Play();
         
         GameManager.Instance.ShiftWorld();
@@ -85,7 +84,7 @@ public partial class CharController
         if (!IsAbleToBeDamaged()) {
             return;
         }
-        CurrentHealth -= damage;
+        currentHealth -= damage;
         GameManager.Instance.FreezeFrame();
         UIManager.Instance.CheckHealth();
         screenShakeController.LargeShake();
@@ -94,7 +93,7 @@ public partial class CharController
         Interrupt();
         StartCoroutine(InvFrameCoroutine(InvTime));
         
-        if (CurrentHealth <= 0) {
+        if (currentHealth <= 0) {
             Die();
         }
     }
@@ -170,7 +169,7 @@ public partial class CharController
             Rigidbody.AddForce(new Vector2(moveVector * attackBoost, 0), ForceMode2D.Impulse);
             //Rigidbody.velocity = new Vector2(moveVector * attackBoost, Rigidbody.velocity.y);
         }
-        yield return new WaitForSeconds(beginAttackDelay * attackTimeMultiplier);
+        yield return new WaitForSeconds(beginAttackDelay * AttackTimeMultiplier);
         
         
         const int maxEnemiesHit = 20;
@@ -179,7 +178,7 @@ public partial class CharController
         //print("scanattack");
         // scan for hit enemies
         Physics2D.OverlapCircleNonAlloc(
-            attackPoint.position, attackRange, hitColliders, enemyLayers);
+            attackPoint.position, AttackRange, hitColliders, enemyLayers);
 
         bool hit = false;
         foreach (Collider2D obj in hitColliders)
@@ -216,7 +215,7 @@ public partial class CharController
             AudioManager.Instance.Play(SoundName.Hit, .5f);
         }
         
-        yield return new WaitForSeconds(endAttackDelay * attackTimeMultiplier);
+        yield return new WaitForSeconds(endAttackDelay * AttackTimeMultiplier);
         
         if (Rigidbody.velocity.x > 0)
         {
@@ -237,7 +236,7 @@ public partial class CharController
         // _screenShakeController.LightShake();
         isAttacking = true;
         //Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
-        Animator.speed = 1 / attackTimeMultiplier;
+        Animator.speed = 1 / AttackTimeMultiplier;
         // Assert.IsTrue(comboCount <= HeavyAttackBuildup);
         switch (combo) {
             case 0:
@@ -248,8 +247,6 @@ public partial class CharController
                 break;
             case 2:
                 Animator.SetTrigger(AttackC);
-                break;
-            default:
                 break;
         }
         

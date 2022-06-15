@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 
 public class DamageProjectile : Projectile
@@ -37,9 +35,9 @@ public class DamageProjectile : Projectile
                 Initialize(new Vector2(-Rigidbody2D.velocity.x, -Rigidbody2D.velocity.y));
                 canHitEnemy = true;
             }
-            else if (CharController.Instance.IFrames())
+            else if (CharController.Instance.CanGetIFrames())
             {
-                return;
+                // return;
             }
             else
             {

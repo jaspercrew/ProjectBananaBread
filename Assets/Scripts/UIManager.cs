@@ -1,7 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class UIManager : MonoBehaviour
 {
@@ -17,15 +17,15 @@ public class UIManager : MonoBehaviour
     public GameObject furyObject;
     public GameObject healthEnd;
 
-    private const float parentScale = .7f;
-    private const float parentXOffset = -43.0f;
-    private const float parentYOffset = 4.0f;
-    private const float healthYOffset = -2.0f;
-    private const float healthXOffset = 0.5f;
-    private const float healthXGap = 1.8f;
-    private const float furyXOffset = -2.5f;
-    private const float furyYOffset = -0.1555f;
-    private const float healthEndXOffset = -0.7f;
+    private const float ParentScale = .7f;
+    private const float ParentXOffset = -43.0f;
+    private const float ParentYOffset = 4.0f;
+    private const float HealthYOffset = -2.0f;
+    private const float HealthXOffset = 0.5f;
+    private const float HealthXGap = 1.8f;
+    private const float FuryXOffset = -2.5f;
+    private const float FuryYOffset = -0.1555f;
+    // private const float HealthEndXOffset = -0.7f;
 
     private void Awake()
     {
@@ -33,7 +33,7 @@ public class UIManager : MonoBehaviour
     }
     
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         back = Resources.Load<Sprite>("Sprites/RageBack");
         backFull = Resources.Load<Sprite>("Sprites/RageBackFull");
@@ -42,7 +42,7 @@ public class UIManager : MonoBehaviour
         StartCoroutine(PopulateHealthBar());
     }
 
-    private bool hasPopulated = false;
+    private bool hasPopulated;
 
     public void PopulateHealthBarPublic()
     {
@@ -62,19 +62,19 @@ public class UIManager : MonoBehaviour
         
         createdFury = Instantiate(furyObject, mainParent);
         ball = createdFury.transform.Find("Ball").GetComponent<UnityEngine.UI.Image>();
-        createdFury.transform.position = new Vector3(healthXOffset + furyXOffset, healthYOffset + furyYOffset, 5);
-        for (int i = 0; i < CharController.Instance.MaxHealth; i++)
+        createdFury.transform.position = new Vector3(HealthXOffset + FuryXOffset, HealthYOffset + FuryYOffset, 5);
+        for (int i = 0; i < CharController.Instance.maxHealth; i++)
         {
             GameObject g = Instantiate(healthObject, mainParent);
             //Debug.Log( new Vector3(healthXOffset + (healthXGap * i), healthYOffset, -15));
-            g.transform.position = new Vector3(healthXOffset + (healthXGap * i), healthYOffset, 5);
+            g.transform.position = new Vector3(HealthXOffset + (HealthXGap * i), HealthYOffset, 5);
             healthList.Add(g);
         }
 
         //GameObject end = Instantiate(healthEnd, mainParent);
         //end.transform.position = new Vector3(healthXOffset + healthEndXOffset + (healthXGap * CharController.Instance.MaxHealth), healthYOffset, 5);
-        mainParent.transform.localScale = new Vector3(mainParent.transform.localScale.x * parentScale, mainParent.transform.localScale.y * parentScale, 1);
-        mainParent.transform.position = new Vector3(mainParent.transform.position.x + parentXOffset, mainParent.transform.position.y + parentYOffset, 5);
+        mainParent.transform.localScale = new Vector3(mainParent.transform.localScale.x * ParentScale, mainParent.transform.localScale.y * ParentScale, 1);
+        mainParent.transform.position = new Vector3(mainParent.transform.position.x + ParentXOffset, mainParent.transform.position.y + ParentYOffset, 5);
 
         CheckHealth();
         CheckFury();
@@ -82,9 +82,9 @@ public class UIManager : MonoBehaviour
 
     public void CheckHealth()
     {
-        for (int i = 0; i < CharController.Instance.MaxHealth; i++)
+        for (int i = 0; i < CharController.Instance.maxHealth; i++)
         {
-            if (i < CharController.Instance.CurrentHealth)
+            if (i < CharController.Instance.currentHealth)
             {
                 healthList[i].GetComponent<HealthUnit>().Fill();
             }
@@ -97,7 +97,7 @@ public class UIManager : MonoBehaviour
 
     public void CheckFury()
     {
-        if (CharController.Instance.fury == CharController.MaxFury)
+        if (Math.Abs(CharController.Instance.fury - CharController.MaxFury) < float.Epsilon)
         {
             createdFury.transform.Find("Back").GetComponent<SpriteRenderer>().sprite = backFull;
         }
@@ -113,8 +113,8 @@ public class UIManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    // void Update()
+    // {
+    //     
+    // }
 }

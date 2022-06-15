@@ -1,6 +1,4 @@
-﻿using System;
-using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BladeProjectile : Projectile
 {
@@ -12,10 +10,11 @@ public class BladeProjectile : Projectile
     private bool isReturning;
     private GameObject stuckTo;
 
-    private LineRenderer lineRenderer;
+    // private LineRenderer lineRenderer;
+    
     private void Awake()
     {
-        lineRenderer = transform.GetComponent<LineRenderer>();
+        // lineRenderer = transform.GetComponent<LineRenderer>();
         Collider2D = transform.GetComponent<BoxCollider2D>();
         Rigidbody2D = transform.GetComponent<Rigidbody2D>();
         //Rigidbody2D.velocity = outSpeed * dir;
@@ -47,7 +46,7 @@ public class BladeProjectile : Projectile
         }
         else if (isReturning || other.gameObject.GetComponent<CharController>() != null)
         {
-            return;
+            // return;
         }
         else if (other.gameObject.GetComponent<Platform>() != null || 
             other.gameObject.GetComponent<Entity>() != null || 

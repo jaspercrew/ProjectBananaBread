@@ -1,12 +1,13 @@
-﻿using UnityEngine;
+﻿using PathCreation;
+using UnityEngine;
 
-namespace PathCreation.Examples
+namespace PathCreator.Examples.Scripts
 {
     // Moves along a path at constant speed.
     // Depending on the end of path instruction, will either loop, reverse, or stop at the end of the path.
     public class PathFollower : MonoBehaviour
     {
-        public PathCreator pathCreator;
+        public PathCreation.PathCreator pathCreator;
         public EndOfPathInstruction endOfPathInstruction;
         public float speed = 5;
         float distanceTravelled;

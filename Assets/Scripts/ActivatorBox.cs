@@ -1,17 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ActivatorBox : Entity
 {
-    private Collider2D collider2D;
-    private Rigidbody2D rigidbody2D;
+    // ReSharper disable once NotAccessedField.Local
+    private new Collider2D collider2D;
+    private new Rigidbody2D rigidbody2D;
     private SpriteRenderer spriteRenderer;
     public Sprite offSprite;
     public Sprite onSprite; 
     
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         collider2D = GetComponent<Collider2D>();
         rigidbody2D = GetComponent<Rigidbody2D>();
@@ -26,8 +25,8 @@ public class ActivatorBox : Entity
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    // private void Update()
+    // {
+    //     
+    // }
 }

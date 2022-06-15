@@ -31,9 +31,9 @@ public class SaveData
         instance = new SaveData
         {
             // update stuff here, then save to object file
-            playerHealth = CharController.Instance.CurrentHealth,
+            playerHealth = CharController.Instance.currentHealth,
             playerScene = SceneManager.GetActiveScene().name,
-            levers = GameManager.Instance.leverDict
+            levers = GameManager.Instance.LeverDict
         };
 
         // write to file
@@ -70,9 +70,9 @@ public class SaveData
             return;
         }
         
-        CharController.Instance.CurrentHealth = instance.playerHealth;
+        CharController.Instance.currentHealth = instance.playerHealth;
         UIManager.Instance.PopulateHealthBarPublic();
-        GameManager.Instance.leverDict = instance.levers;
+        GameManager.Instance.LeverDict = instance.levers;
         GameManager.Instance.isReady = true;
         Debug.Log("scene in save file: " + instance.playerScene + " (not being loaded)");
         

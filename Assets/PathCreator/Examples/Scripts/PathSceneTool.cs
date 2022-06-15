@@ -1,12 +1,13 @@
-﻿using UnityEngine;
+﻿using PathCreation;
+using UnityEngine;
 
-namespace PathCreation.Examples
+namespace PathCreator.Examples.Scripts
 {
     [ExecuteInEditMode]
     public abstract class PathSceneTool : MonoBehaviour
     {
-        public event System.Action onDestroyed;
-        public PathCreator pathCreator;
+        public event System.Action OnDestroyed;
+        public PathCreation.PathCreator pathCreator;
         public bool autoUpdate = true;
 
         protected VertexPath path {
@@ -21,8 +22,8 @@ namespace PathCreation.Examples
 
 
         protected virtual void OnDestroy() {
-            if (onDestroyed != null) {
-                onDestroyed();
+            if (OnDestroyed != null) {
+                OnDestroyed();
             }
         }
 

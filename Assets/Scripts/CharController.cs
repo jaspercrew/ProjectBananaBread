@@ -60,12 +60,12 @@ public partial class CharController : LivingThing
     private const float InAirAcceleration = 18f;
     private const float InAirDrag = 1.5f;
     private const float MaxYSpeed = 30f;
-    private const float dashBoost = 15f;
+    private const float DashBoost = 15f;
     // private const float VerticalDrag = 10f;
     [SerializeField]
-    private float JumpForce = 12f;
-    private const float baseGravity = 9.0f;
-    private const int HeavyAttackBuildup = 4;
+    private float jumpForce = 12f;
+    private const float BaseGravity = 9.0f;
+    // private const int HeavyAttackBuildup = 4;
     private const float AttackCooldown = 0.5f;
     private const float ParryCooldown = 1f;
     private const float ParryTime = .4f;
@@ -76,16 +76,16 @@ public partial class CharController : LivingThing
     public const float FuryIncrement = 10;
     private const int AttackDamage = 1;
     public const float MaxLightBuffer = 7f;
-    private const float MaxLightIntensity = .5f;
-    private const float MaxOuterLightRadius = 5;
-    private const float MaxInnerLightRadius = 3;
+    // private const float MaxLightIntensity = .5f;
+    // private const float MaxOuterLightRadius = 5;
+    // private const float MaxInnerLightRadius = 3;
     private const float ComboResetThreshold = 1.2f;
-    private const float attackRange = 1.15f;
+    private const float AttackRange = 1.15f;
     public LayerMask enemyLayers;
     [SerializeField] private Transform attackPoint;
     [SerializeField] private Transform slicePoint;
     
-    public float gravityValue = baseGravity;
+    public float gravityValue = BaseGravity;
     //Children
     private Transform particleChild;
     
@@ -113,6 +113,7 @@ public partial class CharController : LivingThing
     
     public bool isInverted;
     
+    // ReSharper disable once InconsistentNaming
     private bool _isGrounded;
     private bool isGrounded
     {
@@ -138,6 +139,7 @@ public partial class CharController : LivingThing
 
     private bool grappleBlocked;
     private GrapplePoint launchedPoint;
+    // ReSharper disable once NotAccessedField.Local
     private GrapplePoint hookedPoint;
     public bool isRecentlyGrappled;
     
@@ -150,6 +152,7 @@ public partial class CharController : LivingThing
     private bool canCast;
 
     private bool wallJumpAvailable;
+    // ReSharper disable once InconsistentNaming
     private bool _isWallSliding;
     private bool isWallSliding
     {
@@ -281,11 +284,11 @@ public partial class CharController : LivingThing
 
     private bool IsAbleToMove()
     {
-        return !isAttacking && !isDashing && !isParrying && !isLineGrappling && canFunction;
+        return !isAttacking && !IsDashing && !isParrying && !isLineGrappling && canFunction;
     }
 
     private bool IsAbleToBeDamaged() {
-        return !isInvincible && !isDashing && canFunction;
+        return !isInvincible && !IsDashing && canFunction;
     }
 
     private IEnumerator ParticleBurstCoroutine(ParticleSystem ps, float time)
@@ -314,7 +317,7 @@ public partial class CharController : LivingThing
     }
 
     private bool IsAbleToAct() {
-        return !isDashing && !isAttacking && !isParrying && !isSliceDashing && canFunction;
+        return !IsDashing && !isAttacking && !isParrying && !isSliceDashing && canFunction;
     }
 
     public void Invert() {
@@ -428,12 +431,12 @@ public partial class CharController : LivingThing
         isCrouching = false;
         isParrying = false;
         isSliceDashing = false;
-        isDashing = false;
+        IsDashing = false;
     }
 
-    public bool IFrames()
+    public bool CanGetIFrames()
     {
-        return isDashing || isInvincible || isSliceDashing || !canFunction;
+        return IsDashing || isInvincible || isSliceDashing || !canFunction;
     }
 
     public void PrepForScene()

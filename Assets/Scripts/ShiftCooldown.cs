@@ -1,14 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ShiftCD : MonoBehaviour
+public class ShiftCooldown : MonoBehaviour
 {
     public Image image;
     private float cooldown;
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         image = transform.Find("Canvas").GetComponent<Image>();
         cooldown = CharController.ShiftCooldown;

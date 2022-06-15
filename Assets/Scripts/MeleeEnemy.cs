@@ -1,47 +1,45 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MeleeEnemy : CloseAttackerEnemy
 {
     //[SerializeField] protected Transform attackPoint;
     [SerializeField] protected float knockbackVal = 2f;
-    protected bool isAttacking;
+    protected bool IsAttacking;
     [SerializeField]
-    protected int AttackDamage = 10;
-    protected IEnumerator attackCo;
+    protected int attackDamage = 10;
+    protected IEnumerator AttackCo;
     
     // Start is called before the first frame update
-    protected override void Start()
-    {
-        base.Start();
-        //attackCD = 2f;
-    }
+    // protected override void Start()
+    // {
+    //     base.Start();
+    //     //attackCD = 2f;
+    // }
     
 
-    protected override bool IsFrozen()
-    {
-        return base.IsFrozen();
-    }
+    // protected override bool IsFrozen()
+    // {
+    //     return base.IsFrozen();
+    // }
 
     protected override bool CanMove()
     {
-        return base.CanMove() && !isAttacking && !playerInAttackRange;
+        return base.CanMove() && !IsAttacking && !PlayerInAttackRange;
     }
 
 
     protected override void DoAttack()
     {
-        isAttacking = true;
+        IsAttacking = true;
         Animator.SetTrigger(Attack);
-        attackCo = AttackCoroutine();
-        StartCoroutine(attackCo);
+        AttackCo = AttackCoroutine();
+        StartCoroutine(AttackCo);
     }
 
     protected override bool AttackConditions()
     {
-        return base.AttackConditions() && !isAttacking;
+        return base.AttackConditions() && !IsAttacking;
     }
 
     protected IEnumerator AttackCoroutine()
@@ -57,33 +55,33 @@ public class MeleeEnemy : CloseAttackerEnemy
         const int maxHits = 20;
         Collider2D[] hitColliders = new Collider2D[maxHits];
         int numHits = Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange,
-            hitColliders, playerMask);
+            hitColliders, PlayerMask);
 
         if (numHits > 0) {
             foreach (Collider2D p in hitColliders) {
-                if (p != null && p.gameObject.GetComponent<CharController>() != null && charController.isParrying) {
+                if (p != null && p.gameObject.GetComponent<CharController>() != null && CharController.isParrying) {
                     // StartCoroutine(PauseAnimatorCoroutine(.2f));
-                    charController.CounterStrike(GetComponent<Enemy>());
+                    CharController.CounterStrike(GetComponent<Enemy>());
                 }
                 else if (p != null && p.gameObject.GetComponent<CharController>() != null)
                 {
-                    charController.TakeDamage(AttackDamage);
+                    CharController.TakeDamage(attackDamage);
                 }
             }
         }
         
         yield return new WaitForSeconds(hitEndDelay);
-        isAttacking = false;
+        IsAttacking = false;
     }
     
     
 
     public override void Interrupt() { // should stop all relevant coroutines
-        if (attackCo != null) {
+        if (AttackCo != null) {
             //print("stopped AttackCoroutine");
-            StopCoroutine(attackCo); // interrupt attack if take damage
+            StopCoroutine(AttackCo); // interrupt attack if take damage
             Rigidbody.velocity = Vector2.zero;
-            isAttacking = false;
+            IsAttacking = false;
         }
     }
     // protected override void DisableFunctionality() {

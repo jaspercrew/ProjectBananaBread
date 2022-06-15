@@ -33,7 +33,7 @@ public class Lever : ActivatorTrigger, IHittableEntity
         sr = GetComponent<SpriteRenderer>();
 
         yield return new WaitUntil(() => GameManager.Instance.isReady);
-        leverDict = GameManager.Instance.leverDict;
+        leverDict = GameManager.Instance.LeverDict;
         
         if (!leverDict.ContainsKey(leverName))
         {

@@ -1,8 +1,6 @@
-using System;
 using System.Collections;
 using Pathfinding;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class Enemy : LivingThing , IHittableEntity
 {
@@ -10,39 +8,39 @@ public class Enemy : LivingThing , IHittableEntity
     public float speed = 3f;
     public float aggroRange = 10f;
     public float attackRange;
-    public float attackCD;
+    public float attackCooldown;
     public float knockbackMult = 4f;
-    public bool LOS_Aggro;
-    public bool LOS_Attack;
+    public bool hasLosAggro;
+    public bool hasLosAttack;
     public Transform attackPoint;
-    protected float lastAttackTime;
+    protected float LastAttackTime;
 
     //protected bool animationLocked = false;
-    protected bool isAlive;
-    protected bool isStunned;
-    protected bool movementDisabledAirborne;
-    protected bool movementDisabledTimed;
-    protected bool playerInAggroRange;
-    protected bool playerInAttackRange;
-    protected bool beingKnocked;
+    protected bool IsAlive;
+    protected bool IsStunned;
+    protected bool MovementDisabledAirborne;
+    protected bool MovementDisabledTimed;
+    protected bool PlayerInAggroRange;
+    protected bool PlayerInAttackRange;
+    protected bool BeingKnocked;
 
-    protected AIPath aiPath;
-    protected CharController charController;
-    protected LayerMask playerMask;
+    protected AIPath AIPath;
+    protected CharController CharController;
+    protected LayerMask PlayerMask;
 
     // Start is called before the first frame update
     protected override void Start()
     {
         print("start");
-        playerInAggroRange = false;
-        isAlive = true;
-        isStunned = false;
-        CurrentHealth = MaxHealth;
-        aiPath = GetComponent<AIPath>();
+        PlayerInAggroRange = false;
+        IsAlive = true;
+        IsStunned = false;
+        currentHealth = maxHealth;
+        AIPath = GetComponent<AIPath>();
         Animator = transform.GetComponentInChildren<Animator>();
         Rigidbody = transform.GetComponent<Rigidbody2D>();
-        charController = FindObjectOfType<CharController>();
-        playerMask = LayerMask.GetMask("Player");
+        CharController = FindObjectOfType<CharController>();
+        PlayerMask = LayerMask.GetMask("Player");
     }
 
     public virtual void GetHit(int damage)
@@ -53,7 +51,7 @@ public class Enemy : LivingThing , IHittableEntity
 
     public void TakeDamage(int damage) { // assumes damage is taken from PLAYER
         //print(isAlive);
-        if (isAlive)
+        if (IsAlive)
         {
             Stun(knocktime);
 
@@ -61,7 +59,7 @@ public class Enemy : LivingThing , IHittableEntity
                 ? Vector2.left
                 : Vector2.right));
             //StartCoroutine(DisableMoveCoroutine(.2f));
-            CurrentHealth -= damage;
+            currentHealth -= damage;
             
             // damage animation
             Animator.SetTrigger(Hurt);
@@ -70,7 +68,7 @@ public class Enemy : LivingThing , IHittableEntity
             if (gorePS != null)
             {
                 ParticleSystem.ShapeModule shape = gorePS.shape;
-                if (transform.position.x < charController.transform.position.x)
+                if (transform.position.x < CharController.transform.position.x)
                 {
                     shape.rotation = new Vector3(0, 0, 145);
                 }
@@ -82,7 +80,7 @@ public class Enemy : LivingThing , IHittableEntity
                 gorePS.Play();
             }
 
-            if (CurrentHealth <= 0) {
+            if (currentHealth <= 0) {
                 Die();
             }
         }
@@ -90,22 +88,22 @@ public class Enemy : LivingThing , IHittableEntity
 
     protected IEnumerator KnockbackCoroutine(Vector2 dir)
     {
-        beingKnocked = true;
+        BeingKnocked = true;
         //Rigidbody.velocity = dir * knockbackMult;
         Rigidbody.AddForce(dir * knockbackMult, ForceMode2D.Impulse);
         yield return new WaitForSeconds(knocktime);
-        beingKnocked = false;
+        BeingKnocked = false;
         Rigidbody.velocity = Vector2.zero;
     }
     
     protected virtual bool IsFrozen() //Set velocity to ZERO
     {
-        return !isAlive || movementDisabledAirborne || movementDisabledTimed || isStunned;
+        return !IsAlive || MovementDisabledAirborne || MovementDisabledTimed || IsStunned;
     }
 
     protected virtual bool CanMove() //can begin new movements
     {
-        return !beingKnocked && !IsFrozen();
+        return !BeingKnocked && !IsFrozen();
     }
 
     protected void PlayerScan_Update()
@@ -115,36 +113,36 @@ public class Enemy : LivingThing , IHittableEntity
         Collider2D[] hitCollidersAggro = new Collider2D[maxHits];
         Collider2D[] hitCollidersAttack = new Collider2D[maxHits];
         int numHitsAggro = Physics2D.OverlapCircleNonAlloc(transform.position, aggroRange,
-            hitCollidersAggro, playerMask);
+            hitCollidersAggro, PlayerMask);
         
         Transform attackScanPoint = attackPoint == null ? transform : attackPoint;
         int numHitsAttack = Physics2D.OverlapCircleNonAlloc(attackScanPoint.position, attackRange,
-            hitCollidersAttack, playerMask);
+            hitCollidersAttack, PlayerMask);
 
-        playerInAttackRange = numHitsAttack > 0;
-        playerInAggroRange = numHitsAggro > 0;
+        PlayerInAttackRange = numHitsAttack > 0;
+        PlayerInAggroRange = numHitsAggro > 0;
     }
 
     protected void AttackLoop_Update()
     {
         if (AttackConditions())
         {
-            lastAttackTime = Time.time;
+            LastAttackTime = Time.time;
             DoAttack();
         }
     }
 
     protected virtual bool AttackConditions()
     {
-        if (LOS_Attack)
+        if (hasLosAttack)
         {
-            if (!Utils.LOSCheck(transform, charController.transform))
+            if (!Utils.LosCheck(transform, CharController.transform))
             {
                 return false;
             }
         }
         
-        return Time.time > lastAttackTime + attackCD;
+        return Time.time > LastAttackTime + attackCooldown;
     }
 
     protected virtual void DoAttack()
@@ -166,18 +164,18 @@ public class Enemy : LivingThing , IHittableEntity
             return;
         }
         //Debug.Log(movementDisabledAirborne);
-        if (LOS_Aggro)
+        if (hasLosAggro)
         {
-            if (!Utils.LOSCheck(transform, charController.transform))
+            if (!Utils.LosCheck(transform, CharController.transform))
             {
                 return;
             }
         }
-        if (playerInAggroRange)
+        if (PlayerInAggroRange)
         {
             //print("c");
             float thisXPos = transform.position.x;
-            float charXPos = charController.transform.position.x;
+            float charXPos = CharController.transform.position.x;
             const float buffer = .5f;
             float xLeft = charXPos - buffer;
             float xRight = charXPos + buffer;
@@ -203,7 +201,7 @@ public class Enemy : LivingThing , IHittableEntity
     protected void Die() {
         print("enemy death");
         const float deathTime = 1f;
-        isAlive = false;
+        IsAlive = false;
         Animator.SetTrigger(Death);
         Destroy(gameObject, deathTime);
     }
@@ -247,28 +245,28 @@ public class Enemy : LivingThing , IHittableEntity
 
     protected virtual void BeginStun() {
         //StopAllCoroutines();
-        isStunned = true;
+        IsStunned = true;
     }
 
     protected virtual void EndStun()
     {
-        isStunned = false;
+        IsStunned = false;
     }
 
     public override void Yoink(float yoinkForce)
     {
         Vector3 dir = (Camera.main).ScreenToWorldPoint(Input.mousePosition) - transform.position;
         Rigidbody.AddForce(yoinkForce * dir.normalized , ForceMode2D.Impulse);
-        movementDisabledAirborne = true;
+        MovementDisabledAirborne = true;
     }
     
 
 
     protected IEnumerator DisableMoveCoroutine(float time)
     {
-        movementDisabledTimed = true;
+        MovementDisabledTimed = true;
         yield return new WaitForSeconds(time);
-        movementDisabledTimed = false;
+        MovementDisabledTimed = false;
 
     }
 
@@ -276,7 +274,7 @@ public class Enemy : LivingThing , IHittableEntity
     {
         if (other.gameObject.GetComponent<Platform>() != null)
         {
-            movementDisabledAirborne = false;
+            MovementDisabledAirborne = false;
         }
     }
 }

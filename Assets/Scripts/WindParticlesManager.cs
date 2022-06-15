@@ -34,8 +34,8 @@ public class WindParticlesManager : MonoBehaviour
     private const float SpeedToWidth = 0.3f;
     
     // TODO: 2d
-    private bool isTurning = false;
-    private float prevSpeed = 0;
+    private bool isTurning;
+    private float prevSpeed;
     private float turnStartTime;
     private float turnDuration = CharController.ShiftCooldown / 3;
     private float turnStartSpeed;

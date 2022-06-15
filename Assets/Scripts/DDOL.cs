@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// ReSharper disable once InconsistentNaming
 public class DDOL : MonoBehaviour
 {
     private static DDOL instance;

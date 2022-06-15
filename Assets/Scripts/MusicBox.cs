@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MusicBox : Interactor
@@ -16,9 +14,9 @@ public class MusicBox : Interactor
     protected override void Update()
     {
         base.Update();
-        if (isInteractable)
+        if (IsInteractable)
         {
-            highlightFX.gameObject.transform.Rotate(Vector3.forward, 150 * Time.deltaTime);
+            HighlightFX.gameObject.transform.Rotate(Vector3.forward, 150 * Time.deltaTime);
         }
     }
 }

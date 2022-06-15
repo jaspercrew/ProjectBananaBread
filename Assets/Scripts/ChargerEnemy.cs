@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 public class ChargerEnemy : CloseAttackerEnemy
@@ -27,7 +26,7 @@ public class ChargerEnemy : CloseAttackerEnemy
         Animator.SetTrigger(Attack);
         isCharging = true;
         alreadyHit = false;
-        if (charController.transform.position.x > transform.position.x)
+        if (CharController.transform.position.x > transform.position.x)
         {
             chargeDir = 1;
         }
@@ -54,7 +53,7 @@ public class ChargerEnemy : CloseAttackerEnemy
 
     protected override bool CanMove()
     {
-        return base.CanMove() && !isCharging && !isWaiting && !playerInAttackRange;
+        return base.CanMove() && !isCharging && !isWaiting && !PlayerInAttackRange;
     }
     
     
@@ -64,17 +63,17 @@ public class ChargerEnemy : CloseAttackerEnemy
         const int maxHits = 20;
         Collider2D[] hitColliders = new Collider2D[maxHits];
         int numHits = Physics2D.OverlapCircleNonAlloc(transform.position, 1f,
-            hitColliders, playerMask);
+            hitColliders, PlayerMask);
         if (numHits > 0 && !alreadyHit)
         {
             alreadyHit = true;
-            if (charController.isParrying)
+            if (CharController.isParrying)
             {
                 isCharging = false;
-                charController.CounterStrike(this);
+                CharController.CounterStrike(this);
                 return;
             }
-            charController.TakeDamage(chargeDamage);
+            CharController.TakeDamage(chargeDamage);
         }
     }
 

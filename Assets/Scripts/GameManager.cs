@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,10 +12,10 @@ public class GameManager : MonoBehaviour
     public bool isGameShifted;
     
     // public bool isDarkScene;
-    private int frozenFrames;
+    // private int frozenFrames;
 
-    public Dictionary<string, bool> leverDict = new Dictionary<string, bool>();
-    public bool isReady = false;
+    public Dictionary<string, bool> LeverDict = new Dictionary<string, bool>();
+    public bool isReady;
 
     private void Awake()
     {

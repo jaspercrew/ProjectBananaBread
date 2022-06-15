@@ -1,10 +1,9 @@
-﻿using UnityEngine;
-public class CloseAttackerEnemy : Enemy
+﻿public class CloseAttackerEnemy : Enemy
 {
 
     protected override bool AttackConditions()
     {
-        return base.AttackConditions() && playerInAttackRange;
+        return base.AttackConditions() && PlayerInAttackRange;
     }
 
     protected virtual void Update()

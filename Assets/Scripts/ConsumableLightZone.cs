@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
-using UnityEngine.Serialization;
 
 public class ConsumableLightZone : BinaryEntity
 {
-    private const float intensity = 1f;
+    private const float Intensity = 1f;
     public bool beenConsumed;
     public float radius;
     
@@ -15,6 +11,7 @@ public class ConsumableLightZone : BinaryEntity
     public bool activeInAlt;
     private bool isActive;
 
+    // ReSharper disable once NotAccessedField.Local
     private new Collider2D collider2D;
     private Light2D light2d;
 
@@ -71,7 +68,7 @@ public class ConsumableLightZone : BinaryEntity
 
     private void Activate()
     {
-        light2d.intensity = intensity;
+        light2d.intensity = Intensity;
         isActive = true;
     }
 

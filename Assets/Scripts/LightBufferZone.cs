@@ -8,6 +8,7 @@ public class LightBufferZone : BinaryEntity
     public bool activeInAlt;
     private bool isActive;
 
+    // ReSharper disable once NotAccessedField.Local
     private new Collider2D collider2D;
 
     protected override void Start()

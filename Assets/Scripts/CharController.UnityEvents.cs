@@ -474,7 +474,7 @@ public partial class CharController
     }
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        Gizmos.DrawWireSphere(attackPoint.position, AttackRange);
     }
 
     // private void LightCheckUpdate()
@@ -497,9 +497,9 @@ public partial class CharController
     private void LineGrappleUpdate()
     {
 
-        if (!isLineGrappling && !isGrappleLaunched && GrapplePoint.targetPoint != null)
+        if (!isLineGrappling && !isGrappleLaunched && GrapplePoint.TargetPoint != null)
         {
-            Vector3 targetPosition = GrapplePoint.targetPoint.transform.position;
+            Vector3 targetPosition = GrapplePoint.TargetPoint.transform.position;
             Vector3 direction = (targetPosition - transform.position).normalized;
             Vector3 offset = Vector3.up * .5f;
             
@@ -508,21 +508,21 @@ public partial class CharController
             
             if (hit.collider != null)
             {
-                GrapplePoint.targetPoint.Blocked();
+                GrapplePoint.TargetPoint.Blocked();
                 grappleClearRenderer.enabled = false;
                 grappleBlocked = true;
                 grappleLOSRenderer.enabled = true;
                 grappleLOSRenderer.SetPosition(1, transform.position + offset);
-                grappleLOSRenderer.SetPosition(0, GrapplePoint.targetPoint.transform.position);
+                grappleLOSRenderer.SetPosition(0, GrapplePoint.TargetPoint.transform.position);
             }
             else
             {
-                GrapplePoint.targetPoint.Cleared();
+                GrapplePoint.TargetPoint.Cleared();
                 grappleBlocked = false;
                 grappleLOSRenderer.enabled = false;
                 grappleClearRenderer.enabled = true;
                 grappleClearRenderer.SetPosition(1, transform.position + offset);
-                grappleClearRenderer.SetPosition(0, GrapplePoint.targetPoint.transform.position);
+                grappleClearRenderer.SetPosition(0, GrapplePoint.TargetPoint.transform.position);
             }
         }
         else
@@ -633,7 +633,7 @@ public partial class CharController
 
             // scan for hit enemies
             Physics2D.OverlapCircleNonAlloc(
-                slicePoint.position, attackRange, hitColliders, enemyLayers);
+                slicePoint.position, AttackRange, hitColliders, enemyLayers);
             
             if (hitColliders[0] != null) {
                 //Debug.Log("execute");

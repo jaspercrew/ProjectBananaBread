@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Boss : Enemy
@@ -14,21 +13,20 @@ public class Boss : Enemy
     public float blockTime = .5f;
     
     // private int attackIter = 0;
-    private int bossState = 0;
+    private int bossState;
+    // TODO: this looks like it should be a state machine, not multiple booleans
     private bool isParrying;
-    private bool isDodging;
+    private bool isDodging = false;
     private bool isAttacking;
-    
-    
-    
-    
-    
-    protected override void Start()
-    {
-        //playerMask = LayerMask.NameToLayer("Default");
-        //Animator.SetBool("Grounded", true);
-        base.Start();
-    }
+    private static readonly int Block1 = Animator.StringToHash("Block");
+
+
+    // protected override void Start()
+    // {
+    //     //playerMask = LayerMask.NameToLayer("Default");
+    //     //Animator.SetBool("Grounded", true);
+    //     base.Start();
+    // }
 
     protected override bool AttackConditions()
     {
@@ -38,20 +36,20 @@ public class Boss : Enemy
 
     protected override bool CanMove()
     {
-        return base.CanMove() && !isAttacking && !playerInAttackRange && !isParrying;
+        return base.CanMove() && !isAttacking && !PlayerInAttackRange && !isParrying;
     }
 
     protected void BossState_Update()
     {
-        if (bossState == 0 && CurrentHealth <= stateTrigger1)
+        if (bossState == 0 && currentHealth <= stateTrigger1)
         {
             bossState = 1;
         }
-        else if (bossState == 1 && CurrentHealth <= stateTrigger2)
+        else if (bossState == 1 && currentHealth <= stateTrigger2)
         {
             bossState = 2;
         }
-        else if (bossState == 2 && CurrentHealth <= stateTrigger3)
+        else if (bossState == 2 && currentHealth <= stateTrigger3)
         {
             bossState = 3;
         }
@@ -133,8 +131,7 @@ public class Boss : Enemy
         const int maxEnemiesHit = 1;
         Collider2D[] hitColliders = new Collider2D[maxEnemiesHit];
         // scan for hit enemies
-        int hits = Physics2D.OverlapCircleNonAlloc(
-            attackPoint.position, attackRange, hitColliders, playerMask.value);
+        Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange, hitColliders, PlayerMask.value);
 
 
 
@@ -173,11 +170,13 @@ public class Boss : Enemy
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 
+    // ReSharper disable once UnusedMember.Local
     private void Backstep()
     {
         
     }
 
+    // ReSharper disable once UnusedMember.Local
     private void Block()
     {
         StartCoroutine(BlockCoroutine());
@@ -185,21 +184,22 @@ public class Boss : Enemy
 
     private IEnumerator BlockCoroutine()
     {
-        Animator.SetTrigger("Block");
+        Animator.SetTrigger(Block1);
         isParrying = true;
         yield return new WaitForSeconds(blockTime);
         isParrying = false;
     }
 
+    // ReSharper disable once UnusedMember.Local
     private void DashStrike()
     {
         
     }
 
-    public override void GetHit(int damage)
-    {
-        base.GetHit(damage);
-    }
+    // public override void GetHit(int damage)
+    // {
+    //     base.GetHit(damage);
+    // }
 
 
     protected void Update()

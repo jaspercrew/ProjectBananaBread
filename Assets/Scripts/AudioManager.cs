@@ -1,16 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class AudioManager : MonoBehaviour
 {
     
     public static AudioManager Instance;
 
-    private const float songVolume = 5f;
+    // private const float SongVolume = 5f;
 
     private AudioSource effectSource;
     private AudioSource primarySource;
@@ -109,13 +107,13 @@ public class AudioManager : MonoBehaviour
         
     }
     
-    private IEnumerator FadeOut(AudioSource audioSource, float FadeTime)
+    private IEnumerator FadeOut(AudioSource audioSource, float fadeTime)
     {
         audioSource.volume = 1f;
  
         while (audioSource.volume > 0)
         {
-            audioSource.volume -= 1f * Time.deltaTime / FadeTime;
+            audioSource.volume -= 1f * Time.deltaTime / fadeTime;
  
             yield return null;
         }
@@ -124,13 +122,13 @@ public class AudioManager : MonoBehaviour
         audioSource.volume = 0f;
     }
  
-    private IEnumerator FadeIn(AudioSource audioSource, float FadeTime)
+    private IEnumerator FadeIn(AudioSource audioSource, float fadeTime)
     {
         audioSource.volume = 0;
 
         while (audioSource.volume < 1.0f)
         {
-            audioSource.volume += 1f * Time.deltaTime / FadeTime;
+            audioSource.volume += 1f * Time.deltaTime / fadeTime;
  
             yield return null;
         }

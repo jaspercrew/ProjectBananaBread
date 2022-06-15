@@ -10,17 +10,17 @@ public partial class CharController
         }
         Interrupt();
         
-        float xScale = transform.localScale.x;
+        // float xScale = transform.localScale.x;
         //float dashDir = moveVector == 0 ? -xScale : moveVector;
         float dashDir = inputVector;
-        float dashSpeed = dashBoost * dashDir;
+        float dashSpeed = DashBoost * dashDir;
         const float dashTime = .23f;
 
         emitFadesTime = .28f;
-        isDashing = true;
+        IsDashing = true;
         trailRenderer.emitting = true;
         
-        dashCoroutine = DashCoroutine(dashTime, dashSpeed);
+        dashCoroutine = DashCoroutine(dashTime /*, dashSpeed*/);
         toInterrupt.Add(dashCoroutine);
         StartCoroutine(dashCoroutine);
         
@@ -31,7 +31,7 @@ public partial class CharController
     }
 
     // dash coroutine handles stopping the dash
-    private IEnumerator DashCoroutine(float dashTime, float dashSpeed)
+    private IEnumerator DashCoroutine(float dashTime /*, float dashSpeed*/)
     {
         Vector2 tempSize = groundCheck.size;
         Vector2 tempOffset = groundCheck.offset;
@@ -41,7 +41,7 @@ public partial class CharController
         yield return new WaitForSeconds(dashTime);
         charCollider.enabled = true;
         //Rigidbody.velocity = new Vector2(Rigidbody.velocity.x - dashSpeed, Rigidbody.velocity.y);
-        isDashing = false;
+        IsDashing = false;
         trailRenderer.emitting = false;
         groundCheck.size = tempSize;
         groundCheck.offset = tempOffset;
@@ -76,12 +76,12 @@ public partial class CharController
                 Debug.LogError("wall jump dir is bad");
             }
             
-            Rigidbody.AddForce(new Vector2(JumpForce * wallJumpModX * wallJumpDir, 
-                    (isInverted ? -JumpForce : JumpForce) * wallJumpModY), ForceMode2D.Impulse);
+            Rigidbody.AddForce(new Vector2(jumpForce * wallJumpModX * wallJumpDir, 
+                    (isInverted ? -jumpForce : jumpForce) * wallJumpModY), ForceMode2D.Impulse);
         }
         else
         {
-            Rigidbody.AddForce(new Vector2(0, isInverted ? -JumpForce : JumpForce), 
+            Rigidbody.AddForce(new Vector2(0, isInverted ? -jumpForce : jumpForce), 
                 ForceMode2D.Impulse); 
         }
         
@@ -123,9 +123,9 @@ public partial class CharController
 
     private void AttemptLaunchGrapple()
     {
-        if (GrapplePoint.targetPoint != null && !isGrappleLaunched && !isLineGrappling && !grappleBlocked)
+        if (GrapplePoint.TargetPoint != null && !isGrappleLaunched && !isLineGrappling && !grappleBlocked)
         {
-            LaunchLine(GrapplePoint.targetPoint);
+            LaunchLine(GrapplePoint.TargetPoint);
         }
     }
 

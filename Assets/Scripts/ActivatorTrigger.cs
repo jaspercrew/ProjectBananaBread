@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ActivatorTrigger : MonoBehaviour
 {
-    public bool isActivated = false;
+    public bool isActivated;
     
     public virtual void Activate()
     {

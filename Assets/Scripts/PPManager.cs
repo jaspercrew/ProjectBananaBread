@@ -1,15 +1,13 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
-using UnityEngine.UI;
 
-public class PPManager : MonoBehaviour
+public class PpManager : MonoBehaviour
 {
     private Volume volume;
-    public static PPManager Instance;
-    private bool shiftEffecting;
+    public static PpManager Instance;
+    // private bool shiftEffecting;
     private Bloom bloom;
     private ChromaticAberration chromaticAberration;
     private FilmGrain filmGrain;
@@ -29,13 +27,13 @@ public class PPManager : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         volume = GetComponent<Volume>();
-        volume.profile.TryGet<Bloom>(out bloom);
-        volume.profile.TryGet<ChromaticAberration>(out chromaticAberration);
-        volume.profile.TryGet<FilmGrain>(out filmGrain);
-        volume.profile.TryGet<ShadowsMidtonesHighlights>(out smh);
+        volume.profile.TryGet(out bloom);
+        volume.profile.TryGet(out chromaticAberration);
+        volume.profile.TryGet(out filmGrain);
+        volume.profile.TryGet(out smh);
     }
     
 

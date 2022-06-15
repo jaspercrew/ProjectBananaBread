@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
 
 public class CharacterCam : MonoBehaviour
 {
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         transform.GetComponent<CinemachineVirtualCamera>().Follow = FindObjectOfType<CharController>().transform;
         transform.GetComponent<CinemachineConfiner>().m_BoundingShape2D = SceneInformation.Instance.transform
@@ -14,8 +12,8 @@ public class CharacterCam : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    // void Update()
+    // {
+    //     
+    // }
 }

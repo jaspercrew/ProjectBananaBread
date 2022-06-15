@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class TrackerMoverEnemy : Enemy
+﻿public class TrackerMoverEnemy : Enemy
 {
 
     protected void Update()
@@ -9,8 +7,8 @@ public class TrackerMoverEnemy : Enemy
         TurnAround_Update();
         
     }
-    protected override void Pathfind_Update()
-    {
-        base.Pathfind_Update();
-    }
+    // protected override void Pathfind_Update()
+    // {
+    //     base.Pathfind_Update();
+    // }
 }

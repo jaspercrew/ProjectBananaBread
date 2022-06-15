@@ -1,7 +1,7 @@
 ﻿using PathCreation;
 using UnityEngine;
 
-namespace PathCreation.Examples {
+namespace PathCreator.Examples.Scripts {
 
     [ExecuteInEditMode]
     public class PathPlacer : PathSceneTool {
@@ -10,20 +10,20 @@ namespace PathCreation.Examples {
         public GameObject holder;
         public float spacing = 3;
 
-        const float minSpacing = .1f;
+        const float MinSpacing = .1f;
 
         void Generate () {
             if (pathCreator != null && prefab != null && holder != null) {
                 DestroyObjects ();
 
-                VertexPath path = pathCreator.path;
+                VertexPath path2 = pathCreator.path;
 
-                spacing = Mathf.Max(minSpacing, spacing);
+                spacing = Mathf.Max(MinSpacing, spacing);
                 float dst = 0;
 
-                while (dst < path.length) {
-                    Vector3 point = path.GetPointAtDistance (dst);
-                    Quaternion rot = path.GetRotationAtDistance (dst);
+                while (dst < path2.length) {
+                    Vector3 point = path2.GetPointAtDistance (dst);
+                    Quaternion rot = path2.GetRotationAtDistance (dst);
                     Instantiate (prefab, point, rot, holder.transform);
                     dst += spacing;
                 }

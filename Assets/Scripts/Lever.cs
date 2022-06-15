@@ -16,7 +16,7 @@ public class Lever : ActivatorTrigger, IHittableEntity
         base.Activate();
         Debug.Log("lever activated");
         sr.sprite = onSprite;
-        leverDict[leverName] = true;
+        //leverDict[leverName] = true; TODO: fix error here (savefile failure)
     }
 
     private void Start()

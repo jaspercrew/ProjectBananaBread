@@ -88,7 +88,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &341304080
 Transform:
   m_ObjectHideFlags: 0
@@ -10359,13 +10359,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08a7d1987b3e94147a0a507912e574c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Invertable: 1
-  MaxHealth: 5
-  CurrentHealth: 5
+  invertible: 1
+  maxHealth: 0
+  currentHealth: 0
   castProjectileInput: {fileID: 3870309991120366406, guid: e5443d9096a73484db468b02fc57e85b, type: 3}
   fadeSprite: {fileID: 849027303211011230, guid: 3e65f913ebec9664da23f573e81e5867, type: 3}
   speed: 7
-  JumpForce: 8
+  jumpForce: 8.5
   enemyLayers:
     serializedVersion: 2
     m_Bits: 64

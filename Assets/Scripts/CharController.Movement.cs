@@ -33,18 +33,19 @@ public partial class CharController
     // dash coroutine handles stopping the dash
     private IEnumerator DashCoroutine(float dashTime /*, float dashSpeed*/)
     {
-        Vector2 tempSize = groundCheck.size;
-        Vector2 tempOffset = groundCheck.offset;
-        groundCheck.size = new Vector2(groundCheck.size.x, groundCheck.size.y / 2);
-        groundCheck.offset = new Vector2(groundCheck.offset.x, groundCheck.offset.y - groundCheck.size.y / 2);
-        charCollider.enabled = false;
+        float heightReducer = 4f;
+        Vector2 tempSize = charCollider.size;
+        Vector2 tempOffset = charCollider.offset;
+        charCollider.size = new Vector2(charCollider.size.x, charCollider.size.y / heightReducer);
+        charCollider.offset = new Vector2(charCollider.offset.x, charCollider.offset.y - ((tempSize.y - charCollider.size.y) / 2));
+        //charCollider.enabled = false;
         yield return new WaitForSeconds(dashTime);
-        charCollider.enabled = true;
+        //charCollider.enabled = true;
         //Rigidbody.velocity = new Vector2(Rigidbody.velocity.x - dashSpeed, Rigidbody.velocity.y);
         IsDashing = false;
         trailRenderer.emitting = false;
-        groundCheck.size = tempSize;
-        groundCheck.offset = tempOffset;
+        charCollider.size = tempSize;
+        charCollider.offset = tempOffset;
     }
 
     private void DoJump()

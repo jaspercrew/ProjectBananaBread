@@ -74,6 +74,8 @@ public class SaveData
         UIManager.Instance.PopulateHealthBarPublic();
         GameManager.Instance.leverDict = instance.levers;
         GameManager.Instance.isReady = true;
+        Debug.Log("scene in save file: " + instance.playerScene + " (not being loaded)");
+        
         // SceneManager.LoadSceneAsync(instance.playerScene); // TODO ??
 
         // AsyncOperation op = SceneManager.LoadSceneAsync(instance.playerScene);

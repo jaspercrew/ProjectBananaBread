@@ -30,7 +30,8 @@ public class ExplosiveProjectile : Projectile
         if (canHitPlayer && other.gameObject.GetComponent<CharController>() != null) {
             if (CharController.Instance.isParrying)
             {
-                Initialize(new Vector2(-Rigidbody2D.velocity.x, -Rigidbody2D.velocity.y));
+                Vector2 v = Rigidbody2D.velocity;
+                Initialize(new Vector2(-v.x, -v.y));
                 canHitEnemy = true;
             }
             else if (CharController.Instance.IFrames())
@@ -58,7 +59,7 @@ public class ExplosiveProjectile : Projectile
         instantiatedExplodeFX = Instantiate(explodeFX, transform.position, Quaternion.Euler(Vector3.zero));
         instantiatedExplodeFX.gameObject.transform.localScale *= radius * 2;
         
-        LayerMask explosionMask = new LayerMask();
+        // LayerMask explosionMask = new LayerMask();
  
         const int maxHits = 20;
         Collider2D[] hitColliders = new Collider2D[maxHits];

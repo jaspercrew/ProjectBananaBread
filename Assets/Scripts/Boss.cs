@@ -13,7 +13,7 @@ public class Boss : Enemy
     public float dodgeTime = .5f;
     public float blockTime = .5f;
     
-    private int attackIter = 0;
+    // private int attackIter = 0;
     private int bossState = 0;
     private bool isParrying;
     private bool isDodging;

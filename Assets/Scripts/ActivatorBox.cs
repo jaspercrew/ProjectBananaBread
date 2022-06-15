@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class ActivatorBox : Entity
 {
-    private Collider2D collider2D;
-    private Rigidbody2D rigidbody2D;
+    private new Collider2D collider2D;
+    private new Rigidbody2D rigidbody2D;
     
     // Start is called before the first frame update
     void Start()

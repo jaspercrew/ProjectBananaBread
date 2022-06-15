@@ -15,7 +15,7 @@ public class ConsumableLightZone : BinaryEntity
     public bool activeInAlt;
     private bool isActive;
 
-    private Collider2D collider2D;
+    private new Collider2D collider2D;
     private Light2D light2d;
 
     protected override void Start()

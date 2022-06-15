@@ -10,7 +10,8 @@ public class GrappleProjectile : Projectile {
         speed = newSpeed;
     }
     
-    private void Start() {
+    protected override void Start() {
+        base.Start();
         Collider2D = GetComponent<BoxCollider2D>();
         Rigidbody2D = GetComponent<Rigidbody2D>();
         Rigidbody2D.velocity = direction * speed;

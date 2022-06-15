@@ -29,18 +29,18 @@ public class ExplosiveBomb : Projectile
     }
     
 
+    // TODO: combine this somehow with ExplosiveProjectile.Explode
     private void Explode()
     {
         //Debug.Log("explode");
         instantiatedExplodeFX = Instantiate(explodeFX, transform.position, Quaternion.Euler(Vector3.zero));
         instantiatedExplodeFX.gameObject.transform.localScale *= radius * 2;
         
-        LayerMask explosionMask = new LayerMask();
+        // LayerMask explosionMask = new LayerMask();
  
         const int maxHits = 20;
         Collider2D[] hitColliders = new Collider2D[maxHits];
-        int numHits = Physics2D.OverlapCircleNonAlloc(transform.position, radius,
-            hitColliders);
+        Physics2D.OverlapCircleNonAlloc(transform.position, radius, hitColliders);
         foreach (Collider2D col in hitColliders)
         {
             if (col != null)

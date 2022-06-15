@@ -31,7 +31,7 @@ public class Enemy : LivingThing , IHittableEntity
     protected LayerMask playerMask;
 
     // Start is called before the first frame update
-    protected virtual void Start()
+    protected override void Start()
     {
         print("start");
         playerInAggroRange = false;

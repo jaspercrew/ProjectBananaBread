@@ -8,7 +8,7 @@ public class LightBufferZone : BinaryEntity
     public bool activeInAlt;
     private bool isActive;
 
-    private Collider2D collider2D;
+    private new Collider2D collider2D;
 
     protected override void Start()
     {

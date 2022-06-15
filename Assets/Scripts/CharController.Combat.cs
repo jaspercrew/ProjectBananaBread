@@ -71,7 +71,7 @@ public partial class CharController
     private void CauseSwitch()
     {
         lastShiftTime = Time.time;
-        PpManager.Instance.ShiftEffect(!GameManager.Instance.isGameShifted);
+        PPManager.Instance.ShiftEffect(!GameManager.Instance.isGameShifted);
         transform.Find("ShiftCD").GetComponent<ShiftCooldown>().image.fillAmount = 1; //TODO: FIX
         switchPS.Play();
         

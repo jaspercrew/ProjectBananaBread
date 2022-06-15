@@ -34,7 +34,7 @@ public class SniperEnemy : Enemy
     protected override void DoAttack()
     {
         Animator.SetTrigger(Attack);
-        Vector2 direction = ((CharController.transform.position + new Vector3(0, .5f, 0)) - transform.position).normalized;
+        Vector2 direction = ((CharController.transform.position + new Vector3(0, -.5f, 0)) - transform.position).normalized;
         sentProjectile = Instantiate(projectilePrefab, transform.position, transform.rotation);
         //Debug.Log(sentProjectile.GetComponent<Projectile>().lifetime);
         sentProjectile.gameObject.GetComponent<Projectile>().Initialize(direction * projSpeed);

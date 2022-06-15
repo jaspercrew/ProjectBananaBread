@@ -9,6 +9,7 @@ public class Enemy : LivingThing , IHittableEntity
     public float aggroRange = 10f;
     public float attackRange;
     public float attackCooldown;
+    public float attackRecovery;
     public float knockbackMult = 4f;
     public bool hasLosAggro;
     public bool hasLosAttack;
@@ -16,6 +17,7 @@ public class Enemy : LivingThing , IHittableEntity
     protected float LastAttackTime;
 
     //protected bool animationLocked = false;
+    protected bool inRecovery;
     protected bool IsAlive;
     protected bool IsStunned;
     protected bool MovementDisabledAirborne;
@@ -103,7 +105,7 @@ public class Enemy : LivingThing , IHittableEntity
 
     protected virtual bool CanMove() //can begin new movements
     {
-        return !BeingKnocked && !IsFrozen();
+        return !BeingKnocked && !IsFrozen() && !inRecovery;
     }
 
     protected void PlayerScan_Update()
@@ -147,7 +149,14 @@ public class Enemy : LivingThing , IHittableEntity
 
     protected virtual void DoAttack()
     {
-        
+        StartCoroutine(RecoveryCoroutine());
+    }
+
+    protected IEnumerator RecoveryCoroutine()
+    {
+        inRecovery = true;
+        yield return new WaitForSeconds(attackRecovery);
+        inRecovery = false;
     }
 
     protected virtual void Pathfind_Update()
@@ -215,19 +224,17 @@ public class Enemy : LivingThing , IHittableEntity
     // }
     
     protected virtual void TurnAround_Update() {
-        if (!CanMove())
+        if (BeingKnocked)
         {
             return;
         }
+        Animator.SetInteger(AnimState, Mathf.Abs(Rigidbody.velocity.x) > .01 ? 2 : 0);
         if (Rigidbody.velocity.x > 0) {
             FaceRight();
         }
         else if (Rigidbody.velocity.x < 0) {
             FaceLeft();
         }
-        
-        Animator.SetInteger(AnimState, Mathf.Abs(Rigidbody.velocity.x) > .1 ? 2 : 0);
-        
     }
 
 

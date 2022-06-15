@@ -3,10 +3,10 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-public class PpManager : MonoBehaviour
+public class PPManager : MonoBehaviour
 {
     private Volume volume;
-    public static PpManager Instance;
+    public static PPManager Instance;
     // private bool shiftEffecting;
     private Bloom bloom;
     private ChromaticAberration chromaticAberration;

@@ -12,5 +12,6 @@
         Pathfind_Update();
         AttackLoop_Update();
         TurnAround_Update();
+        PlayerPush_Update();
     }
 }

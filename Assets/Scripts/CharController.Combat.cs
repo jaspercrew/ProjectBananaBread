@@ -6,7 +6,10 @@ public partial class CharController
 {
     private Rigidbody2D castProjectileRb;
     public Rigidbody2D castProjectileInput;
+    public bool noShiftZone;
     private const float AttackTimeMultiplier = .75f;
+    private const float recoveryTime = .5f;
+    private bool inRecovery;
     private void DoSliceDash() {
         if (!IsAbleToAct()) {
              return;
@@ -126,30 +129,52 @@ public partial class CharController
             comboCounter = 0;
         }
 
-        
-        //bool isHeavy = Math.DivRem(comboCounter, HeavyAttackBuildup, out comboCounter) > 0;
-
         DoAttack(comboCounter % 3);
         comboCounter++;
     }
+    
+    private void DoAttack(int combo) {
+        isAttacking = true;
+        Animator.speed = 1 / AttackTimeMultiplier;
+        switch (combo) {
+            case 0:
+                Animator.SetTrigger(AttackA);
+                break;
+            case 1:
+                Animator.SetTrigger(AttackB);
+                break;
+            case 2:
+                Animator.SetTrigger(AttackC);
+                break;
+        }
+
+
+        attackCoroutine = AttackCoroutine(combo);
+        toInterrupt.Add(attackCoroutine);
+        StartCoroutine(attackCoroutine);
+    }
 
     private IEnumerator AttackCoroutine(int combo) {
+        lastAttackTime = Time.time;
         //print("attackco" + combo);
         // light attack modifiers
-        float attackBoost = 3.0f;
+        float preForceDelay = .00f;
+        float attackBoost = 2.0f;
         float beginAttackDelay = .45f;
-        float endAttackDelay = .2f;
+        float endAttackDelay = .25f;
 
         if (combo == 1) { 
-            attackBoost = 3.0f;
-            beginAttackDelay = .2f;
-            endAttackDelay = .1f;
+            preForceDelay = .1f;
+            attackBoost = 2.0f;
+            beginAttackDelay = .25f;
+            endAttackDelay = .2f;
         }
 
         else if (combo == 2) { 
-            attackBoost = 6.0f;
+            preForceDelay = .15f;
+            attackBoost = 3.0f;
             beginAttackDelay = .27f;
-            endAttackDelay = .3f;
+            endAttackDelay = .45f;
         }
 
         if (Rigidbody.velocity.x > 0)
@@ -164,7 +189,7 @@ public partial class CharController
         }
         
 
-        
+        yield return new WaitForSeconds(preForceDelay * AttackTimeMultiplier);
         if (isGrounded) {
             Rigidbody.AddForce(new Vector2(moveVector * attackBoost, 0), ForceMode2D.Impulse);
             //Rigidbody.velocity = new Vector2(moveVector * attackBoost, Rigidbody.velocity.y);
@@ -230,38 +255,15 @@ public partial class CharController
         //yield return new WaitForSeconds(1 * endAttackDelay / 4);
         
         isAttacking = false;
-    }
-
-    private void DoAttack(int combo) {
-        // _screenShakeController.LightShake();
-        isAttacking = true;
-        //Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
-        Animator.speed = 1 / AttackTimeMultiplier;
-        // Assert.IsTrue(comboCount <= HeavyAttackBuildup);
-        switch (combo) {
-            case 0:
-                Animator.SetTrigger(AttackA);
-                break;
-            case 1:
-                Animator.SetTrigger(AttackB);
-                break;
-            case 2:
-                Animator.SetTrigger(AttackC);
-                break;
+        if (combo == 2)
+        {
+            inRecovery = true;
+            yield return new WaitForSeconds(recoveryTime);
+            inRecovery = false;
         }
-        
-        
-        // TODO: remove when we have actual animations
-        // if (isHeavy) { // heavy attack?
-        //     Animator.speed = .5f;
-        // }
-
-        attackCoroutine = AttackCoroutine(combo);
-        toInterrupt.Add(attackCoroutine);
-        StartCoroutine(attackCoroutine);
-        
-        lastAttackTime = Time.time;
     }
+
+    
 
     private IEnumerator ParryCoroutine() {
         yield return new WaitForSeconds(ParryTime);

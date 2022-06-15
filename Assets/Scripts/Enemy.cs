@@ -10,7 +10,8 @@ public class Enemy : LivingThing , IHittableEntity
     public float attackRange;
     public float attackCooldown;
     public float attackRecovery;
-    public float knockbackMult = 4f;
+    public float knockbackMult = 3f;
+    public float pushForce = 15f;
     public bool hasLosAggro;
     public bool hasLosAttack;
     public Transform attackPoint;
@@ -29,6 +30,7 @@ public class Enemy : LivingThing , IHittableEntity
     protected AIPath AIPath;
     protected CharController CharController;
     protected LayerMask PlayerMask;
+    protected BoxCollider2D collider;
 
     // Start is called before the first frame update
     protected override void Start()
@@ -43,6 +45,7 @@ public class Enemy : LivingThing , IHittableEntity
         Rigidbody = transform.GetComponent<Rigidbody2D>();
         CharController = FindObjectOfType<CharController>();
         PlayerMask = LayerMask.GetMask("Player");
+        collider = GetComponent<BoxCollider2D>();
     }
 
     public virtual void GetHit(int damage)
@@ -234,6 +237,19 @@ public class Enemy : LivingThing , IHittableEntity
         }
         else if (Rigidbody.velocity.x < 0) {
             FaceLeft();
+        }
+    }
+
+    protected void PlayerPush_Update()
+    {
+        if (collider.bounds.Contains(CharController.Instance.transform.position))
+        {
+            int dir = 1;
+            if (CharController.Instance.transform.position.x < transform.position.x)
+            {
+                dir = -1;
+            }
+            CharController.Instance.GetComponent<Rigidbody2D>().AddForce(Vector2.right * dir * pushForce);
         }
     }
 

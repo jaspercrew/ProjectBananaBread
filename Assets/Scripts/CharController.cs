@@ -66,7 +66,7 @@ public partial class CharController : LivingThing
     private float jumpForce = 12f;
     private const float BaseGravity = 9.0f;
     // private const int HeavyAttackBuildup = 4;
-    private const float AttackCooldown = 0.5f;
+    private const float AttackCooldown = 0.0f;
     private const float ParryCooldown = 1f;
     private const float ParryTime = .4f;
     private const float DashCooldown = 1f;
@@ -243,13 +243,13 @@ public partial class CharController : LivingThing
             //     @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && 
             //     @this.canDoubleJump && Input.GetKeyDown(KeyCode.Space)},
             {Event.EventTypes.Attack, @this => 
-                @this.IsAbleToAct() && Time.time > @this.lastAttackTime + AttackCooldown},
+                @this.IsAbleToAct() && Time.time > @this.lastAttackTime + AttackCooldown && !@this.inRecovery},
             {Event.EventTypes.Parry, @this =>
                 @this.IsAbleToAct() && Time.time > @this.lastParryTime + ParryCooldown},
             {Event.EventTypes.Interact, 
                 @this => @this.IsAbleToAct()},
             {Event.EventTypes.SwitchState, 
-                @this => @this.IsAbleToAct() && Time.time > @this.lastShiftTime + ShiftCooldown},
+                @this => @this.IsAbleToAct() && Time.time > @this.lastShiftTime + ShiftCooldown && !@this.noShiftZone},
             {Event.EventTypes.SliceDash, @this => 
                 (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown},
             {Event.EventTypes.Crouch, 
@@ -432,6 +432,7 @@ public partial class CharController : LivingThing
         isParrying = false;
         isSliceDashing = false;
         IsDashing = false;
+        inRecovery = false;
     }
 
     public bool CanGetIFrames()

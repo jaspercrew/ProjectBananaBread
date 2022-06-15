@@ -52,14 +52,14 @@ TagManager:
   - name: Middle
     uniqueID: 3085180443
     locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
   - name: Middle+
     uniqueID: 1677689553
     locked: 0
   - name: Foreground
     uniqueID: 1600556957
-    locked: 0
-  - name: Default
-    uniqueID: 0
     locked: 0
   - name: UI
     uniqueID: 2412256349

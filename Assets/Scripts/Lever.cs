@@ -8,8 +8,8 @@ public class Lever : ActivatorTrigger, IHittableEntity
     private Dictionary<string, bool> leverDict;
     private SpriteRenderer sr;
     
-    private Sprite offSprite;
-    private Sprite onSprite;
+    public Sprite offSprite;
+    public Sprite onSprite;
 
     public override void Activate()
     {
@@ -26,10 +26,10 @@ public class Lever : ActivatorTrigger, IHittableEntity
 
     private IEnumerator CoStart()
     {
-        // TODO: this is stinky
-        Sprite[] leverSprites = Resources.LoadAll<Sprite>("Sprites/lever");
-        offSprite = leverSprites[0];
-        onSprite = leverSprites[1];
+        // // TODO: this is stinky
+        // Sprite[] leverSprites = Resources.LoadAll<Sprite>("Sprites/lever");
+        // offSprite = leverSprites[0];
+        // onSprite = leverSprites[1];
         sr = GetComponent<SpriteRenderer>();
 
         yield return new WaitUntil(() => GameManager.Instance.isReady);

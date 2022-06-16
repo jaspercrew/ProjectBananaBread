@@ -24,6 +24,9 @@ public partial class CharController : LivingThing
     private LineRenderer grappleLOSRenderer;
     private LineRenderer grappleClearRenderer;
     private BoxCollider2D groundCheck;
+    
+    private Vector2 originalColliderSize;
+    private Vector2 originalColliderOffset;
 
     // private Transform parentWindFX;
     // private ParticleSystem leftWindFX;
@@ -61,6 +64,7 @@ public partial class CharController : LivingThing
     private const float InAirDrag = 1.5f;
     private const float MaxYSpeed = 30f;
     private const float DashBoost = 15f;
+    private const float heightReducer = 4f;
     // private const float VerticalDrag = 10f;
     [SerializeField]
     private float jumpForce = 12f;
@@ -217,7 +221,7 @@ public partial class CharController : LivingThing
             {() => Input.GetKeyDown(KeyCode.E), Event.EventTypes.Interact},
             {() => Input.GetKeyDown(KeyCode.F), Event.EventTypes.SwitchState},
             {() => Input.GetKeyDown(KeyCode.R), Event.EventTypes.SliceDash},
-            {() => Input.GetKeyDown(KeyCode.LeftControl), Event.EventTypes.Crouch},
+            //{() => Input.GetKeyDown(KeyCode.LeftControl), Event.EventTypes.Crouch},
             {() => Input.GetKeyDown(KeyCode.V), Event.EventTypes.Cast},
             {() => Input.GetKeyDown(KeyCode.V), Event.EventTypes.Yoink},
             {() => Input.GetKeyDown(KeyCode.G), Event.EventTypes.Grapple},
@@ -252,8 +256,8 @@ public partial class CharController : LivingThing
                 @this => @this.IsAbleToAct() && Time.time > @this.lastShiftTime + ShiftCooldown && !@this.noShiftZone},
             {Event.EventTypes.SliceDash, @this => 
                 (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown},
-            {Event.EventTypes.Crouch, 
-                @this => @this.IsAbleToAct()},
+            // {Event.EventTypes.Crouch, 
+            //     @this => @this.IsAbleToAct()},
             {Event.EventTypes.Cast, 
                 @this => @this.IsAbleToAct() && @this.castProjectileRb == null && @this.canCast},
             {Event.EventTypes.Yoink, 
@@ -275,7 +279,7 @@ public partial class CharController : LivingThing
             {Event.EventTypes.Interact, @this => @this.DoInteract()},
             {Event.EventTypes.SwitchState, @this => @this.CauseSwitch()},
             {Event.EventTypes.SliceDash, @this => @this.DoSliceDash()},
-            {Event.EventTypes.Crouch, @this => @this.Crouch()},
+            //{Event.EventTypes.Crouch, @this => @this.Crouch()},
             {Event.EventTypes.Cast, @this => @this.DoCast()},
             {Event.EventTypes.Yoink, @this => @this.DoYoink()},
             {Event.EventTypes.Grapple, @this => @this.AttemptLaunchGrapple()},

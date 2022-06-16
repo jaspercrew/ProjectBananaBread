@@ -1,8 +1,10 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public partial class CharController
 {
+
     private void DoDash()
     {
         if (!IsAbleToAct() && !isAttacking) {
@@ -33,19 +35,42 @@ public partial class CharController
     // dash coroutine handles stopping the dash
     private IEnumerator DashCoroutine(float dashTime /*, float dashSpeed*/)
     {
-        float heightReducer = 4f;
-        Vector2 tempSize = charCollider.size;
-        Vector2 tempOffset = charCollider.offset;
-        charCollider.size = new Vector2(charCollider.size.x, charCollider.size.y / heightReducer);
-        charCollider.offset = new Vector2(charCollider.offset.x, charCollider.offset.y - ((tempSize.y - charCollider.size.y) / 2));
-        //charCollider.enabled = false;
+        ReduceHeight();
         yield return new WaitForSeconds(dashTime);
-        //charCollider.enabled = true;
-        //Rigidbody.velocity = new Vector2(Rigidbody.velocity.x - dashSpeed, Rigidbody.velocity.y);
+        //check if space
         IsDashing = false;
         trailRenderer.emitting = false;
-        charCollider.size = tempSize;
-        charCollider.offset = tempOffset;
+        if (CheckSpace())
+        {
+            ReturnHeight();
+        }
+        else
+        {
+            Crouch();
+        }
+        
+    }
+
+    private bool CheckSpace()
+    {
+        Vector3 bounds = charCollider.bounds.extents;
+        float halfWidth = Mathf.Abs(bounds.x);
+        float halfHeight = Mathf.Abs(bounds.y);
+        Vector2 center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
+        Vector2 topMiddle = center + halfHeight * Vector2.up;
+        Vector2 topLeft = topMiddle + halfWidth * Vector2.left;
+        Vector2 topRight = topMiddle + halfWidth * Vector2.right;
+        Vector2 aLittleUp =  Vector2.up;
+        
+        Debug.DrawLine(topLeft, topLeft + aLittleUp, Color.magenta);
+        Debug.DrawLine(topRight, topRight + aLittleUp, Color.magenta);
+
+        RaycastHit2D hit1 = 
+            Physics2D.Linecast(topLeft, topLeft + aLittleUp, obstaclePlusLayerMask);
+        RaycastHit2D hit2 = 
+            Physics2D.Linecast(topRight, topRight + aLittleUp, obstaclePlusLayerMask);
+
+        return !hit1 && !hit2;
     }
 
     private void DoJump()
@@ -53,15 +78,15 @@ public partial class CharController
         //print("jumpcall");
         justJumped = true;
         dust.Play();
-        const float wallJumpModX = 1.0f;
-        const float wallJumpModY = 1.4f;
+        const float wallJumpModX = .8f;
+        const float wallJumpModY = 1.2f;
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
 
         if ((isWallSliding || wallJumpAvailable) && !isGrounded)
         {
             //Debug.Log("WALLJUMP");
-            forcedMoveTime = .25f;
+            forcedMoveTime = .28f;
             if (wallJumpDir == -1)
             {
                 //FaceLeft();
@@ -101,16 +126,38 @@ public partial class CharController
     //     Animator.SetBool(Grounded, false);
     //     Animator.SetTrigger(Jump);
     // }
+
+    private void ReduceHeight()
+    {
+        charCollider.size = new Vector2(originalColliderSize.x, originalColliderSize.y / heightReducer);
+        charCollider.offset = new Vector2(originalColliderOffset.x, originalColliderOffset.y - 
+                                                                    ((originalColliderSize.y - (originalColliderSize.y / heightReducer)) / 2));
+    }
+
+    private void ReturnHeight()
+    {
+        charCollider.size = originalColliderSize;
+        charCollider.offset = originalColliderOffset;
+    }
     
 
-    // TODO: add variable isCrouching and set to true/false here instead of changing speed directly
-    // and use isCrouching in movement and affect speed there
     private void Crouch()
     {
-        if (!IsAbleToAct())
-            return;
-        isCrouching = !isCrouching;
-        speed *= isCrouching? 0.5f : 2;
+        Assert.IsTrue(!isCrouching);
+        Animator.SetBool("isCrouching", true);
+        ReduceHeight();
+        isCrouching = true;
+        speed *= .5f;
+    }
+
+    private void UnCrouch()
+    {
+        Assert.IsTrue(isCrouching);
+        Animator.SetBool("isCrouching", false);
+        ReturnHeight();
+        speed *= 2f;
+        isCrouching = false;
+
     }
     
     private void OnLanding() {

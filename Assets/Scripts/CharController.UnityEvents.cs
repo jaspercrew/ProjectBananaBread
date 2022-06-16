@@ -61,6 +61,8 @@ public partial class CharController
         screenShakeController = ScreenShakeController.Instance;
         // grappleController = GetComponent<RadialGrapple>();
         spriteRenderer = transform.Find("SpriteHandler").GetComponent<SpriteRenderer>();
+        originalColliderSize = charCollider.size;
+        originalColliderOffset = charCollider.offset;
         
         trailRenderer.emitting = false;
         charLight.enabled = false;
@@ -467,11 +469,21 @@ public partial class CharController
         WallSlideDetection_Update();
         SliceDashDetection_Update();
         LineGrappleUpdate();
+        Crouching_Update();
         if (SceneInformation.Instance.isDarkScene)
         {
             //LightCheckUpdate();
         }
     }
+
+    private void Crouching_Update()
+    {
+        if (isCrouching && CheckSpace())
+        {
+            UnCrouch();
+        }
+    }
+    
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(attackPoint.position, AttackRange);

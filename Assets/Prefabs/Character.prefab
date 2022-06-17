@@ -218,7 +218,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1677689553
-  m_SortingLayer: -2
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: -3318188226485093758, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -10360,15 +10360,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   invertible: 1
-  maxHealth: 0
-  currentHealth: 0
+  maxHealth: 5
+  currentHealth: 5
   castProjectileInput: {fileID: 3870309991120366406, guid: e5443d9096a73484db468b02fc57e85b, type: 3}
+  noShiftZone: 0
   fadeSprite: {fileID: 849027303211011230, guid: 3e65f913ebec9664da23f573e81e5867, type: 3}
   speed: 7
   jumpForce: 8.5
-  enemyLayers:
+  hittableLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 576
   attackPoint: {fileID: 7265325464984090082}
   slicePoint: {fileID: 7265325464034420409}
   gravityValue: 15
@@ -15387,7 +15388,7 @@ LineRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 103378881
-  m_SortingLayer: -4
+  m_SortingLayer: -2
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
@@ -15516,7 +15517,7 @@ LineRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1882710947
-  m_SortingLayer: 1
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}

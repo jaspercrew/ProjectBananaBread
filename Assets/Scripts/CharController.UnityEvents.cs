@@ -645,7 +645,7 @@ public partial class CharController
 
             // scan for hit enemies
             Physics2D.OverlapCircleNonAlloc(
-                slicePoint.position, AttackRange, hitColliders, enemyLayers);
+                slicePoint.position, AttackRange, hitColliders, hittableLayers);
             
             if (hitColliders[0] != null) {
                 //Debug.Log("execute");

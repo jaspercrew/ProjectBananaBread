@@ -203,7 +203,8 @@ public partial class CharController
         //print("scanattack");
         // scan for hit enemies
         Physics2D.OverlapCircleNonAlloc(
-            attackPoint.position, AttackRange, hitColliders, enemyLayers);
+            attackPoint.position, AttackRange, hitColliders, 
+            hittableLayers);
 
         bool hit = false;
         foreach (Collider2D obj in hitColliders)

@@ -47,12 +47,12 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 0.1
   m_AngularDrag: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 6200000, guid: c46c249953dbb004d8a30cb1c8095235, type: 2}
   m_Interpolate: 0
-  m_SleepingMode: 1
+  m_SleepingMode: 2
   m_CollisionDetection: 0
   m_Constraints: 4
 --- !u!61 &1679500839672322549
@@ -144,6 +144,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac6d3bad71119f54e8417faea7d488f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Invertable: 1
+  invertible: 1
   offSprite: {fileID: 5154290314518755557, guid: e626df04f669e6443851ad937b7daff0, type: 3}
   onSprite: {fileID: 7012129125543865552, guid: e626df04f669e6443851ad937b7daff0, type: 3}

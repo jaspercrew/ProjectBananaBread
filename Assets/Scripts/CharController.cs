@@ -85,7 +85,7 @@ public partial class CharController : LivingThing
     // private const float MaxInnerLightRadius = 3;
     private const float ComboResetThreshold = 1.2f;
     private const float AttackRange = 1.15f;
-    public LayerMask enemyLayers;
+    [FormerlySerializedAs("enemyLayers")] public LayerMask hittableLayers;
     [SerializeField] private Transform attackPoint;
     [SerializeField] private Transform slicePoint;
     

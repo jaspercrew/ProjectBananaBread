@@ -154,6 +154,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6c140ed7a96dc0418a922a64e942dd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  invertible: 1
+  activeInReal: 1
+  activeInAlt: 1
   bounceVelocity: 15
   isInverted: 0
 --- !u!212 &84154202
@@ -78942,14 +78945,6 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 355058952}
-    - target: {fileID: 7265325464268355320, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
-      propertyPath: maxHealth
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7265325464268355320, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
-      propertyPath: currentHealth
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 7265325464268355321, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -78996,6 +78991,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7265325464268355322, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
       propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7265325464268355323, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
+      propertyPath: m_Mass
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7265325464268355324, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}

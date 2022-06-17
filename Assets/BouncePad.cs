@@ -19,7 +19,14 @@ public class BouncePad : ActivatedEntity
         if (rb != null)
         {
             //print("force added");
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y + (isInverted ? -bounceVelocity : bounceVelocity));
+            if (other.gameObject.GetComponent<CharController>() == null)
+            {
+                rb.velocity = new Vector2(0, rb.velocity.y + (isInverted ? -bounceVelocity : bounceVelocity));
+            }
+            else
+            {
+                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y + (isInverted ? -bounceVelocity : bounceVelocity));
+            }
         }
     }
 

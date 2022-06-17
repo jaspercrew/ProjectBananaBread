@@ -35,16 +35,21 @@ public partial class CharController
     // dash coroutine handles stopping the dash
     private IEnumerator DashCoroutine(float dashTime /*, float dashSpeed*/)
     {
+        UnCrouch();
         ReduceHeight();
         yield return new WaitForSeconds(dashTime);
         //check if space
         IsDashing = false;
         trailRenderer.emitting = false;
+        // if (isCrouching && CheckSpace())
+        // {
+        //     UnCrouch();
+        // }
         if (CheckSpace())
         {
             ReturnHeight();
         }
-        else
+        else if (!isCrouching)
         {
             Crouch();
         }
@@ -143,19 +148,19 @@ public partial class CharController
 
     private void Crouch()
     {
-        Assert.IsTrue(!isCrouching);
+        //Assert.IsTrue(!isCrouching);
         Animator.SetBool("isCrouching", true);
         ReduceHeight();
         isCrouching = true;
-        speed *= .5f;
+        speed = baseSpeed / 2;
     }
 
     private void UnCrouch()
     {
-        Assert.IsTrue(isCrouching);
+        //Assert.IsTrue(isCrouching);
         Animator.SetBool("isCrouching", false);
         ReturnHeight();
-        speed *= 2f;
+        speed = baseSpeed;
         isCrouching = false;
 
     }

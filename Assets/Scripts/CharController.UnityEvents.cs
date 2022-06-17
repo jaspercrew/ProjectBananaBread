@@ -23,6 +23,7 @@ public partial class CharController
 
     protected override void Start()
     {
+        
         SaveData.LoadFromFile(1);
         fury = 0;
         lastShiftTime = 0f;
@@ -32,6 +33,7 @@ public partial class CharController
         fadeSpriteIterator = 0;
         //capeAnchor = transform.Find("Cape").Find("CapeAnchor").GetComponent<CapeController>();
         //capeOutlineAnchor = transform.Find("Cape").Find("CapeAnchor1").GetComponent<CapeController>();
+        speed = baseSpeed;
         grappleLineRenderer = transform.GetComponent<LineRenderer>();
         grappleLineRenderer.enabled = false;
         grappleLOSRenderer = transform.Find("GrappleLOS").GetComponent<LineRenderer>();

@@ -6,7 +6,7 @@ public class ActivatorBox : Entity, IHittableEntity
     private new Collider2D collider2D;
     private new Rigidbody2D rigidbody2D;
     private SpriteRenderer spriteRenderer;
-    private const float hitVelocity = 10f;
+    private const float hitVelocity = 13f;
     private bool beingHit;
     public Sprite offSprite;
     public Sprite onSprite; 

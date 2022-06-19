@@ -30,7 +30,7 @@ public class Enemy : LivingThing , IHittableEntity
     protected AIPath AIPath;
     protected CharController CharController;
     protected LayerMask PlayerMask;
-    protected BoxCollider2D collider;
+    protected new BoxCollider2D collider;
 
     // Start is called before the first frame update
     protected override void Start()

@@ -41321,6 +41321,14 @@ PrefabInstance:
       propertyPath: exitMappings.Array.data[0].spawnObj
       value: 
       objectReference: {fileID: 790809519}
+    - target: {fileID: 7811712953924589793, guid: ef954ea09b3d0374889ca55a796390cd, type: 3}
+      propertyPath: exitMappings.Array.data[0].exitTrigger
+      value: 
+      objectReference: {fileID: 1823159730}
+    - target: {fileID: 7811712953924589793, guid: ef954ea09b3d0374889ca55a796390cd, type: 3}
+      propertyPath: exitMappings.Array.data[0].destinationScene
+      value: 
+      objectReference: {fileID: 102900000, guid: c317f727c5957384d9b16121ae03ec44, type: 3}
     - target: {fileID: 8679911871374044261, guid: ef954ea09b3d0374889ca55a796390cd, type: 3}
       propertyPath: m_TagString
       value: Untagged
@@ -41398,8 +41406,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caf2d51b7784feb4cbbd6ce2c868f324, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exitName: ToB
-  scene: {fileID: 102900000, guid: c317f727c5957384d9b16121ae03ec44, type: 3}
 --- !u!212 &1823159733
 SpriteRenderer:
   m_ObjectHideFlags: 0

@@ -242,7 +242,6 @@ public partial class CharController : LivingThing
     // methods of CharController, so we have to explicitly pass an instance of a CharController
     // (i.e. we later explicitly pass in a "this"). we can access private variables just fine since
     // we're inside the class definition
-    // TODO: add these to the beginnings of each of the respective functions
     private static readonly Dictionary<Event.EventTypes, Func<CharController, bool>> EventConditions =
         new Dictionary<Event.EventTypes, Func<CharController, bool>>
         {
@@ -453,7 +452,7 @@ public partial class CharController : LivingThing
         inRecovery = false;
     }
 
-    public bool CanGetIFrames()
+    public bool HasIFrames()
     {
         return IsDashing || isInvincible || isSliceDashing || !canFunction;
     }

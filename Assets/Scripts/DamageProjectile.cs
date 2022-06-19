@@ -35,7 +35,7 @@ public class DamageProjectile : Projectile
                 Initialize(new Vector2(-Rigidbody2D.velocity.x, -Rigidbody2D.velocity.y));
                 canHitEnemy = true;
             }
-            else if (CharController.Instance.CanGetIFrames())
+            else if (CharController.Instance.HasIFrames())
             {
                 // return;
             }

@@ -60,7 +60,7 @@ public class Enemy : LivingThing , IHittableEntity
         {
             Stun(knocktime);
 
-            StartCoroutine(KnockbackCoroutine(CharController.Instance.transform.position.x > transform.position.x
+            StartCoroutine(KnockbackCoroutine(CharController.position.x > transform.position.x
                 ? Vector2.left
                 : Vector2.right));
             //StartCoroutine(DisableMoveCoroutine(.2f));
@@ -242,10 +242,10 @@ public class Enemy : LivingThing , IHittableEntity
 
     protected void PlayerPush_Update()
     {
-        if (collider.bounds.Contains(CharController.Instance.transform.position))
+        if (collider.bounds.Contains(CharController.position))
         {
             int dir = 1;
-            if (CharController.Instance.transform.position.x < transform.position.x)
+            if (CharController.position.x < transform.position.x)
             {
                 dir = -1;
             }

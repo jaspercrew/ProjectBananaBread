@@ -22,7 +22,7 @@ public class ThrowerEnemy : Enemy
 
     protected override void TurnAround_Update()
     {
-        if (CharController.Instance.transform.position.x < transform.position.x) {
+        if (CharController.position.x < transform.position.x) {
             FaceLeft();
         }
         else {
@@ -37,7 +37,7 @@ public class ThrowerEnemy : Enemy
         //Vector2 direction = ((charController.transform.position + new Vector3(0, .5f, 0)) - transform.position).normalized;
         sentProjectile = Instantiate(projectilePrefab, transform.position, transform.rotation);
         //Debug.Log(sentProjectile.GetComponent<Projectile>().lifetime);
-        float xDiff = CharController.Instance.transform.position.x - transform.position.x;
+        float xDiff = CharController.position.x - transform.position.x;
         Vector2 dir =  xDiff > 0?  
             new Vector2(1, 1) : new Vector2(-1, 1);
         sentProjectile.gameObject.GetComponent<ExplosiveBomb>().Initialize(dir, xDiff * forceMult);

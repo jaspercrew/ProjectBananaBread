@@ -65,7 +65,7 @@ public class BinaryHazard : BinaryEntity
         }
         else if (behavior == HazardBehavior.Teleport)
         {
-            CharController.Instance.transform.position = destination.position;
+            CharController.position = destination.position;
         }
     }
     

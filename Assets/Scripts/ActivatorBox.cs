@@ -32,7 +32,7 @@ public class ActivatorBox : Entity, IHittableEntity
         rigidbody2D.mass = 1;
         beingHit = true;
         rigidbody2D.velocity =
-            (CharController.Instance.transform.position.x > transform.position.x ? Vector2.left : Vector2.right) *
+            (CharController.position.x > transform.position.x ? Vector2.left : Vector2.right) *
             hitVelocity;
         
     }

@@ -92,7 +92,7 @@ public class GameManager : MonoBehaviour
     {
         GameObject prefab = Resources.Load<GameObject>("Prefabs/TextNotification");
         GameObject created = Instantiate(prefab);
-        created.transform.position = CharController.Instance.transform.position;
+        created.transform.position = CharController.position;
         Destroy(created, duration);
         TMP_Text tmp = created.transform.Find("Canvas").Find("Text").GetComponent<TMP_Text>();
         StartCoroutine(TextPopCoroutine(created, duration));

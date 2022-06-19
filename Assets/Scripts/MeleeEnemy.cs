@@ -64,7 +64,7 @@ public class MeleeEnemy : CloseAttackerEnemy
             Rigidbody.velocity = 
                 new Vector2(Mathf.Max(Rigidbody.velocity.x, -.01f), Rigidbody.velocity.y);
         }
-        Rigidbody.AddForce(new Vector2((CharController.Instance.transform.position.x < transform.position.x ? -1 : 1) * attackBoost, 0), ForceMode2D.Impulse);
+        Rigidbody.AddForce(new Vector2((CharController.position.x < transform.position.x ? -1 : 1) * attackBoost, 0), ForceMode2D.Impulse);
         yield return new WaitForSeconds(beginAttackDelay);
 
         const int maxHits = 20;

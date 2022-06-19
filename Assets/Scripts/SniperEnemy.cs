@@ -22,7 +22,7 @@ public class SniperEnemy : Enemy
 
     protected override void TurnAround_Update()
     {
-        if (CharController.Instance.transform.position.x < transform.position.x) {
+        if (CharController.position.x < transform.position.x) {
             FaceLeft();
         }
         else {

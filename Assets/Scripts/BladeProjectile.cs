@@ -26,7 +26,7 @@ public class BladeProjectile : Projectile
     {
         if (isReturning)
         {
-            Rigidbody2D.velocity = inSpeed * (CharController.Instance.transform.position - transform.position).normalized;
+            Rigidbody2D.velocity = inSpeed * (CharController.position - transform.position).normalized;
         }
     }
 

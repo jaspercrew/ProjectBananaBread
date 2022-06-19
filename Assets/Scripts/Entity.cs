@@ -18,6 +18,6 @@ public class Entity : MonoBehaviour
         {
             return;
         }
-        GetComponent<Rigidbody2D>().AddForce(yoinkForce * (CharController.Instance.transform.position - transform.position).normalized, ForceMode2D.Impulse);
+        GetComponent<Rigidbody2D>().AddForce(yoinkForce * (CharController.position - transform.position).normalized, ForceMode2D.Impulse);
     }
 }

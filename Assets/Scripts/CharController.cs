@@ -8,6 +8,13 @@ using UnityEngine.Serialization;
 public partial class CharController : LivingThing
 {
     public static CharController Instance;
+
+    public static Vector3 position
+    {
+        get => Instance.transform.position;
+        set => Instance.transform.position = value;
+    }
+    
     // Components
     private BoxCollider2D charCollider;
     private ParticleSystem dust;

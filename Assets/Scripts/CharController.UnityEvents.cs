@@ -349,7 +349,8 @@ public partial class CharController
             // affect gravity
             float windSpeed = currentWind.speedOnPlayer;
             float gravChange = -0.1f * windSpeed; // TODO: constant
-            gravityValue = (isInverted ? -Math.Abs(gravityValue) : Math.Abs(gravityValue)) + gravChange; // TODO: change back
+            // TODO: ???
+            gravityValue = (isInverted ? -Math.Abs(gravityValue) : Math.Abs(gravityValue)) + gravChange;
             
             // apply max vel
             int windDir = (windSpeed < 0)? -1 : 1; // -1 if left, 1 if right
@@ -734,7 +735,8 @@ public partial class CharController
         // isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) 
         //                              || (moveVector < 0 && isNearWallOnLeft)) && IsAbleToMove();
         // isWallSliding = (isInverted ? -v.y : v.y) <= 0 && 
-        //                 ((isNearWallOnRight && moveVector >= 0)|| (isNearWallOnLeft && moveVector <= 0)) && IsAbleToMove();
+        //                 ((isNearWallOnRight && moveVector >= 0)|| (isNearWallOnLeft && moveVector <= 0)) &&
+        //                 IsAbleToMove();
         isWallSliding = (isInverted ? -v.y : v.y) <= 0 && 
                         ((isNearWallOnRight)|| (isNearWallOnLeft)) && IsAbleToMove() && !isGrounded;
         //Debug.Log(wallJumpAvailable);

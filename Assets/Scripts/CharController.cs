@@ -247,23 +247,29 @@ public partial class CharController : LivingThing
         new Dictionary<Event.EventTypes, Func<CharController, bool>>
         {
             {Event.EventTypes.Dash, @this =>
-                (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown && !@this.isCrouching},
+                (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown &&
+                !@this.isCrouching},
             {Event.EventTypes.Jump, @this => 
-                @this.IsAbleToMove() && (@this.isGrounded || (@this.jumpAvailable && !@this.justJumped) ||
-                                         @this.isWallSliding || (@this.wallJumpAvailable && !@this.justJumped)) && !@this.isCrouching},
+                @this.IsAbleToMove() && 
+                (@this.isGrounded || (@this.jumpAvailable && !@this.justJumped) ||
+                 @this.isWallSliding || (@this.wallJumpAvailable && !@this.justJumped)) &&
+                !@this.isCrouching},
             // {Event.EventTypes.DoubleJump, @this => 
             //     @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && 
             //     @this.canDoubleJump && Input.GetKeyDown(KeyCode.Space)},
             {Event.EventTypes.Attack, @this => 
-                @this.IsAbleToAct() && Time.time > @this.lastAttackTime + AttackCooldown && !@this.inRecovery && !@this.isCrouching},
+                @this.IsAbleToAct() && Time.time > @this.lastAttackTime + AttackCooldown && 
+                !@this.inRecovery && !@this.isCrouching},
             {Event.EventTypes.Parry, @this =>
                 @this.IsAbleToAct() && Time.time > @this.lastParryTime + ParryCooldown && !@this.isCrouching},
             {Event.EventTypes.Interact, 
                 @this => @this.IsAbleToAct()},
             {Event.EventTypes.SwitchState, 
-                @this => @this.IsAbleToAct() && Time.time > @this.lastShiftTime + ShiftCooldown && !@this.noShiftZone},
+                @this => @this.IsAbleToAct() && Time.time > @this.lastShiftTime + ShiftCooldown &&
+                         !@this.noShiftZone},
             {Event.EventTypes.SliceDash, @this => 
-                (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown && !@this.isCrouching},
+                (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown &&
+                !@this.isCrouching},
             // {Event.EventTypes.Crouch, 
             //     @this => @this.IsAbleToAct()},
             {Event.EventTypes.Cast, 

@@ -1,4 +1,5 @@
 using UnityEngine;
+using ADBannerView = UnityEngine.iOS.ADBannerView;
 
 public class ActivatorBox : Entity, IHittableEntity
 {
@@ -9,7 +10,8 @@ public class ActivatorBox : Entity, IHittableEntity
     private const float hitVelocity = 13f;
     private bool beingHit;
     public Sprite offSprite;
-    public Sprite onSprite; 
+    public Sprite onSprite;
+    private bool isLocked = false;
     
     // Start is called before the first frame update
     private void Start()
@@ -18,18 +20,23 @@ public class ActivatorBox : Entity, IHittableEntity
         rigidbody2D = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = offSprite;
-        rigidbody2D.mass = 10000;
+        //rigidbody2D.mass = 10000;
     }
 
     public void Lock()
     {
+        isLocked = true;
         GetComponent<SpriteRenderer>().sprite = onSprite;
         rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
     }
 
     public void GetHit(int damage)
     {
-        rigidbody2D.mass = 1;
+        if (isLocked)
+        {
+            return;
+        }
+        //rigidbody2D.mass = 1;
         beingHit = true;
         rigidbody2D.velocity =
             (CharController.position.x > transform.position.x ? Vector2.left : Vector2.right) *
@@ -43,7 +50,7 @@ public class ActivatorBox : Entity, IHittableEntity
         if (beingHit && rigidbody2D.velocity.magnitude < .1f)
         {
             beingHit = false;
-            rigidbody2D.mass = 10000;
+            //rigidbody2D.mass = 10000;
         }
 
     }

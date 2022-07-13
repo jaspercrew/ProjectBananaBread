@@ -71,13 +71,13 @@ AreaEffector2D:
   m_UseColliderMask: 1
   m_ColliderMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 576
   m_UseGlobalAngle: 0
   m_ForceAngle: 0
   m_ForceMagnitude: 10
   m_ForceVariation: 0
   m_ForceTarget: 0
-  m_Drag: 0
+  m_Drag: 0.7
   m_AngularDrag: 0
 --- !u!114 &62266879
 MonoBehaviour:
@@ -91,7 +91,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79384463c47ca41459d054d26d8aa5e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Invertable: 1
+  invertible: 1
+  moveableMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &1622318049
 GameObject:
   m_ObjectHideFlags: 0
@@ -508,7 +511,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isGameShifted: 0
-  lastExitTouched: 
+  isReady: 0
 --- !u!1 &1005183157556488413
 GameObject:
   m_ObjectHideFlags: 0
@@ -699,7 +702,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1c7aa501400cf944bb52fa8a3741f74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Invertable: 1
+  invertible: 1
 --- !u!1 &1005183158196578498
 GameObject:
   m_ObjectHideFlags: 0

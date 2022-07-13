@@ -4,14 +4,12 @@ public class WindForce : BinaryEntity
 {
 
     private AreaEffector2D areaEffector;
-    private LayerMask moveableMask;
+    public LayerMask moveableMask;
     // Start is called before the first frame update
     protected override void Start()
     {
         areaEffector = GetComponent<AreaEffector2D>();
-        moveableMask = LayerMask.NameToLayer("Moveable");
         areaEffector.useColliderMask = true;
-        areaEffector.colliderMask = moveableMask;
         base.Start();
         if (!SceneInformation.Instance.isWindScene)
         {

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1941901862837427717}
   - component: {fileID: 1941901862837427714}
   - component: {fileID: 1941901862837427715}
-  - component: {fileID: 1941901862837427712}
+  - component: {fileID: 5945577540034860760}
   m_Layer: 0
   m_Name: BouncePad
   m_TagString: Untagged
@@ -110,7 +110,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1941901862837427712
+--- !u!114 &5945577540034860760
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,11 +119,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1941901862837427713}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6c140ed7a96dc0418a922a64e942dd8, type: 3}
+  m_Script: {fileID: 11500000, guid: 8a95de538f4a452492185bc95e03b1b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   invertible: 1
   activeInReal: 1
   activeInAlt: 1
-  bounceVelocity: 13
+  bounceVelocity: 10
   isInverted: 0

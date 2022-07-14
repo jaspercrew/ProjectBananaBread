@@ -126,6 +126,7 @@ public partial class CharController : LivingThing
     public bool isInverted;
     
     // ReSharper disable once InconsistentNaming
+    private bool isPlatformGrounded;
     private bool _isGrounded;
     private bool isGrounded
     {
@@ -194,6 +195,7 @@ public partial class CharController : LivingThing
 
     private LayerMask obstacleLayerMask;
     private LayerMask obstaclePlusLayerMask;
+    private LayerMask platformLayerMask;
     
     private readonly LinkedList<Event> eventQueue = new LinkedList<Event>();
 

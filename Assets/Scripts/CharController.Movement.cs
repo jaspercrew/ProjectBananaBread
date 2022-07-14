@@ -80,6 +80,17 @@ public partial class CharController
 
     private void DoJump()
     {
+        if (Input.GetKey(KeyCode.S) && isPlatformGrounded)
+        {
+            TileStateManager.Instance.DeactivatePlatforms();
+            return;
+        }
+
+        if (Rigidbody.velocity.y > 0.01)
+        {
+            return;
+        }
+        
         //print("jumpcall");
         justJumped = true;
         dust.Play();

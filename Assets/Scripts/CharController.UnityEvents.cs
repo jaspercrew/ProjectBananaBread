@@ -57,7 +57,8 @@ public partial class CharController
         trailRenderer = particleChild.Find("FX").GetComponent<TrailRenderer>();
         //fadePS = particleChild.Find("FadePS").GetComponent<ParticleSystem>();
         obstacleLayerMask = LayerMask.GetMask("Obstacle");
-        obstaclePlusLayerMask = LayerMask.GetMask("Obstacle", "Moveable");
+        obstaclePlusLayerMask = LayerMask.GetMask("Obstacle", "Moveable", "Platform");
+        platformLayerMask = LayerMask.GetMask("Platform");
         
         
         screenShakeController = ScreenShakeController.Instance;
@@ -448,6 +449,7 @@ public partial class CharController
         Vector2 v = Rigidbody.velocity;
         Rigidbody.velocity = new Vector2(v.x, v.y - (gravityValue * Time.deltaTime));
         CheckGrounded_Update();
+        CheckPlatformGrounded_Update();
         EventHandling_Update();
 
         // apply wind min velocity lolol
@@ -486,6 +488,7 @@ public partial class CharController
             UnCrouch();
         }
     }
+
     
     private void OnDrawGizmos()
     {
@@ -601,6 +604,30 @@ public partial class CharController
 
         isGrounded = newlyGrounded;
         Animator.SetBool(Grounded, isGrounded);
+    }
+    
+    private void CheckPlatformGrounded_Update()
+    {
+        const float groundDistance = 0.05f;
+
+        Vector3 bounds = charCollider.bounds.extents;
+        float halfWidth = Mathf.Abs(bounds.x) - groundDistance;
+        float halfHeight = Mathf.Abs(bounds.y) - groundDistance;
+        Vector2 center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
+        Vector2 bottomMiddle = center + halfHeight * Vector2.down;
+        Vector2 bottomLeft = bottomMiddle + halfWidth * Vector2.left;
+        Vector2 bottomRight = bottomMiddle + halfWidth * Vector2.right;
+        Vector2 aLittleDown = 5 * groundDistance * Vector2.down;
+        
+        Debug.DrawLine(bottomLeft, bottomLeft + aLittleDown, Color.magenta);
+        Debug.DrawLine(bottomRight, bottomRight + aLittleDown, Color.magenta);
+
+        RaycastHit2D hit1 = 
+            Physics2D.Linecast(bottomLeft, bottomLeft + aLittleDown, platformLayerMask);
+        RaycastHit2D hit2 = 
+            Physics2D.Linecast(bottomRight, bottomRight + aLittleDown, platformLayerMask);
+
+        isPlatformGrounded = hit1 || hit2;
     }
 
     private void EventHandling_Update() {
@@ -763,5 +790,12 @@ public partial class CharController
         {
         }
     }
-    
+
+    // private void OnCollisionExit2D(Collision2D other)
+    // {
+    //     if (other.gameObject.CompareTag("Platform") && !TileStateManager.Instance.platformsActivated)
+    //     {
+    //         TileStateManager.Instance.ActivatePlatforms();
+    //     }
+    // }
 }

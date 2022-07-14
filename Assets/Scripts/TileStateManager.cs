@@ -1,4 +1,8 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class TileStateManager : MonoBehaviour
 {
@@ -15,6 +19,10 @@ public class TileStateManager : MonoBehaviour
     private CompositeCollider2D realCc;
     private CompositeCollider2D altCc;
 
+    private HashSet<PlatformEffector2D> platforms;
+
+    public bool platformsActivated = true;
+
     void Awake()
     {
         if (Instance == null)
@@ -27,6 +35,11 @@ public class TileStateManager : MonoBehaviour
         Grid both = transform.Find("GridMain").GetComponent<Grid>();
         realGrid = transform.Find("GridA").GetComponent<Grid>();
         altGrid = transform.Find("GridB").GetComponent<Grid>();
+       // print(transform.Find("GridMain").transform.Find("Main-Platforms").GetComponent<PlatformEffector2D>());
+        platforms = new HashSet<PlatformEffector2D>();
+        platforms.Add(transform.Find("GridMain").transform.Find("Main-Platforms").GetComponent<PlatformEffector2D>());
+        platforms.Add(transform.Find("GridA").transform.Find("A-Platforms").GetComponent<PlatformEffector2D>());
+        platforms.Add(transform.Find("GridB").transform.Find("B-Platforms").GetComponent<PlatformEffector2D>());
         
         both.enabled = true;
 
@@ -39,6 +52,36 @@ public class TileStateManager : MonoBehaviour
         CalculateAndSpawnOutlines("B", out altLrParent, altCc, altGround);
         
         ShiftTilesTo(GameManager.Instance.isGameShifted);
+    }
+
+    public void DeactivatePlatforms()
+    {
+        print("deactivate plats");
+        Assert.IsTrue(platformsActivated);
+        platformsActivated = false;
+        foreach (PlatformEffector2D platform in platforms)
+        {
+            platform.colliderMask = LayerMask.NameToLayer("Player");
+        }
+        StartCoroutine(DeactivatePlatformCoroutine());
+    }
+
+    private IEnumerator DeactivatePlatformCoroutine()
+    {
+        yield return new WaitForSeconds(1.2f);
+        ActivatePlatforms();
+    }
+
+    public void ActivatePlatforms()
+    {
+        print("activate plats");
+        Assert.IsTrue(!platformsActivated);
+        platformsActivated = true;
+        foreach (PlatformEffector2D platform in platforms)
+        {
+            platform.colliderMask = Physics.AllLayers;
+        }
+        
     }
 
     public void ShiftTilesTo(bool isAlt)

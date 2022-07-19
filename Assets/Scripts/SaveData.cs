@@ -12,9 +12,9 @@ public class SaveData
     // this is the only place the constructor should ever be called
     private static SaveData instance = new SaveData();
     
-    private int playerHealth;
+    //private int playerHealth;
     private string playerScene;
-    private Dictionary<string, bool> levers = new Dictionary<string, bool>();
+    //private Dictionary<string, bool> levers = new Dictionary<string, bool>();
 
     private SaveData()
     {
@@ -31,9 +31,9 @@ public class SaveData
         instance = new SaveData
         {
             // update stuff here, then save to object file
-            playerHealth = CharController.Instance.currentHealth,
+            //playerHealth = CharController.Instance.currentHealth,
             playerScene = SceneManager.GetActiveScene().name,
-            levers = GameManager.Instance.LeverDict
+            //levers = GameManager.Instance.LeverDict
         };
 
         // write to file
@@ -70,9 +70,9 @@ public class SaveData
             return;
         }
         
-        CharController.Instance.currentHealth = instance.playerHealth;
-        UIManager.Instance.PopulateHealthBarPublic();
-        GameManager.Instance.LeverDict = instance.levers;
+        //CharController.Instance.currentHealth = instance.playerHealth;
+        //UIManager.Instance.PopulateHealthBarPublic();
+        //GameManager.Instance.LeverDict = instance.levers;
         GameManager.Instance.isReady = true;
         Debug.Log("scene in save file: " + instance.playerScene + " (not being loaded)");
         

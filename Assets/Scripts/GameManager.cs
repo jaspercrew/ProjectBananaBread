@@ -36,22 +36,22 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            TextPop("test text");
-        }
+        // if (Input.GetKeyDown(KeyCode.M))
+        // {
+        //     TextPop("test text");
+        // }
     }
 
-    public void ShiftWorld()
+    public void WorldBeat()
     {
         isGameShifted = !isGameShifted;
         
         // shift entities
-        Entity[] entities = FindObjectsOfType<Entity>();
+        BeatEntity[] entities = FindObjectsOfType<BeatEntity>();
         
-        foreach (Entity entity in entities)
+        foreach (BeatEntity entity in entities)
         {
-            entity.Shift();
+            entity.Beat();
         }
         
         // shift tiles

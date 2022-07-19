@@ -2,50 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActivatedEntity : BinaryEntity
+public class ActivatedEntity : BeatEntity
 {
-    protected bool isActive;
-    public bool activeInReal = true;
-    public bool activeInAlt = true;
+    public bool isActive = false;
     // Start is called before the first frame update
     protected override void Start()
     {
         base.Start();
     }
-
-    protected override void TurnShifted()
+    
+    public override void Beat()
     {
-        base.TurnShifted();
-        if (activeInAlt)
-        {
-            Activate();
-        }
-        else
-        {
-            Deactivate();
-        }
-    }
+        isActive = !isActive;
 
-    protected override void TurnUnshifted()
-    {
-        base.TurnUnshifted();
-        if (activeInReal)
-        {
-            Activate();
-        }
-        else
-        {
-            Deactivate();
-        }
-    }
-
-    protected virtual void Activate()
-    {
-        isActive = true;
-    }
-
-    protected virtual void Deactivate()
-    {
-        isActive = false;
     }
 }

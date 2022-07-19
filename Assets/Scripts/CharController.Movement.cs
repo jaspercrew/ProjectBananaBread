@@ -7,7 +7,7 @@ public partial class CharController
 
     private void DoDash()
     {
-        if (!IsAbleToAct() && !isAttacking) {
+        if (!IsAbleToAct()) {
             return;
         }
         Interrupt();
@@ -17,9 +17,8 @@ public partial class CharController
         float dashDir = inputVector;
         float dashSpeed = DashBoost * dashDir;
         const float dashTime = .23f;
-
         emitFadesTime = .28f;
-        IsDashing = true;
+        isDashing = true;
         trailRenderer.emitting = true;
         
         dashCoroutine = DashCoroutine(dashTime /*, dashSpeed*/);
@@ -39,7 +38,7 @@ public partial class CharController
         ReduceHeight();
         yield return new WaitForSeconds(dashTime);
         //check if space
-        IsDashing = false;
+        isDashing = false;
         trailRenderer.emitting = false;
         // if (isCrouching && CheckSpace())
         // {

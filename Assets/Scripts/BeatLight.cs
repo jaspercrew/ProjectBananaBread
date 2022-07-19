@@ -1,6 +1,6 @@
 using UnityEngine.Experimental.Rendering.Universal;
 
-public class GlobalLightManager : BeatEntity
+public class BeatLight : BeatEntity
 {
     private Light2D lightComponent;
     
@@ -11,13 +11,21 @@ public class GlobalLightManager : BeatEntity
         base.Start();
     }
 
-
+    // protected override void TurnShifted()
+    // {
+    //     base.TurnShifted();
+    //     lightComponent.enabled = true;
+    // }
+    //
     // protected override void TurnUnshifted()
     // {
     //     base.TurnUnshifted();
-    //     if (SceneInformation.Instance.isDarkScene)
-    //     {
-    //         lightComponent.enabled = true;
-    //     }
+    //     lightComponent.enabled = false;
+    // }
+
+    // Update is called once per frame
+    // void Update()
+    // {
+    //     
     // }
 }

@@ -25,10 +25,7 @@ public partial class CharController
     {
         
         SaveData.LoadFromFile(1);
-        fury = 0;
-        lastShiftTime = 0f;
-        Interactor.interactors.Clear();
-        canCast = true;
+        //Interactor.interactors.Clear();
         //canDoubleJump = false;
         fadeSpriteIterator = 0;
         //capeAnchor = transform.Find("Cape").Find("CapeAnchor").GetComponent<CapeController>();
@@ -43,16 +40,13 @@ public partial class CharController
         groundCheck = transform.Find("GroundCheck").GetComponent<BoxCollider2D>();
 
         charLight = transform.Find("Light").GetComponent<Light2D>();
-        lightBuffer = MaxLightBuffer;
         particleChild = transform.Find("Particles");
-        // CurrentHealth = MaxHealth;
         Rigidbody = transform.GetComponent<Rigidbody2D>();
         Animator = transform.Find("SpriteHandler").GetComponent<Animator>();
         charCollider = transform.GetComponent<BoxCollider2D>();
         
         dust = particleChild.Find("DustPS").GetComponent<ParticleSystem>();
         sliceDashPS = particleChild.Find("SliceDashPS").GetComponent<ParticleSystem>();
-        parryPS = particleChild.Find("ParryPS").GetComponent<ParticleSystem>();
         switchPS = particleChild.Find("SwitchPS").GetComponent<ParticleSystem>();
         trailRenderer = particleChild.Find("FX").GetComponent<TrailRenderer>();
         //fadePS = particleChild.Find("FadePS").GetComponent<ParticleSystem>();
@@ -69,11 +63,6 @@ public partial class CharController
         
         trailRenderer.emitting = false;
         charLight.enabled = false;
-        if (SceneInformation.Instance.isDarkScene)
-        {
-            Debug.Log("light true");
-            charLight.enabled = true;
-        }
 
         // set char's spawn
         //Debug.Log(SceneInformation.Instance.GetSpawnPos());
@@ -82,34 +71,17 @@ public partial class CharController
     }
 
     private void FixedUpdate() {
-        // if (wallJumpAvailable && !justJumped)
-        // {
-        //     Debug.Log("wj aiv");
-        // }
-        
-        // Debug.Log("touching" + isWallTouching);
-        // Debug.Log("sliding" + isWallSliding);
+
         Animstate_FixedUpdate();
-        
-        
         inputVector = Input.GetAxisRaw("Horizontal");
         FadeParticle_FixedUpdate();
         // AdjustCape_FixedUpdate();
         if (!IsAbleToMove()) return;
         // movement animations
         
+        gravityValue = isInverted ? -Mathf.Abs(gravityValue) : Mathf.Abs(gravityValue);
+        StandardMovement_FixedUpdate();
         
-        
-
-        if (SceneInformation.Instance.isWindScene)
-        {
-            WindMovement_FixedUpdate();
-        }
-        else
-        {
-            gravityValue = isInverted ? -Mathf.Abs(gravityValue) : Mathf.Abs(gravityValue);
-            StandardMovement_FixedUpdate();
-        }
         ApplyForcedMovement_FixedUpdate();
 
         TurnAround_FixedUpdate();
@@ -134,46 +106,7 @@ public partial class CharController
             Animator.SetInteger(AnimState, 1);
         }
     }
-
-    // private const float verticalConst = .35f;
-    // private const float horizontalConst = .35f;
-    // private void AdjustCape_FixedUpdate()
-    // {
-    //     Vector2 currentOffset = Vector2.zero;
-    //     if (Rigidbody.velocity.x == 0 && Rigidbody.velocity.y == 0)
-    //     {
-    //         //Debug.Log("idle");
-    //         currentOffset = idleOffset;
-    //     }
-    //     else if (Rigidbody.velocity.y > .1f)
-    //     {
-    //         //Debug.Log("jump");
-    //         currentOffset = new Vector2( jumpOffset.x, jumpOffset.y * 
-    //                                                    Mathf.Abs(Rigidbody.velocity.y) * verticalConst);
-    //     }
-    //     else if (Rigidbody.velocity.y < -.1f)
-    //     {
-    //         //Debug.Log("fall");
-    //         currentOffset = new Vector2( fallOffset.x, fallOffset.y * 
-    //                                                    Mathf.Abs(Rigidbody.velocity.y) * verticalConst);
-    //     }
-    //     else if (Rigidbody.velocity.x != 0)
-    //     {
-    //         //Debug.Log("run");
-    //         currentOffset = new Vector2( runOffset.x * 
-    //                                      Mathf.Abs(Rigidbody.velocity.x) * horizontalConst, runOffset.y);
-    //     }
-    //
-    //     if (transform.localScale.x < 0)
-    //     {
-    //         currentOffset.x = currentOffset.x * -1;
-    //     }
-    //     
-    //     //capeAnchor.partOffset = currentOffset;
-    //     //capeOutlineAnchor.partOffset = currentOffset;
-    //
-    //
-    // }
+    
 
     private void ApplyForcedMovement_FixedUpdate()
     {
@@ -247,158 +180,7 @@ public partial class CharController
         }
     }
 
-    private void WindMovement_FixedUpdate()
-    {
-        if (currentWind == null)
-        {
-            currentWind = GameManager.Instance.isGameShifted
-                ? SceneInformation.Instance.altStateWind
-                : SceneInformation.Instance.realStateWind;
-        }
-        Debug.Assert(SceneInformation.Instance.isWindScene);
-        
-        Vector2 v = Rigidbody.velocity;
-        float xVel = v.x;
-        float yVel = v.y;
-        
-        float horizWindSpeed = currentWind.isHorizontal ? currentWind.speedOnPlayer : 0;
-        // float vertWindSpeed = isHorizWind? 0 : currentWindZone.windSpeedOnPlayer;
-
-        // regular ground movement
-        if (isGrounded)
-        {
-            int moveDir = Math.Sign(moveVector);
-            // if user is not moving and has speed, then slow down
-            if (moveDir == 0 && !Mathf.Approximately(xVel, horizWindSpeed))
-            {
-                int antiMoveDir = -Math.Sign(xVel - horizWindSpeed);
-
-                // TODO change this if we choose to add ice or something
-                Rigidbody.AddForce(antiMoveDir * OnGroundDeceleration * Vector2.right, ForceMode2D.Force);
-            }
-            // otherwise move the player in the direction
-            else if (moveDir != 0)
-            {
-                Rigidbody.AddForce(moveDir * OnGroundAcceleration * Vector2.right, ForceMode2D.Force);
-            }
-            
-        }
-        // in-air movement
-        else
-        {
-            // move if not wall sliding (?)
-            if (!isWallSliding)
-            {
-                Rigidbody.AddForce(Math.Sign(moveVector) * InAirAcceleration * Vector2.right, ForceMode2D.Force);
-            }
-
-            // slow down if player is not inputting horizontal movement
-            // and don't apply if grappling
-            if (moveVector == 0 && !isLineGrappling)
-            {
-                // apply horizontal "drag" based on current x velocity
-                Rigidbody.AddForce(-(xVel - horizWindSpeed) * InAirDrag * Vector2.right, ForceMode2D.Force);
-            }
-
-            // apply max velocity if not grappling
-            if (!isLineGrappling)
-            {
-                Vector2 vel = Rigidbody.velocity;
-                Rigidbody.velocity = new Vector2(Mathf.Clamp(vel.x, -speed, speed), yVel);
-            }
-        }
-        
-        // if no wind,
-        // if (!SceneInformation.Instance.isWindScene)
-        // {
-        //     // TODO: if yVel out of range, use a force to slow down, don't just clamp
-        //     // TODO: also apply this in non-wind movement
-        //     Rigidbody.velocity = new Vector2(
-        //         Mathf.Clamp(xVel, -speed, speed),
-        //         Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
-        // }
-        // else if sideways wind,
-        if (currentWind.isHorizontal)
-        {
-            // apply horizontal wind max velocity
-            int windDir = (currentWind.speedOnPlayer < 0)? -1 : 1; // -1 if left, 1 if right
-            // int velDir = Math.Sign(xVel);
-            float maxSpeedSameDir = speed + Mathf.Abs(currentWind.speedOnPlayer);
-            float maxSpeedOppDir = speed - Mathf.Abs(currentWind.speedOnPlayer);
-            float maxLeft, maxRight;
-            if (windDir == 1) // if right wind
-            {
-                maxLeft = -maxSpeedOppDir;
-                maxRight = maxSpeedSameDir;
-            }
-            else
-            {
-                maxLeft = -maxSpeedSameDir;
-                maxRight = maxSpeedOppDir;
-            }
-
-            Rigidbody.velocity = new Vector2(
-                Mathf.Clamp(xVel, maxLeft, maxRight),
-                Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
-        }
-        // else if vertical wind
-        else
-        {
-            Debug.Log("vertical wind");
-            // apply vertical wind max velocity
-            
-            // affect gravity
-            float windSpeed = currentWind.speedOnPlayer;
-            float gravChange = -0.1f * windSpeed; // TODO: constant
-            // TODO: ???
-            gravityValue = (isInverted ? -Math.Abs(gravityValue) : Math.Abs(gravityValue)) + gravChange;
-            
-            // apply max vel
-            int windDir = (windSpeed < 0)? -1 : 1; // -1 if left, 1 if right
-            // int velDir = Math.Sign(yVel);
-            float maxSpeedSameDir = MaxYSpeed + Mathf.Abs(windSpeed);
-            float maxSpeedOppDir = MaxYSpeed - Mathf.Abs(windSpeed);
-            float maxDown, maxUp;
-            if (windDir == 1) // if up wind
-            {
-                maxDown = -maxSpeedOppDir;
-                maxUp = maxSpeedSameDir;
-            }
-            else
-            {
-                maxDown = -maxSpeedSameDir;
-                maxUp = maxSpeedOppDir;
-            }
-
-            Rigidbody.velocity = new Vector2(
-                Mathf.Clamp(xVel, -speed, speed),
-                Mathf.Clamp(yVel, maxDown, maxUp));
-
-            // max velocity but approach it rather than clamp it
-            // if (yVel < maxDown || yVel > maxUp)
-            // {
-                // Debug.Log("applying drag");
-                // float g = Physics2D.gravity.y;
-                // float vMax = (velDir == 1) ? maxUp : maxDown;
-                // float drag = -g / vMax;
-                // float dir = (yVel < 0) ? 1 : -1;
-                // Rigidbody.AddForce(dir * VerticalDrag * Vector2.up);
-            // }
-
-            // if (windDir == velDir) 
-            // {
-            //     Rigidbody.velocity = new Vector2(
-            //         Mathf.Clamp(xVel, -speed, speed), 
-            //         Mathf.Clamp(yVel, -maxSpeedSameDir, maxSpeedSameDir));
-            // }
-            // else if (windDir == -velDir) 
-            // {
-            //     Rigidbody.velocity = new Vector2(
-            //         Mathf.Clamp(xVel, -speed, speed), 
-            //         Mathf.Clamp(yVel, -maxSpeedOppDir, maxSpeedOppDir));
-            // }
-        }
-    }
+    
 
     private void TurnAround_FixedUpdate() {
         // feet dust logic
@@ -432,47 +214,19 @@ public partial class CharController
         if (Input.GetKeyDown(KeyCode.RightBracket))
             SaveData.LoadFromFile(1);
 
-        if (!isAttacking)
-        {
-            Animator.speed = 1;
-        }
         
-        
-        // if (WindEmitterChild.targetWind == null) {
-        //     currentWind = null;
-        // }
-        // else
-        // {
-        //     currentWind = WindEmitterChild.targetWind.GetComponentInParent<WindEmitter>();
-        // }
 
         Vector2 v = Rigidbody.velocity;
         Rigidbody.velocity = new Vector2(v.x, v.y - (gravityValue * Time.deltaTime));
         CheckGrounded_Update();
         CheckPlatformGrounded_Update();
         EventHandling_Update();
-
-        // apply wind min velocity lolol
-        if (!(currentWind == null) && Math.Sign(moveVector) == 0)
-        {
-            float xVel = Rigidbody.velocity.x;
-            float horizWindSpeed = currentWind.speedOnPlayer;
-            // apply min velocity
-            if (Math.Sign(xVel) == Math.Sign(horizWindSpeed) && Mathf.Abs(xVel) < Math.Abs(horizWindSpeed))
-            {
-                Rigidbody.velocity = new Vector2(horizWindSpeed, Rigidbody.velocity.y);
-                // Debug.Log("applied min vel, new x vel is " + Rigidbody.velocity.x);
-            }
-        }
         
-        // // jump animation
-        // if (isGrounded) {
-        //     Animator.SetBool(Jump, false);
-        // }
+        
         ShortJumpDetection_Update();
         //JumpCooldown_Update();
         WallSlideDetection_Update();
-        SliceDashDetection_Update();
+
         LineGrappleUpdate();
         Crouching_Update();
         if (SceneInformation.Instance.isDarkScene)
@@ -488,27 +242,7 @@ public partial class CharController
             UnCrouch();
         }
     }
-
     
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawWireSphere(attackPoint.position, AttackRange);
-    }
-
-    // private void LightCheckUpdate()
-    // {
-    //     if (lightBuffer < 0)
-    //     {
-    //         TakeDamage(1);
-    //     }
-    //     else
-    //     {
-    //         lightBuffer -= Time.deltaTime;
-    //         charLight.pointLightOuterRadius = MaxOuterLightRadius * (lightBuffer / MaxLightBuffer);
-    //         charLight.pointLightInnerRadius = MaxInnerLightRadius * (lightBuffer / MaxLightBuffer);
-    //         charLight.intensity = MaxLightIntensity * (lightBuffer / MaxLightBuffer);
-    //     }
-    // }
 
 
 
@@ -668,22 +402,7 @@ public partial class CharController
         }
     }
 
-    private void SliceDashDetection_Update() {
-        if (isSliceDashing) {
-            const int maxEnemiesHit = 1;
-            Collider2D[] hitColliders = new Collider2D[maxEnemiesHit];
-
-            // scan for hit enemies
-            Physics2D.OverlapCircleNonAlloc(
-                slicePoint.position, AttackRange, hitColliders, hittableLayers);
-            
-            if (hitColliders[0] != null) {
-                //Debug.Log("execute");
-                StartCoroutine(SliceExecuteCoroutine(hitColliders[0].GetComponent<Enemy>()));
-            }
-        }
-    }
-
+   
     private void ShortJumpDetection_Update() {
         if (Input.GetButtonUp("Jump") && !isGrounded && 
             ((!isInverted && Rigidbody.velocity.y > 0) || (isInverted && Rigidbody.velocity.y < 0))) {
@@ -790,12 +509,5 @@ public partial class CharController
         {
         }
     }
-
-    // private void OnCollisionExit2D(Collision2D other)
-    // {
-    //     if (other.gameObject.CompareTag("Platform") && !TileStateManager.Instance.platformsActivated)
-    //     {
-    //         TileStateManager.Instance.ActivatePlatforms();
-    //     }
-    // }
+    
 }

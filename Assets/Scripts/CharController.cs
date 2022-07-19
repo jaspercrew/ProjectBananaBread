@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.Serialization;
 
-public partial class CharController : LivingThing
+public partial class CharController : BeatEntity
 {
     public static CharController Instance;
 
@@ -19,7 +19,6 @@ public partial class CharController : LivingThing
     private BoxCollider2D charCollider;
     private ParticleSystem dust;
     private ParticleSystem sliceDashPS;
-    private ParticleSystem parryPS;
     private ParticleSystem switchPS;
     private TrailRenderer trailRenderer;
     private ScreenShakeController screenShakeController;
@@ -31,40 +30,18 @@ public partial class CharController : LivingThing
     private LineRenderer grappleLOSRenderer;
     private LineRenderer grappleClearRenderer;
     private BoxCollider2D groundCheck;
+    private Rigidbody2D Rigidbody;
+    private Animator Animator;
     
     private Vector2 originalColliderSize;
     private Vector2 originalColliderOffset;
-
-    // private Transform parentWindFX;
-    // private ParticleSystem leftWindFX;
-    // private ParticleSystem rightWindFX;
-    // private ParticleSystem upWindFX;
-    // private ParticleSystem downWindFX;
-
-    // Cape Config
-    // [Header("Cape Offsets")] 
-    //
-    // [SerializeField]
-    // private Vector2 idleOffset;
-    //
-    // [SerializeField]
-    // private Vector2 runOffset;
-    //
-    // [SerializeField]
-    // private Vector2 jumpOffset;
-    //
-    // [SerializeField]
-    // private Vector2 fallOffset;
     
-    //private CapeController capeAnchor;
-    //private CapeController capeOutlineAnchor;
     
     [Header("Configurable player control values")] 
     // Configurable player control values
     public float baseSpeed = 8f;
     private float speed;
-    private const int SliceDamage = 100;
-    
+
     private const float MinGroundSpeed = 0.5f;
     private const float OnGroundAcceleration = 38f;
     private const float OnGroundDeceleration = 30f;
@@ -77,26 +54,11 @@ public partial class CharController : LivingThing
     [SerializeField]
     private float jumpForce = 12f;
     private const float BaseGravity = 9.0f;
-    // private const int HeavyAttackBuildup = 4;
-    private const float AttackCooldown = 0.0f;
-    private const float ParryCooldown = 1f;
-    private const float ParryTime = .4f;
-    private const float DashCooldown = 1f;
-    public const float ShiftCooldown = 1.5f;
-    const float InvTime = 1.25f;
-    public const float MaxFury = 100;
-    public const float FuryIncrement = 10;
-    private const int AttackDamage = 1;
-    public const float MaxLightBuffer = 7f;
-    // private const float MaxLightIntensity = .5f;
-    // private const float MaxOuterLightRadius = 5;
-    // private const float MaxInnerLightRadius = 3;
-    private const float ComboResetThreshold = 1.2f;
-    private const float AttackRange = 1.15f;
-    [FormerlySerializedAs("enemyLayers")] public LayerMask hittableLayers;
-    [SerializeField] private Transform attackPoint;
-    [SerializeField] private Transform slicePoint;
     
+
+    private const float DashCooldown = 1f;
+
+    public bool isDashing;
     public float gravityValue = BaseGravity;
     //Children
     private Transform particleChild;
@@ -104,25 +66,13 @@ public partial class CharController : LivingThing
     // Trackers
     public float lightBuffer;
     private bool canFunction = true;
-    private float lastAttackTime;
-    private bool isAttacking;
-    private int comboCounter;
-
-    public float fury;
+    
 
     private HashSet<IEnumerator> toInterrupt = new HashSet<IEnumerator>();
     private IEnumerator dashCoroutine;
-    private IEnumerator attackCoroutine;
 
-    private float lastShiftTime;
-    
-    private float lastParryTime;
-    public bool isParrying;
-    
     private float lastDashTime;
-    
-    private bool isSliceDashing;
-    
+
     public bool isInverted;
     
     // ReSharper disable once InconsistentNaming
@@ -143,8 +93,7 @@ public partial class CharController : LivingThing
     }
 
     private bool jumpAvailable;
-    public bool isInvincible;
-    
+
     private bool isGrappleLaunched;
     private bool isLineGrappling;
     public Rigidbody2D grappleProjectile;
@@ -161,8 +110,6 @@ public partial class CharController : LivingThing
     public bool isCrouching;
     //private bool canDoubleJump;
     
-    private bool canYoink;
-    private bool canCast;
 
     private bool wallJumpAvailable;
     // ReSharper disable once InconsistentNaming
@@ -182,8 +129,7 @@ public partial class CharController : LivingThing
     }
     private int wallJumpDir;
     //private int wallJumpFramesLeft;
-    public WindInfo currentWind;
-    
+
     private int fadeSpriteIterator;
     [FormerlySerializedAs("fadeTime")] public float emitFadesTime;
     
@@ -192,7 +138,16 @@ public partial class CharController : LivingThing
     private float prevInVector = 2;
     private int forcedMoveVector;
     private float forcedMoveTime;
-
+    
+    // animator values beforehand to save time later
+    protected static readonly int AnimState = Animator.StringToHash("AnimState");
+    protected static readonly int Idle = Animator.StringToHash("Idle");
+    protected static readonly int Jump = Animator.StringToHash("Jump");
+    protected static readonly int Death = Animator.StringToHash("Death");
+    protected static readonly int Grounded = Animator.StringToHash("Grounded");
+    protected static readonly int Dash = Animator.StringToHash("Dash");
+    
+    
     private LayerMask obstacleLayerMask;
     private LayerMask obstaclePlusLayerMask;
     private LayerMask platformLayerMask;
@@ -207,8 +162,8 @@ public partial class CharController : LivingThing
         
         public enum EventTypes
         {
-            Dash, Jump, /*DoubleJump,*/ Attack, Parry, Interact, SwitchState, 
-            SliceDash, Crouch, Cast, Yoink, Grapple
+            Dash, Jump, Interact, 
+             Crouch, Grapple
         }
 
         public Event(EventTypes type, float time)
@@ -226,14 +181,8 @@ public partial class CharController : LivingThing
             {() => Input.GetKeyDown(KeyCode.LeftShift), Event.EventTypes.Dash},
             {() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.Jump},
             //{() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.DoubleJump},
-            {() => Input.GetMouseButtonDown(0), Event.EventTypes.Attack},
-            {() => Input.GetMouseButtonDown(1), Event.EventTypes.Parry},
             {() => Input.GetKeyDown(KeyCode.E), Event.EventTypes.Interact},
-            {() => Input.GetKeyDown(KeyCode.F), Event.EventTypes.SwitchState},
-            {() => Input.GetKeyDown(KeyCode.R), Event.EventTypes.SliceDash},
-            //{() => Input.GetKeyDown(KeyCode.LeftControl), Event.EventTypes.Crouch},
-            {() => Input.GetKeyDown(KeyCode.V), Event.EventTypes.Cast},
-            {() => Input.GetKeyDown(KeyCode.V), Event.EventTypes.Yoink},
+            {() => Input.GetKeyDown(KeyCode.LeftControl), Event.EventTypes.Crouch},
             {() => Input.GetKeyDown(KeyCode.G), Event.EventTypes.Grapple},
         };
 
@@ -248,7 +197,7 @@ public partial class CharController : LivingThing
         new Dictionary<Event.EventTypes, Func<CharController, bool>>
         {
             {Event.EventTypes.Dash, @this =>
-                (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown &&
+                (@this.IsAbleToAct()) && Time.time > @this.lastDashTime + DashCooldown &&
                 !@this.isCrouching},
             {Event.EventTypes.Jump, @this => 
                 @this.IsAbleToMove() && 
@@ -258,25 +207,10 @@ public partial class CharController : LivingThing
             // {Event.EventTypes.DoubleJump, @this => 
             //     @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && 
             //     @this.canDoubleJump && Input.GetKeyDown(KeyCode.Space)},
-            {Event.EventTypes.Attack, @this => 
-                @this.IsAbleToAct() && Time.time > @this.lastAttackTime + AttackCooldown && 
-                !@this.inRecovery && !@this.isCrouching},
-            {Event.EventTypes.Parry, @this =>
-                @this.IsAbleToAct() && Time.time > @this.lastParryTime + ParryCooldown && !@this.isCrouching},
             {Event.EventTypes.Interact, 
                 @this => @this.IsAbleToAct()},
-            {Event.EventTypes.SwitchState, 
-                @this => @this.IsAbleToAct() && Time.time > @this.lastShiftTime + ShiftCooldown &&
-                         !@this.noShiftZone},
-            {Event.EventTypes.SliceDash, @this => 
-                (@this.IsAbleToAct() || @this.isAttacking) && Time.time > @this.lastDashTime + DashCooldown &&
-                !@this.isCrouching},
             // {Event.EventTypes.Crouch, 
             //     @this => @this.IsAbleToAct()},
-            {Event.EventTypes.Cast, 
-                @this => @this.IsAbleToAct() && @this.castProjectileRb == null && @this.canCast},
-            {Event.EventTypes.Yoink, 
-                @this => @this.IsAbleToAct() && @this.castProjectileRb != null && @this.canYoink},
             {Event.EventTypes.Grapple, 
                 @this => @this.IsAbleToAct()}
         };
@@ -289,34 +223,18 @@ public partial class CharController : LivingThing
             {Event.EventTypes.Dash, @this => @this.DoDash()},
             {Event.EventTypes.Jump, @this => @this.DoJump()},
             //{Event.EventTypes.DoubleJump, @this => @this.DoDoubleJump()},
-            {Event.EventTypes.Attack, @this => @this.AttemptAttack()},
-            {Event.EventTypes.Parry, @this => @this.DoParry()},
-            {Event.EventTypes.Interact, @this => @this.DoInteract()},
-            {Event.EventTypes.SwitchState, @this => @this.CauseSwitch()},
-            {Event.EventTypes.SliceDash, @this => @this.DoSliceDash()},
+            //{Event.EventTypes.Interact, @this => @this.DoInteract()},
             //{Event.EventTypes.Crouch, @this => @this.Crouch()},
-            {Event.EventTypes.Cast, @this => @this.DoCast()},
-            {Event.EventTypes.Yoink, @this => @this.DoYoink()},
             {Event.EventTypes.Grapple, @this => @this.AttemptLaunchGrapple()},
         };
 
 
     private bool IsAbleToMove()
     {
-        return !isAttacking && !IsDashing && !isParrying && !isLineGrappling && canFunction;
+        return !isDashing && !isLineGrappling && canFunction;
     }
 
-    private bool IsAbleToBeDamaged() {
-        return !isInvincible && !IsDashing && canFunction;
-    }
-
-    private IEnumerator ParticleBurstCoroutine(ParticleSystem ps, float time)
-    {
-        ps.Play();
-        yield return new WaitForSeconds(time);
-        ps.Stop();
-        ps.Clear();
-    }
+    
 
     private IEnumerator WallJumpBufferCoroutine()
     {
@@ -336,7 +254,23 @@ public partial class CharController : LivingThing
     }
 
     private bool IsAbleToAct() {
-        return !IsDashing && !isAttacking && !isParrying && !isSliceDashing && canFunction;
+        return !isDashing  && canFunction;
+    }
+    
+    protected void FaceLeft()
+    {
+        //Debug.Log("face left");
+        Transform t = transform; // more efficient, according to Rider
+        Vector3 s = t.localScale;
+        t.localScale = new Vector3(Mathf.Abs(s.x), s.y, s.z);
+    }
+
+    protected void FaceRight()
+    {
+        //Debug.Log("face right");
+        Transform t = transform; // more efficient, according to Rider
+        Vector3 s = t.localScale;
+        t.localScale = new Vector3(-Mathf.Abs(s.x), s.y, s.z);
     }
 
     public void Invert() {
@@ -350,6 +284,16 @@ public partial class CharController : LivingThing
         isInverted = true;
     }
     
+    protected void Die() 
+    {
+        Animator.SetTrigger(Death);
+        canFunction = false;
+        Rigidbody.gravityScale = 0;
+        Rigidbody.velocity = Vector2.zero;
+        Rigidbody.bodyType = RigidbodyType2D.Static;
+        GameManager.Instance.PlayerDeath();
+    }
+    
     public void DeInvert() {
         gravityValue = Mathf.Abs(gravityValue);
         if (isInverted)
@@ -360,81 +304,9 @@ public partial class CharController : LivingThing
         isInverted = false;
     }
 
-    protected override void TurnShifted()
-    {
-        base.TurnShifted();
-        if (SceneInformation.Instance.isGravityScene)
-        {
-            Invert();
-        }
-        if (SceneInformation.Instance.isWindScene)
-        {
-            currentWind = SceneInformation.Instance.altStateWind;
+   
 
-        }
-        if (SceneInformation.Instance.isDarkScene)
-        {
-            
-        }
-    }
-
-    // protected override void CheckEntity()
-    // {
-    //     base.CheckEntity();
-    //     Debug.Log("char checked");
-    // }
-    
-    
-
-    protected override void TurnUnshifted()
-    {
-        //Debug.Log("char unshifted");
-        base.TurnUnshifted();
-        if (SceneInformation.Instance.isGravityScene)
-        {
-            DeInvert();
-        }
-        if (SceneInformation.Instance.isWindScene)
-        {
-            currentWind = SceneInformation.Instance.realStateWind;
-            
-        }
-        if (SceneInformation.Instance.isDarkScene)
-        {
-            
-        }
-    }
-
-    public IEnumerator InvFrameCoroutine(float time)
-    {
-        float blinkTime = .15f;
-        float elapsedTime = 0;
-        bool isHidden = false;
-
-        while (elapsedTime < time)
-        {
-            if (isHidden)
-            {
-                yield return new WaitForSeconds(blinkTime);
-                isHidden = false;
-                spriteRenderer.forceRenderingOff = false;
-            }
-            else
-            {
-                yield return new WaitForSeconds(blinkTime); 
-                isHidden = true;
-                spriteRenderer.forceRenderingOff = true;
-            }
-
-            elapsedTime += blinkTime;
-        }  
-        // Make sure we got there
-        spriteRenderer.forceRenderingOff = false;
-        yield return null;
-    }
-
-
-
+  
 
     private void Interrupt() {
         foreach (IEnumerator co in toInterrupt)
@@ -444,25 +316,17 @@ public partial class CharController : LivingThing
                 StopCoroutine(co);
             }
         }
-        
-        //Rigidbody.velocity = Vector2.zero;
-        isAttacking = false;
+
         isCrouching = false;
-        isParrying = false;
-        isSliceDashing = false;
-        IsDashing = false;
-        inRecovery = false;
+        isDashing = false;
+
     }
 
-    public bool HasIFrames()
-    {
-        return IsDashing || isInvincible || isSliceDashing || !canFunction;
-    }
+
 
     public void PrepForScene()
     {
         Interrupt();
-        currentWind = null;
     }
 
 }

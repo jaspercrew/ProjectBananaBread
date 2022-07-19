@@ -13,7 +13,7 @@ public class AudioManager : MonoBehaviour
     private AudioSource effectSource;
     private AudioSource primarySource;
     private AudioSource altSource;
-    private Dictionary<SoundName, AudioClip> soundToClip = new Dictionary<SoundName, AudioClip>();
+    private readonly Dictionary<SoundName, AudioClip> soundToClip = new Dictionary<SoundName, AudioClip>();
 
     private SoundName savedA;
     private SoundName savedB;
@@ -79,10 +79,11 @@ public class AudioManager : MonoBehaviour
         {
             return;
         }
-        AudioClip primaryClip = soundToClip[primary];
-        AudioClip altClip = soundToClip[alt];
-        primarySource.clip = primaryClip;
-        altSource.clip = altClip;
+        primarySource.clip = soundToClip[primary];
+        altSource.clip = soundToClip[alt];
+        Debug.Log("actually");
+        Debug.Log(primarySource);
+        Debug.Log(primarySource);
         primarySource.Play();
         altSource.Play();
         savedA = primary;
@@ -91,10 +92,25 @@ public class AudioManager : MonoBehaviour
 
 
 
-    public void OnShift(bool toAlt)
+    // TODO: remove and make this an ActivatedEntity?
+    private int beatCounter = 0;
+    private bool isAlt = false;
+    public void OnShift(/*bool toAlt*/)
     {
-        const float fadeTime = .5f;
-        if (toAlt)
+        beatCounter++;
+        if (beatCounter == 4)
+        {
+            beatCounter = 0;
+        }
+        else
+        {
+            return;
+        }
+
+        isAlt = !isAlt;
+        
+        const float fadeTime = .25f;
+        if (isAlt)
         {
             StartCoroutine(FadeOut(primarySource, fadeTime));   
             StartCoroutine(FadeIn(altSource, fadeTime));

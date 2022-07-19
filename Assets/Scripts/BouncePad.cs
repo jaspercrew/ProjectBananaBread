@@ -1,18 +1,14 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class BouncePad : ActivatedEntity
 {
     public float bounceVelocity;
-    private const float charMultiplier = .8f;
+    private const float CharMultiplier = .8f;
     public bool isInverted;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!isActive)
+        if (!IsActive)
         {
             return;
         }
@@ -27,7 +23,7 @@ public class BouncePad : ActivatedEntity
             else
             {
                 rb.velocity = new Vector2(rb.velocity.x, isInverted ? 
-                    (-bounceVelocity * charMultiplier) : (bounceVelocity * charMultiplier));
+                    (-bounceVelocity * CharMultiplier) : (bounceVelocity * CharMultiplier));
             }
         }
     }

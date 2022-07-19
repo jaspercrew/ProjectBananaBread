@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
@@ -73,7 +72,7 @@ public class SaveData
         //CharController.Instance.currentHealth = instance.playerHealth;
         //UIManager.Instance.PopulateHealthBarPublic();
         //GameManager.Instance.LeverDict = instance.levers;
-        GameManager.Instance.isReady = true;
+        // GameManager.Instance.isReady = true;
         Debug.Log("scene in save file: " + instance.playerScene + " (not being loaded)");
         
         // SceneManager.LoadSceneAsync(instance.playerScene); // TODO ??

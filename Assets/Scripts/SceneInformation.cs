@@ -127,6 +127,7 @@ public class SceneInformation : MonoBehaviour
     {
         if (playMusic)
         {
+            Debug.Log("playing");
             AudioManager.Instance.PlaySong(songA, songB);
         }
     }

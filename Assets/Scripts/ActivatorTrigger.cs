@@ -13,5 +13,4 @@ public class ActivatorTrigger : MonoBehaviour
     {
         isActivated = false;
     }
-
 }

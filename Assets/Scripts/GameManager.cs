@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,8 +13,16 @@ public class GameManager : MonoBehaviour
     // public bool isDarkScene;
     // private int frozenFrames;
 
-    public Dictionary<string, bool> LeverDict = new Dictionary<string, bool>();
-    public bool isReady;
+    // public Dictionary<string, bool> LeverDict = new Dictionary<string, bool>();
+    // public bool isReady;
+    
+    // https://www.gamedeveloper.com/audio/coding-to-the-beat---under-the-hood-of-a-rhythm-game-in-unity
+    public float songBpm;
+    public float firstBeatOffset;
+    private float secPerBeat;
+    private float songPosition;
+    private float songPositionInBeats;
+    private float dspSongTime;
 
     private void Awake()
     {
@@ -32,6 +39,10 @@ public class GameManager : MonoBehaviour
     {
         // TODO
         Application.targetFrameRate = 144;
+
+        secPerBeat = 60f / songBpm;
+
+        dspSongTime = (float) AudioSettings.dspTime;
     }
 
     private void Update()
@@ -40,6 +51,16 @@ public class GameManager : MonoBehaviour
         // {
         //     TextPop("test text");
         // }
+        
+        songPosition = (float) (AudioSettings.dspTime - dspSongTime - firstBeatOffset);
+        float newSongPositionInBeats = songPosition / secPerBeat;
+
+        if (Mathf.Floor(newSongPositionInBeats) > Mathf.Floor(songPositionInBeats))
+        {
+            WorldBeat();
+        }
+        
+        songPositionInBeats = newSongPositionInBeats;
     }
 
     public void WorldBeat()
@@ -60,8 +81,9 @@ public class GameManager : MonoBehaviour
         {
             t.ShiftTilesTo(isGameShifted);
         }
+        
         // play sound
-        AudioManager.Instance.OnShift(isGameShifted);
+        AudioManager.Instance.OnShift();
     }
 
     public void FreezeFrame()

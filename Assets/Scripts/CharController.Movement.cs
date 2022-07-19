@@ -19,8 +19,7 @@ public partial class CharController
         const float dashTime = .23f;
         emitFadesTime = .28f;
         isDashing = true;
-        trailRenderer.emitting = true;
-        
+
         dashCoroutine = DashCoroutine(dashTime /*, dashSpeed*/);
         toInterrupt.Add(dashCoroutine);
         StartCoroutine(dashCoroutine);
@@ -39,7 +38,6 @@ public partial class CharController
         yield return new WaitForSeconds(dashTime);
         //check if space
         isDashing = false;
-        trailRenderer.emitting = false;
         // if (isCrouching && CheckSpace())
         // {
         //     UnCrouch();

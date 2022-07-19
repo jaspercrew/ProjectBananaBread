@@ -46,9 +46,6 @@ public partial class CharController
         charCollider = transform.GetComponent<BoxCollider2D>();
         
         dust = particleChild.Find("DustPS").GetComponent<ParticleSystem>();
-        sliceDashPS = particleChild.Find("SliceDashPS").GetComponent<ParticleSystem>();
-        switchPS = particleChild.Find("SwitchPS").GetComponent<ParticleSystem>();
-        trailRenderer = particleChild.Find("FX").GetComponent<TrailRenderer>();
         //fadePS = particleChild.Find("FadePS").GetComponent<ParticleSystem>();
         obstacleLayerMask = LayerMask.GetMask("Obstacle");
         obstaclePlusLayerMask = LayerMask.GetMask("Obstacle", "Moveable", "Platform");
@@ -61,7 +58,6 @@ public partial class CharController
         originalColliderSize = charCollider.size;
         originalColliderOffset = charCollider.offset;
         
-        trailRenderer.emitting = false;
         charLight.enabled = false;
 
         // set char's spawn

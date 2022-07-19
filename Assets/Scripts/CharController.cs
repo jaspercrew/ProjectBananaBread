@@ -18,9 +18,6 @@ public partial class CharController : BeatEntity
     // Components
     private BoxCollider2D charCollider;
     private ParticleSystem dust;
-    private ParticleSystem sliceDashPS;
-    private ParticleSystem switchPS;
-    private TrailRenderer trailRenderer;
     private ScreenShakeController screenShakeController;
     private Light2D charLight;
     // private RadialGrapple grappleController;
@@ -64,7 +61,6 @@ public partial class CharController : BeatEntity
     private Transform particleChild;
     
     // Trackers
-    public float lightBuffer;
     private bool canFunction = true;
     
 

@@ -50,7 +50,7 @@ public partial class CharController : BeatEntity
     // private const float VerticalDrag = 10f;
     [SerializeField]
     private float jumpForce = 12f;
-    private const float BaseGravity = 9.0f;
+    private const float BaseGravity = 0.0f;
     
 
     private const float DashCooldown = 1f;
@@ -270,14 +270,31 @@ public partial class CharController : BeatEntity
     }
 
     public void Invert() {
+        if (isInverted)
+        {
+            return;
+        }
         gravityValue = -Mathf.Abs(gravityValue);
+        //transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
+        particleChild.transform.localScale =
+            new Vector3(particleChild.transform.localScale.x, -Mathf.Abs(particleChild.transform.localScale.y), 0);
+        spriteRenderer.flipY = true;
+        charCollider.offset = new Vector2(originalColliderOffset.x, -originalColliderOffset.y);
+        isInverted = true;
+    }
+    
+    public void DeInvert() {
         if (!isInverted)
         {
-            transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
+            return;
         }
-        
-        spriteRenderer.flipX = true;
-        isInverted = true;
+        gravityValue = Mathf.Abs(gravityValue);
+        particleChild.transform.localScale =
+            new Vector3(particleChild.transform.localScale.x, Mathf.Abs(particleChild.transform.localScale.y), 0);
+        //transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
+        spriteRenderer.flipY = false;
+        charCollider.offset = new Vector2(originalColliderOffset.x, originalColliderOffset.y);
+        isInverted = false;
     }
     
     protected void Die() 
@@ -288,16 +305,6 @@ public partial class CharController : BeatEntity
         Rigidbody.velocity = Vector2.zero;
         Rigidbody.bodyType = RigidbodyType2D.Static;
         GameManager.Instance.PlayerDeath();
-    }
-    
-    public void DeInvert() {
-        gravityValue = Mathf.Abs(gravityValue);
-        if (isInverted)
-        {
-            transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
-        }
-        spriteRenderer.flipX = false;
-        isInverted = false;
     }
 
    

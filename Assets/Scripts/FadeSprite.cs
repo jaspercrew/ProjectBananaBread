@@ -29,12 +29,17 @@ public class FadeSprite : MonoBehaviour
         }
     }
 
-    public void Initialize(Sprite sprite, bool flipped)
+    public void Initialize(Sprite sprite, bool flippedX, bool FlippedY)
     {
         spriteRenderer.sprite = sprite;
-        if (flipped)
+        if (flippedX)
         {
             spriteRenderer.flipX = true;
+        }
+
+        if (FlippedY)
+        {
+            spriteRenderer.flipY = true;
         }
     }
 }

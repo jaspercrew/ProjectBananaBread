@@ -75,7 +75,7 @@ public partial class CharController
         if (!IsAbleToMove()) return;
         // movement animations
         
-        gravityValue = isInverted ? -Mathf.Abs(gravityValue) : Mathf.Abs(gravityValue);
+        //gravityValue = isInverted ? -Mathf.Abs(gravityValue) : Mathf.Abs(gravityValue);
         StandardMovement_FixedUpdate();
         
         ApplyForcedMovement_FixedUpdate();
@@ -309,15 +309,17 @@ public partial class CharController
     private void CheckGrounded_Update()
     {
         const float groundDistance = 0.05f;
+        Vector2 relativeDown = isInverted ? Vector2.up : Vector2.down;
 
         Vector3 bounds = charCollider.bounds.extents;
         float halfWidth = Mathf.Abs(bounds.x) - groundDistance;
         float halfHeight = Mathf.Abs(bounds.y) - groundDistance;
         Vector2 center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
-        Vector2 bottomMiddle = center + halfHeight * Vector2.down;
+
+        Vector2 bottomMiddle = center + halfHeight * relativeDown;
         Vector2 bottomLeft = bottomMiddle + halfWidth * Vector2.left;
         Vector2 bottomRight = bottomMiddle + halfWidth * Vector2.right;
-        Vector2 aLittleDown = 5 * groundDistance * Vector2.down;
+        Vector2 aLittleDown = 3 * groundDistance * relativeDown;
         
         Debug.DrawLine(bottomLeft, bottomLeft + aLittleDown, Color.magenta);
         Debug.DrawLine(bottomRight, bottomRight + aLittleDown, Color.magenta);
@@ -339,15 +341,17 @@ public partial class CharController
     private void CheckPlatformGrounded_Update()
     {
         const float groundDistance = 0.05f;
+        Vector2 relativeDown = isInverted ? Vector2.up : Vector2.down;
 
         Vector3 bounds = charCollider.bounds.extents;
         float halfWidth = Mathf.Abs(bounds.x) - groundDistance;
         float halfHeight = Mathf.Abs(bounds.y) - groundDistance;
         Vector2 center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
-        Vector2 bottomMiddle = center + halfHeight * Vector2.down;
+        
+        Vector2 bottomMiddle = center + halfHeight * relativeDown;
         Vector2 bottomLeft = bottomMiddle + halfWidth * Vector2.left;
         Vector2 bottomRight = bottomMiddle + halfWidth * Vector2.right;
-        Vector2 aLittleDown = 5 * groundDistance * Vector2.down;
+        Vector2 aLittleDown = 3 * groundDistance * relativeDown;
         
         Debug.DrawLine(bottomLeft, bottomLeft + aLittleDown, Color.magenta);
         Debug.DrawLine(bottomRight, bottomRight + aLittleDown, Color.magenta);
@@ -429,7 +433,7 @@ public partial class CharController
                 fadeSpriteIterator = 0;
                 GameObject newFadeSprite = Instantiate(fadeSprite, transform.position, transform.rotation);
                 newFadeSprite.GetComponent<FadeSprite>()
-                    .Initialize(spriteRenderer.sprite, transform.localScale.x > 0);
+                    .Initialize(spriteRenderer.sprite, transform.localScale.x > 0, isInverted);
             }
         }
     }

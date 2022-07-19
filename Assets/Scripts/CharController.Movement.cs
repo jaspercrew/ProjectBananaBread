@@ -55,14 +55,15 @@ public partial class CharController
 
     private bool CheckSpace()
     {
+        Vector2 relativeUp = isInverted ? Vector2.down : Vector2.up;
         Vector3 bounds = charCollider.bounds.extents;
         float halfWidth = Mathf.Abs(bounds.x);
         float halfHeight = Mathf.Abs(bounds.y);
         Vector2 center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
-        Vector2 topMiddle = center + halfHeight * Vector2.up;
+        Vector2 topMiddle = center + halfHeight * relativeUp;
         Vector2 topLeft = topMiddle + halfWidth * Vector2.left;
         Vector2 topRight = topMiddle + halfWidth * Vector2.right;
-        Vector2 aLittleUp =  Vector2.up;
+        Vector2 aLittleUp = relativeUp;
         
         Debug.DrawLine(topLeft, topLeft + aLittleUp, Color.magenta);
         Debug.DrawLine(topRight, topRight + aLittleUp, Color.magenta);
@@ -83,7 +84,7 @@ public partial class CharController
             return;
         }
 
-        if (Rigidbody.velocity.y > 0.01)
+        if ((!isInverted && Rigidbody.velocity.y > 0.01) || (isInverted && Rigidbody.velocity.y < -0.01))
         {
             return;
         }
@@ -143,14 +144,25 @@ public partial class CharController
     private void ReduceHeight()
     {
         charCollider.size = new Vector2(originalColliderSize.x, originalColliderSize.y / heightReducer);
-        charCollider.offset = new Vector2(originalColliderOffset.x, originalColliderOffset.y - 
-                                                                    ((originalColliderSize.y - (originalColliderSize.y / heightReducer)) / 2));
+        // charCollider.offset = new Vector2(originalColliderOffset.x, originalColliderOffset.y -  
+        //                                                             ((originalColliderSize.y - (originalColliderSize.y / heightReducer)) / 2));
+        if (isInverted)
+        {
+            charCollider.offset = new Vector2(originalColliderOffset.x,
+                -originalColliderOffset.y + (originalColliderSize.y / 2) * (1 - (1 / heightReducer)));
+        }
+        else
+        {
+            charCollider.offset = new Vector2(originalColliderOffset.x, originalColliderOffset.y -  
+                                                                        ((originalColliderSize.y - (originalColliderSize.y / heightReducer)) / 2));
+        }
+
     }
 
     private void ReturnHeight()
     {
         charCollider.size = originalColliderSize;
-        charCollider.offset = originalColliderOffset;
+        charCollider.offset = new Vector2(originalColliderOffset.x, (isInverted ? -1 : 1) * originalColliderOffset.y);
     }
     
 

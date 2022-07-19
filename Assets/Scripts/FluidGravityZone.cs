@@ -9,8 +9,9 @@ using UnityEngine;
      private BoxCollider2D boxCollider2D;
      private SpriteRenderer spriteRenderer;
 
-     void Start()
+     protected override void Start()
      {
+         base.Start();
          boxCollider2D = GetComponent<BoxCollider2D>();
          spriteRenderer = GetComponent<SpriteRenderer>();
      }
@@ -18,7 +19,7 @@ using UnityEngine;
 
      private void OnTriggerStay2D(Collider2D other) {
          if (other.gameObject.CompareTag("Player")) {
-             if (isActive)
+             if (IsActive)
              {
                  other.GetComponent<CharController>().Invert();
              }
@@ -35,15 +36,11 @@ using UnityEngine;
          }
      }
 
-     private void EnableFGZ() {
-         isActive = true;
-         boxCollider2D.size = Vector2.one;
-         spriteRenderer.enabled = true;
+     protected override void Activate() {
+         base.Activate();
      }
 
-     private void DisableFGZ() {
-         isActive = false;
-         boxCollider2D.size = Vector2.zero;
-         spriteRenderer.enabled = false;
+     protected override void Deactivate() {
+         base.Deactivate();
      }
  }

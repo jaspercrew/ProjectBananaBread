@@ -15,10 +15,10 @@ EditorBuildSettings:
     path: Assets/Scenes/To be removed/TTHub.unity
     guid: a722a9c9cbaad064095fb6c402e48ab0
   - enabled: 1
-    path: Assets/Scenes/DemoA.unity
+    path: Assets/Scenes/OldDemoScenes/DemoA.unity
     guid: c8758660ecbeeac43bb4c90374cfd730
   - enabled: 1
-    path: Assets/Scenes/DemoB.unity
+    path: Assets/Scenes/OldDemoScenes/DemoB.unity
     guid: c317f727c5957384d9b16121ae03ec44
   - enabled: 1
     path: Assets/Scenes/To be removed/TTMove.unity

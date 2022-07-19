@@ -56,7 +56,7 @@ public class TileStateManager : MonoBehaviour
 
     public void DeactivatePlatforms()
     {
-        print("deactivate plats");
+        //print("deactivate plats");
         Assert.IsTrue(platformsActivated);
         platformsActivated = false;
         foreach (PlatformEffector2D platform in platforms)
@@ -74,7 +74,7 @@ public class TileStateManager : MonoBehaviour
 
     public void ActivatePlatforms()
     {
-        print("activate plats");
+        //print("activate plats");
         Assert.IsTrue(!platformsActivated);
         platformsActivated = true;
         foreach (PlatformEffector2D platform in platforms)

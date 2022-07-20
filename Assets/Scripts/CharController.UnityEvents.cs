@@ -193,6 +193,11 @@ public partial class CharController
         // {
         //     return;
         // }
+
+        if (isWallSliding)
+        {
+            return;
+        }
         if (moveVector > 0 && Math.Abs(scale.x + 1) > float.Epsilon) {
             FaceRight();
         }
@@ -446,7 +451,7 @@ public partial class CharController
         Vector2 v = Rigidbody.velocity;
 
         Vector3 bounds = charCollider.bounds.extents;
-        float halfWidth = Mathf.Abs(bounds.x) - 2 * groundDistance;
+        float halfWidth = Mathf.Abs(bounds.x) - groundDistance;
         float halfHeight = Mathf.Abs(bounds.y) - groundDistance;
         Vector2 center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
         
@@ -486,10 +491,10 @@ public partial class CharController
         isWallSliding = (isInverted ? -v.y : v.y) <= 0 && 
                         ((isNearWallOnRight) || (isNearWallOnLeft)) && IsAbleToMove() && !isGrounded;
         // print("tr" + (bool)topRightHit + "br:" + (bool)bottomRightHit);
-        // Debug.DrawLine(bottomRight, bottomRight + aLittleRight);
-        // Debug.DrawLine(topRight, topRight + aLittleRight);
-        // Debug.DrawLine(bottomLeft, bottomLeft + aLittleLeft);
-        // Debug.DrawLine(topLeft, topLeft + aLittleLeft);
+        Debug.DrawLine(bottomRight, bottomRight + aLittleRight);
+        Debug.DrawLine(topRight, topRight + aLittleRight);
+        Debug.DrawLine(bottomLeft, bottomLeft + aLittleLeft);
+        Debug.DrawLine(topLeft, topLeft + aLittleLeft);
 
         if (isNearWallOnLeft)
         {

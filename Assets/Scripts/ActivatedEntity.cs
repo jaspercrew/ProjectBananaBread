@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class ActivatedEntity : BeatEntity
 {
-    [Min(1)] public int beatsToSwitch = 1;
+
     public bool InitialIsActive = false;
     public bool IsActive { get; private set; }
-    private int beatsCounter = 0;
+    
 
     //Start is called before the first frame update
     protected override void Start()
@@ -14,19 +14,19 @@ public class ActivatedEntity : BeatEntity
         base.Start();
         IsActive = InitialIsActive;
     }
-    
-    public override void Beat()
+
+    protected override void BeatAction()
     {
-        beatsCounter++;
-        if (beatsCounter == beatsToSwitch)
+        if (IsActive)
         {
-            if (IsActive)
-                Deactivate();
-            else
-                Activate();
-            
-            beatsCounter = 0;
+            Deactivate();
         }
+        else
+        {
+            Activate();
+        }
+        
+        
     }
 
     protected virtual void Activate()

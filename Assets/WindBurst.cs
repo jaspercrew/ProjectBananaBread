@@ -1,11 +1,12 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class WindBurst : BeatEntity
 {
     public Vector2 direction;
-    public float velocity;
+    public float windVelocity;
     private bool playerInRange;
     // Start is called before the first frame update
     protected override void Start()
@@ -17,7 +18,9 @@ public class WindBurst : BeatEntity
     {
         if (playerInRange)
         {
-            CharController.Instance.GetComponent<Rigidbody2D>().AddForce(direction * velocity, ForceMode2D.Impulse);
+            //Vector2 vel = CharController.Instance.GetComponent<Rigidbody2D>().velocity;
+            CharController.Instance.GetComponent<Rigidbody2D>().velocity = windVelocity * direction.normalized;
+
         }
     }
 

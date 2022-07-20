@@ -446,7 +446,7 @@ public partial class CharController
         Vector2 v = Rigidbody.velocity;
 
         Vector3 bounds = charCollider.bounds.extents;
-        float halfWidth = Mathf.Abs(bounds.x) - groundDistance;
+        float halfWidth = Mathf.Abs(bounds.x) - 2 * groundDistance;
         float halfHeight = Mathf.Abs(bounds.y) - groundDistance;
         Vector2 center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
         
@@ -465,17 +465,17 @@ public partial class CharController
 
         // left linecasts
         RaycastHit2D bottomLeftHit = 
-            Physics2D.Linecast(bottomLeft, bottomLeft + aLittleLeft, obstacleLayerMask);
+            Physics2D.Linecast(bottomLeft, bottomLeft + aLittleLeft, obstaclePlusLayerMask);
         RaycastHit2D topLeftHit = 
-            Physics2D.Linecast(topLeft, topLeft + aLittleLeft, obstacleLayerMask);
+            Physics2D.Linecast(topLeft, topLeft + aLittleLeft, obstaclePlusLayerMask);
         bool isNearWallOnLeft = bottomLeftHit && topLeftHit;
         
 
         // right linecasts
         RaycastHit2D bottomRightHit = 
-            Physics2D.Linecast(bottomRight, bottomRight + aLittleRight, obstacleLayerMask);
+            Physics2D.Linecast(bottomRight, bottomRight + aLittleRight, obstaclePlusLayerMask);
         RaycastHit2D topRightHit = 
-            Physics2D.Linecast(topRight, topRight + aLittleRight, obstacleLayerMask);
+            Physics2D.Linecast(topRight, topRight + aLittleRight, obstaclePlusLayerMask);
         bool isNearWallOnRight = bottomRightHit && topRightHit;
 
         // isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) 
@@ -484,8 +484,12 @@ public partial class CharController
         //                 ((isNearWallOnRight && moveVector >= 0)|| (isNearWallOnLeft && moveVector <= 0)) &&
         //                 IsAbleToMove();
         isWallSliding = (isInverted ? -v.y : v.y) <= 0 && 
-                        ((isNearWallOnRight)|| (isNearWallOnLeft)) && IsAbleToMove() && !isGrounded;
-        //Debug.Log(wallJumpAvailable);
+                        ((isNearWallOnRight) || (isNearWallOnLeft)) && IsAbleToMove() && !isGrounded;
+        // print("tr" + (bool)topRightHit + "br:" + (bool)bottomRightHit);
+        // Debug.DrawLine(bottomRight, bottomRight + aLittleRight);
+        // Debug.DrawLine(topRight, topRight + aLittleRight);
+        // Debug.DrawLine(bottomLeft, bottomLeft + aLittleLeft);
+        // Debug.DrawLine(topLeft, topLeft + aLittleLeft);
 
         if (isNearWallOnLeft)
         {
@@ -505,9 +509,7 @@ public partial class CharController
             Rigidbody.velocity = new Vector2(v.x,
                 isInverted ? Mathf.Max(-v.y, wallSlideSpeed) : Mathf.Max(v.y, -wallSlideSpeed));
         }
-        else
-        {
-        }
+
     }
     
 }

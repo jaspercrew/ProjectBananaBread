@@ -4,7 +4,7 @@ using UnityEngine;
 public class ActivatedEntity : BeatEntity
 {
 
-    public bool InitialIsActive = false;
+    public bool initialIsActive = false;
     public bool IsActive { get; private set; }
     
 
@@ -12,7 +12,7 @@ public class ActivatedEntity : BeatEntity
     protected override void Start()
     {
         base.Start();
-        IsActive = InitialIsActive;
+        IsActive = initialIsActive;
     }
 
     protected override void BeatAction()

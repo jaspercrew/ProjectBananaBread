@@ -40,8 +40,8 @@ public class SceneInformation : MonoBehaviour
     public Animator sceneFadeAnim;
 
     public bool isDarkScene;
-    public bool isGravityScene;
-    public bool isWindScene;
+    // public bool isGravityScene;
+    // public bool isWindScene;
     public WindInfo realStateWind;
     public WindInfo altStateWind;
     public SoundName songA;

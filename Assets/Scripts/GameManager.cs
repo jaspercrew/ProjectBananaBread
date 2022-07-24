@@ -83,7 +83,7 @@ public class GameManager : MonoBehaviour
         }
         
         // play sound
-        AudioManager.Instance.OnShift();
+        //AudioManager.Instance.OnShift();
     }
 
     public void FreezeFrame()

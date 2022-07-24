@@ -230,10 +230,7 @@ public partial class CharController
 
         LineGrappleUpdate();
         Crouching_Update();
-        if (SceneInformation.Instance.isDarkScene)
-        {
-            //LightCheckUpdate();
-        }
+
     }
 
     private void Crouching_Update()

@@ -15,9 +15,8 @@ public class AudioManager : MonoBehaviour
     private AudioSource altSource;
     private readonly Dictionary<SoundName, AudioClip> soundToClip = new Dictionary<SoundName, AudioClip>();
 
-    private SoundName savedA;
-    private SoundName savedB;
-    
+    private SoundName savedSong;
+
 
     // public AudioMixerGroup mixerGroup;
 
@@ -30,7 +29,6 @@ public class AudioManager : MonoBehaviour
         else
         {
             Instance = this;
-            
         }
 
         foreach (SoundName sound in Enum.GetValues(typeof(SoundName)))
@@ -48,17 +46,9 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        if (GameManager.Instance.isGameShifted)
-        {
-            primarySource.volume = 0f;
-            altSource.volume = 1f;
-        }
-        else
-        {
-            primarySource.volume = 1f;
-            altSource.volume = 0f;
-        }
-        //PlaySong(SoundName.Song1A, SoundName.Song1B);
+
+        primarySource.volume = 1f;
+        altSource.volume = 1f;
     }
 
     public void Play(SoundName sound, float volume)
@@ -73,55 +63,49 @@ public class AudioManager : MonoBehaviour
 //        effectSource.PlayOneShot(clip, songVolume);
 //    }
     
-    public void PlaySong(SoundName primary, SoundName alt)
+    public void PlaySong(SoundName song)
     {
-        if (savedA == primary && savedB == alt) //if the song is already playing, do nothing
+        if (savedSong == song) //if the song is already playing, do nothing
         {
             return;
         }
-        primarySource.clip = soundToClip[primary];
-        altSource.clip = soundToClip[alt];
-        Debug.Log("actually");
-        Debug.Log(primarySource);
-        Debug.Log(primarySource);
+        primarySource.clip = soundToClip[song];
         primarySource.Play();
-        altSource.Play();
-        savedA = primary;
-        savedB = alt;
+        savedSong = song;
     }
 
 
 
     // TODO: remove and make this an ActivatedEntity?
-    private int beatCounter = 0;
-    private bool isAlt = false;
-    public void OnShift(/*bool toAlt*/)
-    {
-        beatCounter++;
-        if (beatCounter == 4)
-        {
-            beatCounter = 0;
-        }
-        else
-        {
-            return;
-        }
-
-        isAlt = !isAlt;
-        
-        const float fadeTime = .25f;
-        if (isAlt)
-        {
-            StartCoroutine(FadeOut(primarySource, fadeTime));   
-            StartCoroutine(FadeIn(altSource, fadeTime));
-        }
-        else
-        {
-            StartCoroutine(FadeOut(altSource, fadeTime)); 
-            StartCoroutine(FadeIn(primarySource, fadeTime));
-        }
-        
-    }
+    // private int beatCounter = 0;
+    // private bool isAlt = false;
+    // public void OnShift(/*bool toAlt*/)
+    // {
+    //     beatCounter++;
+    //     if (beatCounter == 4)
+    //     {
+    //         beatCounter = 0;
+    //     }
+    //     else
+    //     {
+    //         return;
+    //     }
+    //
+    //     isAlt = !isAlt;
+    //     
+    //     const float fadeTime = .25f;
+    //     if (isAlt)
+    //     {
+    //         StartCoroutine(FadeOut(primarySource, fadeTime));   
+    //         StartCoroutine(FadeIn(altSource, fadeTime));
+    //     }
+    //     else
+    //     {
+    //         StartCoroutine(FadeOut(altSource, fadeTime)); 
+    //         StartCoroutine(FadeIn(primarySource, fadeTime));
+    //     }
+    //     
+    // }
     
     private IEnumerator FadeOut(AudioSource audioSource, float fadeTime)
     {

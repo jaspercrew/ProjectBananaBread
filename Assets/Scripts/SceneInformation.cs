@@ -38,14 +38,11 @@ public class SceneInformation : MonoBehaviour
 
     [HideInInspector]
     public Animator sceneFadeAnim;
-
-    public bool isDarkScene;
+    
     // public bool isGravityScene;
     // public bool isWindScene;
-    public WindInfo realStateWind;
-    public WindInfo altStateWind;
-    public SoundName songA;
-    public SoundName songB;
+    public SoundName song;
+
     public bool playMusic;
 
     public Transform defaultSpawn;
@@ -128,7 +125,7 @@ public class SceneInformation : MonoBehaviour
         if (playMusic)
         {
             Debug.Log("playing");
-            AudioManager.Instance.PlaySong(songA, songB);
+            AudioManager.Instance.PlaySong(song);
         }
     }
 

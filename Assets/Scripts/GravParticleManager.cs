@@ -20,19 +20,19 @@ public class GravParticleManager : MonoBehaviour
     private readonly LinkedList<WindParticle> windParticles = new LinkedList<WindParticle>();
     // private SpriteRenderer normalSquare;
 
-    private const float TimeBetweenParticles = 0.2f;
+    private const float TimeBetweenParticles = 0.1f;
     private float lastParticleSpawnTime = -1f;
     
-    private const float BaseParticleSpeed = 0.1f;
+    private const float BaseParticleSpeed = 0.2f;
     
     private const float GravParticleZ = -3; // TODO
-    private const float SpeedToSize = 0.5f;
+    private const float SpeedToSize = 0.10f;
     private const float MinSize = 0.01f;
     
     private bool isTurning;
     private Vector2 prevSpeed;
     private float turnStartTime;
-    private float turnDuration = 0.4f; // TODO
+    private float turnDuration = 0.2f; // TODO
     private Vector2 turnStartSpeed;
     private Vector2 turnEndSpeed;
 
@@ -90,7 +90,8 @@ public class GravParticleManager : MonoBehaviour
             }
             else
             {
-                Vector2 windSpeed = BaseParticleSpeed * (fgz.IsActive? fgz.activeGravityDirection : fgz.inactiveGravityDirection);
+                Vector2 gravSpeed = BaseParticleSpeed * (fgz.IsActive? fgz.activeGravityDirection : fgz.inactiveGravityDirection);
+          
                 
                 if (isTurning)
                 {
@@ -104,20 +105,22 @@ public class GravParticleManager : MonoBehaviour
                     t = (1 - Mathf.Cos(Mathf.PI * t)) / 2;
                     // print("in process of turning: " + (t * 100) + "%");
 
-                    windSpeed = Vector2.Lerp(turnStartSpeed, turnEndSpeed, t);
+                    gravSpeed = Vector2.Lerp(turnStartSpeed, turnEndSpeed, t);
                 } 
+                print(gravSpeed);
                 
                 Vector3 pos = node.Value.Transform.position;
                 Vector3 scale = node.Value.Transform.localScale;
                 node.Value.Transform.position = new Vector3(
-                    pos.x + windSpeed.x, 
-                    pos.y + windSpeed.y, 
+                    pos.x + gravSpeed.x, 
+                    pos.y + gravSpeed.y, 
                       pos.z);
                 node.Value.Transform.localScale = new Vector3(
                     // Mathf.Max(SpeedToSize * windSpeed.x, MinSize), 
                     // Mathf.Max(SpeedToSize * windSpeed.y, MinSize), 
-                    SpeedToSize * Mathf.Max(windSpeed.x, 0.01f), // TODO ?????
-                    SpeedToSize * Mathf.Max(windSpeed.y, 0.01f), 
+                    
+                    SpeedToSize * gravSpeed.x > 0 ? Mathf.Max(SpeedToSize * gravSpeed.x, 0.01f) : Mathf.Min(SpeedToSize * gravSpeed.x, -0.01f), // TODO ?????
+                    SpeedToSize * gravSpeed.y > 0 ? Mathf.Max(SpeedToSize * gravSpeed.y, 0.01f) : Mathf.Min(SpeedToSize * gravSpeed.y, -0.01f), 
                     scale.z);
             }
 

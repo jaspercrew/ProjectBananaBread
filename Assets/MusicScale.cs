@@ -8,7 +8,7 @@ public class MusicScale : MonoBehaviour
     private const float maxheight = 8f;
     private const float heightMultiplier = 2f;
     private const float minLength = .2f;
-    private float backdropHeight = 1.75f;
+    private float backdropHeight = 2.5f;
     public int spectrumIndex;
 
     public Transform mainBox;

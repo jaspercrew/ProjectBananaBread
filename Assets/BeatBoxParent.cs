@@ -33,7 +33,7 @@ public class BeatBoxParent : MonoBehaviour
                 print("inst");
                 GameObject instantiatedBeatBox = Instantiate(beatBoxPrefab, transform, true);
                 instantiatedBeatBox.transform.position = transform.TransformPoint(spawnLocation);
-                instantiatedBeatBox.transform.eulerAngles = new Vector3(0, 0, 30);
+                instantiatedBeatBox.transform.eulerAngles = new Vector3(0, 0, 0);
                 instantiatedBeatBox.GetComponent<MusicScale>().Initialize(indexArray[i]);
                 spawnLocation = new Vector3(spawnLocation.x + barWidth + barGap, spawnLocation.y, spawnLocation.z);
             }

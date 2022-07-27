@@ -14,14 +14,14 @@ TagManager:
   - 
   - Water
   - UI
-  - Enemy
+  - 
   - Player
   - Obstacle
   - Moveable
-  - Projectile
+  - Slide
   - GroundCheck
-  - Bomb
-  - MoveableNC
+  - 
+  - 
   - Platform
   - 
   - 

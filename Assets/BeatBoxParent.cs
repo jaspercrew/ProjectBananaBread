@@ -30,7 +30,7 @@ public class BeatBoxParent : MonoBehaviour
             Shuffle(rand, indexArray);
             for (int i = 0; i < numBars; i++)
             {
-                print("inst");
+                //print("inst");
                 GameObject instantiatedBeatBox = Instantiate(beatBoxPrefab, transform, true);
                 instantiatedBeatBox.transform.position = transform.TransformPoint(spawnLocation);
                 instantiatedBeatBox.transform.eulerAngles = new Vector3(0, 0, 0);

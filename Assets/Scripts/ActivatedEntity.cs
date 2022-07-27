@@ -13,6 +13,14 @@ public class ActivatedEntity : BeatEntity
     {
         base.Start();
         IsActive = initialIsActive;
+        if (initialIsActive)
+        {
+            Activate();
+        }
+        else
+        {
+            Deactivate();
+        }
     }
 
     protected override void BeatAction()

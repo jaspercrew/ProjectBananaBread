@@ -147,6 +147,7 @@ public partial class CharController : BeatEntity
     private LayerMask obstacleLayerMask;
     private LayerMask obstaclePlusLayerMask;
     private LayerMask platformLayerMask;
+    private LayerMask wallSlideLayerMask;
     
     private readonly LinkedList<Event> eventQueue = new LinkedList<Event>();
 
@@ -178,7 +179,7 @@ public partial class CharController : BeatEntity
             {() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.Jump},
             //{() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.DoubleJump},
             {() => Input.GetKeyDown(KeyCode.E), Event.EventTypes.Interact},
-            {() => Input.GetKeyDown(KeyCode.LeftControl), Event.EventTypes.Crouch},
+            //{() => Input.GetKeyDown(KeyCode.LeftControl), Event.EventTypes.Crouch},
             {() => Input.GetKeyDown(KeyCode.G), Event.EventTypes.Grapple},
         };
 

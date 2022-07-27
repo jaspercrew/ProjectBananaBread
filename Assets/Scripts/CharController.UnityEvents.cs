@@ -48,7 +48,8 @@ public partial class CharController
         dust = particleChild.Find("DustPS").GetComponent<ParticleSystem>();
         //fadePS = particleChild.Find("FadePS").GetComponent<ParticleSystem>();
         obstacleLayerMask = LayerMask.GetMask("Obstacle");
-        obstaclePlusLayerMask = LayerMask.GetMask("Obstacle", "Moveable", "Platform");
+        obstaclePlusLayerMask = LayerMask.GetMask("Obstacle", "Slide", "Platform");
+        wallSlideLayerMask = LayerMask.GetMask("Slide");
         platformLayerMask = LayerMask.GetMask("Platform");
         
         
@@ -467,17 +468,17 @@ public partial class CharController
 
         // left linecasts
         RaycastHit2D bottomLeftHit = 
-            Physics2D.Linecast(bottomLeft, bottomLeft + aLittleLeft, obstaclePlusLayerMask);
+            Physics2D.Linecast(bottomLeft, bottomLeft + aLittleLeft, wallSlideLayerMask);
         RaycastHit2D topLeftHit = 
-            Physics2D.Linecast(topLeft, topLeft + aLittleLeft, obstaclePlusLayerMask);
+            Physics2D.Linecast(topLeft, topLeft + aLittleLeft, wallSlideLayerMask);
         bool isNearWallOnLeft = bottomLeftHit && topLeftHit;
         
 
         // right linecasts
         RaycastHit2D bottomRightHit = 
-            Physics2D.Linecast(bottomRight, bottomRight + aLittleRight, obstaclePlusLayerMask);
+            Physics2D.Linecast(bottomRight, bottomRight + aLittleRight, wallSlideLayerMask);
         RaycastHit2D topRightHit = 
-            Physics2D.Linecast(topRight, topRight + aLittleRight, obstaclePlusLayerMask);
+            Physics2D.Linecast(topRight, topRight + aLittleRight, wallSlideLayerMask);
         bool isNearWallOnRight = bottomRightHit && topRightHit;
 
         // isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) 

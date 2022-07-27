@@ -1,17 +1,22 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public enum PlatformType
 {
-    Collider, Wallslide, 
+    Collider, Wallslide
 }
 public class BeatPlatform : ActivatedEntity
 {
     public bool isStatic = false;
+    public bool isHazard = false;
     public PlatformType type;
     private Collider2D collider2D;
     private SpriteRenderer spriteRenderer;
+
+    //[HideInInspector]
+    public bool isWallSlideable;
 
     private const float deactivatedAlpha = .3f;
     // Start is called before the first frame update
@@ -19,6 +24,10 @@ public class BeatPlatform : ActivatedEntity
     {
         collider2D = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        if (isHazard)
+        {
+            spriteRenderer.color = Color.red;
+        }
         base.Start();
     }
 
@@ -44,7 +53,8 @@ public class BeatPlatform : ActivatedEntity
                 break;
 
             case PlatformType.Wallslide:
-                gameObject.layer = LayerMask.NameToLayer("Slide");
+                //gameObject.layer = LayerMask.NameToLayer("Slide");
+                isWallSlideable = true;
                 spriteRenderer.color = new Color(1, .5f, 0);
                 break;
         }
@@ -65,11 +75,18 @@ public class BeatPlatform : ActivatedEntity
                 break;
             
             case PlatformType.Wallslide:
-                gameObject.layer = LayerMask.NameToLayer("Obstacle");
+                //gameObject.layer = LayerMask.NameToLayer("Obstacle");
+                isWallSlideable = false;
                 spriteRenderer.color = Color.white;
                 break;
         }
-
     }
-    
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (isHazard && other.gameObject.CompareTag("Player"))
+        {
+            CharController.Instance.Die();
+        }
+    }
 }

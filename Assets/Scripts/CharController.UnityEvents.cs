@@ -468,18 +468,25 @@ public partial class CharController
 
         // left linecasts
         RaycastHit2D bottomLeftHit = 
-            Physics2D.Linecast(bottomLeft, bottomLeft + aLittleLeft, wallSlideLayerMask);
+            Physics2D.Linecast(bottomLeft, bottomLeft + aLittleLeft, obstacleLayerMask);
         RaycastHit2D topLeftHit = 
-            Physics2D.Linecast(topLeft, topLeft + aLittleLeft, wallSlideLayerMask);
-        bool isNearWallOnLeft = bottomLeftHit && topLeftHit;
+            Physics2D.Linecast(topLeft, topLeft + aLittleLeft, obstacleLayerMask);
+        bool isNearWallOnLeft = bottomLeftHit && topLeftHit && 
+                                bottomLeftHit.transform.GetComponent<BeatPlatform>() != null && bottomLeftHit.transform.GetComponent<BeatPlatform>().isWallSlideable && 
+                                topLeftHit.transform.GetComponent<BeatPlatform>() != null && topLeftHit.transform.GetComponent<BeatPlatform>().isWallSlideable;
+        
         
 
         // right linecasts
         RaycastHit2D bottomRightHit = 
-            Physics2D.Linecast(bottomRight, bottomRight + aLittleRight, wallSlideLayerMask);
+            Physics2D.Linecast(bottomRight, bottomRight + aLittleRight, obstacleLayerMask);
         RaycastHit2D topRightHit = 
-            Physics2D.Linecast(topRight, topRight + aLittleRight, wallSlideLayerMask);
-        bool isNearWallOnRight = bottomRightHit && topRightHit;
+            Physics2D.Linecast(topRight, topRight + aLittleRight, obstacleLayerMask);
+        bool isNearWallOnRight = bottomRightHit && topRightHit && 
+                                 bottomRightHit.transform.GetComponent<BeatPlatform>() != null && bottomRightHit.transform.GetComponent<BeatPlatform>().isWallSlideable && 
+                                 topRightHit.transform.GetComponent<BeatPlatform>() != null && topRightHit.transform.GetComponent<BeatPlatform>().isWallSlideable;
+        
+        //print(bottomRightHit.transform.gameObject);
 
         // isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) 
         //                              || (moveVector < 0 && isNearWallOnLeft)) && IsAbleToMove();

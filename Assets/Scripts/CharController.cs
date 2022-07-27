@@ -298,7 +298,7 @@ public partial class CharController : BeatEntity
         isInverted = false;
     }
     
-    protected void Die() 
+    public void Die() 
     {
         Animator.SetTrigger(Death);
         canFunction = false;

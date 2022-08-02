@@ -2,7 +2,7 @@
 using Cinemachine;
 using UnityEngine;
 
-public class ScreenShakeController : MonoBehaviour {
+public class ScreenShakeController : BeatEntity {
     public static ScreenShakeController Instance;
     public CinemachineVirtualCamera virtualCamera;
     private float shakeTimer;
@@ -15,17 +15,8 @@ public class ScreenShakeController : MonoBehaviour {
         Instance = this;
     }
     // Start is called before the first frame update
-    private void Start() {
-        StartCoroutine(LateStart());
-    }
 
-    private IEnumerator LateStart()
-    {
-        yield return new WaitForEndOfFrame();
-        virtualCamera = GetComponent<CinemachineBrain>().ActiveVirtualCamera.
-            VirtualCameraGameObject.GetComponent<CinemachineVirtualCamera>();
-    }
-    
+
     public void StartShake(float length, float power) {
         CinemachineBasicMultiChannelPerlin perlin =
             virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
@@ -35,10 +26,16 @@ public class ScreenShakeController : MonoBehaviour {
         shakeTimerTotal = length;
         //Debug.Log("shake start");
     }
-    
+
+    protected override void MicroBeatAction()
+    {
+        MediumShake();
+    }
+
     // Update is called once per frame
     void Update() {
-
+        virtualCamera = GetComponent<CinemachineBrain>().ActiveVirtualCamera.
+            VirtualCameraGameObject.GetComponent<CinemachineVirtualCamera>();
         if (shakeTimer > 0) {
             shakeTimer -= Time.deltaTime;
             if (shakeTimer <= 0f) {
@@ -50,7 +47,7 @@ public class ScreenShakeController : MonoBehaviour {
     }
 
     public void MediumShake() {
-        StartShake(.1f, 4f);
+        StartShake(.07f, 5f);
     }
     
     public void LargeShake() {

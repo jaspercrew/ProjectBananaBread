@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Gate : MonoBehaviour
 {
-    public List<ActivatorTrigger> triggers;
+    public List<Token> triggers;
     public float yOffset = 5f;
     public float timeToOpen = 3f;
 
@@ -30,7 +30,7 @@ public class Gate : MonoBehaviour
         {
             case GateState.Closed:
                 bool allActive = true;
-                foreach (ActivatorTrigger trigger in triggers)
+                foreach (Token trigger in triggers)
                 {
                     allActive &= trigger.isActivated;
                 }
@@ -57,6 +57,12 @@ public class Gate : MonoBehaviour
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+
+    public void ResetGate()
+    {
+        transform.position = closedPos;
+        state = GateState.Closed;
     }
 
 

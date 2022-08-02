@@ -298,13 +298,9 @@ public partial class CharController : BeatEntity
         isInverted = false;
     }
     
-    public void Die() 
+    public void Die()
     {
-        Animator.SetTrigger(Death);
-        canFunction = false;
-        Rigidbody.gravityScale = 0;
-        Rigidbody.velocity = Vector2.zero;
-        Rigidbody.bodyType = RigidbodyType2D.Static;
+        transform.position = SceneInformation.Instance.GetSpawnPos();
         GameManager.Instance.PlayerDeath();
     }
 

@@ -17,7 +17,7 @@ public class WindBurst : BeatEntity
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    protected override void BeatAction()
+    protected override void MicroBeatAction()
     {
         if (playerInRange)
         {

@@ -92,8 +92,8 @@ public partial class CharController
         //print("jumpcall");
         justJumped = true;
         dust.Play();
-        const float wallJumpModX = .8f;
-        const float wallJumpModY = 1.2f;
+        const float wallJumpModX = .7f;
+        const float wallJumpModY = 1.4f;
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
 

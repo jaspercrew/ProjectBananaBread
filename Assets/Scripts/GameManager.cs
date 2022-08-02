@@ -3,12 +3,14 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    public bool isGameShifted;
+    public bool musicStart;
+    //public bool isGameShifted;
     
     // public bool isDarkScene;
     // private int frozenFrames;
@@ -17,12 +19,15 @@ public class GameManager : MonoBehaviour
     // public bool isReady;
     
     // https://www.gamedeveloper.com/audio/coding-to-the-beat---under-the-hood-of-a-rhythm-game-in-unity
+    private float microBpm;
     public float songBpm;
     public float firstBeatOffset;
     private float secPerBeat;
     private float songPosition;
-    private float songPositionInBeats;
+    private float songPositionInBeats = float.NegativeInfinity;
     private float dspSongTime;
+    public float coroutineDelay = .5f;
+
 
     private void Awake()
     {
@@ -31,7 +36,7 @@ public class GameManager : MonoBehaviour
             // Debug.Log("setting gm instance");
             Instance = this;
         }
-        isGameShifted = false;
+        //isGameShifted = false;
     }
 
     // Start is called before the first frame update
@@ -39,8 +44,9 @@ public class GameManager : MonoBehaviour
     {
         // TODO
         Application.targetFrameRate = 144;
+        microBpm = songBpm * 16f;
 
-        secPerBeat = 60f / songBpm;
+        secPerBeat = 60f / microBpm;
 
         dspSongTime = (float) AudioSettings.dspTime;
     }
@@ -51,39 +57,38 @@ public class GameManager : MonoBehaviour
         // {
         //     TextPop("test text");
         // }
-        
-        songPosition = (float) (AudioSettings.dspTime - dspSongTime - firstBeatOffset);
-        float newSongPositionInBeats = songPosition / secPerBeat;
-
-        if (Mathf.Floor(newSongPositionInBeats) > Mathf.Floor(songPositionInBeats))
+        if (musicStart)
         {
-            WorldBeat();
+            songPosition = (float) (AudioSettings.dspTime - dspSongTime - firstBeatOffset);
+            float newSongPositionInBeats = songPosition / secPerBeat;
+
+            if (Mathf.Floor(newSongPositionInBeats) > Mathf.Floor(songPositionInBeats))
+            {
+                WorldBeat();
+            }
+
+            songPositionInBeats = newSongPositionInBeats;
         }
-        
-        songPositionInBeats = newSongPositionInBeats;
     }
 
     public void WorldBeat()
     {
-        isGameShifted = !isGameShifted;
-        
+        StartCoroutine(BeatCoroutine());
+        //print(microBeatCount);
+        // isGameShifted = !isGameShifted;
+
         // shift entities
+
+    }
+
+    public IEnumerator BeatCoroutine()
+    {
+        yield return new WaitForSecondsRealtime(coroutineDelay);
         BeatEntity[] entities = FindObjectsOfType<BeatEntity>();
-        
         foreach (BeatEntity entity in entities)
         {
-            entity.Beat();
+            entity.MicroBeat();
         }
-        
-        // shift tiles
-        //TileStateManager t = TileStateManager.Instance;
-        // if (t != null)
-        // {
-        //     t.ShiftTilesTo(isGameShifted);
-        // }
-        
-        // play sound
-        //AudioManager.Instance.OnShift();
     }
 
     public void FreezeFrame()
@@ -94,14 +99,24 @@ public class GameManager : MonoBehaviour
 
     public void PlayerDeath()
     {
-        StartCoroutine(PlayerDeathCoroutine());
-    }
+        Token[] tokens = FindObjectsOfType<Token>();
+        foreach (Token token in tokens)
+        {
+            token.ResetToken();
+        }
 
-    private IEnumerator PlayerDeathCoroutine()
-    {
-        yield return new WaitForSeconds(2f);
-        SceneManager.LoadScene("DemoA");
-    }
+        Gate[] gates = FindObjectsOfType<Gate>();
+        foreach (Gate gate in gates)
+        {
+            gate.ResetGate();
+        }
+}
+
+    // private IEnumerator PlayerDeathCoroutine()
+    // {
+    //     yield return new WaitForSeconds(2f);
+    //     SceneManager.LoadScene("DemoA");
+    // }
 
     private IEnumerator FreezeFrameCoroutine(float time)
     {

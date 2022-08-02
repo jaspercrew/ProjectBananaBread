@@ -47,8 +47,8 @@ public class AudioManager : MonoBehaviour
     private void Start()
     {
 
-        primarySource.volume = 1f;
-        altSource.volume = 1f;
+        primarySource.volume = .5f;
+        altSource.volume = .5f;
     }
 
     public void Play(SoundName sound, float volume)

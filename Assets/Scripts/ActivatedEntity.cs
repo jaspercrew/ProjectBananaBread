@@ -23,7 +23,7 @@ public class ActivatedEntity : BeatEntity
         }
     }
 
-    protected override void BeatAction()
+    protected override void MicroBeatAction()
     {
         if (IsActive)
         {

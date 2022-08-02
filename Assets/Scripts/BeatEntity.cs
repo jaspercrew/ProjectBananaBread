@@ -1,30 +1,56 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class BeatEntity : Entity
 {
-    [Min(1)] public int beatsToAction = 1;
+    [Min(1)] public int motifLength = 1; //length of motif in beats
     protected int beatsCounter = 0;
-
+    public List<int> actionMicroBeats= new List<int>();
+    protected int microBeatCount = 0;
     // Start is called before the first frame update
     protected virtual void Start()
     {
         
     }
 
-    protected virtual void BeatAction()
+    protected virtual void MicroBeatAction()
+    {
+        
+    }
+
+
+    protected virtual void FullBeatAction()
+    {
+        
+    }
+
+    protected virtual void MotifResetAction()
     {
         
     }
     
-    public void Beat()
+    public void MicroBeat()
     {
-        beatsCounter++;
-        if (beatsCounter == beatsToAction)
+        //print(actionMicroBeats.Contains(microbeat));
+        if (actionMicroBeats.Count > 0 && actionMicroBeats.Contains(microBeatCount))
         {
-            BeatAction();
-            beatsCounter = 0;
+            MicroBeatAction();
+            //beatsCounter = 0;
+        }
+
+        if (microBeatCount % 16 == 0)
+        {
+            FullBeatAction();
+            beatsCounter++;
+        }
+        
+        microBeatCount++;
+        if (microBeatCount == 16 * motifLength)
+        {
+            microBeatCount = 0;
+            MotifResetAction();
         }
     }
-
-   
+        
 }

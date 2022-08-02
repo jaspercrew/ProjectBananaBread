@@ -122,9 +122,18 @@ public class SceneInformation : MonoBehaviour
 
     private void Start()
     {
-        if (playMusic)
+        // if (playMusic)
+        // {
+        //     //Debug.Log("playing");
+        //     AudioManager.Instance.PlaySong(song);
+        // }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            //Debug.Log("playing");
+            GameManager.Instance.musicStart = true;
             AudioManager.Instance.PlaySong(song);
         }
     }

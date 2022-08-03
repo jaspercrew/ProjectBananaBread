@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public partial class CharController
 {
+    public bool recentlyImpulsed;
     public GameObject fadeSprite;
     private void Awake()
     {
@@ -124,6 +125,7 @@ public partial class CharController
         // regular ground movement
         if (isGrounded)
         {
+            recentlyImpulsed = false;
             int moveDir = Math.Sign(moveVector);
             // if user is not moving and has speed, then slow down
             if (moveDir == 0 && Mathf.Abs(xVel) >= MinGroundSpeed)
@@ -167,8 +169,13 @@ public partial class CharController
                 Rigidbody.AddForce(-xVel * InAirDrag * Vector2.right, ForceMode2D.Force);
             }
 
+            if (recentlyImpulsed && Math.Abs(xVel) <= speed)
+            {
+                recentlyImpulsed = false;
+            }
+
             // apply max velocity if not grappling
-            if (!isLineGrappling)
+            if (!isLineGrappling && !recentlyImpulsed)
             {
                 Rigidbody.velocity = new Vector2(
                     Mathf.Clamp(xVel, -speed, speed),

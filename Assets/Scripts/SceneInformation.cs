@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class WindInfo
-{ 
-    public float forceStrength; 
-    public float speedOnPlayer; 
-    public bool isHorizontal;
-}
+// public class WindInfo
+// { 
+//     public float forceStrength; 
+//     public float speedOnPlayer; 
+//     public bool isHorizontal;
+// }
 
 public enum SpawnPickDirection
 {
@@ -131,11 +131,7 @@ public class SceneInformation : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            GameManager.Instance.musicStart = true;
-            AudioManager.Instance.PlaySong(song);
-        }
+
     }
 
     public Vector3 GetSpawnPos()

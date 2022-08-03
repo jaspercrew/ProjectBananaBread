@@ -1,14 +1,32 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BurstOrb : BeatEntity
 {
-    private const int numCircles = 8;
     private BeatOrb[] circles;
     private int circleIterator = 0;
+    public GameObject BeatCircle;
+    public float radius = 1f;
+    public float impulseForce = 1f;
+    private CircleCollider2D circleCollider2D;
+    private ParticleSystem particle;
+    private bool applyForce = false;
+    private bool playerInRange = false;
     protected override void Start()
     {
+        circleCollider2D = GetComponent<CircleCollider2D>();
+        particle = GetComponent<ParticleSystem>();
+        int numCircles = actionMicroBeats.Count - 1;
+        float angleGap = 2 * (float) Math.PI / numCircles;
+        for (int i = 0; i < numCircles; i++)
+        {
+            Vector3 spawnPosition = new Vector3(radius * (float) Math.Cos(angleGap * i),
+                                                radius * (float) Math.Sin(angleGap * i), 0);
+            GameObject instantiatedCircle = Instantiate(BeatCircle, transform, true);
+            instantiatedCircle.transform.position = transform.TransformPoint(spawnPosition);
+        }
         circles = transform.GetComponentsInChildren<BeatOrb>();
         base.Start();
     }
@@ -31,8 +49,32 @@ public class BurstOrb : BeatEntity
 
     private void PlayerImpulse()
     {
+        particle.Emit(1);
         Trigger();
-        print("impulse triggered");
+        if (playerInRange)
+        {
+            applyForce = true;
+        }
+        else
+        {
+            applyForce = false;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        playerInRange = false;
+        if (other.gameObject.CompareTag("Player"))
+        {
+            playerInRange = true;
+            if (applyForce)
+            {
+                applyForce = false;
+                Vector2 direction = (CharController.Instance.transform.position - transform.position).normalized;
+                CharController.Instance.GetComponent<Rigidbody2D>()
+                    .AddForce(direction * impulseForce, ForceMode2D.Impulse);
+            }
+        }
     }
 
 

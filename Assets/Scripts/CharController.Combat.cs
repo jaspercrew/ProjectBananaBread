@@ -78,7 +78,7 @@
 //         transform.Find("ShiftCD").GetComponent<ShiftCooldown>().image.fillAmount = 1; //TODO: FIX
 //         switchPS.Play();
 //         
-//         GameManager.Instance.WorldBeat();
+//         GameManager.Instance.WorldMicroBeat();
 //         //StartCoroutine(WindDetectionCheck());
 //     }
 //     

@@ -39,14 +39,14 @@ public class BeatEntity : Entity
             //beatsCounter = 0;
         }
 
-        if (microBeatCount % 16 == 0)
+        if (microBeatCount % GameManager.microBeatsInBeat == 0)
         {
             FullBeatAction();
             beatsCounter++;
         }
         
         microBeatCount++;
-        if (microBeatCount == 16 * motifLength)
+        if (microBeatCount == GameManager.microBeatsInBeat * motifLength)
         {
             microBeatCount = 0;
             MotifResetAction();

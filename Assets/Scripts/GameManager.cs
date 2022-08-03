@@ -8,8 +8,11 @@ using UnityEngine.Serialization;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-
+    public const int microBeatsInBeat = 16;
     public bool musicStart;
+    private bool playSnares;
+    public float snareDelay = 1f;
+    
     //public bool isGameShifted;
     
     // public bool isDarkScene;
@@ -21,13 +24,15 @@ public class GameManager : MonoBehaviour
     // https://www.gamedeveloper.com/audio/coding-to-the-beat---under-the-hood-of-a-rhythm-game-in-unity
     private float microBpm;
     public float songBpm;
-    public float firstBeatOffset;
+    public float firstBeatOffset; //DOES THIS EVEN DO ANYTHING?????????
     private float secPerBeat;
     private float songPosition;
     private float songPositionInBeats = float.NegativeInfinity;
     private float dspSongTime;
     public float coroutineDelay = .5f;
-
+    private int snareCount = 0;
+    public int snareToSongDelay = 2;
+    private BeatEntity[] entities;
 
     private void Awake()
     {
@@ -45,50 +50,60 @@ public class GameManager : MonoBehaviour
         // TODO
         Application.targetFrameRate = 144;
         microBpm = songBpm * 16f;
-
         secPerBeat = 60f / microBpm;
-
         dspSongTime = (float) AudioSettings.dspTime;
+        StartCoroutine(SnareCoroutine());
+        entities = FindObjectsOfType<BeatEntity>();
+    }
+
+    private IEnumerator SnareCoroutine()
+    {
+        yield return new WaitForSeconds(snareDelay);
+        playSnares = true;
     }
 
     private void Update()
     {
-        // if (Input.GetKeyDown(KeyCode.M))
-        // {
-        //     TextPop("test text");
-        // }
+        songPosition = (float) (AudioSettings.dspTime - dspSongTime - firstBeatOffset);
+        float newSongPositionInBeats = songPosition / secPerBeat;
+        if (Mathf.Floor(newSongPositionInBeats) > Mathf.Floor(songPositionInBeats))
+        {
+            WorldMicroBeat();
+        }
+        songPositionInBeats = newSongPositionInBeats;
+    }
+
+    public void WorldMicroBeat()
+    {
+        StartCoroutine(BeatDelayCoroutine());
+    }
+
+    public IEnumerator BeatDelayCoroutine()
+    {
         if (musicStart)
         {
-            songPosition = (float) (AudioSettings.dspTime - dspSongTime - firstBeatOffset);
-            float newSongPositionInBeats = songPosition / secPerBeat;
-
-            if (Mathf.Floor(newSongPositionInBeats) > Mathf.Floor(songPositionInBeats))
+            yield return new WaitForSecondsRealtime(coroutineDelay);
+            
+            foreach (BeatEntity entity in entities)
             {
-                WorldBeat();
+                entity.MicroBeat();
             }
-
-            songPositionInBeats = newSongPositionInBeats;
         }
-    }
-
-    public void WorldBeat()
-    {
-        StartCoroutine(BeatCoroutine());
-        //print(microBeatCount);
-        // isGameShifted = !isGameShifted;
-
-        // shift entities
-
-    }
-
-    public IEnumerator BeatCoroutine()
-    {
-        yield return new WaitForSecondsRealtime(coroutineDelay);
-        BeatEntity[] entities = FindObjectsOfType<BeatEntity>();
-        foreach (BeatEntity entity in entities)
+        else if (playSnares)
         {
-            entity.MicroBeat();
+            snareCount++;
+            if (snareCount % 16 == 0 && snareCount <= 64)
+            {
+                AudioManager.Instance.Play(SoundName.Snare, .5f);
+            }
+            
+            if (snareCount == (4 * microBeatsInBeat) + snareToSongDelay)
+            {
+                AudioManager.Instance.PlaySong(SceneInformation.Instance.song);
+                musicStart = true;
+            }
         }
+
     }
 
     public void FreezeFrame()

@@ -178,9 +178,9 @@ public partial class CharController : BeatEntity
             {() => Input.GetKeyDown(KeyCode.LeftShift), Event.EventTypes.Dash},
             {() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.Jump},
             //{() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.DoubleJump},
-            {() => Input.GetKeyDown(KeyCode.E), Event.EventTypes.Interact},
+            //{() => Input.GetKeyDown(KeyCode.E), Event.EventTypes.Interact},
             //{() => Input.GetKeyDown(KeyCode.LeftControl), Event.EventTypes.Crouch},
-            {() => Input.GetKeyDown(KeyCode.G), Event.EventTypes.Grapple},
+            //{() => Input.GetKeyDown(KeyCode.G), Event.EventTypes.Grapple},
         };
 
     // maps from event type to a boolean function that says whether the conditions for the 

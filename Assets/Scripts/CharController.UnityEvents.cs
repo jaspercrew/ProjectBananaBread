@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
@@ -8,6 +9,11 @@ public partial class CharController
 {
     public bool recentlyImpulsed;
     public GameObject fadeSprite;
+    public List<Vector3> pointsInTime = new List<Vector3>();
+    private bool isRewinding;
+    public bool doRecord;
+    private int rewindSpeed = 5;
+    
     private void Awake()
     {
         if (Instance != null)
@@ -83,7 +89,48 @@ public partial class CharController
         ApplyForcedMovement_FixedUpdate();
 
         TurnAround_FixedUpdate();
-        
+        Record_FixedUpdate();
+    }
+
+    private void Record_FixedUpdate()
+    {
+        if (!doRecord || isRewinding)
+        {
+            return;
+        }
+        if (pointsInTime.Count == 0)
+        {
+            pointsInTime.Insert(0, transform.position);
+            return;
+        }
+        Vector3 last = pointsInTime[0];
+        if (last != transform.position)
+        {
+            pointsInTime.Insert(0, transform.position);
+        }
+    }
+
+    public IEnumerator StartRewind()
+    {
+        int savedPriority = CameraManager.Instance.currentCam.Priority;
+        CameraManager.Instance.currentCam.Priority = 50;
+        doRecord = false;
+        Rigidbody.velocity = Vector3.zero; //diving fix (LOL RERUN XD)
+        charCollider.isTrigger = true;
+        isRewinding = true;
+        Rigidbody.bodyType = RigidbodyType2D.Static;
+        emitFadesTime += .45f;
+        //while (pointsInTime.Count > 0) {
+        for (int i = 0; i < pointsInTime.Count; i += rewindSpeed){
+            Vector3 pointInTime = pointsInTime[i];
+            transform.position = pointInTime;
+            yield return new WaitForFixedUpdate();
+        }
+        pointsInTime.Clear();
+        isRewinding = false;
+        Rigidbody.bodyType = RigidbodyType2D.Dynamic;
+        charCollider.isTrigger = false;
+        CameraManager.Instance.currentCam.Priority = savedPriority;
     }
 
     private void Animstate_FixedUpdate()
@@ -93,7 +140,7 @@ public partial class CharController
             //Debug.Log("wallslide anim");
             Animator.SetInteger(AnimState, 3);
         }
-        else if (isGrounded && Mathf.Abs(moveVector) > float.Epsilon)
+        else if (isGrounded && (Mathf.Abs(moveVector) > float.Epsilon || isRewinding))
         {
             //Debug.Log("run anim");
             Animator.SetInteger(AnimState, 2);
@@ -230,16 +277,14 @@ public partial class CharController
         CheckGrounded_Update();
         CheckPlatformGrounded_Update();
         EventHandling_Update();
-        
-        
         ShortJumpDetection_Update();
-        //JumpCooldown_Update();
         WallSlideDetection_Update();
-
         LineGrappleUpdate();
         Crouching_Update();
 
     }
+    
+    
 
     private void Crouching_Update()
     {
@@ -314,6 +359,20 @@ public partial class CharController
             }
         }
     }
+
+    // private void GetBounds_Update()
+    // {
+    //     Vector2 relativeDown = isInverted ? Vector2.up : Vector2.down;
+    //
+    //     Vector3 bounds = charCollider.bounds.extents;
+    //     float halfWidth = Mathf.Abs(bounds.x);
+    //     float halfHeight = Mathf.Abs(bounds.y);
+    //     Vector2 center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
+    //
+    //     Vector2 bottomMiddle = center + halfHeight * relativeDown;
+    //     Vector2 bottomLeft = bottomMiddle + halfWidth * Vector2.left;
+    //     Vector2 bottomRight = bottomMiddle + halfWidth * Vector2.right;
+    // }
 
 
     private void CheckGrounded_Update()
@@ -447,6 +506,8 @@ public partial class CharController
             }
         }
     }
+
+
 
 
     private void WallSlideDetection_Update() {

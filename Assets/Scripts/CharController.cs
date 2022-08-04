@@ -228,7 +228,7 @@ public partial class CharController : BeatEntity
 
     private bool IsAbleToMove()
     {
-        return !isDashing && !isLineGrappling && canFunction;
+        return !isDashing && !isLineGrappling && canFunction && !isRewinding;
     }
 
     
@@ -251,7 +251,7 @@ public partial class CharController : BeatEntity
     }
 
     private bool IsAbleToAct() {
-        return !isDashing  && canFunction;
+        return !isDashing  && canFunction && !isRewinding;
     }
     
     protected void FaceLeft()
@@ -268,6 +268,13 @@ public partial class CharController : BeatEntity
         Transform t = transform; // more efficient, according to Rider
         Vector3 s = t.localScale;
         t.localScale = new Vector3(-Mathf.Abs(s.x), s.y, s.z);
+    }
+    
+    public void SpawnExtendedFadeSprite()
+    {
+        GameObject newFadeSprite = Instantiate(fadeSprite, transform.position, transform.rotation);
+        newFadeSprite.GetComponent<FadeSprite>()
+            .Initialize(spriteRenderer.sprite, transform.localScale.x > 0, isInverted, true);
     }
 
     public void Invert() {

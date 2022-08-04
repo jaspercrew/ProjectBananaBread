@@ -51,31 +51,16 @@ public class BurstOrb : BeatEntity
     {
         particle.Emit(1);
         Trigger();
-        if (playerInRange)
+        if (((Vector2)CharController.Instance.transform.position - (Vector2)transform.position).magnitude < (transform.localScale.x * circleCollider2D.radius))
         {
-            applyForce = true;
+            CharController.Instance.recentlyImpulsed = true;
+            Vector2 direction = (CharController.Instance.transform.position - transform.position).normalized;
+            CharController.Instance.GetComponent<Rigidbody2D>()
+                .AddForce(direction * impulseForce, ForceMode2D.Impulse);
         }
-        else
-        {
-            applyForce = false;
-        }
-    }
 
-    private void OnTriggerStay2D(Collider2D other)
-    {
-        playerInRange = false;
-        if (other.gameObject.CompareTag("Player"))
-        {
-            playerInRange = true;
-            if (applyForce)
-            {
-                applyForce = false;
-                Vector2 direction = (CharController.Instance.transform.position - transform.position).normalized;
-                CharController.Instance.GetComponent<Rigidbody2D>()
-                    .AddForce(direction * impulseForce, ForceMode2D.Impulse);
-            }
-        }
     }
+    
 
 
     protected override void MotifResetAction()

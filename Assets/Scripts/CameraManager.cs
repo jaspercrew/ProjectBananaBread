@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour {
     public static CameraManager Instance;
-    private CinemachineVirtualCamera currentCam;
+    public CinemachineVirtualCamera currentCam;
     
 
     private void Awake() {
@@ -17,6 +17,12 @@ public class CameraManager : MonoBehaviour {
         else {
             Instance = this;
         }
+    }
+
+    private void Update()
+    {
+        currentCam = GetComponent<CinemachineBrain>().ActiveVirtualCamera.VirtualCameraGameObject
+            .GetComponent<CinemachineVirtualCamera>();
     }
 
     // public void SwitchCam(CinemachineVirtualCamera cam) {

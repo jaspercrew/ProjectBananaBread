@@ -3,7 +3,7 @@ using UnityEngine;
 public class FadeSprite : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
-    public float fadeTime = .3f;
+    public float fadeTime = .35f;
     private float timeLeft;
     
 
@@ -11,8 +11,12 @@ public class FadeSprite : MonoBehaviour
     void Awake()
     {
         spriteRenderer = GetComponentInParent<SpriteRenderer>();
-        timeLeft = fadeTime;
         //fadeSpriteIterator = 0;
+    }
+
+    void Start()
+    {
+        timeLeft = fadeTime;
     }
     
     void FixedUpdate()
@@ -29,8 +33,12 @@ public class FadeSprite : MonoBehaviour
         }
     }
 
-    public void Initialize(Sprite sprite, bool flippedX, bool FlippedY)
+    public void Initialize(Sprite sprite, bool flippedX, bool FlippedY, bool isExtended = false)
     {
+        if (isExtended)
+        {
+            fadeTime *= 2.5f;
+        }
         spriteRenderer.sprite = sprite;
         if (flippedX)
         {

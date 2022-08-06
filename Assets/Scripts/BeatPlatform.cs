@@ -5,7 +5,7 @@ using UnityEngine;
 
 public enum PlatformType
 {
-    Collider, Wallslide, Moving
+    Collider, Wallslide, Moving, Fading
 }
 public class BeatPlatform : ActivatedEntity
 {
@@ -92,7 +92,7 @@ public class BeatPlatform : ActivatedEntity
     {
         Vector2 destination = isMovingBack ? (Vector2)transform.position - moveVector : (Vector2)transform.position + moveVector;
         float elapsedTime = 0f;
-        float moveTime = GameManager.Instance.songBpm / 60;
+        float moveTime = 60 / GameManager.Instance.songBpm;
 
         while (elapsedTime < moveTime)
         {
@@ -139,6 +139,34 @@ public class BeatPlatform : ActivatedEntity
         {
             CharController.Instance.Die();
         }
+        
+        else if (type == PlatformType.Fading && other.gameObject.CompareTag("Player"))
+        {
+            StartCoroutine(FadeCoroutine());
+        }
     }
+
+    private IEnumerator FadeCoroutine()
+    {
+        Color original = spriteRenderer.color;
+        Color faded = original;
+        faded.a = 0f;
+        
+        float elapsedTime = 0f;
+        float fadeTime = .5f;
+
+        while (elapsedTime < fadeTime)
+        {
+            spriteRenderer.color = Color.Lerp(original, faded, elapsedTime / fadeTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        platformCollider.enabled = false;
+        spriteRenderer.color = faded;
+        yield return new WaitForSeconds(3f);
+        platformCollider.enabled = true;
+        spriteRenderer.color = original;
+    }
+   
     
 }

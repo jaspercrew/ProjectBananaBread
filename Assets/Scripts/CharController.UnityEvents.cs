@@ -140,7 +140,7 @@ public partial class CharController
             //Debug.Log("wallslide anim");
             Animator.SetInteger(AnimState, 3);
         }
-        else if (isGrounded && (Mathf.Abs(moveVector) > float.Epsilon || isRewinding))
+        else if (isGrounded && (Mathf.Abs(moveVector) > float.Epsilon))
         {
             //Debug.Log("run anim");
             Animator.SetInteger(AnimState, 2);

@@ -522,7 +522,6 @@ public partial class CharController
         Vector2 center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
         
         // left points
-        
         Vector2 middleLeft = center + halfWidth * Vector2.left;
         Vector2 topLeft = middleLeft + halfHeight * Vector2.up;
         Vector2 bottomLeft = middleLeft + halfHeight * Vector2.down;
@@ -540,8 +539,10 @@ public partial class CharController
         RaycastHit2D topLeftHit = 
             Physics2D.Linecast(topLeft, topLeft + aLittleLeft, obstacleLayerMask);
         bool isNearWallOnLeft = bottomLeftHit && topLeftHit && 
-                                bottomLeftHit.transform.GetComponent<BeatPlatform>() != null && bottomLeftHit.transform.GetComponent<BeatPlatform>().isWallSlideable && 
-                                topLeftHit.transform.GetComponent<BeatPlatform>() != null && topLeftHit.transform.GetComponent<BeatPlatform>().isWallSlideable;
+                                bottomLeftHit.transform.GetComponent<BeatPlatform>() != null && 
+                                bottomLeftHit.transform.GetComponent<BeatPlatform>().isWallSlideable && 
+                                topLeftHit.transform.GetComponent<BeatPlatform>() != null && 
+                                topLeftHit.transform.GetComponent<BeatPlatform>().isWallSlideable;
         
         
 
@@ -551,8 +552,10 @@ public partial class CharController
         RaycastHit2D topRightHit = 
             Physics2D.Linecast(topRight, topRight + aLittleRight, obstacleLayerMask);
         bool isNearWallOnRight = bottomRightHit && topRightHit && 
-                                 bottomRightHit.transform.GetComponent<BeatPlatform>() != null && bottomRightHit.transform.GetComponent<BeatPlatform>().isWallSlideable && 
-                                 topRightHit.transform.GetComponent<BeatPlatform>() != null && topRightHit.transform.GetComponent<BeatPlatform>().isWallSlideable;
+                                 bottomRightHit.transform.GetComponent<BeatPlatform>() != null && 
+                                 bottomRightHit.transform.GetComponent<BeatPlatform>().isWallSlideable && 
+                                 topRightHit.transform.GetComponent<BeatPlatform>() != null && 
+                                 topRightHit.transform.GetComponent<BeatPlatform>().isWallSlideable;
         
         //print(bottomRightHit.transform.gameObject);
 

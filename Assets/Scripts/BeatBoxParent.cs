@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
@@ -22,8 +20,9 @@ public class BeatBoxParent : MonoBehaviour
     public Vector2 scaleFactor = Vector2.one;
 
     private float barWidth;
+    
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         int[] indexArray = new int[numBars];
         Random rand = new Random();
@@ -49,7 +48,8 @@ public class BeatBoxParent : MonoBehaviour
                     GameObject instantiatedBeatBox = Instantiate(beatBoxPrefab, transform, true);
                     instantiatedBeatBox.transform.position = transform.TransformPoint(spawnLocation);
                     instantiatedBeatBox.transform.eulerAngles = new Vector3(0, 0, boxRotation);
-                    instantiatedBeatBox.GetComponent<BeatBox>().Initialize(indexArray[i], maxheight, heightMultiplier, minLength, backdropHeight);
+                    instantiatedBeatBox.GetComponent<BeatBox>()
+                        .Initialize(indexArray[i], maxheight, heightMultiplier, minLength, backdropHeight);
                     verticalAdd += verticalLayerOffset;
                 }
                 spawnLocation = new Vector3(spawnLocation.x + barWidth + barGap, spawnLocation.y, spawnLocation.z);
@@ -59,16 +59,14 @@ public class BeatBoxParent : MonoBehaviour
     }
     
     
-    //https://stackoverflow.com/questions/108819/best-way-to-randomize-an-array-with-net
-    public void Shuffle<T> (Random rng, T[] array)
+    // https://stackoverflow.com/questions/108819/best-way-to-randomize-an-array-with-net
+    private static void Shuffle<T>(Random rng, IList<T> array)
     {
-        int n = array.Length;
+        int n = array.Count;
         while (n > 1) 
         {
             int k = rng.Next(n--);
-            T temp = array[n];
-            array[n] = array[k];
-            array[k] = temp;
+            (array[n], array[k]) = (array[k], array[n]);
         }
     }
 

@@ -1,12 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BeatBox : MonoBehaviour
 {
-    public float maxheight = 0;
-    public float heightMultiplier = 0;
+    public float maxHeight;
+    public float heightMultiplier;
     public float minLength;
     public float backdropHeight;
     public int spectrumIndex;
@@ -14,30 +12,63 @@ public class BeatBox : MonoBehaviour
     public Transform mainBox;
     public Transform backdropA;
     public Transform backdropB;
+
+    private bool doChanging = false;
+    
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
+        float height = doChanging?
+            Math.Min(heightMultiplier * AudioSpectrum.Instance.bufferSpectrum[spectrumIndex] + minLength, maxHeight) : 
+            0;
 
-        Vector3 scale = mainBox.transform.localScale;
-        float height = Math.Min(heightMultiplier * AudioSpectrum.Instance.bufferSpectrum[spectrumIndex] + minLength, maxheight);
-        mainBox.transform.localScale = new Vector3(scale.x, height,  scale.z);
-        backdropA.localScale = new Vector3(backdropA.localScale.x, height + backdropHeight, backdropA.localScale.z);
-        backdropB.localScale = new Vector3(backdropB.localScale.x, height + (backdropHeight * 2), backdropB.localScale.z);
-        //print(string.Join (" , ", AudioSpectrum.Instance.bufferSpectrum));
+        Vector3 sM = mainBox.localScale;
+        Vector3 sA = backdropA.localScale;
+        Vector3 sB = backdropB.localScale;
+        sM = new Vector3(sM.x, doChanging? height + 0 * backdropHeight : 0, sM.z);
+        sA = new Vector3(sA.x, doChanging? height + 1 * backdropHeight : 0, sA.z);
+        sB = new Vector3(sB.x, doChanging? height + 2 * backdropHeight : 0, sB.z);
+        mainBox.localScale = sM;
+        backdropA.localScale = sA;
+        backdropB.localScale = sB;
     }
 
-    public void Initialize(int index, float maxHeight, float heightMultiplier, float minLength, float backdropHeight)
+    public void Initialize(int index, float height, float heightMult, float minLen, float backHeight)
     {
         spectrumIndex = index;
-        this.maxheight = maxHeight;
-        this.heightMultiplier = heightMultiplier;
-        this.minLength = minLength;
-        this.backdropHeight = backdropHeight;
+        maxHeight = height;
+        heightMultiplier = heightMult;
+        minLength = minLen;
+        backdropHeight = backHeight;
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            doChanging = false;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            doChanging = true;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            doChanging = true;
+        }
     }
 }

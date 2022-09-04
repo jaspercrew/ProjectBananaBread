@@ -507,8 +507,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cf0568c8aa34d499394e30bd3f321c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  motifLength: 2
-  actionMicroBeats: 00000000
+  motifLength: 1
+  actionMicroBeats: 
   virtualCamera: {fileID: 2147466807}
 --- !u!114 &147687363
 MonoBehaviour:
@@ -1094,8 +1094,8 @@ MonoBehaviour:
   snareDelay: 1
   songBpm: 131
   firstBeatOffset: 0
-  coroutineDelay: 0
-  snareToSongDelay: 16
+  coroutineDelay: 0.5
+  snareToSongDelay: 2
 --- !u!1001 &471418077
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1559,11 +1559,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   motifLength: 1
-  actionMicroBeats: 00000000
-  beatScale: {x: 30, y: 30, z: 30}
-  restScale: {x: 10, y: 10, z: 10}
-  timeToBeat: 0.01
-  restSmoothTime: 1
+  actionMicroBeats: 
+  beatScale: {x: 0, y: 0, z: 0}
+  restScale: {x: 0, y: 0, z: 0}
+  timeToBeat: 0
+  restSmoothTime: 0
 --- !u!1 &950457257
 GameObject:
   m_ObjectHideFlags: 0
@@ -1594,7 +1594,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9a5413858d9df74cbc9ce3ca12cbb96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  motifLength: 16
+  motifLength: 1
   actionMicroBeats: 
 --- !u!114 &950457259
 MonoBehaviour:
@@ -1610,8 +1610,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneFadeAnim: {fileID: 0}
   songA: 0
-  songB: 14
-  songC: 13
+  songB: 0
+  songC: 0
   playMusic: 1
   defaultSpawn: {fileID: 3023590}
   exitMappings:
@@ -2895,15 +2895,15 @@ MonoBehaviour:
   barGap: 0
   numGroups: 16
   indexOffset: 2
-  verticalSize: 5
-  maxheight: 10
-  heightMultiplier: 5
-  verticalLayerOffset: 40
+  verticalSize: 1
+  maxheight: 8
+  heightMultiplier: 3
+  verticalLayerOffset: 45
   boxRotation: 0
   minLength: 1
-  backdropHeight: 3.5
+  backdropHeight: 2.5
   beatBoxPrefab: {fileID: 3434885016373002063, guid: 02dd246dbbf8b8945969c180aa1c0442, type: 3}
-  scaleFactor: {x: 0.5, y: 0.5}
+  scaleFactor: {x: 1, y: 1}
 --- !u!4 &1247610480
 Transform:
   m_ObjectHideFlags: 0
@@ -2912,7 +2912,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1247610478}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -740.25, y: -112.25, z: 0}
+  m_LocalPosition: {x: -740.25, y: -80.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2962,7 +2962,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1c7aa501400cf944bb52fa8a3741f74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  motifLength: 0
+  motifLength: 1
   actionMicroBeats: 
 --- !u!114 &1270722279
 MonoBehaviour:

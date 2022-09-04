@@ -78,6 +78,7 @@ public partial class CharController
 
     private void DoJump()
     {
+        print(isJumpBoosted);
         if (Input.GetKey(KeyCode.S) && isPlatformGrounded)
         {
             TileStateManager.Instance.DeactivatePlatforms();
@@ -96,6 +97,7 @@ public partial class CharController
         const float wallJumpModY = 1.4f;
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
+        float adjustedJumpForce = isJumpBoosted ? jumpForce * 2 : jumpForce;
 
         if ((isWallSliding || wallJumpAvailable) && !isGrounded)
         {
@@ -115,13 +117,25 @@ public partial class CharController
             {
                 Debug.LogError("wall jump dir is bad");
             }
-            
-            Rigidbody.AddForce(new Vector2(jumpForce * wallJumpModX * wallJumpDir, 
+
+            if (isJumpBoosted)
+            {
+                recentlyImpulsed = true;
+                float xJumpBoost = 2.5f;
+                float yJumpBoost = 1.3f;
+                Rigidbody.AddForce(new Vector2(jumpForce * wallJumpModX * wallJumpDir * xJumpBoost, 
+                    (isInverted ? -jumpForce : jumpForce) * wallJumpModY * yJumpBoost), ForceMode2D.Impulse);
+            }
+            else
+            {
+                Rigidbody.AddForce(new Vector2(jumpForce * wallJumpModX * wallJumpDir, 
                     (isInverted ? -jumpForce : jumpForce) * wallJumpModY), ForceMode2D.Impulse);
+            }
+
         }
         else
         {
-            Rigidbody.AddForce(new Vector2(0, isInverted ? -jumpForce : jumpForce), 
+            Rigidbody.AddForce(new Vector2(0, isInverted ? -adjustedJumpForce : adjustedJumpForce), 
                 ForceMode2D.Impulse); 
         }
         

@@ -34,6 +34,8 @@ public partial class CharController : BeatEntity
     private Vector2 originalColliderOffset;
     
     
+    
+    
     [Header("Configurable player control values")] 
     // Configurable player control values
     public float baseSpeed = 8f;
@@ -70,8 +72,9 @@ public partial class CharController : BeatEntity
     private float lastDashTime;
 
     public bool isInverted;
-    
+    public GameAreaController currentArea;
     // ReSharper disable once InconsistentNaming
+    public bool isJumpBoosted;
     private bool isPlatformGrounded;
     private bool _isGrounded;
     private bool isGrounded
@@ -307,7 +310,15 @@ public partial class CharController : BeatEntity
     
     public void Die()
     {
-        transform.position = SceneInformation.Instance.GetSpawnPos();
+        if (currentArea == null || currentArea.spawnLocation == null)
+        {
+            transform.position = SceneInformation.Instance.GetSpawnPos();
+        }
+        else
+        {
+            transform.position = currentArea.spawnLocation.position;
+        }
+        
         GameManager.Instance.PlayerDeath();
     }
 

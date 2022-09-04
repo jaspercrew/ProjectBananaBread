@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [Serializable]
 // public class WindInfo
@@ -41,7 +42,9 @@ public class SceneInformation : MonoBehaviour
     
     // public bool isGravityScene;
     // public bool isWindScene;
-    public SoundName song;
+    public SoundName songA;
+    public SoundName songB;
+    public SoundName songC;
 
     public bool playMusic;
 
@@ -125,7 +128,7 @@ public class SceneInformation : MonoBehaviour
         // if (playMusic)
         // {
         //     //Debug.Log("playing");
-        //     AudioManager.Instance.PlaySong(song);
+        //     AudioManager.Instance.PlaySong(songA);
         // }
     }
 

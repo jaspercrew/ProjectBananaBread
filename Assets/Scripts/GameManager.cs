@@ -99,7 +99,9 @@ public class GameManager : MonoBehaviour
             
             if (snareCount == (4 * microBeatsInBeat) + snareToSongDelay)
             {
-                AudioManager.Instance.PlaySong(SceneInformation.Instance.song);
+                AudioManager.Instance.PlaySong(SceneInformation.Instance.songA, 0);
+                AudioManager.Instance.PlaySong(SceneInformation.Instance.songB, 1);
+                AudioManager.Instance.PlaySong(SceneInformation.Instance.songC, 2);
                 musicStart = true;
             }
         }

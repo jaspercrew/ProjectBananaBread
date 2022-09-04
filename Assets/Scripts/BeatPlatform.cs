@@ -5,23 +5,26 @@ using UnityEngine;
 
 public enum PlatformType
 {
-    Collider, Wallslide, Moving, Fading
+    Collider, Moving, Fading, Impulse
 }
 public class BeatPlatform : ActivatedEntity
 {
     public bool isStatic = false;
     public bool isHazard = false;
     public PlatformType type;
+    public float timeToMove = 2f;
+    public Vector2 moveVector;
+    public bool isWallSlideable;
+    
     private Collider2D platformCollider;
     private SpriteRenderer spriteRenderer;
-    private const float deathCheckFactor = .75f;
-    public Vector2 moveVector;
     private Vector2 originalPosition;
-
-    //[HideInInspector]
-    public bool isWallSlideable;
-
+    private bool isPlayerTouching;
+    private Vector2 playerRelativePosition;
+    
+    private const float deathCheckFactor = .75f;
     private const float deactivatedAlpha = .3f;
+    
     // Start is called before the first frame update
     protected override void Start()
     {
@@ -31,7 +34,30 @@ public class BeatPlatform : ActivatedEntity
         {
             spriteRenderer.color = Color.red;
         }
+
+
+
+        if (isWallSlideable)
+        {
+            spriteRenderer.color = new Color(1f, .5f, 0);
+        }
         base.Start();
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (type == PlatformType.Moving)
+        {
+            if (initialIsActive)
+            {
+                Gizmos.DrawWireSphere(transform.localPosition + (Vector3) moveVector, 1f);
+            }
+            else
+            {
+                Gizmos.DrawWireSphere(transform.localPosition - (Vector3) moveVector, 1f);
+            }
+                
+        }
     }
 
     protected override void MicroBeatAction()
@@ -75,24 +101,77 @@ public class BeatPlatform : ActivatedEntity
                 }
                 break;
 
-            case PlatformType.Wallslide:
-                //gameObject.layer = LayerMask.NameToLayer("Slide");
-                isWallSlideable = true;
-                spriteRenderer.color = new Color(1, .5f, 0);
-                break;
-            
             case PlatformType.Moving:
                 StopCoroutine("MoveToCoroutine");
                 StartCoroutine(MoveToCoroutine(false));
                 break;
+            
+            case PlatformType.Impulse:
+                StartCoroutine(ImpulseCoroutine());
+                break;
         }
+    }
+
+    private IEnumerator ImpulseCoroutine()
+    {
+        const float speedFactor = 16;
+        const float enlargeAdder = .5f;
+        
+        //enlarge
+        Vector2 originalScale = transform.localScale;
+        Vector2 positiveMoveVector = new Vector2(Math.Abs(moveVector.normalized.x), Math.Abs(moveVector.normalized.y));
+        Vector2 targetScale = originalScale + (positiveMoveVector * enlargeAdder);
+        Vector2 originalPosition = transform.localPosition;
+        Vector2 targetPosition = originalPosition + (moveVector.normalized * enlargeAdder / 2);
+
+        float elapsedTime = 0f;
+        float moveTime = (60 * timeToMove / GameManager.Instance.songBpm) / speedFactor;
+
+        while (elapsedTime < moveTime)
+        {
+            if (isPlayerTouching /**&& playerRelativePosition == moveVector.normalized**/)
+            {
+                CharController.Instance.isJumpBoosted = true;
+            }
+            transform.localScale = Vector3.Lerp(originalScale, targetScale, (elapsedTime / moveTime));
+            transform.localPosition = Vector3.Lerp(originalPosition, targetPosition, (elapsedTime / moveTime));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        transform.localScale = targetScale;
+        transform.localPosition = targetPosition;
+        yield return null;
+        
+        // if (isPlayerTouching && playerRelativePosition == moveVector.normalized)
+        // {
+        //     CharController.Instance.GetComponent<Rigidbody2D>().AddForce(moveVector, ForceMode2D.Impulse);
+        // }
+        
+        
+        //return to original scale
+        elapsedTime = 0f;
+        moveTime = (60 * timeToMove / GameManager.Instance.songBpm) * ((speedFactor - 1) / speedFactor);
+
+        while (elapsedTime < moveTime)
+        {
+            transform.localScale = Vector3.Lerp(targetScale, originalScale, (elapsedTime / moveTime));
+            transform.localPosition = Vector3.Lerp(targetPosition, originalPosition, (elapsedTime / moveTime));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        transform.localScale = originalScale;
+        transform.localPosition = originalPosition;
+        yield return null;
+        
+        
+
     }
 
     private IEnumerator MoveToCoroutine(bool isMovingBack)
     {
         Vector2 destination = isMovingBack ? (Vector2)transform.position - moveVector : (Vector2)transform.position + moveVector;
         float elapsedTime = 0f;
-        float moveTime = 60 / GameManager.Instance.songBpm;
+        float moveTime = 60 * timeToMove / GameManager.Instance.songBpm;
 
         while (elapsedTime < moveTime)
         {
@@ -121,11 +200,6 @@ public class BeatPlatform : ActivatedEntity
                 spriteRenderer.color = temp;
                 break;
             
-            case PlatformType.Wallslide:
-                //gameObject.layer = LayerMask.NameToLayer("Obstacle");
-                isWallSlideable = false;
-                spriteRenderer.color = Color.white;
-                break;
             case PlatformType.Moving:
                 StopCoroutine("MoveToCoroutine");
                 StartCoroutine(MoveToCoroutine(true));
@@ -135,16 +209,61 @@ public class BeatPlatform : ActivatedEntity
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (isHazard && other.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player"))
         {
-            CharController.Instance.Die();
-        }
-        
-        else if (type == PlatformType.Fading && other.gameObject.CompareTag("Player"))
-        {
-            StartCoroutine(FadeCoroutine());
+            isPlayerTouching = true;
+            if (isHazard)
+            {
+                CharController.Instance.Die();
+            }
+
+            else if (type == PlatformType.Fading)
+            {
+                StartCoroutine(FadeCoroutine());
+            }
+
+            else if (type == PlatformType.Moving  &&
+                     (CharController.Instance.transform.localPosition.y > transform.localPosition.y || isWallSlideable))
+            {
+                CharController.Instance.transform.SetParent(transform);
+            }
         }
     }
+
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            playerRelativePosition = Vector2.zero;
+            CharController.Instance.transform.SetParent(null);
+            isPlayerTouching = false;
+            CharController.Instance.isJumpBoosted = false;
+        }
+    }
+    
+    private void OnCollisionStay2D(Collision2D other)
+    {
+        if(other.gameObject.CompareTag("Player"))
+        { 
+            Collider2D collider = other.collider;
+            Vector2 contactPoint = other.contacts[0].point;
+            Vector2 center = collider.bounds.center;
+            Vector2 dirVector = (contactPoint - center).normalized;
+            Vector2 roundedVector;
+            if (Math.Abs(dirVector.x) > Math.Abs(dirVector.y))
+            {
+                roundedVector = Vector2.right * Math.Sign(dirVector.x); 
+            }
+            else
+            {
+                roundedVector = Vector2.up * Math.Sign(dirVector.y); 
+            }
+            
+            playerRelativePosition = roundedVector;
+            print(roundedVector);
+        }
+    }
+
 
     private IEnumerator FadeCoroutine()
     {

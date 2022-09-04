@@ -47,7 +47,7 @@ public class ScreenShakeController : BeatEntity {
     }
 
     public void MediumShake() {
-        StartShake(.07f, 5f);
+        StartShake(.07f, 4f);
     }
     
     public void LargeShake() {

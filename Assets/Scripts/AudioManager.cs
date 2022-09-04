@@ -11,8 +11,9 @@ public class AudioManager : MonoBehaviour
     // private const float SongVolume = 5f;
 
     private AudioSource effectSource;
-    private AudioSource primarySource;
-    private AudioSource altSource;
+    private AudioSource songSourceA;
+    private AudioSource songSourceB;
+    private AudioSource songSourceC;
     private readonly Dictionary<SoundName, AudioClip> soundToClip = new Dictionary<SoundName, AudioClip>();
 
     private SoundName savedSong;
@@ -40,15 +41,17 @@ public class AudioManager : MonoBehaviour
         
         AudioSource[] sources = GetComponents<AudioSource>();
         effectSource = sources[0];
-        primarySource = sources[1];
-        altSource = sources[2];
+        songSourceA = sources[1];
+        songSourceB = sources[2];
+        songSourceC = sources[3];
     }
 
     private void Start()
     {
-
-        primarySource.volume = .5f;
-        altSource.volume = .5f;
+        float volume = .1f;
+        songSourceA.volume = volume;
+        songSourceB.volume = volume;
+        songSourceC.volume = volume;
     }
 
     public void Play(SoundName sound, float volume)
@@ -57,20 +60,34 @@ public class AudioManager : MonoBehaviour
         effectSource.PlayOneShot(clip, volume);
     }
 
-//    public void PlaySong(SoundName song)
+//    public void PlaySong(SoundName songA)
 //    {
-//        AudioClip clip = soundToClip[song];
+//        AudioClip clip = soundToClip[songA];
 //        effectSource.PlayOneShot(clip, songVolume);
 //    }
-    
-    public void PlaySong(SoundName song)
+
+    public void PlaySong(SoundName song, int source = 0)
     {
-        if (savedSong == song) //if the song is already playing, do nothing
+        if (savedSong == song || song == SoundName.None) //if the songA is already playing, do nothing
         {
             return;
         }
-        primarySource.clip = soundToClip[song];
-        primarySource.Play();
+
+        AudioSource sourceToUse;
+        if (source == 0)
+        {
+            sourceToUse = songSourceA;
+        }
+        else if (source == 1)
+        {
+            sourceToUse = songSourceB;
+        }
+        else
+        {
+            sourceToUse = songSourceC;
+        }
+        sourceToUse.clip = soundToClip[song];
+        sourceToUse.Play();
         savedSong = song;
     }
 
@@ -96,13 +113,13 @@ public class AudioManager : MonoBehaviour
     //     const float fadeTime = .25f;
     //     if (isAlt)
     //     {
-    //         StartCoroutine(FadeOut(primarySource, fadeTime));   
-    //         StartCoroutine(FadeIn(altSource, fadeTime));
+    //         StartCoroutine(FadeOut(songSourceA, fadeTime));   
+    //         StartCoroutine(FadeIn(songSourceB, fadeTime));
     //     }
     //     else
     //     {
-    //         StartCoroutine(FadeOut(altSource, fadeTime)); 
-    //         StartCoroutine(FadeIn(primarySource, fadeTime));
+    //         StartCoroutine(FadeOut(songSourceB, fadeTime)); 
+    //         StartCoroutine(FadeIn(songSourceA, fadeTime));
     //     }
     //     
     // }

@@ -2790,14 +2790,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numBarsPerGroup: 16
-  gapBetweenBars: 0
+  gapBetweenBars: -0.2
   numGroups: 16
   audioIndexOffset: 2
   verticalLayerCount: 5
   maxHeightPerLayer: 8
   heightBoostMultiplier: 2
-  distanceBetweenVerticalLayers: 20
-  boxRotation: 10.03
+  distanceBetweenVerticalLayers: 30
+  boxRotation: 30
   minHeightBooster: 1
   backdropHeightMultiplier: 2.5
   useWavePattern: 0

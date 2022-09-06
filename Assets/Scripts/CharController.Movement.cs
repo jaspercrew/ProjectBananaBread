@@ -1,4 +1,5 @@
 using System.Collections;
+using TreeEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -78,7 +79,7 @@ public partial class CharController
 
     private void DoJump()
     {
-        print(isJumpBoosted);
+        GameManager.Instance.TextPop(isJumpBoosted.ToString(), 2f);
         if (Input.GetKey(KeyCode.S) && isPlatformGrounded)
         {
             TileStateManager.Instance.DeactivatePlatforms();
@@ -121,7 +122,12 @@ public partial class CharController
             if (isJumpBoosted)
             {
                 recentlyImpulsed = true;
-                float xJumpBoost = 2.5f;
+                Vector2 forcedTeleportVector = new Vector2((float) wallJumpDir, 0);
+                transform.position += (Vector3) forcedTeleportVector;
+                transform.parent = null;
+                isWallSliding = false;
+                
+                float xJumpBoost = 3.0f;
                 float yJumpBoost = 1.3f;
                 Rigidbody.AddForce(new Vector2(jumpForce * wallJumpModX * wallJumpDir * xJumpBoost, 
                     (isInverted ? -jumpForce : jumpForce) * wallJumpModY * yJumpBoost), ForceMode2D.Impulse);

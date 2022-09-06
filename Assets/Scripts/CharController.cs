@@ -76,6 +76,7 @@ public partial class CharController : BeatEntity
     // ReSharper disable once InconsistentNaming
     public bool isJumpBoosted;
     private bool isPlatformGrounded;
+    public bool isMetronomeLocked;
     private bool _isGrounded;
     private bool isGrounded
     {
@@ -231,7 +232,7 @@ public partial class CharController : BeatEntity
 
     private bool IsAbleToMove()
     {
-        return !isDashing && !isLineGrappling && canFunction && !isRewinding;
+        return !isDashing && !isLineGrappling && canFunction && !isRewinding && !isMetronomeLocked;
     }
 
     
@@ -254,7 +255,7 @@ public partial class CharController : BeatEntity
     }
 
     private bool IsAbleToAct() {
-        return !isDashing  && canFunction && !isRewinding;
+        return !isDashing  && canFunction && !isRewinding && !isMetronomeLocked;
     }
     
     protected void FaceLeft()

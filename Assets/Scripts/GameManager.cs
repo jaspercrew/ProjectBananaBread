@@ -30,10 +30,12 @@ public class GameManager : MonoBehaviour
     private float songPositionInBeats = float.NegativeInfinity;
     private float dspSongTime;
     public float coroutineDelay = .5f;
+    private int snareMicroBeatCount = 0;
     private int snareCount = 0;
     public int snareToSongDelay = 2;
     private BeatEntity[] entities;
-
+    private SpriteRenderer[] metronomes;
+    
     private void Awake()
     {
         if (Instance == null)
@@ -54,10 +56,15 @@ public class GameManager : MonoBehaviour
         dspSongTime = (float) AudioSettings.dspTime;
         StartCoroutine(SnareCoroutine());
         entities = FindObjectsOfType<BeatEntity>();
+        metronomes = CameraManager.Instance.transform.Find("MetronomeUI").GetComponentsInChildren<SpriteRenderer>();
+        print(metronomes.Length);
+
     }
 
     private IEnumerator SnareCoroutine()
     {
+        CharController.Instance.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        CharController.Instance.isMetronomeLocked = true;
         yield return new WaitForSeconds(snareDelay);
         playSnares = true;
     }
@@ -83,6 +90,7 @@ public class GameManager : MonoBehaviour
         if (musicStart)
         {
             yield return new WaitForSecondsRealtime(coroutineDelay);
+            CharController.Instance.isMetronomeLocked = false;
             
             foreach (BeatEntity entity in entities)
             {
@@ -91,18 +99,32 @@ public class GameManager : MonoBehaviour
         }
         else if (playSnares)
         {
-            snareCount++;
-            if (snareCount % 16 == 0 && snareCount <= 64)
+
+            
+            snareMicroBeatCount++;
+            if (snareMicroBeatCount % 16 == 0 && snareMicroBeatCount <= 64)
             {
                 AudioManager.Instance.Play(SoundName.Snare, .5f);
+                Color temp = metronomes[snareCount].color;
+                temp.a = 1f;
+                metronomes[snareCount].color = temp;
+                snareCount++;
             }
             
-            if (snareCount == (4 * microBeatsInBeat) + snareToSongDelay)
+            if (snareMicroBeatCount == (4 * microBeatsInBeat) + snareToSongDelay)
             {
                 AudioManager.Instance.PlaySong(SceneInformation.Instance.songA, 0);
                 AudioManager.Instance.PlaySong(SceneInformation.Instance.songB, 1);
                 AudioManager.Instance.PlaySong(SceneInformation.Instance.songC, 2);
                 musicStart = true;
+                foreach (SpriteRenderer spr in metronomes)
+                {
+                    Color temp1 = spr.color;
+                    temp1.a = 0f;
+                    spr.color = temp1;
+
+                }
+                
             }
         }
 

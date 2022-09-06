@@ -202,11 +202,10 @@ public partial class CharController
         // in-air movement
         else
         {
-            // move if not wall sliding (?)
-            //if (!isWallSliding)
-            //{
+            if (!(Math.Sign(moveVector) == Math.Sign(xVel) && Math.Abs(xVel) > speed))
+            {
             Rigidbody.AddForce(Math.Sign(moveVector) * InAirAcceleration * Vector2.right, ForceMode2D.Force);
-            //}
+            }
 
             // slow down if player is not inputting horizontal movement
             // and don't apply if grappling

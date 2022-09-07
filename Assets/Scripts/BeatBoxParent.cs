@@ -26,7 +26,7 @@ public class BeatBoxParent : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        gapBetweenBars += (Mathf.Sin(boxRotation * Mathf.Deg2Rad)) * 1;
+        gapBetweenBars += 1 / (Mathf.Cos(boxRotation * Mathf.Deg2Rad)) - 1;
 
         int[] indexArray = new int[numBarsPerGroup];
         Random rand = new Random();

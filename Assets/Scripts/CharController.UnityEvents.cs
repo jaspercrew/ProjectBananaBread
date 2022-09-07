@@ -30,7 +30,7 @@ public partial class CharController
 
     protected override void Start()
     {
-        
+
         SaveData.LoadFromFile(1);
         //Interactor.interactors.Clear();
         //canDoubleJump = false;

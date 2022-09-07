@@ -232,7 +232,7 @@ public partial class CharController : BeatEntity
 
     private bool IsAbleToMove()
     {
-        return !isDashing && !isLineGrappling && canFunction && !isRewinding && !isMetronomeLocked;
+        return !isDashing && !isLineGrappling && canFunction && !isRewinding && !isMetronomeLocked && !GameManager.Instance.isMenu;
     }
 
     
@@ -255,7 +255,7 @@ public partial class CharController : BeatEntity
     }
 
     private bool IsAbleToAct() {
-        return !isDashing  && canFunction && !isRewinding && !isMetronomeLocked;
+        return !isDashing  && canFunction && !isRewinding && !isMetronomeLocked && !GameManager.Instance.isMenu;
     }
     
     protected void FaceLeft()

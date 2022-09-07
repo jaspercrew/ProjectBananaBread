@@ -29,7 +29,10 @@ public class ScreenShakeController : BeatEntity {
 
     protected override void MicroBeatAction()
     {
-        MediumShake();
+        if (!GameManager.Instance.isMenu)
+        {
+            MediumShake();
+        }
     }
 
     // Update is called once per frame

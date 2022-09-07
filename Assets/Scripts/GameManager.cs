@@ -12,15 +12,8 @@ public class GameManager : MonoBehaviour
     public bool musicStart;
     private bool playSnares;
     public float snareDelay = 1f;
-    
-    //public bool isGameShifted;
-    
-    // public bool isDarkScene;
-    // private int frozenFrames;
+    public bool isMenu;
 
-    // public Dictionary<string, bool> LeverDict = new Dictionary<string, bool>();
-    // public bool isReady;
-    
     // https://www.gamedeveloper.com/audio/coding-to-the-beat---under-the-hood-of-a-rhythm-game-in-unity
     private float microBpm;
     public float songBpm;

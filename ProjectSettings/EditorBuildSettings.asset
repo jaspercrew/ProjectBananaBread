@@ -6,54 +6,57 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
+    path: Assets/Scenes/OldDemoScenes/DemoA.unity
+    guid: c8758660ecbeeac43bb4c90374cfd730
+  - enabled: 0
+    path: Assets/Scenes/OldDemoScenes/DemoB.unity
+    guid: c317f727c5957384d9b16121ae03ec44
+  - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/Scenes/To be removed/SceneT1.unity
-    guid: f64cb69f86b53924a9ea1cddbe56c5a3
-  - enabled: 1
-    path: Assets/Scenes/To be removed/TTHub.unity
-    guid: a722a9c9cbaad064095fb6c402e48ab0
-  - enabled: 1
-    path: Assets/Scenes/OldDemoScenes/DemoA.unity
-    guid: c8758660ecbeeac43bb4c90374cfd730
-  - enabled: 1
-    path: Assets/Scenes/OldDemoScenes/DemoB.unity
-    guid: c317f727c5957384d9b16121ae03ec44
-  - enabled: 1
-    path: Assets/Scenes/To be removed/TTMove.unity
-    guid: 96c5b7a9caee0b74182348c43509742a
-  - enabled: 1
-    path: Assets/Scenes/To be removed/TTShift.unity
-    guid: b05820265d33ee246a90e7a859214208
-  - enabled: 1
-    path: Assets/Scenes/To be removed/TTWall.unity
-    guid: cff286e0d72adbb409a7def510219181
-  - enabled: 1
-    path: Assets/Scenes/To be removed/TTGrapple.unity
-    guid: d0e894a6155930b42a2d2a9f64536cb1
-  - enabled: 1
-    path: Assets/Scenes/To be removed/TTWind.unity
-    guid: 7e99a926f19f1c04cbdf001954ed5dd3
-  - enabled: 1
-    path: Assets/Scenes/To be removed/TTGrav.unity
-    guid: b12a0a81ac69b664ba128273b082c8ee
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/Scenes/To be removed/TTCombat.unity
-    guid: 8d733a88779cfc049bd971a10524d638
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Scenes/To be removed/Moving Test/top right.unity
-    guid: 5027c8eb8fe93d144b6d4f66d7f7d2ba
+    path: Assets/Scenes/MainMenu.unity
+    guid: 8b53a52b8b0e10f4b8cbc4586a42cb38
   - enabled: 1
-    path: Assets/Scenes/To be removed/Dev4.unity
-    guid: b59c3fda08118df42aae13846ac9f06e
+    path: Assets/Scenes/Demo 1A.unity
+    guid: c1b45cdc3718e894fa45ad90fea53c87
   - enabled: 1
-    path: Assets/Scenes/To be removed/Moving Test/bottom left.unity
-    guid: 7ce6d19f5dadca84185d800d439c0c53
+    path: Assets/Scenes/Demo 1B.unity
+    guid: 208009e4b5e72264eb9372cb8a414135
   - enabled: 1
-    path: Assets/Scenes/To be removed/Moving Test/bottom right.unity
-    guid: eaf923d1bf2fc454ea0e20770eda73b4
+    path: Assets/Scenes/Demo 1C.unity
+    guid: 7b01bbb98cb2e21489493fb30a96ba28
   - enabled: 1
-    path: Assets/Scenes/To be removed/Moving Test/top left.unity
-    guid: 8aacebc4a86882445accad42ab7402f1
+    path: Assets/Scenes/Dev.unity
+    guid: 336a9c03209c403408c24a706c961145
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   m_configObjects: {}

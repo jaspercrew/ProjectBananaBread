@@ -114,7 +114,7 @@ public class BeatPlatform : ActivatedEntity
 
     private IEnumerator ImpulseCoroutine()
     {
-        const float speedFactor = 16;
+        const float speedFactor = 8;
         const float enlargeAdder = .5f;
         
         //enlarge

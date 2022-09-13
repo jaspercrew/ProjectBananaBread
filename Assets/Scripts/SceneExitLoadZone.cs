@@ -6,6 +6,7 @@ public class SceneExitLoadZone : MonoBehaviour
 {
     // public string exitName;
     private static readonly int Start = Animator.StringToHash("Start");
+    public bool isSceneFinishPoint;
 
     private void SwitchScene()
     {
@@ -25,6 +26,11 @@ public class SceneExitLoadZone : MonoBehaviour
     {
         if (other.gameObject.GetComponent<CharController>() != null)
         {
+            if (isSceneFinishPoint)
+            {
+                GameManager.Instance.scenesCompleted[SceneManager.GetActiveScene().buildIndex] = true;
+            }
+            SaveData.SaveToFile(1);
             ExitToNextSpawn e = SceneInformation.Instance.SceneInfoForExit(transform);
             Debug.Log("exit touched, setting last exit to " + e.exitTrigger);
             SceneTransitionManager.Instance.LastExitInfo = new LastExitInfo(e);

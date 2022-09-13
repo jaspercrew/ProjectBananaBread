@@ -15,6 +15,7 @@ public class AudioManager : MonoBehaviour
     private AudioSource songSourceB;
     private AudioSource songSourceC;
     private readonly Dictionary<SoundName, AudioClip> soundToClip = new Dictionary<SoundName, AudioClip>();
+    public AudioSource[] audioSources;
 
     private SoundName savedSong;
 
@@ -48,10 +49,40 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
+        audioSources = new AudioSource[4];
         float volume = .1f;
         songSourceA.volume = volume;
         songSourceB.volume = volume;
         songSourceC.volume = volume;
+        audioSources[0] = songSourceA;
+        audioSources[1] = songSourceB;
+        audioSources[2] = songSourceC;
+        audioSources[3] = effectSource;
+    }
+
+    public void PauseAudio()
+    {
+        foreach (AudioSource source in audioSources)
+        {
+            source.Pause();
+        }
+    }
+    
+    public void UnpauseAudio()
+    {
+        foreach (AudioSource source in audioSources)
+        {
+            source.UnPause();
+        }
+    }
+    
+    public void UpdateVolume(float sliderValue)
+    {
+        const float volumeMultiplier = 2f;
+        foreach (AudioSource source in AudioManager.Instance.audioSources)
+        {
+            source.volume = sliderValue * volumeMultiplier;
+        }
     }
 
     public void Play(SoundName sound, float volume)

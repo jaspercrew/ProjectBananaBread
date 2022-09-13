@@ -8,7 +8,7 @@ public partial class CharController
 
     private void DoDash()
     {
-        if (!IsAbleToAct()) {
+        if (!IsAbleToAct() || !isGrounded) {
             return;
         }
         Interrupt();
@@ -128,7 +128,7 @@ public partial class CharController
                 isWallSliding = false;
                 
                 float xJumpBoost = 3.0f;
-                float yJumpBoost = 1.3f;
+                float yJumpBoost = 1.1f;
                 Rigidbody.AddForce(new Vector2(jumpForce * wallJumpModX * wallJumpDir * xJumpBoost, 
                     (isInverted ? -jumpForce : jumpForce) * wallJumpModY * yJumpBoost), ForceMode2D.Impulse);
             }

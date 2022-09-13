@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
@@ -13,6 +14,7 @@ public class GameManager : MonoBehaviour
     private bool playSnares;
     public float snareDelay = 1f;
     public bool isMenu;
+    public bool[] scenesCompleted;
 
     // https://www.gamedeveloper.com/audio/coding-to-the-beat---under-the-hood-of-a-rhythm-game-in-unity
     private float microBpm;
@@ -26,8 +28,10 @@ public class GameManager : MonoBehaviour
     private int snareMicroBeatCount = 0;
     private int snareCount = 0;
     public int snareToSongDelay = 2;
+    public bool isPaused;
     private BeatEntity[] entities;
     private SpriteRenderer[] metronomes;
+    private Transform pauseOverlay;
     
     private void Awake()
     {
@@ -39,6 +43,11 @@ public class GameManager : MonoBehaviour
         //isGameShifted = false;
     }
 
+    public void ToggleFullScreen()
+    {
+        Screen.fullScreen = !Screen.fullScreen;
+    }
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -48,12 +57,16 @@ public class GameManager : MonoBehaviour
         secPerBeat = 60f / microBpm;
         dspSongTime = (float) AudioSettings.dspTime;
         StartCoroutine(SnareCoroutine());
+        SaveData.LoadSettings();
+        SaveData.LoadFromFile(1);
         entities = FindObjectsOfType<BeatEntity>();
         metronomes = CameraManager.Instance.transform.Find("MetronomeUI").GetComponentsInChildren<SpriteRenderer>();
-        print(metronomes.Length);
+        //print(metronomes.Length);
+        pauseOverlay = CameraManager.Instance.transform.Find("PauseOverlay");
+        pauseOverlay.gameObject.SetActive(false);
 
     }
-
+    
     private IEnumerator SnareCoroutine()
     {
         CharController.Instance.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
@@ -123,6 +136,41 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public void AttemptLoadLevel(int index)
+    {
+        if (scenesCompleted[index] || index < 2)
+        {
+            SceneManager.LoadScene(index);
+        }
+        
+    }
+
+    public void Pause()
+    {
+        Assert.IsTrue(!isPaused);
+        if (isMenu)
+        {
+            return;
+        }
+        AudioManager.Instance.PauseAudio();
+        isPaused = true;
+        Time.timeScale = 0f;
+        pauseOverlay.gameObject.SetActive(true);
+    }
+    
+    public void Unpause()
+    {
+        Assert.IsTrue(isPaused);
+        if (isMenu)
+        {
+            return;
+        }
+        AudioManager.Instance.UnpauseAudio();
+        isPaused = false;
+        Time.timeScale = 1f;
+        pauseOverlay.gameObject.SetActive(false);
+    }
+
     public void FreezeFrame()
     {
         const float freezeTime = 0.1f;
@@ -143,6 +191,19 @@ public class GameManager : MonoBehaviour
             gate.ResetGate();
         }
 }
+
+    // public void ChangeAudio(float slider)
+    // {
+    //     const float volumeMultiplier = 5f;
+    //     foreach (AudioSource source in AudioManager.Instance.audioSources)
+    //     {
+    //         source.volume = slider * volumeMultiplier;
+    //     }
+    // }
+    public void SaveSettings()
+    {
+        SaveData.SaveSettings();
+    }
 
     // private IEnumerator PlayerDeathCoroutine()
     // {

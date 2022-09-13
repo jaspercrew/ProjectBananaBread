@@ -31,7 +31,7 @@ public partial class CharController
     protected override void Start()
     {
 
-        SaveData.LoadFromFile(1);
+        //SaveData.LoadFromFile(1);
         //Interactor.interactors.Clear();
         //canDoubleJump = false;
         fadeSpriteIterator = 0;
@@ -262,12 +262,24 @@ public partial class CharController
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
-            SceneManager.LoadScene("TTHub");
-        if (Input.GetKeyDown(KeyCode.LeftBracket))
-            SaveData.SaveToFile(1);
-        if (Input.GetKeyDown(KeyCode.RightBracket))
-            SaveData.LoadFromFile(1);
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (GameManager.Instance.isPaused)
+            {
+                GameManager.Instance.Unpause();  
+            }
+            else
+            {
+                GameManager.Instance.Pause();  
+            }
+            
+        }
+            
+        // if (Input.GetKeyDown(KeyCode.LeftBracket))
+        //     SaveData.SaveToFile(1);
+        // if (Input.GetKeyDown(KeyCode.RightBracket))
+        //     SaveData.LoadFromFile(1);
+        
 
         
 

@@ -41,6 +41,10 @@ public class BeatBox : MonoBehaviour
 
     public void Initialize(int index, float height, float heightMult, float minLen, float backHeight)
     {
+        if (GameManager.Instance.isMenu)
+        {
+            doChanging = true;
+        }
         spectrumIndex = index;
         maxHeight = height;
         heightMultiplier = heightMult;
@@ -49,7 +53,11 @@ public class BeatBox : MonoBehaviour
     }
 
     private void OnTriggerExit2D(Collider2D other)
-    {
+    {      
+        if (GameManager.Instance.isMenu)
+        {
+            return;
+        }
         if (other.gameObject.CompareTag("Player"))
         {
             doChanging = false;
@@ -58,6 +66,10 @@ public class BeatBox : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D other)
     {
+        if (GameManager.Instance.isMenu)
+        {
+            return;
+        }
         if (other.gameObject.CompareTag("Player"))
         {
             doChanging = true;
@@ -66,6 +78,10 @@ public class BeatBox : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (GameManager.Instance.isMenu)
+        {
+            return;
+        }
         if (other.gameObject.CompareTag("Player"))
         {
             doChanging = true;

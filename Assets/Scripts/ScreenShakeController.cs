@@ -12,6 +12,7 @@ public class ScreenShakeController : BeatEntity {
     //public float rotationMultiplier = 10f;
     void Awake()
     {
+
         Instance = this;
     }
     // Start is called before the first frame update

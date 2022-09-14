@@ -12,6 +12,10 @@ public class LockSpriteController : MonoBehaviour
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        if (GameManager.Instance.scenesCompleted.Length < 1)
+        {
+            SaveData.LoadFromFile(1);
+        }
         if (GameManager.Instance.scenesCompleted[sceneIndex])
         {
             Color temp = spriteRenderer.color;

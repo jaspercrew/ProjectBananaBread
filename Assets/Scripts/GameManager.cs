@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Cinemachine;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -29,6 +30,7 @@ public class GameManager : MonoBehaviour
     private int snareCount = 0;
     public int snareToSongDelay = 2;
     public bool isPaused;
+    public GameObject MenuCenterCam;
     private BeatEntity[] entities;
     private SpriteRenderer[] metronomes;
     private Transform pauseOverlay;
@@ -40,7 +42,7 @@ public class GameManager : MonoBehaviour
             // Debug.Log("setting gm instance");
             Instance = this;
         }
-        //isGameShifted = false;
+ 
     }
 
     public void ToggleFullScreen()
@@ -62,8 +64,12 @@ public class GameManager : MonoBehaviour
         entities = FindObjectsOfType<BeatEntity>();
         metronomes = CameraManager.Instance.transform.Find("MetronomeUI").GetComponentsInChildren<SpriteRenderer>();
         //print(metronomes.Length);
-        pauseOverlay = CameraManager.Instance.transform.Find("PauseOverlay");
-        pauseOverlay.gameObject.SetActive(false);
+        if (!isMenu)
+        {
+            pauseOverlay = CameraManager.Instance.transform.Find("PauseOverlay");
+            pauseOverlay.gameObject.SetActive(false);
+        }
+
 
     }
     
@@ -136,11 +142,30 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void AttemptLoadLevel(int index)
+    public void MenuExit(int index)
+    {
+        PrepMenuExit(index);
+        StartCoroutine(MenuExitCoroutine());
+    }
+
+    private IEnumerator MenuExitCoroutine()
+    {
+        float dropDelay = 2.0f;
+        MenuCenterCam.GetComponent<CinemachineVirtualCamera>().m_Priority = 100;
+        yield return new WaitForSeconds(dropDelay);
+        TileStateManager.Instance.transform.Find("GridMain").transform.Find("Menu-Exit").gameObject.SetActive(false);
+        AudioManager.Instance.IsolatedPlay(SoundName.ExtendedSnare, .25f);
+
+    }
+
+    public void PrepMenuExit(int index)
     {
         if (scenesCompleted[index] || index < 2)
         {
-            SceneManager.LoadScene(index);
+            //SceneManager.LoadScene(index);
+            AudioManager.Instance.AllFadeOut();
+            string path = SceneUtility.GetScenePathByBuildIndex(index);
+            SceneInformation.Instance.exitMappings[0].sceneNameOverride = path.Substring(0, path.Length - 6).Substring(path.LastIndexOf('/') + 1);
         }
         
     }

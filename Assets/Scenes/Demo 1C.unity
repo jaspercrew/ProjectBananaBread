@@ -597,6 +597,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caf2d51b7784feb4cbbd6ce2c868f324, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSceneFinishPoint: 0
 --- !u!1 &129164513
 GameObject:
   m_ObjectHideFlags: 0
@@ -1040,6 +1041,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caf2d51b7784feb4cbbd6ce2c868f324, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSceneFinishPoint: 0
 --- !u!1001 &428388374
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1683,6 +1685,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87931fa32f82a4a468ff808279e61034, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioSources: []
 --- !u!1001 &569119134
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2067,57 +2070,9 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1453533035}
     m_Modifications:
-    - target: {fileID: 2294952497199651677, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
-      propertyPath: m_Size.x
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2294952497199651677, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: e8422146f2c90a34c98628daaed7e328, type: 3}
-    - target: {fileID: 2294952497199651677, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
-      propertyPath: m_DrawMode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3839422298870858003, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
-      propertyPath: m_Size.x
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3839422298870858003, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
-      propertyPath: m_SpriteTilingProperty.border.w
-      value: 0.33333334
-      objectReference: {fileID: 0}
-    - target: {fileID: 3839422298870858003, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
-      propertyPath: m_SpriteTilingProperty.border.x
-      value: 0.33333334
-      objectReference: {fileID: 0}
-    - target: {fileID: 3839422298870858003, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
-      propertyPath: m_SpriteTilingProperty.border.y
-      value: 0.33333334
-      objectReference: {fileID: 0}
-    - target: {fileID: 3839422298870858003, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
-      propertyPath: m_SpriteTilingProperty.border.z
-      value: 0.33333334
-      objectReference: {fileID: 0}
-    - target: {fileID: 3839422298870858003, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
-      propertyPath: m_SpriteTilingProperty.drawMode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3839422298870858003, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
-      propertyPath: m_SpriteTilingProperty.newSize.x
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 3945271499517466384, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: m_RootOrder
       value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 3945271499517466384, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3945271499517466384, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3945271499517466384, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2520,7 +2475,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3945271499517466384, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: m_LocalScale.x
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3945271499517466384, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: m_LocalScale.y
@@ -2729,10 +2684,13 @@ MonoBehaviour:
   musicStart: 0
   snareDelay: 1
   isMenu: 0
+  scenesCompleted: 
   songBpm: 131
   firstBeatOffset: 0
   coroutineDelay: 0
   snareToSongDelay: 16
+  isPaused: 0
+  MenuCenterCam: {fileID: 0}
 --- !u!1 &717037120
 GameObject:
   m_ObjectHideFlags: 0
@@ -3160,6 +3118,7 @@ MonoBehaviour:
   exitMappings:
   - exitTrigger: {fileID: 97027303}
     destinationScene: {fileID: 0}
+    sceneNameOverride: 
     spawnToPick: 0
   spawnOverrides: []
 --- !u!4 &972988788
@@ -3357,7 +3316,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3945271499517466384, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: m_LocalScale.x
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3945271499517466384, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: m_LocalScale.y
@@ -42125,7 +42084,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3839422298870858003, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.y
-      value: 5
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 3945271499517466384, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: m_RootOrder
@@ -45173,7 +45132,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3839422298870858003, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.x
-      value: 35
+      value: 37
       objectReference: {fileID: 0}
     - target: {fileID: 3945271499517466384, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: m_RootOrder

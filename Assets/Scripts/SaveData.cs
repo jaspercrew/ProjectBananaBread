@@ -126,6 +126,7 @@ public class SaveData
         }
         catch (SerializationException)
         {
+            GameManager.Instance.scenesCompleted = new bool[4];
             Debug.LogError("something is wrong with the save file, ignoring it");
             return;
         }

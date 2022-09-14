@@ -14,6 +14,7 @@ public class AudioManager : MonoBehaviour
     private AudioSource songSourceA;
     private AudioSource songSourceB;
     private AudioSource songSourceC;
+    private AudioSource isolatedSource;
     private readonly Dictionary<SoundName, AudioClip> soundToClip = new Dictionary<SoundName, AudioClip>();
     public AudioSource[] audioSources;
 
@@ -45,6 +46,10 @@ public class AudioManager : MonoBehaviour
         songSourceA = sources[1];
         songSourceB = sources[2];
         songSourceC = sources[3];
+        if (sources.Length > 4)
+        {
+            isolatedSource = sources[4];
+        }
     }
 
     private void Start()
@@ -79,7 +84,7 @@ public class AudioManager : MonoBehaviour
     public void UpdateVolume(float sliderValue)
     {
         const float volumeMultiplier = 2f;
-        foreach (AudioSource source in AudioManager.Instance.audioSources)
+        foreach (AudioSource source in audioSources)
         {
             source.volume = sliderValue * volumeMultiplier;
         }
@@ -90,6 +95,12 @@ public class AudioManager : MonoBehaviour
         AudioClip clip = soundToClip[sound];
         effectSource.PlayOneShot(clip, volume);
     }
+    
+    public void IsolatedPlay(SoundName sound, float volume)
+    {
+        AudioClip clip = soundToClip[sound];
+        isolatedSource.PlayOneShot(clip, volume);
+    }
 
 //    public void PlaySong(SoundName songA)
 //    {
@@ -99,11 +110,6 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySong(SoundName song, int source = 0)
     {
-        if (savedSong == song || song == SoundName.None) //if the songA is already playing, do nothing
-        {
-            return;
-        }
-
         AudioSource sourceToUse;
         if (source == 0)
         {
@@ -117,9 +123,16 @@ public class AudioManager : MonoBehaviour
         {
             sourceToUse = songSourceC;
         }
-        sourceToUse.clip = soundToClip[song];
-        sourceToUse.Play();
-        savedSong = song;
+        if (song == SoundName.None) 
+        {
+            sourceToUse.Stop();
+        }
+        else
+        {
+            sourceToUse.clip = soundToClip[song];
+            sourceToUse.Play();
+        }
+
     }
 
 
@@ -154,22 +167,30 @@ public class AudioManager : MonoBehaviour
     //     }
     //     
     // }
+
+    public void AllFadeOut()
+    {
+        foreach (AudioSource source in audioSources)
+        {
+            StartCoroutine(FadeOut(source, 1.5f));
+        }
+    }
     
     private IEnumerator FadeOut(AudioSource audioSource, float fadeTime)
     {
-        audioSource.volume = 1f;
+        float startingVol = audioSource.volume;
  
         while (audioSource.volume > 0)
         {
-            audioSource.volume -= 1f * Time.deltaTime / fadeTime;
+            audioSource.volume -= startingVol * Time.deltaTime / fadeTime;
  
             yield return null;
         }
  
-        //audioSource.Stop();
+        audioSource.Stop();
         audioSource.volume = 0f;
     }
- 
+
     private IEnumerator FadeIn(AudioSource audioSource, float fadeTime)
     {
         audioSource.volume = 0;

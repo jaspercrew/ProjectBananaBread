@@ -21,6 +21,7 @@ public class ExitToNextSpawn
 {
     public Transform exitTrigger;
     public UnityEngine.Object destinationScene;
+    public string sceneNameOverride;
     public SpawnPickDirection spawnToPick;
 }
 

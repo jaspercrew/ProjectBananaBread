@@ -14,12 +14,20 @@ public class SceneExitLoadZone : MonoBehaviour
         StartCoroutine(LoadScene());
     }
 
-    private IEnumerator LoadScene()
+    public IEnumerator LoadScene()
     {
         SceneInformation.Instance.sceneFadeAnim.speed = 1 / SceneInformation.SceneTransitionTime;
         SceneInformation.Instance.sceneFadeAnim.SetTrigger(Start);
         yield return new WaitForSeconds(SceneInformation.SceneTransitionTime);
-        SceneManager.LoadSceneAsync(SceneInformation.Instance.SceneInfoForExit(transform).destinationScene.name);
+        if (SceneInformation.Instance.SceneInfoForExit(transform).sceneNameOverride.Length < 1)
+        {
+            SceneManager.LoadSceneAsync(SceneInformation.Instance.SceneInfoForExit(transform).destinationScene.name);
+        }
+        else
+        {
+            SceneManager.LoadSceneAsync(SceneInformation.Instance.SceneInfoForExit(transform).sceneNameOverride);
+        }
+        
     }
 
     private void OnTriggerEnter2D(Collider2D other)

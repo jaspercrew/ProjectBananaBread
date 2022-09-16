@@ -5,10 +5,10 @@
 // {
 //     private const float RotateSpeed = 150f;
 //     //public Object scene;
-//     public int sceneIndex;
+//     public int prevSceneIndex;
 //     public override void Interact()
 //     {
-//         SceneManager.LoadSceneAsync(sceneIndex);
+//         SceneManager.LoadSceneAsync(prevSceneIndex);
 //         interactors.Remove(this);
 //     }
 //

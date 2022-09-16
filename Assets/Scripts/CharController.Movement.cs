@@ -99,6 +99,10 @@ public partial class CharController
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
         float adjustedJumpForce = isJumpBoosted ? jumpForce * 2 : jumpForce;
+        if (isJumpBoosted)
+        {
+            emitFadesTime += .3f;
+        }
 
         if ((isWallSliding || wallJumpAvailable) && !isGrounded)
         {

@@ -35,7 +35,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Demo 1C.unity
     guid: 7b01bbb98cb2e21489493fb30a96ba28
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Dev.unity
     guid: 336a9c03209c403408c24a706c961145
   - enabled: 0

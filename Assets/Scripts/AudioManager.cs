@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
@@ -23,7 +24,7 @@ public class AudioManager : MonoBehaviour
 
     // public AudioMixerGroup mixerGroup;
 
-    private void Awake()
+    public void Awake()
     {
         if (Instance != null)
         {
@@ -46,24 +47,29 @@ public class AudioManager : MonoBehaviour
         songSourceA = sources[1];
         songSourceB = sources[2];
         songSourceC = sources[3];
-        if (sources.Length > 4)
-        {
-            isolatedSource = sources[4];
-        }
-    }
-
-    private void Start()
-    {
+        isolatedSource = sources[4];
+        
         audioSources = new AudioSource[4];
-        float volume = .1f;
-        songSourceA.volume = volume;
-        songSourceB.volume = volume;
-        songSourceC.volume = volume;
         audioSources[0] = songSourceA;
         audioSources[1] = songSourceB;
         audioSources[2] = songSourceC;
         audioSources[3] = effectSource;
+
     }
+    
+
+    public void Start()
+    {
+       // print(songSourceA.volume);
+        // if (songSourceA.volume == 0)
+        // {
+        //     print("check for 0 volume");
+        //     UpdateVolume(.5f);
+        // }
+
+    }
+    
+    
 
     public void PauseAudio()
     {

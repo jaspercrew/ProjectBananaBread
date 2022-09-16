@@ -10,25 +10,35 @@ public class SceneExitLoadZone : MonoBehaviour
 
     private void SwitchScene()
     {
-        SaveData.SaveToFile(1);
-        StartCoroutine(LoadScene());
-    }
-
-    public IEnumerator LoadScene()
-    {
-        SceneInformation.Instance.sceneFadeAnim.speed = 1 / SceneInformation.SceneTransitionTime;
-        SceneInformation.Instance.sceneFadeAnim.SetTrigger(Start);
-        yield return new WaitForSeconds(SceneInformation.SceneTransitionTime);
         if (SceneInformation.Instance.SceneInfoForExit(transform).sceneNameOverride.Length < 1)
         {
-            SceneManager.LoadSceneAsync(SceneInformation.Instance.SceneInfoForExit(transform).destinationScene.name);
+            GameManager.Instance.AttemptSwitchScene(SceneInformation.Instance.SceneInfoForExit(transform).destinationScene.name);
+        }
+        else if (GameManager.Instance.isMenu)
+        {
+            GameManager.Instance.AttemptSwitchScene(SceneInformation.Instance.SceneInfoForExit(transform).sceneNameOverride);
         }
         else
         {
-            SceneManager.LoadSceneAsync(SceneInformation.Instance.SceneInfoForExit(transform).sceneNameOverride);
+            print("switch scene matches no conditions");
         }
-        
     }
+
+    // public IEnumerator LoadScene()
+    // {
+    //     SceneInformation.Instance.sceneFadeAnim.speed = 1 / SceneInformation.SceneTransitionTime;
+    //     SceneInformation.Instance.sceneFadeAnim.SetTrigger(Start);
+    //     yield return new WaitForSeconds(SceneInformation.SceneTransitionTime);
+    //     if (SceneInformation.Instance.SceneInfoForExit(transform).sceneNameOverride.Length < 1)
+    //     {
+    //         SceneManager.LoadSceneAsync(SceneInformation.Instance.SceneInfoForExit(transform).destinationScene.name);
+    //     }
+    //     else
+    //     {
+    //         SceneManager.LoadSceneAsync(SceneInformation.Instance.SceneInfoForExit(transform).sceneNameOverride);
+    //     }
+    //     
+    // }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -36,9 +46,11 @@ public class SceneExitLoadZone : MonoBehaviour
         {
             if (isSceneFinishPoint)
             {
+                print(SceneManager.GetActiveScene().buildIndex);
                 GameManager.Instance.scenesCompleted[SceneManager.GetActiveScene().buildIndex] = true;
             }
-            SaveData.SaveToFile(1);
+            //AudioManager.Instance.AllFadeOut();
+            //SaveData.SaveToFile(1);
             ExitToNextSpawn e = SceneInformation.Instance.SceneInfoForExit(transform);
             Debug.Log("exit touched, setting last exit to " + e.exitTrigger);
             SceneTransitionManager.Instance.LastExitInfo = new LastExitInfo(e);

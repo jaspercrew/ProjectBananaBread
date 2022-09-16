@@ -7,7 +7,7 @@ public class LockSpriteController : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
 
-    public int sceneIndex;
+    public int prevSceneIndex;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,7 +16,7 @@ public class LockSpriteController : MonoBehaviour
         {
             SaveData.LoadFromFile(1);
         }
-        if (GameManager.Instance.scenesCompleted[sceneIndex])
+        if (GameManager.Instance.scenesCompleted[prevSceneIndex])
         {
             Color temp = spriteRenderer.color;
             temp.a = 0f;

@@ -21,6 +21,10 @@ public class CameraManager : MonoBehaviour {
 
     private void Update()
     {
+        if (GetComponent<CinemachineBrain>().ActiveVirtualCamera is null)
+        {
+            return;
+        }
         currentCam = GetComponent<CinemachineBrain>().ActiveVirtualCamera.VirtualCameraGameObject
             .GetComponent<CinemachineVirtualCamera>();
     }

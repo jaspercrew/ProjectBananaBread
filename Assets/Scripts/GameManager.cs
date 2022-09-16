@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using Cinemachine;
 using TMPro;
 using UnityEngine;
@@ -42,6 +43,7 @@ public class GameManager : MonoBehaviour
             // Debug.Log("setting gm instance");
             Instance = this;
         }
+
  
     }
 
@@ -70,6 +72,7 @@ public class GameManager : MonoBehaviour
             pauseOverlay.gameObject.SetActive(false);
         }
 
+        //print(scenesCompleted.ToList());
 
     }
     
@@ -101,18 +104,18 @@ public class GameManager : MonoBehaviour
     {
         if (musicStart)
         {
-            yield return new WaitForSecondsRealtime(coroutineDelay);
+            yield return new WaitForSeconds(coroutineDelay);
             CharController.Instance.isMetronomeLocked = false;
-            
-            foreach (BeatEntity entity in entities)
+            if (entities.Length > 0)
             {
-                entity.MicroBeat();
+                foreach (BeatEntity entity in entities)
+                {
+                    entity.MicroBeat();
+                }
             }
         }
         else if (playSnares)
         {
-
-            
             snareMicroBeatCount++;
             if (snareMicroBeatCount % 16 == 0 && snareMicroBeatCount <= 64)
             {
@@ -139,13 +142,74 @@ public class GameManager : MonoBehaviour
                 
             }
         }
-
     }
+    
+    // private int sceneIndexFromName(string sceneName) {
+    //     for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++) {
+    //         string testedScreen = NameFromIndex(i);
+    //         //print("sceneIndexFromName: i: " + i + " sceneName = " + testedScreen);
+    //         if (testedScreen == sceneName)
+    //             return i;
+    //     }
+    //     return -1;
+    // }
+
+    // private string NameFromIndex(int index)
+    // {
+    //     string path = SceneUtility.GetScenePathByBuildIndex(index);
+    //     return path.Substring(0, path.Length - 6).Substring(path.LastIndexOf('/') + 1);
+    // }
+    
+    public void AttemptSwitchScene(int index)
+    {
+        //print(index);
+        SaveData.SaveToFile(1);
+        StartCoroutine(LoadScene(index));
+        
+    }
+    
+    public void AttemptSwitchScene(string sceneName)
+    {
+        //print(index);
+        SaveData.SaveToFile(1);
+        StartCoroutine(LoadScene(sceneName));
+        
+    }
+    
+    
+    
+    
+
+    private IEnumerator LoadScene(int index)
+    {
+        
+        AudioManager.Instance.AllFadeOut();
+        SceneInformation.Instance.sceneFadeAnim.speed = 2 / SceneInformation.SceneTransitionTime;
+        SceneInformation.Instance.sceneFadeAnim.SetTrigger(Animator.StringToHash("Start"));
+        yield return new WaitForSeconds(SceneInformation.SceneTransitionTime);
+        SceneManager.LoadSceneAsync(index);
+        //AudioManager.Instance.Awake();
+    }
+    
+    private IEnumerator LoadScene(string sceneName)
+    {
+        
+        AudioManager.Instance.AllFadeOut();
+        SceneInformation.Instance.sceneFadeAnim.speed = 2 / SceneInformation.SceneTransitionTime;
+        SceneInformation.Instance.sceneFadeAnim.SetTrigger(Animator.StringToHash("Start"));
+        yield return new WaitForSeconds(SceneInformation.SceneTransitionTime);
+        SceneManager.LoadSceneAsync(sceneName);
+        //AudioManager.Instance.Awake();
+    }
+
 
     public void MenuExit(int index)
     {
-        PrepMenuExit(index);
-        StartCoroutine(MenuExitCoroutine());
+        if (scenesCompleted[index - 1] || index < 2)
+        {
+            PrepMenuExit(index);
+            StartCoroutine(MenuExitCoroutine());
+        }
     }
 
     private IEnumerator MenuExitCoroutine()
@@ -160,14 +224,10 @@ public class GameManager : MonoBehaviour
 
     public void PrepMenuExit(int index)
     {
-        if (scenesCompleted[index] || index < 2)
-        {
-            //SceneManager.LoadScene(index);
-            AudioManager.Instance.AllFadeOut();
-            string path = SceneUtility.GetScenePathByBuildIndex(index);
-            SceneInformation.Instance.exitMappings[0].sceneNameOverride = path.Substring(0, path.Length - 6).Substring(path.LastIndexOf('/') + 1);
-        }
-        
+        //SceneManager.LoadScene(index);
+        AudioManager.Instance.AllFadeOut();
+        string path = SceneUtility.GetScenePathByBuildIndex(index);
+        SceneInformation.Instance.exitMappings[0].sceneNameOverride = path.Substring(0, path.Length - 6).Substring(path.LastIndexOf('/') + 1);
     }
 
     public void Pause()

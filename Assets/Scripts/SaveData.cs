@@ -76,7 +76,7 @@ public class SaveData
         }
 
         if (GameManager.Instance.isMenu)
-        {
+        { 
             AudioSlider.instance.slider.value = settingsInst.volume;
         }
         AudioManager.Instance.UpdateVolume(settingsInst.volume);
@@ -136,6 +136,10 @@ public class SaveData
         //GameManager.Instance.LeverDict = instance.levers;
         // GameManager.Instance.isReady = true;
         GameManager.Instance.scenesCompleted = instance.scenesCompleted;
+        if (GameManager.Instance.scenesCompleted.Length < 1)
+        {
+            GameManager.Instance.scenesCompleted = new bool[4];
+        }
         Debug.Log("scene in save file: " + instance.playerScene + " (not being loaded)");
         
         // SceneManager.LoadSceneAsync(instance.playerScene); // TODO ??

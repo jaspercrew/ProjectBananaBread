@@ -24,9 +24,11 @@ public class BeatBox : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        //print("update");
         float height = doChanging?
             Math.Min(heightMultiplier * AudioSpectrum.Instance.bufferSpectrum[spectrumIndex] + minLength, maxHeight) : 
             0;
+
 
         Vector3 sM = mainBox.localScale;
         Vector3 sA = backdropA.localScale;

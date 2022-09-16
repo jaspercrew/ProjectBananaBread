@@ -38,6 +38,10 @@ public class ScreenShakeController : BeatEntity {
 
     // Update is called once per frame
     void Update() {
+        if (GetComponent<CinemachineBrain>().ActiveVirtualCamera is null)
+        {
+            return;
+        }
         virtualCamera = GetComponent<CinemachineBrain>().ActiveVirtualCamera.
             VirtualCameraGameObject.GetComponent<CinemachineVirtualCamera>();
         if (shakeTimer > 0) {

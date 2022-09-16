@@ -31,7 +31,7 @@ public class AudioSpectrum : MonoBehaviour
     
     private void Update()
     {
-        print(bufferSpectrum[4]);
+        // print(bufferSpectrum[4]);
         // get the data
         AudioListener.GetSpectrumData(largeSpectrum, 0, FFTWindow.Blackman);
         for (int i = 0; i < compressedSpectrumSize; i++)

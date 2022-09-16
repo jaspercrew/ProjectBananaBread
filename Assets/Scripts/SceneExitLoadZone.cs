@@ -10,18 +10,22 @@ public class SceneExitLoadZone : MonoBehaviour
 
     private void SwitchScene()
     {
-        if (SceneInformation.Instance.SceneInfoForExit(transform).sceneNameOverride.Length < 1)
-        {
-            GameManager.Instance.AttemptSwitchScene(SceneInformation.Instance.SceneInfoForExit(transform).destinationScene.name);
-        }
-        else if (GameManager.Instance.isMenu)
-        {
-            GameManager.Instance.AttemptSwitchScene(SceneInformation.Instance.SceneInfoForExit(transform).sceneNameOverride);
-        }
-        else
-        {
-            print("switch scene matches no conditions");
-        }
+        // if (SceneInformation.Instance.SceneInfoForExit(transform).sceneNameOverride.Length < 1)
+        // {
+        print( SceneInformation.Instance.SceneInfoForExit(transform));
+        print( SceneInformation.Instance.SceneInfoForExit(transform).destSceneName);
+        string destSceneName = SceneInformation.Instance.SceneInfoForExit(transform).destSceneName;
+        int buildIndex = GameManager.Instance.BuildIndexFromSceneName(destSceneName);
+        GameManager.Instance.AttemptSwitchScene(buildIndex);
+        // }
+        // else if (GameManager.Instance.isMenu)
+        // {
+        //     GameManager.Instance.AttemptSwitchScene(SceneInformation.Instance.SceneInfoForExit(transform).sceneNameOverride);
+        // }
+        // else
+        // {
+        //     print("switch scene matches no conditions");
+        // }
     }
 
     // public IEnumerator LoadScene()

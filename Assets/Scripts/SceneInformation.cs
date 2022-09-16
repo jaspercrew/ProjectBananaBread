@@ -20,8 +20,9 @@ public enum SpawnPickDirection
 public class ExitToNextSpawn
 {
     public Transform exitTrigger;
-    public UnityEngine.Object destinationScene;
-    public string sceneNameOverride;
+    // public UnityEngine.Object destinationScene;
+    // public string sceneNameOverride;
+    public string destSceneName;
     public SpawnPickDirection spawnToPick;
 }
 

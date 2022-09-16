@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Cinemachine;
 using TMPro;
@@ -35,6 +36,8 @@ public class GameManager : MonoBehaviour
     private BeatEntity[] entities;
     private SpriteRenderer[] metronomes;
     private Transform pauseOverlay;
+
+    private Dictionary<string, int> sceneNameToBuildIndex = new Dictionary<string, int>();
     
     private void Awake()
     {
@@ -43,8 +46,8 @@ public class GameManager : MonoBehaviour
             // Debug.Log("setting gm instance");
             Instance = this;
         }
-
- 
+        
+        GetSceneIndices();
     }
 
     public void ToggleFullScreen()
@@ -143,38 +146,49 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    
-    // private int sceneIndexFromName(string sceneName) {
-    //     for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++) {
-    //         string testedScreen = NameFromIndex(i);
-    //         //print("sceneIndexFromName: i: " + i + " sceneName = " + testedScreen);
-    //         if (testedScreen == sceneName)
-    //             return i;
-    //     }
-    //     return -1;
-    // }
 
-    // private string NameFromIndex(int index)
-    // {
-    //     string path = SceneUtility.GetScenePathByBuildIndex(index);
-    //     return path.Substring(0, path.Length - 6).Substring(path.LastIndexOf('/') + 1);
-    // }
+    private void GetSceneIndices() {
+        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++) {
+            string sceneName = SceneNameFromIndex(i);
+            sceneNameToBuildIndex[sceneName] = i;
+        }
+    }
+
+    public int BuildIndexFromSceneName(string sceneName)
+    {
+        if (sceneNameToBuildIndex.ContainsKey(sceneName))
+        {
+            return sceneNameToBuildIndex[sceneName];
+        }
+        else
+        {
+            Debug.LogError("Scene \"" +sceneName + "\" not in build settings!");
+            return -1;
+        }
+    }
+    
+    private static string SceneNameFromIndex(int index)
+    {
+        string path = SceneUtility.GetScenePathByBuildIndex(index);
+        return path
+            .Substring(0, path.Length - 6)  // gets rid of ".scene"
+            .Substring(path.LastIndexOf('/') + 1);       // gets the name of the scene (after directory)
+    }
     
     public void AttemptSwitchScene(int index)
     {
         //print(index);
         SaveData.SaveToFile(1);
         StartCoroutine(LoadScene(index));
-        
     }
     
-    public void AttemptSwitchScene(string sceneName)
-    {
-        //print(index);
-        SaveData.SaveToFile(1);
-        StartCoroutine(LoadScene(sceneName));
-        
-    }
+    // public void AttemptSwitchScene(string sceneName)
+    // {
+    //     //print(index);
+    //     SaveData.SaveToFile(1);
+    //     StartCoroutine(LoadScene(sceneName));
+    //     
+    // }
     
     
     
@@ -191,16 +205,16 @@ public class GameManager : MonoBehaviour
         //AudioManager.Instance.Awake();
     }
     
-    private IEnumerator LoadScene(string sceneName)
-    {
-        
-        AudioManager.Instance.AllFadeOut();
-        SceneInformation.Instance.sceneFadeAnim.speed = 2 / SceneInformation.SceneTransitionTime;
-        SceneInformation.Instance.sceneFadeAnim.SetTrigger(Animator.StringToHash("Start"));
-        yield return new WaitForSeconds(SceneInformation.SceneTransitionTime);
-        SceneManager.LoadSceneAsync(sceneName);
-        //AudioManager.Instance.Awake();
-    }
+    // private IEnumerator LoadScene(string sceneName)
+    // {
+    //     
+    //     AudioManager.Instance.AllFadeOut();
+    //     SceneInformation.Instance.sceneFadeAnim.speed = 2 / SceneInformation.SceneTransitionTime;
+    //     SceneInformation.Instance.sceneFadeAnim.SetTrigger(Animator.StringToHash("Start"));
+    //     yield return new WaitForSeconds(SceneInformation.SceneTransitionTime);
+    //     SceneManager.LoadSceneAsync(sceneName);
+    //     //AudioManager.Instance.Awake();
+    // }
 
 
     public void MenuExit(int index)
@@ -226,8 +240,10 @@ public class GameManager : MonoBehaviour
     {
         //SceneManager.LoadScene(index);
         AudioManager.Instance.AllFadeOut();
-        string path = SceneUtility.GetScenePathByBuildIndex(index);
-        SceneInformation.Instance.exitMappings[0].sceneNameOverride = path.Substring(0, path.Length - 6).Substring(path.LastIndexOf('/') + 1);
+        // string path = SceneUtility.GetScenePathByBuildIndex(index);
+        // SceneInformation.Instance.exitMappings[0].sceneNameOverride = 
+        //     path.Substring(0, path.Length - 6).Substring(path.LastIndexOf('/') + 1);
+        SceneInformation.Instance.exitMappings[0].destSceneName = SceneNameFromIndex(index);
     }
 
     public void Pause()
@@ -303,7 +319,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    public void TextPop(String text, float duration = 2f)
+    public void TextPop(string text, float duration = 2f)
     {
         GameObject prefab = Resources.Load<GameObject>("Prefabs/TextNotification");
         GameObject created = Instantiate(prefab);

@@ -576,7 +576,7 @@ public partial class CharController
         //                 ((isNearWallOnRight && moveVector >= 0)|| (isNearWallOnLeft && moveVector <= 0)) &&
         //                 IsAbleToMove();
         isWallSliding = (isInverted ? -v.y : v.y) <= 0 && 
-                        ((isNearWallOnRight) || (isNearWallOnLeft)) && IsAbleToMove() && !isGrounded;
+                        ((isNearWallOnRight && transform.localScale.x < 0) || (isNearWallOnLeft && transform.localScale.x > 0)) && IsAbleToMove() && !isGrounded;
         // print("tr" + (bool)topRightHit + "br:" + (bool)bottomRightHit);
         Debug.DrawLine(bottomRight, bottomRight + aLittleRight);
         Debug.DrawLine(topRight, topRight + aLittleRight);

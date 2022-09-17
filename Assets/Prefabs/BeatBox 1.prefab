@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6960683889852803057}
   - component: {fileID: 6960134665859041278}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: BackdropB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,7 +92,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8595839812354709460}
   - component: {fileID: 4176573132232899244}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: BackdropA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -175,7 +175,7 @@ GameObject:
   - component: {fileID: 3434885016373002048}
   - component: {fileID: 3434885016373002051}
   - component: {fileID: 5804134438750005023}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: BeatBox 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -243,7 +243,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 80, y: 80}
+  m_Size: {x: 5, y: 5}
   m_EdgeRadius: 0
 --- !u!1 &3434885017001974633
 GameObject:
@@ -255,7 +255,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3434885017001974632}
   - component: {fileID: 8823516981120331401}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: MainBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}

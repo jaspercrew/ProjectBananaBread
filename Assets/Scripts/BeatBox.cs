@@ -28,10 +28,14 @@ public class BeatBox : MonoBehaviour
         float height = doChanging?
             Math.Min(heightMultiplier * AudioSpectrum.Instance.bufferSpectrum[spectrumIndex] + minLength, maxHeight) : 
             0;
+        if (doChanging)
+        {
+            //print(AudioSpectrum.Instance.bufferSpectrum[spectrumIndex]);
+        }
 
 
         Vector3 sM = mainBox.localScale;
-        Vector3 sA = backdropA.localScale;
+        Vector3 sA = backdropA.localScale; 
         Vector3 sB = backdropB.localScale;
         sM = new Vector3(sM.x, doChanging? height + 0 * backdropHeight : 0, sM.z);
         sA = new Vector3(sA.x, doChanging? height + 1 * backdropHeight : 0, sA.z);
@@ -60,7 +64,7 @@ public class BeatBox : MonoBehaviour
         {
             return;
         }
-        if (other.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("MainCamera"))
         {
             doChanging = false;
         }
@@ -72,8 +76,9 @@ public class BeatBox : MonoBehaviour
         {
             return;
         }
-        if (other.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("MainCamera"))
         {
+            
             doChanging = true;
         }
     }
@@ -84,7 +89,7 @@ public class BeatBox : MonoBehaviour
         {
             return;
         }
-        if (other.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("MainCamera"))
         {
             doChanging = true;
         }

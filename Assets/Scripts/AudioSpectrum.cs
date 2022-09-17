@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 /// <summary>
@@ -31,7 +32,7 @@ public class AudioSpectrum : MonoBehaviour
     
     private void Update()
     {
-        // print(bufferSpectrum[4]);
+        
         // get the data
         AudioListener.GetSpectrumData(largeSpectrum, 0, FFTWindow.Blackman);
         for (int i = 0; i < compressedSpectrumSize; i++)
@@ -45,14 +46,13 @@ public class AudioSpectrum : MonoBehaviour
             compressedSpectrum[i] = average;
         }
         BandBuffer();
+        //print(string.Join(" ", bufferSpectrum));
+        //print(SceneManager.GetActiveScene().name);
     }
 
-    private void Start()
+    private void Awake()
     {
-        if (Instance is null)
-        {
-            Instance = this;
-        }
+        Instance = this;
         largeSpectrum = new float[largeSpectrumSize];
         compressedSpectrum = new float[compressedSpectrumSize];
         bufferSpectrum = new float[compressedSpectrumSize];

@@ -89,7 +89,7 @@ public class AudioManager : MonoBehaviour
     
     public void UpdateVolume(float sliderValue)
     {
-        const float volumeMultiplier = 2f;
+        const float volumeMultiplier = 1f;
         foreach (AudioSource source in audioSources)
         {
             source.volume = sliderValue * volumeMultiplier;

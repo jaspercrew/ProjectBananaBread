@@ -126,7 +126,7 @@ public class SaveData
         }
         catch (SerializationException)
         {
-            GameManager.Instance.scenesCompleted = new bool[4];
+            GameManager.Instance.scenesCompleted = new bool[10];
             Debug.LogError("something is wrong with the save file, ignoring it");
             return;
         }
@@ -138,7 +138,7 @@ public class SaveData
         GameManager.Instance.scenesCompleted = instance.scenesCompleted;
         if (GameManager.Instance.scenesCompleted.Length < 1)
         {
-            GameManager.Instance.scenesCompleted = new bool[4];
+            GameManager.Instance.scenesCompleted = new bool[10];
         }
         Debug.Log("scene in save file: " + instance.playerScene + " (not being loaded)");
         

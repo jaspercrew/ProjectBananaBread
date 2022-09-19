@@ -1883,7 +1883,7 @@ ParticleSystem:
   ShapeModule:
     serializedVersion: 6
     enabled: 1
-    type: 5
+    type: 12
     angle: 25
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
@@ -1891,7 +1891,7 @@ ParticleSystem:
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
     m_Rotation: {x: 0, y: 0, z: 0}
-    m_Scale: {x: 14.7, y: 25.51, z: 0}
+    m_Scale: {x: 6.07, y: 25.51, z: 0}
     placementMode: 0
     m_MeshMaterialIndex: 0
     m_MeshNormalOffset: 0
@@ -1970,9 +1970,9 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 0.37
+      value: 1
       mode: 0
-      spread: 0
+      spread: 1
       speed:
         serializedVersion: 2
         minMaxState: 0
@@ -7253,17 +7253,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29206ff1a313cce4c9c73682e646ae0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numBars: 16
-  barGap: 0
+  numBarsPerGroup: 16
+  gapBetweenBars: 0
   numGroups: 8
-  indexOffset: 2
-  verticalSize: 3
-  maxheight: 10
-  heightMultiplier: 5
-  verticalLayerOffset: 45
+  audioIndexOffset: 2
+  verticalLayerCount: 1
+  maxHeightPerLayer: 8
+  heightBoostMultiplier: 3
+  distanceBetweenVerticalLayers: 45
   boxRotation: 0
-  minLength: 1
-  backdropHeight: 3.5
+  minHeightBooster: 1
+  backdropHeightMultiplier: 2.5
+  useWavePattern: 0
   beatBoxPrefab: {fileID: 3434885016373002063, guid: 02dd246dbbf8b8945969c180aa1c0442, type: 3}
   scaleFactor: {x: 0.5, y: 0.5}
 --- !u!4 &874035673
@@ -7303,7 +7304,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!61 &888006509
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7678,6 +7679,7 @@ MonoBehaviour:
   isStatic: 0
   isHazard: 0
   type: 0
+  timeToMove: 2
   moveVector: {x: 0, y: 0}
   isWallSlideable: 0
 --- !u!212 &1022580651
@@ -13406,6 +13408,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caf2d51b7784feb4cbbd6ce2c868f324, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSceneFinishPoint: 0
 --- !u!1 &1531289083
 GameObject:
   m_ObjectHideFlags: 0
@@ -13528,6 +13531,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caf2d51b7784feb4cbbd6ce2c868f324, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSceneFinishPoint: 0
 --- !u!4 &1614680219 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3945271499517466384, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
@@ -19796,10 +19800,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   musicStart: 0
   snareDelay: 1
+  isMenu: 0
+  scenesCompleted: 
   songBpm: 140
   firstBeatOffset: 0
   coroutineDelay: 0
   snareToSongDelay: 16
+  isPaused: 0
+  MenuCenterCam: {fileID: 0}
 --- !u!4 &1005183157759930097
 Transform:
   m_ObjectHideFlags: 0
@@ -69423,6 +69431,9 @@ MonoBehaviour:
   isDashing: 0
   gravityValue: 15
   isInverted: 0
+  currentArea: {fileID: 0}
+  isJumpBoosted: 0
+  isMetronomeLocked: 0
   grappleProjectile: {fileID: 1920082404479384334, guid: 7f946ab064a4c614a865b845260eaef6, type: 3}
   isRecentlyGrappled: 0
   isCrouching: 0
@@ -74872,12 +74883,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneFadeAnim: {fileID: 0}
-  song: 10
+  songA: 0
+  songB: 0
+  songC: 0
   playMusic: 1
   defaultSpawn: {fileID: 6953441936242576087}
   exitMappings:
   - exitTrigger: {fileID: 0}
-    destinationScene: {fileID: 0}
+    destSceneName: 
     spawnToPick: 0
   spawnOverrides: []
 --- !u!4 &7882894059666913339
@@ -75237,6 +75250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87931fa32f82a4a468ff808279e61034, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioSources: []
 --- !u!82 &9207931784500453660
 AudioSource:
   m_ObjectHideFlags: 0

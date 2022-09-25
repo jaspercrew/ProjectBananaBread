@@ -129,7 +129,7 @@ public class BeatPlatform : ActivatedEntity
 
         while (elapsedTime < moveTime)
         {
-            if (isPlayerTouching /**&& playerRelativePosition == moveVector.normalized**/)
+            if (isPlayerTouching /*&& playerRelativePosition == moveVector.normalized*/)
             {
                 CharController.Instance.isJumpBoosted = true;
             }
@@ -211,6 +211,7 @@ public class BeatPlatform : ActivatedEntity
     {
         if (other.gameObject.CompareTag("Player"))
         {
+            CharController.Instance.mostRecentlyTouchedPlatform = this;
             isPlayerTouching = true;
             if (isHazard)
             {
@@ -226,6 +227,13 @@ public class BeatPlatform : ActivatedEntity
                      (CharController.Instance.transform.localPosition.y > transform.localPosition.y || isWallSlideable))
             {
                 CharController.Instance.transform.SetParent(transform);
+            }
+
+            // crushed under platform
+            else if (type == PlatformType.Moving  &&
+                     (CharController.Instance.transform.localPosition.y < transform.localPosition.y && CharController.Instance.isGrounded))
+            {
+                CharController.Instance.Die();
             }
         }
     }
@@ -260,7 +268,7 @@ public class BeatPlatform : ActivatedEntity
             }
             
             playerRelativePosition = roundedVector;
-            print(roundedVector);
+            // print(roundedVector);
         }
     }
 

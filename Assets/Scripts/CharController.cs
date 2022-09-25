@@ -78,10 +78,10 @@ public partial class CharController : BeatEntity
     private bool isPlatformGrounded;
     public bool isMetronomeLocked;
     private bool _isGrounded;
-    private bool isGrounded
+    public bool isGrounded
     {
         get => _isGrounded;
-        set
+        private set 
         {
             if (_isGrounded && !value)
             {
@@ -129,6 +129,7 @@ public partial class CharController : BeatEntity
     }
     private int wallJumpDir;
     //private int wallJumpFramesLeft;
+    public BeatPlatform mostRecentlyTouchedPlatform;
 
     private int fadeSpriteIterator;
     [FormerlySerializedAs("fadeTime")] public float emitFadesTime;

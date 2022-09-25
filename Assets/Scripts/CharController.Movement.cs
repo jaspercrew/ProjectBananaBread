@@ -126,8 +126,11 @@ public partial class CharController
             if (isJumpBoosted)
             {
                 recentlyImpulsed = true;
-                Vector2 forcedTeleportVector = new Vector2((float) wallJumpDir, 0);
-                transform.position += (Vector3) forcedTeleportVector;
+                // float forcedTeleportDistance = 1;
+                // Debug.Log("teleport distance: " + wallJumpDir);
+                // Vector2 forcedTeleportVector = new Vector2(forcedTeleportDistance * wallJumpDir, 0);
+                // transform.position += (Vector3) forcedTeleportVector;
+                StartCoroutine(TemporarilyDisablePlatformCollision(mostRecentlyTouchedPlatform.transform));
                 transform.parent = null;
                 isWallSliding = false;
                 
@@ -151,6 +154,24 @@ public partial class CharController
         
         
         justJumped = true;
+    }
+
+    private IEnumerator TemporarilyDisablePlatformCollision(Transform parent)
+    {
+        if (parent == null)
+        {
+            Debug.LogError("cannot temporarily disable collision on null!");
+            yield break;
+        }
+
+        BoxCollider2D box = parent.GetComponent<BoxCollider2D>();
+        Debug.Log("disabling box collision");
+        box.enabled = false;
+
+        yield return new WaitForSeconds(0.25f);
+
+        Debug.Log("re-enabling box collision");
+        box.enabled = true;
     }
 
     

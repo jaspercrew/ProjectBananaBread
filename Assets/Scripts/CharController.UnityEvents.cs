@@ -172,7 +172,7 @@ public partial class CharController
         // regular ground movement
         if (isGrounded)
         {
-            recentlyImpulsed = false;
+            
             int moveDir = Math.Sign(moveVector);
             // if user is not moving and has speed, then slow down
             if (moveDir == 0 && Mathf.Abs(xVel) >= MinGroundSpeed)
@@ -198,6 +198,7 @@ public partial class CharController
             {
                 Rigidbody.velocity = new Vector2(0, yVel);
             }
+            recentlyImpulsed = false;
         }
         // in-air movement
         else
@@ -409,7 +410,7 @@ public partial class CharController
         RaycastHit2D hit2 = 
             Physics2D.Linecast(bottomRight, bottomRight + aLittleDown, obstaclePlusLayerMask);
 
-        bool newlyGrounded = hit1 || hit2;
+        bool newlyGrounded = (hit1 || hit2) && !isWallSliding;
         if (!isGrounded && newlyGrounded){
             OnLanding();
         }

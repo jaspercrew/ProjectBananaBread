@@ -99,15 +99,12 @@ public partial class CharController
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
         float adjustedJumpForce = isJumpBoosted ? jumpForce * 2 : jumpForce;
-        if (isJumpBoosted)
-        {
-            emitFadesTime += .3f;
-        }
+        print("grounded?" + isGrounded + ",    isWallSliding?" + isWallSliding);
 
         if ((isWallSliding || wallJumpAvailable) && !isGrounded)
         {
             //Debug.Log("WALLJUMP");
-            forcedMoveTime = .28f;
+            forcedMoveTime = .38f;
             if (wallJumpDir == -1)
             {
                 //FaceLeft();
@@ -125,12 +122,14 @@ public partial class CharController
 
             if (isJumpBoosted)
             {
+                emitFadesTime += .3f;
                 recentlyImpulsed = true;
-                // float forcedTeleportDistance = 1;
-                // Debug.Log("teleport distance: " + wallJumpDir);
-                // Vector2 forcedTeleportVector = new Vector2(forcedTeleportDistance * wallJumpDir, 0);
-                // transform.position += (Vector3) forcedTeleportVector;
-                StartCoroutine(TemporarilyDisablePlatformCollision(mostRecentlyTouchedPlatform.transform));
+                float forcedTeleportDistance = .5f;
+                Debug.Log("teleport distance: " + wallJumpDir);
+                 Vector2 forcedTeleportVector = new Vector2(forcedTeleportDistance * wallJumpDir, 0);
+                 transform.position += (Vector3) forcedTeleportVector;
+                
+                //StartCoroutine(TemporarilyDisablePlatformCollision(mostRecentlyTouchedPlatform.transform));
                 transform.parent = null;
                 isWallSliding = false;
                 
@@ -148,6 +147,7 @@ public partial class CharController
         }
         else
         {
+            //print("regular jump" + isJumpBoosted);
             Rigidbody.AddForce(new Vector2(0, isInverted ? -adjustedJumpForce : adjustedJumpForce), 
                 ForceMode2D.Impulse); 
         }

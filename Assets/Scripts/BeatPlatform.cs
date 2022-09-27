@@ -81,7 +81,7 @@ public class BeatPlatform : ActivatedEntity
                 spriteRenderer.color = temp;
 
                 BoxCollider2D charCollider = CharController.Instance.GetComponent<BoxCollider2D>();
-                Vector3 bounds = charCollider.bounds.extents;
+                Vector3 bounds = charCollider.bounds.extents; 
                 float halfWidth = Mathf.Abs(bounds.x);
                 float halfHeight = Mathf.Abs(bounds.y);
                 Vector2 center = (Vector2) CharController.Instance.transform.position + charCollider.offset.y * Vector2.up;

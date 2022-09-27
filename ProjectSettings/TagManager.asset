@@ -21,7 +21,7 @@ TagManager:
   - Moveable
   - Slide
   - GroundCheck
-  - 
+  - SpawnCamera
   - 
   - Platform
   - 

@@ -18,6 +18,7 @@ public class BeatBoxParent : MonoBehaviour
     public float minHeightBooster = 1f;
     public float backdropHeightMultiplier = 2.5f;
     public bool useWavePattern;
+    public Vector3 overallRotation;
     
     public GameObject beatBoxPrefab;
     public Vector2 scaleFactor = Vector2.one;
@@ -67,6 +68,7 @@ public class BeatBoxParent : MonoBehaviour
             }
         }
         transform.localScale = scaleFactor;
+        transform.localRotation = Quaternion.Euler(overallRotation.x, overallRotation.y, overallRotation.z);
     }
     
     

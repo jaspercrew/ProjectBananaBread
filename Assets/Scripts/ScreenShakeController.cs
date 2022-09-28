@@ -21,6 +21,10 @@ public class ScreenShakeController : BeatEntity {
     public void StartShake(float length, float power) {
         CinemachineBasicMultiChannelPerlin perlin =
             virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+        if (perlin is null)
+        {
+            return;
+        }
         perlin.m_AmplitudeGain = power;
         startingIntensity = power;
         shakeTimer = length;

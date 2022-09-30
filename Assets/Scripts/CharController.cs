@@ -139,6 +139,7 @@ public partial class CharController : BeatEntity
     private float prevInVector = 2;
     private int forcedMoveVector;
     private float forcedMoveTime;
+    public bool disabledMovement;
     
     // animator values beforehand to save time later
     protected static readonly int AnimState = Animator.StringToHash("AnimState");
@@ -205,7 +206,7 @@ public partial class CharController : BeatEntity
                 @this.IsAbleToMove() && 
                 (@this.isGrounded || (@this.jumpAvailable && !@this.justJumped) ||
                  @this.isWallSliding || (@this.wallJumpAvailable && !@this.justJumped)) &&
-                !@this.isCrouching},
+                !@this.isCrouching} ,
             // {Event.EventTypes.DoubleJump, @this => 
             //     @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && 
             //     @this.canDoubleJump && Input.GetKeyDown(KeyCode.Space)},
@@ -256,7 +257,7 @@ public partial class CharController : BeatEntity
     }
 
     private bool IsAbleToAct() {
-        return !isDashing  && canFunction && !isRewinding && !isMetronomeLocked && !GameManager.Instance.isMenu;
+        return !isDashing  && !disabledMovement && canFunction && !isRewinding && !isMetronomeLocked && !GameManager.Instance.isMenu;
     }
     
     protected void FaceLeft()
@@ -318,8 +319,11 @@ public partial class CharController : BeatEntity
 
     private IEnumerator DieCoroutine()
     {
-        SpawnCamController.Instance.DoTransition();
-        yield return new WaitForSeconds(1f);
+        CameraManager.Instance.DoTransition(true);
+        Animator.SetTrigger(Death);
+
+        yield return new WaitForSeconds(CameraManager.arppegioTime + CameraManager.disappearDelay / 2);
+
         if (currentArea == null || currentArea.spawnLocation == null)
         {
             transform.position = SceneInformation.Instance.GetSpawnPos();

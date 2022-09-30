@@ -80,15 +80,19 @@ public partial class CharController
         inputVector = Input.GetAxisRaw("Horizontal");
         FadeParticle_FixedUpdate();
         // AdjustCape_FixedUpdate();
-        if (!IsAbleToMove()) return;
+        if (disabledMovement)
+        {
+            moveVector = 0;
+        }
+        if (IsAbleToMove())
+        {
+            StandardMovement_FixedUpdate();
+            ApplyForcedMovement_FixedUpdate();
+            TurnAround_FixedUpdate();
+        }
         // movement animations
-        
         //gravityValue = isInverted ? -Mathf.Abs(gravityValue) : Mathf.Abs(gravityValue);
-        StandardMovement_FixedUpdate();
-        
-        ApplyForcedMovement_FixedUpdate();
 
-        TurnAround_FixedUpdate();
         Record_FixedUpdate();
     }
 
@@ -150,6 +154,7 @@ public partial class CharController
             //Debug.Log("idle anim");
             Animator.SetInteger(AnimState, 1);
         }
+        print(Animator.GetCurrentAnimatorStateInfo(0).IsName("Death"));
     }
     
 

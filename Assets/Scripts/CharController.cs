@@ -312,6 +312,14 @@ public partial class CharController : BeatEntity
     
     public void Die()
     {
+
+        StartCoroutine(DieCoroutine());
+    }
+
+    private IEnumerator DieCoroutine()
+    {
+        SpawnCamController.Instance.DoTransition();
+        yield return new WaitForSeconds(1f);
         if (currentArea == null || currentArea.spawnLocation == null)
         {
             transform.position = SceneInformation.Instance.GetSpawnPos();

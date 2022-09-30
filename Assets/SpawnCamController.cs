@@ -20,6 +20,7 @@ public class SpawnCamController : MonoBehaviour
     {
         mainCamera = CameraManager.Instance.transform.GetComponent<Camera>();
         spawnCamera = transform.GetComponent<Camera>();
+        spawnCamera.rect = new Rect(-1, 0, 1, 1);
         ResetTransition();
         //StartCoroutine(TestTransition());
 
@@ -27,8 +28,8 @@ public class SpawnCamController : MonoBehaviour
 
     private void ResetTransition()
     {
-        spawnCamera.rect = new Rect(0, -1, 1, 1);
-        mainCamera.rect = new Rect(0, 0, 1, 1);
+        
+        //mainCamera.rect = new Rect(0, 0, 1, 1);
         if (CharController.Instance.currentArea == null || CharController.Instance.currentArea.spawnLocation == null)
         {
             transform.position = SceneInformation.Instance.GetSpawnPos();
@@ -43,24 +44,25 @@ public class SpawnCamController : MonoBehaviour
 
     public IEnumerator ProgressTransition()
     {
+        spawnCamera.rect = new Rect(-1, 0, 1, 1);
         //float timeToMove = 4;
         //Vector2 lowerDestination = Vector2.zero;
         float elapsedTime = 0f;
-        float moveTime = 2;
+        float moveTime = 1f;
 
         while (elapsedTime < moveTime)
         {
             //transform.position = Vector3.Lerp(transform.position, destination, (elapsedTime / moveTime));
-            Vector2 toSet = Vector2.Lerp(Vector2.zero,  Vector2.up, elapsedTime / moveTime);
-            mainCamera.rect = new Rect(toSet, Vector2.one);
-            spawnCamera.rect = new Rect(toSet - Vector2.up, Vector2.one);
+            Vector2 toSet = Vector2.Lerp(Vector2.zero,  Vector2.right, elapsedTime / moveTime);
+            //mainCamera.rect = new Rect(toSet, Vector2.one);
+            spawnCamera.rect = new Rect(toSet - Vector2.right, Vector2.one);
             elapsedTime += Time.deltaTime;
             
             // Yield here
             yield return null;
         }  
         // Make sure we got there
-        mainCamera.rect = new Rect(Vector2.up, Vector2.one);
+        //mainCamera.rect = new Rect(Vector2.right, Vector2.one);
         spawnCamera.rect = new Rect(Vector2.zero, Vector2.one);
         yield return null;
         ResetTransition();

@@ -12,8 +12,8 @@ public class SceneExitLoadZone : MonoBehaviour
     {
         // if (SceneInformation.Instance.SceneInfoForExit(transform).sceneNameOverride.Length < 1)
         // {
-        print( SceneInformation.Instance.SceneInfoForExit(transform));
-        print( SceneInformation.Instance.SceneInfoForExit(transform).destSceneName);
+        // print( SceneInformation.Instance.SceneInfoForExit(transform));
+        // print( SceneInformation.Instance.SceneInfoForExit(transform).destSceneName);
         string destSceneName = SceneInformation.Instance.SceneInfoForExit(transform).destSceneName;
         int buildIndex = GameManager.Instance.BuildIndexFromSceneName(destSceneName);
         GameManager.Instance.AttemptSwitchScene(buildIndex);
@@ -50,7 +50,7 @@ public class SceneExitLoadZone : MonoBehaviour
         {
             if (isSceneFinishPoint)
             {
-                print(SceneManager.GetActiveScene().buildIndex);
+                //print(SceneManager.GetActiveScene().buildIndex);
                 GameManager.Instance.scenesCompleted[SceneManager.GetActiveScene().buildIndex] = true;
             }
             //AudioManager.Instance.AllFadeOut();

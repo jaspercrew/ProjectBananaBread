@@ -56,6 +56,7 @@ public class ScreenShakeController : BeatEntity {
 
             }
         }
+        virtualCamera.transform.localRotation = Quaternion.Euler(0, 0, virtualCamera.transform.localRotation.z);
     }
 
     public void MediumShake() {

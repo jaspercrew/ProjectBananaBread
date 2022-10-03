@@ -12,8 +12,8 @@ public class BurstOrb : BeatEntity
     public float impulseForce = 1f;
     private CircleCollider2D circleCollider2D;
     private ParticleSystem particle;
-    private bool applyForce = false;
-    private bool playerInRange = false;
+    // private bool applyForce = false;
+    // private bool playerInRange = false;
     protected override void Start()
     {
         circleCollider2D = GetComponent<CircleCollider2D>();

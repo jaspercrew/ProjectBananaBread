@@ -206,7 +206,7 @@ public partial class CharController : BeatEntity
                 @this.IsAbleToMove() && 
                 (@this.isGrounded || (@this.jumpAvailable && !@this.justJumped) ||
                  @this.isWallSliding || (@this.wallJumpAvailable && !@this.justJumped)) &&
-                !@this.isCrouching} ,
+                !@this.isCrouching && !@this.disabledMovement} ,
             // {Event.EventTypes.DoubleJump, @this => 
             //     @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && 
             //     @this.canDoubleJump && Input.GetKeyDown(KeyCode.Space)},
@@ -313,7 +313,10 @@ public partial class CharController : BeatEntity
     
     public void Die()
     {
-
+        if (disabledMovement) //if already in dying anim, dont do anything
+        {
+            return;
+        }
         StartCoroutine(DieCoroutine());
     }
 
@@ -322,7 +325,7 @@ public partial class CharController : BeatEntity
         CameraManager.Instance.DoTransition(true);
         Animator.SetTrigger(Death);
 
-        yield return new WaitForSeconds(CameraManager.arppegioTime + CameraManager.disappearDelay / 2);
+        yield return new WaitForSeconds(CameraManager.Instance.totalDelayToSpawn);
 
         if (currentArea == null || currentArea.spawnLocation == null)
         {

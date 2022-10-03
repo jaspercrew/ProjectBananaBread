@@ -99,7 +99,7 @@ public partial class CharController
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
         float adjustedJumpForce = isJumpBoosted ? jumpForce * 2 : jumpForce;
-        print("grounded?" + isGrounded + ",    isWallSliding?" + isWallSliding);
+        //print("grounded?" + isGrounded + ",    isWallSliding?" + isWallSliding);
 
         if ((isWallSliding || wallJumpAvailable) && !isGrounded)
         {
@@ -125,7 +125,7 @@ public partial class CharController
                 emitFadesTime += .3f;
                 recentlyImpulsed = true;
                 float forcedTeleportDistance = .5f;
-                Debug.Log("teleport distance: " + wallJumpDir);
+                //Debug.Log("teleport distance: " + wallJumpDir);
                  Vector2 forcedTeleportVector = new Vector2(forcedTeleportDistance * wallJumpDir, 0);
                  transform.position += (Vector3) forcedTeleportVector;
                 

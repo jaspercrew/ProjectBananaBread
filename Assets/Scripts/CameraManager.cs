@@ -13,9 +13,11 @@ public class CameraManager : MonoBehaviour {
     private Camera unityCam;
     private TransitionSlice[] slices;
     private const int numSlices = 8;
-    public const float arppegioTime = .75f;
-    public const float disappearDelay = .5f;
+    private const float initialDelay = .3f;
+    private const float arppegioTime = .75f;
+    private const float disappearDelay = .5f;
     public const float sliceFadeTime = .2f;
+    public float totalDelayToSpawn;
     
 
     private void Awake() {
@@ -29,7 +31,15 @@ public class CameraManager : MonoBehaviour {
 
     private void Start()
     {
+        
         unityCam = GetComponent<Camera>();
+        
+        if (slicePrefab is null)
+        {
+            return;
+        }
+        
+        totalDelayToSpawn = initialDelay + arppegioTime + disappearDelay / 2;
         slices = new TransitionSlice[numSlices];
         float distanceFromCamera = unityCam.nearClipPlane ; // Change this value if you want
         Vector3 midLeft = unityCam.ViewportToWorldPoint(new Vector3(0, .5f, distanceFromCamera));
@@ -67,6 +77,7 @@ public class CameraManager : MonoBehaviour {
     private IEnumerator TransitionCoroutine(bool invertDirection)
     {
         CharController.Instance.disabledMovement = true;
+        yield return new WaitForSeconds(initialDelay);
         float sliceInterval = arppegioTime / numSlices;
 
         for (int i = 0; i < numSlices; i++)

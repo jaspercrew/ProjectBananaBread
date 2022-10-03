@@ -13,7 +13,7 @@ public class BeatBox : MonoBehaviour
     public Transform backdropA;
     public Transform backdropB;
 
-    private bool doChanging = false;
+    private bool doChanging;
     
     // Start is called before the first frame update
     private void Start()

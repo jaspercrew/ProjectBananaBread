@@ -154,7 +154,7 @@ public partial class CharController
             //Debug.Log("idle anim");
             Animator.SetInteger(AnimState, 1);
         }
-        print(Animator.GetCurrentAnimatorStateInfo(0).IsName("Death"));
+        //print(Animator.GetCurrentAnimatorStateInfo(0).IsName("Death"));
     }
     
 
@@ -239,6 +239,10 @@ public partial class CharController
     
 
     private void TurnAround_FixedUpdate() {
+        if (disabledMovement)
+        {
+            return;
+        }
         // feet dust logic
         if (Math.Abs(prevInVector - inputVector) > 0.01f && isGrounded && inputVector != 0) {
             dust.Play();

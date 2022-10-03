@@ -24,9 +24,9 @@ public class GameManager : MonoBehaviour
     public float songBpm;
     public float firstBeatOffset; //DOES THIS EVEN DO ANYTHING?????????
     private float secPerBeat;
-    private float songPosition;
-    private float songPositionInBeats = float.NegativeInfinity;
-    private float dspSongTime;
+    private double songPosition;
+    private double songPositionInBeats = float.NegativeInfinity;
+    private double songTime;
     public float coroutineDelay = .5f;
     private int snareMicroBeatCount = 0;
     private int snareCount = 0;
@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
         Application.targetFrameRate = 144;
         microBpm = songBpm * 16f;
         secPerBeat = 60f / microBpm;
-        dspSongTime = (float) AudioSettings.dspTime;
+        songTime = (double) Time.time;
         StartCoroutine(SnareCoroutine());
         SaveData.LoadSettings();
         SaveData.LoadFromFile(1);
@@ -89,9 +89,9 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        songPosition = (float) (AudioSettings.dspTime - dspSongTime - firstBeatOffset);
-        float newSongPositionInBeats = songPosition / secPerBeat;
-        if (Mathf.Floor(newSongPositionInBeats) > Mathf.Floor(songPositionInBeats))
+        songPosition = (float) (Time.time - songTime - firstBeatOffset);
+        double newSongPositionInBeats = songPosition / secPerBeat;
+        if (Mathf.Floor((float)newSongPositionInBeats) > Mathf.Floor((float)songPositionInBeats))
         {
             WorldMicroBeat();
         }

@@ -14,6 +14,7 @@ public class BeatBoxSubParent : MonoBehaviour
     {
         foreach (BeatBox b in children)
         {
+            Debug.Log("entered");
             b.doChanging = doChanging;
         }
     }

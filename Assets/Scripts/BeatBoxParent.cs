@@ -44,7 +44,7 @@ public class BeatBoxParent : MonoBehaviour
         {
             Shuffle(rand, indexArray);
             GameObject subParent = Instantiate(beatBoxSubParentPrefab, transform, false);
-            subParent.transform.position = spawnLocation + groupWidth / 2 * Vector3.right;
+            subParent.transform.position = transform.TransformPoint(spawnLocation + groupWidth / 2 * Vector3.right);
             
             for (int i = 0; i < numBarsPerGroup; i++)
             {
@@ -63,7 +63,7 @@ public class BeatBoxParent : MonoBehaviour
                     }
                     
                     GameObject instantiatedBeatBox = Instantiate(beatBoxPrefab, subParent.transform, true);
-                    instantiatedBeatBox.transform.position = transform.TransformPoint(spawnLocation);
+                    instantiatedBeatBox.transform.position = subParent.transform.TransformPoint(spawnLocation);
                     instantiatedBeatBox.transform.eulerAngles = new Vector3(0, 0, boxRotation);
                     instantiatedBeatBox.GetComponent<BeatBox>().Initialize(indexArray[i], maxHeightPerLayer, 
                         heightBoostMultiplier, minHeightBooster, backdropHeightMultiplier);

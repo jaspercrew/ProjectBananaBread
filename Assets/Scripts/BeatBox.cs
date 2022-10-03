@@ -14,6 +14,7 @@ public class BeatBox : MonoBehaviour
     public Transform backdropB;
 
     private bool wasZeroLastFrame;
+    private bool wasChangingLastFrame;
     public bool doChanging;
 
     // Update is called once per frame
@@ -21,6 +22,10 @@ public class BeatBox : MonoBehaviour
     {
         if (doChanging)  // changed by sub parent (group parent)
         {
+            if (!wasChangingLastFrame)
+            {
+                Debug.Log("started changing");
+            }
             float height = Math.Min(heightMultiplier * AudioSpectrum.Instance.bufferSpectrum[spectrumIndex] + minLength,
                 maxHeight);
             Vector3 sM = mainBox.localScale;
@@ -32,6 +37,7 @@ public class BeatBox : MonoBehaviour
             mainBox.localScale = sM;
             backdropA.localScale = sA;
             backdropB.localScale = sB;
+            wasChangingLastFrame = true;
         } 
         else if (!wasZeroLastFrame)
         {
@@ -45,6 +51,7 @@ public class BeatBox : MonoBehaviour
             backdropA.localScale = sA;
             backdropB.localScale = sB;
             wasZeroLastFrame = true;
+            wasChangingLastFrame = false;
         }
         else
         {

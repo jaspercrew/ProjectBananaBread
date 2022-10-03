@@ -148,6 +148,10 @@ public partial class CharController
         else
         {
             //print("regular jump" + isJumpBoosted);
+            if (isJumpBoosted)
+            {
+                emitFadesTime += .3f;
+            }
             Rigidbody.AddForce(new Vector2(0, isInverted ? -adjustedJumpForce : adjustedJumpForce), 
                 ForceMode2D.Impulse); 
         }

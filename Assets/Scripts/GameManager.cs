@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public float snareDelay = 1f;
     public bool isMenu;
     public bool[] scenesCompleted;
+    private bool playFlipped;
 
     // https://www.gamedeveloper.com/audio/coding-to-the-beat---under-the-hood-of-a-rhythm-game-in-unity
     private float microBpm;
@@ -31,6 +32,7 @@ public class GameManager : MonoBehaviour
     private int snareMicroBeatCount = 0;
     private int snareCount = 0;
     public int snareToSongDelay = 2;
+    private double nextLoopTime;
     public bool isPaused;
     public GameObject MenuCenterCam;
     private BeatEntity[] entities;
@@ -59,6 +61,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         // TODO
+        nextLoopTime = Double.MaxValue;
         Application.targetFrameRate = 144;
         microBpm = songBpm * 16f;
         secPerBeat = 60f / microBpm;
@@ -96,6 +99,26 @@ public class GameManager : MonoBehaviour
             WorldMicroBeat();
         }
         songPositionInBeats = newSongPositionInBeats;
+        if (Time.time + 1.0f > nextLoopTime)
+        {
+            //return;
+            //print("loop triggered, is flipped?:" + playFlipped);
+            AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songA, 0, nextLoopTime, playFlipped);
+            AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songB, 1, nextLoopTime, playFlipped);
+            AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songC, 2, nextLoopTime, playFlipped);
+            playFlipped = !playFlipped;
+            nextLoopTime = nextLoopTime + (60f / songBpm * 64f);
+        }
+    }
+
+    private void BeginSongLoop()
+    {
+        //print("begin song loop");
+        AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songA, 0, Time.time, playFlipped);
+        AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songB, 1, Time.time, playFlipped);
+        AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songC, 2, Time.time, playFlipped);
+        nextLoopTime = Time.time + (60f / songBpm * 64f);
+        playFlipped = !playFlipped;
     }
 
     public void WorldMicroBeat()
@@ -131,9 +154,7 @@ public class GameManager : MonoBehaviour
             
             if (snareMicroBeatCount == (4 * microBeatsInBeat) + snareToSongDelay)
             {
-                AudioManager.Instance.PlaySong(SceneInformation.Instance.songA, 0);
-                AudioManager.Instance.PlaySong(SceneInformation.Instance.songB, 1);
-                AudioManager.Instance.PlaySong(SceneInformation.Instance.songC, 2);
+                BeginSongLoop();
                 musicStart = true;
                 foreach (SpriteRenderer spr in metronomes)
                 {
@@ -256,6 +277,7 @@ public class GameManager : MonoBehaviour
         AudioManager.Instance.PauseAudio();
         isPaused = true;
         Time.timeScale = 0f;
+        AudioListener.pause = true;
         pauseOverlay.gameObject.SetActive(true);
     }
     
@@ -269,6 +291,7 @@ public class GameManager : MonoBehaviour
         AudioManager.Instance.UnpauseAudio();
         isPaused = false;
         Time.timeScale = 1f;
+        AudioListener.pause = false;
         pauseOverlay.gameObject.SetActive(false);
     }
 
@@ -296,7 +319,7 @@ public class GameManager : MonoBehaviour
     // public void ChangeAudio(float slider)
     // {
     //     const float volumeMultiplier = 5f;
-    //     foreach (AudioSource source in AudioManager.Instance.audioSources)
+    //     foreach (AudioSource source in AudioManager.Instance.mainSources)
     //     {
     //         source.volume = slider * volumeMultiplier;
     //     }

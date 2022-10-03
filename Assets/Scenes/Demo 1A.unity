@@ -147,7 +147,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3023589}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -537.25, y: -61, z: 0}
+  m_LocalPosition: {x: -697.2, y: -85.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1572347746}
@@ -2627,6 +2627,7 @@ MonoBehaviour:
   useWavePattern: 0
   overallRotation: {x: 0, y: 0, z: 0}
   beatBoxPrefab: {fileID: 3434885016373002063, guid: 02dd246dbbf8b8945969c180aa1c0442, type: 3}
+  beatBoxSubParentPrefab: {fileID: 0}
   scaleFactor: {x: 1, y: 1}
 --- !u!4 &1247610480
 Transform:

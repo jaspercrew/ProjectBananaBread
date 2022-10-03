@@ -342,6 +342,11 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
     }
 
+    public void CloseGame()
+    {
+        Application.Quit();
+    }
+
     public void TextPop(string text, float duration = 2f)
     {
         GameObject prefab = Resources.Load<GameObject>("Prefabs/TextNotification");

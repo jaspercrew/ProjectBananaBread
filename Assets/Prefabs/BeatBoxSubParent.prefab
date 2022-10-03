@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 120297492604587021}
   - component: {fileID: 7086938588990556201}
   - component: {fileID: 5082619590236560714}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: BeatBoxSubParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}

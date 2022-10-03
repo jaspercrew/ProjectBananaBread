@@ -897,8 +897,9 @@ MonoBehaviour:
   minHeightBooster: 1
   backdropHeightMultiplier: 2.5
   useWavePattern: 0
-  overallRotation: {x: 0, y: 0, z: 60}
+  overallRotation: {x: 0, y: 0, z: 0}
   beatBoxPrefab: {fileID: 3434885016373002063, guid: 02dd246dbbf8b8945969c180aa1c0442, type: 3}
+  beatBoxSubParentPrefab: {fileID: 6963714681914097078, guid: 7214411600bb1d641ad2796bd799c01f, type: 3}
   scaleFactor: {x: 0.5, y: 0.5}
 --- !u!4 &437944118
 Transform:
@@ -77189,6 +77190,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3945271499517466384, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
   m_PrefabInstance: {fileID: 349443896}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5735207223687334
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 120297492604587021, guid: 7214411600bb1d641ad2796bd799c01f, type: 3}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 120297492604587021, guid: 7214411600bb1d641ad2796bd799c01f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 120297492604587021, guid: 7214411600bb1d641ad2796bd799c01f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 120297492604587021, guid: 7214411600bb1d641ad2796bd799c01f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 120297492604587021, guid: 7214411600bb1d641ad2796bd799c01f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 120297492604587021, guid: 7214411600bb1d641ad2796bd799c01f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 120297492604587021, guid: 7214411600bb1d641ad2796bd799c01f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 120297492604587021, guid: 7214411600bb1d641ad2796bd799c01f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 120297492604587021, guid: 7214411600bb1d641ad2796bd799c01f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 120297492604587021, guid: 7214411600bb1d641ad2796bd799c01f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 120297492604587021, guid: 7214411600bb1d641ad2796bd799c01f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6963714681914097078, guid: 7214411600bb1d641ad2796bd799c01f, type: 3}
+      propertyPath: m_Name
+      value: BeatBoxSubParent
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7214411600bb1d641ad2796bd799c01f, type: 3}
 --- !u!1001 &6315776760858451093
 PrefabInstance:
   m_ObjectHideFlags: 0

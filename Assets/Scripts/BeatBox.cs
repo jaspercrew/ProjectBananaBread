@@ -14,18 +14,12 @@ public class BeatBox : MonoBehaviour
     public Transform backdropB;
 
     private bool wasZeroLastFrame;
-    private bool doChanging;
-    
-    // Start is called before the first frame update
-    private void Start()
-    {
-        
-    }
+    public bool doChanging;
 
     // Update is called once per frame
     private void Update()
     {
-        if (doChanging)
+        if (doChanging)  // changed by sub parent (group parent)
         {
             float height = Math.Min(heightMultiplier * AudioSpectrum.Instance.bufferSpectrum[spectrumIndex] + minLength,
                 maxHeight);
@@ -65,30 +59,5 @@ public class BeatBox : MonoBehaviour
         heightMultiplier = heightMult;
         minLength = minLen;
         backdropHeight = backHeight;
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("MainCamera"))
-        {
-            doChanging = false;
-        }
-    }
-
-    private void OnTriggerStay2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("MainCamera"))
-        {
-            
-            doChanging = true;
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("MainCamera"))
-        {
-            doChanging = true;
-        }
     }
 }

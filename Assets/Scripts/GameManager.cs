@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
         Application.targetFrameRate = 144;
         microBpm = songBpm * 16f;
         secPerBeat = 60f / microBpm;
-        songTime = (double) Time.time;
+        songTime = (double) AudioSettings.dspTime;
         StartCoroutine(SnareCoroutine());
         SaveData.LoadSettings();
         SaveData.LoadFromFile(1);
@@ -97,14 +97,14 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        songPosition = (float) (Time.time - songTime - firstBeatOffset);
+        songPosition = (float) (AudioSettings.dspTime - songTime - firstBeatOffset);
         double newSongPositionInBeats = songPosition / secPerBeat;
         if (Mathf.Floor((float)newSongPositionInBeats) > Mathf.Floor((float)songPositionInBeats))
         {
             WorldMicroBeat();
         }
         songPositionInBeats = newSongPositionInBeats;
-        double time = Time.time;
+        double time = AudioSettings.dspTime;
         if (time + 1.0f > nextLoopTime)
         {
             //return;
@@ -113,7 +113,8 @@ public class GameManager : MonoBehaviour
             AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songB, 1, nextLoopTime, playFlipped);
             AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songC, 2, nextLoopTime, playFlipped);
             playFlipped = !playFlipped;
-            nextLoopTime += (AudioManager.Instance.soundToClip[SceneInformation.Instance.songA].length);
+            AudioClip audioClip = AudioManager.Instance.soundToClip[SceneInformation.Instance.songA];
+            nextLoopTime += (double)audioClip.samples / audioClip.frequency;
         }
     }
 
@@ -123,9 +124,9 @@ public class GameManager : MonoBehaviour
         // AudioManager.Instance.PlaySong(SceneInformation.Instance.songA, 0);
         // AudioManager.Instance.PlaySong(SceneInformation.Instance.songB, 1);
         // AudioManager.Instance.PlaySong(SceneInformation.Instance.songC, 2);
-        // nextLoopTime = Time.time + (60f / songBpm * 64f);
+        // nextLoopTime = AudioSettings.dspTime + (60f / songBpm * 64f);
         //playFlipped = !playFlipped;
-        nextLoopTime = Time.time;
+        nextLoopTime = AudioSettings.dspTime;
     }
 
     public void WorldMicroBeat()

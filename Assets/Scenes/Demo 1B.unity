@@ -2187,7 +2187,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4158951475661347324, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: actionMicroBeats.Array.data[0]
-      value: 63
+      value: 31
       objectReference: {fileID: 0}
     - target: {fileID: 8879888523996725614, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: m_Name
@@ -3001,6 +3001,10 @@ PrefabInstance:
       propertyPath: m_Size.x
       value: 26
       objectReference: {fileID: 0}
+    - target: {fileID: 2294952497199651677, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
+      propertyPath: m_SortingOrder
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 3839422298870858003, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: m_Size.x
       value: 26
@@ -3157,11 +3161,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4158951475661347324, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: timeToMove
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4158951475661347324, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: motifLength
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4158951475661347324, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: moveVector.x
@@ -4920,11 +4924,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4158951475661347324, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: timeToMove
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4158951475661347324, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: motifLength
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4158951475661347324, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: moveVector.x
@@ -5368,11 +5372,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4158951475661347324, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: timeToMove
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4158951475661347324, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: motifLength
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4158951475661347324, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: moveVector.x
@@ -6620,7 +6624,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4158951475661347324, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: actionMicroBeats.Array.data[0]
-      value: 63
+      value: 31
       objectReference: {fileID: 0}
     - target: {fileID: 8879888523996725614, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: m_Name
@@ -140084,11 +140088,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4158951475661347324, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: timeToMove
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4158951475661347324, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: motifLength
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4158951475661347324, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: moveVector.x
@@ -140500,6 +140504,18 @@ PrefabInstance:
     - target: {fileID: 2294952497199651677, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: m_Size.x
       value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 2294952497199651677, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
+      propertyPath: m_SortingLayer
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2294952497199651677, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
+      propertyPath: m_SortingOrder
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2294952497199651677, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -1209786853
       objectReference: {fileID: 0}
     - target: {fileID: 3839422298870858003, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
       propertyPath: m_Size.x

@@ -887,11 +887,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   numBarsPerGroup: 16
   gapBetweenBars: 0
-  numGroups: 32
+  numGroupsPerLayer: 32
   audioIndexOffset: 2
   verticalLayerCount: 15
-  maxHeightPerLayer: 8
-  heightBoostMultiplier: 3
+  maxHeightPerLayer: 9
+  heightBoostMultiplier: 5
   distanceBetweenVerticalLayers: 20
   boxRotation: 0
   minHeightBooster: 1
@@ -900,7 +900,7 @@ MonoBehaviour:
   overallRotation: {x: 0, y: 0, z: 40}
   beatBoxPrefab: {fileID: 3434885016373002063, guid: 02dd246dbbf8b8945969c180aa1c0442, type: 3}
   beatBoxSubParentPrefab: {fileID: 6963714681914097078, guid: 7214411600bb1d641ad2796bd799c01f, type: 3}
-  scaleFactor: {x: 0.5, y: 0.5}
+  scaleFactor: {x: 0.7, y: 0.7}
 --- !u!4 &437944118
 Transform:
   m_ObjectHideFlags: 0
@@ -1822,6 +1822,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 122352544427117143, guid: ddb23ba0221fe5647a477ed38fd9af33, type: 3}
+      propertyPath: m_BackGroundColor.b
+      value: 0.2501741
+      objectReference: {fileID: 0}
+    - target: {fileID: 122352544427117143, guid: ddb23ba0221fe5647a477ed38fd9af33, type: 3}
+      propertyPath: m_BackGroundColor.g
+      value: 0.21386614
+      objectReference: {fileID: 0}
+    - target: {fileID: 122352544427117143, guid: ddb23ba0221fe5647a477ed38fd9af33, type: 3}
+      propertyPath: m_BackGroundColor.r
+      value: 0.509434
+      objectReference: {fileID: 0}
     - target: {fileID: 3232405488041129825, guid: ddb23ba0221fe5647a477ed38fd9af33, type: 3}
       propertyPath: m_RootOrder
       value: 0

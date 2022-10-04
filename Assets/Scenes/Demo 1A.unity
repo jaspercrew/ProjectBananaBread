@@ -2615,7 +2615,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   numBarsPerGroup: 16
   gapBetweenBars: 0
-  numGroups: 32
+  numGroupsPerLayer: 32
   audioIndexOffset: 2
   verticalLayerCount: 10
   maxHeightPerLayer: 8
@@ -2628,7 +2628,7 @@ MonoBehaviour:
   overallRotation: {x: 0, y: 0, z: 0}
   beatBoxPrefab: {fileID: 3434885016373002063, guid: 02dd246dbbf8b8945969c180aa1c0442, type: 3}
   beatBoxSubParentPrefab: {fileID: 6963714681914097078, guid: 7214411600bb1d641ad2796bd799c01f, type: 3}
-  scaleFactor: {x: 0.5, y: 0.5}
+  scaleFactor: {x: 1, y: 1}
 --- !u!4 &1247610480
 Transform:
   m_ObjectHideFlags: 0
@@ -2637,7 +2637,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1247610478}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -740.25, y: -112.25, z: 0}
+  m_LocalPosition: {x: -740.25, y: -99, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

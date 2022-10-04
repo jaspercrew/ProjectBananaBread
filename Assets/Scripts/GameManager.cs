@@ -90,6 +90,11 @@ public class GameManager : MonoBehaviour
         playSnares = true;
     }
 
+    private void OnAudioFilterRead(float[] data, int channels)
+    {
+        
+    }
+
     private void Update()
     {
         songPosition = (float) (Time.time - songTime - firstBeatOffset);
@@ -99,7 +104,8 @@ public class GameManager : MonoBehaviour
             WorldMicroBeat();
         }
         songPositionInBeats = newSongPositionInBeats;
-        if (Time.time + 1.0f > nextLoopTime)
+        double time = Time.time;
+        if (time + 1.0f > nextLoopTime)
         {
             //return;
             //print("loop triggered, is flipped?:" + playFlipped);
@@ -107,18 +113,19 @@ public class GameManager : MonoBehaviour
             AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songB, 1, nextLoopTime, playFlipped);
             AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songC, 2, nextLoopTime, playFlipped);
             playFlipped = !playFlipped;
-            nextLoopTime = nextLoopTime + (60f / songBpm * 64f);
+            nextLoopTime += (AudioManager.Instance.soundToClip[SceneInformation.Instance.songA].length);
         }
     }
 
     private void BeginSongLoop()
     {
         //print("begin song loop");
-        AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songA, 0, Time.time, playFlipped);
-        AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songB, 1, Time.time, playFlipped);
-        AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songC, 2, Time.time, playFlipped);
-        nextLoopTime = Time.time + (60f / songBpm * 64f);
-        playFlipped = !playFlipped;
+        // AudioManager.Instance.PlaySong(SceneInformation.Instance.songA, 0);
+        // AudioManager.Instance.PlaySong(SceneInformation.Instance.songB, 1);
+        // AudioManager.Instance.PlaySong(SceneInformation.Instance.songC, 2);
+        // nextLoopTime = Time.time + (60f / songBpm * 64f);
+        //playFlipped = !playFlipped;
+        nextLoopTime = Time.time;
     }
 
     public void WorldMicroBeat()

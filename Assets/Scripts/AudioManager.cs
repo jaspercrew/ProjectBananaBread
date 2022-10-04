@@ -19,7 +19,7 @@ public class AudioManager : MonoBehaviour
     private AudioSource songSourceAf;
     private AudioSource songSourceBf;
     private AudioSource songSourceCf;
-    private readonly Dictionary<SoundName, AudioClip> soundToClip = new Dictionary<SoundName, AudioClip>();
+    public readonly Dictionary<SoundName, AudioClip> soundToClip = new Dictionary<SoundName, AudioClip>();
     //private readonly Dictionary<SoundName, AudioClip> soundToClipf = new Dictionary<SoundName, AudioClip>();
     public AudioSource[] mainSources;
 

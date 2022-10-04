@@ -14,7 +14,7 @@ public class BeatBox : MonoBehaviour
     public Transform backdropB;
 
     private bool wasZeroLastFrame;
-    private bool wasChangingLastFrame;
+    // private bool wasChangingLastFrame;
     public bool doChanging;
 
     // Update is called once per frame
@@ -37,7 +37,7 @@ public class BeatBox : MonoBehaviour
             mainBox.localScale = sM;
             backdropA.localScale = sA;
             backdropB.localScale = sB;
-            wasChangingLastFrame = true;
+            // wasChangingLastFrame = true;
             wasZeroLastFrame = false;
         } 
         else if (!wasZeroLastFrame)
@@ -52,7 +52,7 @@ public class BeatBox : MonoBehaviour
             backdropA.localScale = sA;
             backdropB.localScale = sB;
             wasZeroLastFrame = true;
-            wasChangingLastFrame = false;
+            // wasChangingLastFrame = false;
         }
         else
         {

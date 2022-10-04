@@ -1,11 +1,12 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = System.Random;
 
 public class BeatBoxParent : MonoBehaviour
 {
     public int numBarsPerGroup = 16;
     public float gapBetweenBars;
-    public int numGroups = 8;
+    [FormerlySerializedAs("numGroups")] public int numGroupsPerLayer = 8;
     public int audioIndexOffset = 2;
     public int verticalLayerCount = 1;
     public float maxHeightPerLayer = 8f;
@@ -36,16 +37,61 @@ public class BeatBoxParent : MonoBehaviour
         
         barWidth = beatBoxPrefab.transform.localScale.x;
         Vector3 spawnLocation = Vector3.zero;
+        Vector3 originalSpawnLocation = spawnLocation;
 
         // float groupWidth = numBarsPerGroup * (barWidth + gapBetweenBars);
-        float groupWidth = 0;
+        // float groupWidth = 0;
+
+        // draw one row at a time
+        for (int verticalLayer = 0; verticalLayer < verticalLayerCount; verticalLayer++)
+        {
+            int rowCount = 0; // change this to overallCount outside this for loop if we don't want the waves to line up
+            
+            // draw one group at a time in the row
+            for (int group = 0; group < numGroupsPerLayer; group++)
+            {
+                // create sub-parent for the group
+                GameObject subParent = Instantiate(beatBoxSubParentPrefab, transform, false);
+                subParent.transform.position = transform.TransformPoint(spawnLocation);
+                
+                // randomize audio frequencies for this group
+                Shuffle(rand, indexArray);
+                
+                // create the boxes in the group
+                for (int bar = 0; bar < numBarsPerGroup; bar++)
+                {
+                    Vector3 waveSpawnLocation = spawnLocation + Mathf.Sin(rowCount / 2f) * 3f * Vector3.up;
+                    rowCount++;
+                    
+                    // create box
+                    GameObject instantiatedBeatBox = Instantiate(beatBoxPrefab, subParent.transform, true);
+                    instantiatedBeatBox.transform.position =
+                        transform.transform.TransformPoint(useWavePattern? waveSpawnLocation : spawnLocation);
+                    instantiatedBeatBox.transform.eulerAngles = new Vector3(0, 0, boxRotation);
+                    
+                    instantiatedBeatBox.GetComponent<BeatBox>().Initialize(indexArray[bar], maxHeightPerLayer, 
+                        heightBoostMultiplier, minHeightBooster, backdropHeightMultiplier);
+
+                    // move right for next box
+                    spawnLocation += barWidth * Vector3.right;
+                }
+            }
+
+            // move all the way back and up for next row
+            spawnLocation = originalSpawnLocation + verticalLayer * distanceBetweenVerticalLayers * Vector3.up;
+        }
+        
+        transform.localScale = scaleFactor;
+        transform.localRotation = Quaternion.Euler(overallRotation.x, overallRotation.y, overallRotation.z);
+        
+        return;
         
         int count = 0;
-        for (int g = 0; g < numGroups; g++)
+        for (int g = 0; g < numGroupsPerLayer; g++)
         {
             Shuffle(rand, indexArray);
             GameObject subParent = Instantiate(beatBoxSubParentPrefab, transform, false);
-            subParent.transform.position = transform.TransformPoint(spawnLocation + groupWidth / 2 * Vector3.right);
+            subParent.transform.position = transform.TransformPoint(spawnLocation);
             
             for (int i = 0; i < numBarsPerGroup; i++)
             {

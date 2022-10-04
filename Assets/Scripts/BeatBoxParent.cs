@@ -73,7 +73,7 @@ public class BeatBoxParent : MonoBehaviour
                         heightBoostMultiplier, minHeightBooster, backdropHeightMultiplier);
 
                     // move right for next box
-                    spawnLocation += barWidth * Vector3.right;
+                    spawnLocation += (barWidth + gapBetweenBars) * Vector3.right;
                 }
             }
 
@@ -81,45 +81,6 @@ public class BeatBoxParent : MonoBehaviour
             spawnLocation = originalSpawnLocation + verticalLayer * distanceBetweenVerticalLayers * Vector3.up;
         }
         
-        transform.localScale = scaleFactor;
-        transform.localRotation = Quaternion.Euler(overallRotation.x, overallRotation.y, overallRotation.z);
-        
-        return;
-        
-        int count = 0;
-        for (int g = 0; g < numGroupsPerLayer; g++)
-        {
-            Shuffle(rand, indexArray);
-            GameObject subParent = Instantiate(beatBoxSubParentPrefab, transform, false);
-            subParent.transform.position = transform.TransformPoint(spawnLocation);
-            
-            for (int i = 0; i < numBarsPerGroup; i++)
-            {
-                count++; // TODO: can't we just use i and q?
-                float verticalAdd = 0f; // TODO: can't we just use h?
-                for (int h = 0; h < verticalLayerCount; h++)
-                {
-                    //print("inst");
-                    if (useWavePattern)
-                    {
-                        spawnLocation = new Vector3(spawnLocation.x, (Mathf.Sin(count / 2f) * 3f) + verticalAdd, spawnLocation.z);
-                    }
-                    else
-                    {
-                        spawnLocation = new Vector3(spawnLocation.x, verticalAdd, spawnLocation.z); 
-                    }
-                    
-                    GameObject instantiatedBeatBox = Instantiate(beatBoxPrefab, subParent.transform, true);
-                    instantiatedBeatBox.transform.position = transform.transform.TransformPoint(spawnLocation);
-                    instantiatedBeatBox.transform.eulerAngles = new Vector3(0, 0, boxRotation);
-                    instantiatedBeatBox.GetComponent<BeatBox>().Initialize(indexArray[i], maxHeightPerLayer, 
-                        heightBoostMultiplier, minHeightBooster, backdropHeightMultiplier);
-                    verticalAdd += distanceBetweenVerticalLayers;
-                }
-                
-                spawnLocation = new Vector3(spawnLocation.x + barWidth + gapBetweenBars, spawnLocation.y, spawnLocation.z);
-            }
-        }
         transform.localScale = scaleFactor;
         transform.localRotation = Quaternion.Euler(overallRotation.x, overallRotation.y, overallRotation.z);
     }

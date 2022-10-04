@@ -5158,7 +5158,7 @@ MonoBehaviour:
   verticalLayerCount: 15
   maxHeightPerLayer: 8
   heightBoostMultiplier: 3
-  distanceBetweenVerticalLayers: 20
+  distanceBetweenVerticalLayers: 15
   boxRotation: 30
   minHeightBooster: 1
   backdropHeightMultiplier: 2.5
@@ -5166,7 +5166,7 @@ MonoBehaviour:
   overallRotation: {x: 0, y: 0, z: 0}
   beatBoxPrefab: {fileID: 3434885016373002063, guid: 02dd246dbbf8b8945969c180aa1c0442, type: 3}
   beatBoxSubParentPrefab: {fileID: 6963714681914097078, guid: 7214411600bb1d641ad2796bd799c01f, type: 3}
-  scaleFactor: {x: 0.5, y: 0.5}
+  scaleFactor: {x: 0.7, y: 0.7}
 --- !u!4 &1247610480
 Transform:
   m_ObjectHideFlags: 0

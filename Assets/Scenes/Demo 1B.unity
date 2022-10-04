@@ -2744,9 +2744,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneFadeAnim: {fileID: 0}
-  songA: 0
-  songB: 14
-  songC: 12
+  songA: 14
+  songB: 13
+  songC: 0
   playMusic: 1
   defaultSpawn: {fileID: 3023590}
   exitMappings:
@@ -5153,7 +5153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   numBarsPerGroup: 16
   gapBetweenBars: 0
-  numGroups: 64
+  numGroupsPerLayer: 64
   audioIndexOffset: 2
   verticalLayerCount: 15
   maxHeightPerLayer: 8

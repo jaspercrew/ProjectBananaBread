@@ -8,6 +8,7 @@ TagManager:
   - CameraBounds
   - Platform
   - CenterCam
+  - AudioSlider
   layers:
   - Default
   - TransparentFX

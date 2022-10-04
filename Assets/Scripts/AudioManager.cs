@@ -110,7 +110,7 @@ public class AudioManager : MonoBehaviour
         foreach (AudioSource source in mainSources)
         {
             
-            print("volume updated for a source");
+            //print("volume updated for a source");
             source.volume = sliderValue * volumeMultiplier;
         }
     }

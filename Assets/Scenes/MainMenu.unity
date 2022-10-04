@@ -17267,7 +17267,7 @@ MonoBehaviour:
   gapBetweenBars: 0
   numGroupsPerLayer: 16
   audioIndexOffset: 2
-  verticalLayerCount: 5
+  verticalLayerCount: 15
   maxHeightPerLayer: 8
   heightBoostMultiplier: 2.5
   distanceBetweenVerticalLayers: 15
@@ -21054,7 +21054,7 @@ GameObject:
   - component: {fileID: 1910024587}
   - component: {fileID: 1910024588}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: AudioSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21597,7 +21597,7 @@ GameObject:
   - component: {fileID: 2024957281}
   m_Layer: 5
   m_Name: RightCanvas
-  m_TagString: Untagged
+  m_TagString: AudioSlider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -22739,7 +22739,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentCam: {fileID: 0}
-  slicePrefab: {fileID: 0}
+  slicePrefab: {fileID: 8688688030893821844, guid: 3906bc8f1bf5cc24c85d66797eab1435, type: 3}
   totalDelayToSpawn: 0
 --- !u!114 &3272253633986146511
 MonoBehaviour:

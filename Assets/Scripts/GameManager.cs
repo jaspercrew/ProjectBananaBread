@@ -48,8 +48,8 @@ public class GameManager : MonoBehaviour
             // Debug.Log("setting gm instance");
             Instance = this;
         }
-        
         GetSceneIndices();
+
     }
 
     public void ToggleFullScreen()
@@ -209,6 +209,12 @@ public class GameManager : MonoBehaviour
         //print(index);
         SaveData.SaveToFile(1);
         StartCoroutine(LoadScene(index));
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveSettings();
+        SaveData.SaveToFile(1);
     }
     
     // public void AttemptSwitchScene(string sceneName)

@@ -312,7 +312,7 @@ public partial class CharController
         if (Input.GetKeyDown(KeyCode.F) && CameraManager.Instance.currentCam.gameObject.CompareTag("DynamicCamera"))
         {
             CameraManager.Instance.currentCam.GetCinemachineComponent<CinemachineFramingTransposer>()
-                .m_TrackedObjectOffset.x = CameraManager.Instance.currentCam.m_Lens.OrthographicSize * 1.8f;
+                .m_TrackedObjectOffset.x = CameraManager.Instance.currentCam.m_Lens.OrthographicSize * -1.8f * transform.localScale.x;
         }
 
         if (Input.GetKeyUp(KeyCode.F) || !CameraManager.Instance.currentCam.gameObject.CompareTag("DynamicCamera"))

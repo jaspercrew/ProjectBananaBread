@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 23815818}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: PauseOverlay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 132609356}
   - component: {fileID: 132609355}
   - component: {fileID: 132609354}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: PauseCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -144,7 +144,7 @@ GameObject:
   m_Component:
   - component: {fileID: 215758607}
   - component: {fileID: 215758608}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: PauseDarkEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1059,7 +1059,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3232405487220130670}
   - component: {fileID: 3232405487220130665}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: MetronomeOrb4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1141,7 +1141,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3232405487707715711}
   - component: {fileID: 3232405487707715710}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: MetronomeOrb2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1255,7 +1255,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3232405487808677732}
   - component: {fileID: 3232405487808677735}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: MetronomeOrb3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1337,7 +1337,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3232405487935785042}
   - component: {fileID: 3232405487935785037}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: MetronomeOrb1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2421,7 +2421,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3272253632892980218, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_Layer
-      value: 13
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3272253632892980223, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_NoiseProfile
@@ -2429,7 +2429,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 4c649d5f31e62a54c8f9d68fdee5733b, type: 2}
     - target: {fileID: 3272253632893003486, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_Layer
-      value: 13
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3272253632893003552, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_NoiseProfile
@@ -2437,7 +2437,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 4c649d5f31e62a54c8f9d68fdee5733b, type: 2}
     - target: {fileID: 3272253633093239314, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_Layer
-      value: 13
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3272253633093239314, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_IsActive
@@ -2453,11 +2453,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3272253633159583768, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_Layer
-      value: 13
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3272253634295666154, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_Layer
-      value: 13
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3272253634295666154, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3272253634321267680, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_RootOrder
@@ -2515,6 +2519,10 @@ PrefabInstance:
       propertyPath: slicePrefab
       value: 
       objectReference: {fileID: 8688688030893821844, guid: 3906bc8f1bf5cc24c85d66797eab1435, type: 3}
+    - target: {fileID: 3272253634321267683, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
+      propertyPath: actionMicroBeats.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3272253634321267686, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: field of view
       value: 60
@@ -2533,7 +2541,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3272253634820623502, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_Layer
-      value: 13
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3272253634820623504, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_Priority
@@ -2553,7 +2561,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5545104354063809303, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_Layer
-      value: 13
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}

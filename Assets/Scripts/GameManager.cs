@@ -264,6 +264,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator MenuExitCoroutine()
     {
         float dropDelay = 2.0f;
+        GameObject.Find("CenterCanvas").GetComponent<Canvas>().enabled = false;
         MenuCenterCam.GetComponent<CinemachineVirtualCamera>().m_Priority = 100;
         yield return new WaitForSeconds(dropDelay);
         TileStateManager.Instance.transform.Find("GridMain").transform.Find("Menu-Exit").gameObject.SetActive(false);

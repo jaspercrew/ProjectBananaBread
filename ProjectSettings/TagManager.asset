@@ -9,6 +9,7 @@ TagManager:
   - Platform
   - CenterCam
   - AudioSlider
+  - DynamicCamera
   layers:
   - Default
   - TransparentFX

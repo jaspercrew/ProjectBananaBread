@@ -10264,7 +10264,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!199 &900178386
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -22754,7 +22754,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   motifLength: 2
-  actionMicroBeats: 00000000
+  actionMicroBeats: 
   virtualCamera: {fileID: 3272253633697909050}
 --- !u!61 &3272253633986146512
 BoxCollider2D:
@@ -22970,7 +22970,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4287943475832138382
 Transform:
   m_ObjectHideFlags: 0

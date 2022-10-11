@@ -2443,6 +2443,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3272253633093239314, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
+      propertyPath: m_TagString
+      value: DynamicCamera
+      objectReference: {fileID: 0}
     - target: {fileID: 3272253633093239316, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_BoundingShape2D
       value: 

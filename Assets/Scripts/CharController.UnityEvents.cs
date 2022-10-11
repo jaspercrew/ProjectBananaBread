@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.SceneManagement;
@@ -302,7 +303,23 @@ public partial class CharController
         WallSlideDetection_Update();
         LineGrappleUpdate();
         Crouching_Update();
+        LookAhead_Update();
 
+    }
+
+    private void LookAhead_Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F) && CameraManager.Instance.currentCam.gameObject.CompareTag("DynamicCamera"))
+        {
+            CameraManager.Instance.currentCam.GetCinemachineComponent<CinemachineFramingTransposer>()
+                .m_TrackedObjectOffset.x = CameraManager.Instance.currentCam.m_Lens.OrthographicSize * 1.8f;
+        }
+
+        if (Input.GetKeyUp(KeyCode.F) || !CameraManager.Instance.currentCam.gameObject.CompareTag("DynamicCamera"))
+        {
+            CameraManager.Instance.currentCam.GetCinemachineComponent<CinemachineFramingTransposer>()
+                .m_TrackedObjectOffset.x = 0;
+        }
     }
     
     

@@ -309,16 +309,22 @@ public partial class CharController
 
     private void LookAhead_Update()
     {
-        if (Input.GetKeyDown(KeyCode.F) && CameraManager.Instance.currentCam.gameObject.CompareTag("DynamicCamera"))
+        if (CameraManager.Instance.currentCam is null)
         {
-            CameraManager.Instance.currentCam.GetCinemachineComponent<CinemachineFramingTransposer>()
+            return;
+        }
+        CinemachineFramingTransposer transposer =
+            CameraManager.Instance.currentCam.GetCinemachineComponent<CinemachineFramingTransposer>();
+        
+        if (Input.GetKeyDown(KeyCode.F) && CameraManager.Instance.currentCam.gameObject.CompareTag("DynamicCamera") && !(transposer is null))
+        {
+            transposer
                 .m_TrackedObjectOffset.x = CameraManager.Instance.currentCam.m_Lens.OrthographicSize * -1.8f * transform.localScale.x;
         }
 
-        if (Input.GetKeyUp(KeyCode.F) || !CameraManager.Instance.currentCam.gameObject.CompareTag("DynamicCamera"))
+        if (!(transposer is null) && (Input.GetKeyUp(KeyCode.F) || !CameraManager.Instance.currentCam.gameObject.CompareTag("DynamicCamera")))
         {
-            CameraManager.Instance.currentCam.GetCinemachineComponent<CinemachineFramingTransposer>()
-                .m_TrackedObjectOffset.x = 0;
+            transposer.m_TrackedObjectOffset.x = 0;
         }
     }
     

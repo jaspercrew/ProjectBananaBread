@@ -2,12 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
     
     public static AudioManager Instance;
+    
 
     // private const float SongVolume = 5f;
 
@@ -20,6 +22,10 @@ public class AudioManager : MonoBehaviour
     private AudioSource songSourceBf;
     private AudioSource songSourceCf;
     public readonly Dictionary<SoundName, AudioClip> soundToClip = new Dictionary<SoundName, AudioClip>();
+
+    public float normalizedVolume;
+
+    private AudioMixer audioMixer;
     //private readonly Dictionary<SoundName, AudioClip> soundToClipf = new Dictionary<SoundName, AudioClip>();
     public AudioSource[] mainSources;
 
@@ -72,6 +78,8 @@ public class AudioManager : MonoBehaviour
         mainSources[5] = songSourceBf;
         mainSources[6] = songSourceCf;
 
+        audioMixer = (AudioMixer) Resources.Load("MainMixer");
+
     }
     
 
@@ -106,13 +114,17 @@ public class AudioManager : MonoBehaviour
     
     public void UpdateVolume(float sliderValue)
     {
-        const float volumeMultiplier = 1f;
-        foreach (AudioSource source in mainSources)
-        {
-            
-            //print("volume updated for a source");
-            source.volume = sliderValue * volumeMultiplier;
-        }
+        // const float volumeMultiplier = 1f;
+        // foreach (AudioSource source in mainSources)
+        // {
+        //     
+        //     //print("volume updated for a source");
+        //     source.volume = sliderValue * volumeMultiplier;
+        // }
+        normalizedVolume = sliderValue;
+
+        audioMixer.SetFloat("MainVolume", Mathf.Log10(sliderValue + .001f) * 20);
+
     }
 
     public void Play(SoundName sound, float volume)

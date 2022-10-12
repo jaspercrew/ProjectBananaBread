@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
@@ -26,9 +27,16 @@ public class AudioSpectrum : MonoBehaviour
     private int largeSpectrumSize = 512;
 
     private int indicesPerBar;
+    private AudioMixer audioMixer;
     
 
     public static AudioSpectrum Instance;
+
+    private void Start()
+    {
+        audioMixer = (AudioMixer)Resources.Load("MainMixer");
+
+    }
     
     private void Update()
     {
@@ -43,7 +51,8 @@ public class AudioSpectrum : MonoBehaviour
                 sum += largeSpectrum[j] * spectrumFactor;
             }
             float average = sum / indicesPerBar;
-            compressedSpectrum[i] = average;
+            float vol = AudioManager.Instance.normalizedVolume;
+            compressedSpectrum[i] = average / (vol + .001f); // + small number to prevent / 0 
         }
         BandBuffer();
         //print(string.Join(" ", bufferSpectrum));

@@ -23,7 +23,7 @@ TagManager:
   - Moveable
   - Slide
   - GroundCheck
-  - SpawnCamera
+  - SpawnCamera/Ignore
   - MainCamera
   - Platform
   - 

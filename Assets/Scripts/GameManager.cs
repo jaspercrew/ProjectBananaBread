@@ -107,8 +107,8 @@ public class GameManager : MonoBehaviour
         double time = Time.time;
         if (time + 3.0d > nextLoopTime)
         {
-            print((time));
-            print(nextLoopTime);
+            //print((time));
+            //print(nextLoopTime);
             //return;
             //print("loop triggered, is flipped?:" + playFlipped);
             AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songA, 0, nextLoopTime, playFlipped);

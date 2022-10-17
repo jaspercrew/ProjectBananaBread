@@ -1491,7 +1491,7 @@ MonoBehaviour:
   snareDelay: 1
   isMenu: 0
   scenesCompleted: 
-  songBpm: 131
+  songBpm: 126
   firstBeatOffset: 0
   coroutineDelay: 0
   snareToSongDelay: 16
@@ -1549,6 +1549,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87931fa32f82a4a468ff808279e61034, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  normalizedVolume: 0
   mainSources: []
 --- !u!82 &8021764628870731025
 AudioSource:
@@ -2465,7 +2466,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3272253634295666154, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3272253634321267680, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_RootOrder
@@ -2540,8 +2541,20 @@ PrefabInstance:
       value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 3272253634321267686, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
+      propertyPath: m_BackGroundColor.b
+      value: 0.2501741
+      objectReference: {fileID: 0}
+    - target: {fileID: 3272253634321267686, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
+      propertyPath: m_BackGroundColor.g
+      value: 0.21386614
+      objectReference: {fileID: 0}
+    - target: {fileID: 3272253634321267686, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
+      propertyPath: m_BackGroundColor.r
+      value: 0.509434
+      objectReference: {fileID: 0}
+    - target: {fileID: 3272253634321267686, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_CullingMask.m_Bits
-      value: 28599
+      value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 3272253634820623502, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_Layer

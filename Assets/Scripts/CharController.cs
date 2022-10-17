@@ -288,6 +288,8 @@ public partial class CharController : BeatEntity
         {
             return;
         }
+        emitFadesTime += .2f;
+
         gravityValue = -Mathf.Abs(gravityValue);
         //transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
         particleChild.transform.localScale =
@@ -302,6 +304,8 @@ public partial class CharController : BeatEntity
         {
             return;
         }
+
+        emitFadesTime += .2f;
         gravityValue = Mathf.Abs(gravityValue);
         particleChild.transform.localScale =
             new Vector3(particleChild.transform.localScale.x, Mathf.Abs(particleChild.transform.localScale.y), 0);

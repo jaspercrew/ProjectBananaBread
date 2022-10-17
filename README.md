@@ -1,1 +1,3 @@
-#A shifting 2D Metroidvania.
+#A dynamic rhythm platformer
+
+https://jaspercrew.itch.io/project-tempo

@@ -76,9 +76,8 @@ public class BeatPlatform : ActivatedEntity
         {
             case PlatformType.Collider:
                 platformCollider.enabled = true;
-                Color temp = spriteRenderer.color;
-                temp.a = 1;
-                spriteRenderer.color = temp;
+                StartCoroutine(BinaryPlatformCoroutine(true));
+
 
                 BoxCollider2D charCollider = CharController.Instance.GetComponent<BoxCollider2D>();
                 Vector3 bounds = charCollider.bounds.extents; 
@@ -195,9 +194,10 @@ public class BeatPlatform : ActivatedEntity
             case PlatformType.Collider:
                 base.Deactivate();
                 platformCollider.enabled = false;
-                Color temp = spriteRenderer.color;
-                temp.a = deactivatedAlpha;
-                spriteRenderer.color = temp;
+                StartCoroutine(BinaryPlatformCoroutine(false));
+                // Color temp = spriteRenderer.color;
+                // temp.a = deactivatedAlpha;
+                // spriteRenderer.color = temp;
                 break;
             
             case PlatformType.Moving:
@@ -270,6 +270,30 @@ public class BeatPlatform : ActivatedEntity
             playerRelativePosition = roundedVector;
             // print(roundedVector);
         }
+    }
+    
+    private IEnumerator BinaryPlatformCoroutine(bool toFull)
+    {
+        Color original = spriteRenderer.color;
+        Color faded = original;
+        faded.a = deactivatedAlpha;
+        Color full = original;
+        full.a = 1;
+        Color fadeTo = toFull ? full : faded;
+        Color initialBurst = toFull ? Color.cyan : Color.black;
+        
+        
+        float elapsedTime = 0f;
+        float fadeTime = .35f;
+        spriteRenderer.color = initialBurst;
+
+        while (elapsedTime < fadeTime)
+        {
+            spriteRenderer.color = Color.Lerp(initialBurst, fadeTo, elapsedTime / fadeTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        spriteRenderer.color = fadeTo;
     }
 
 

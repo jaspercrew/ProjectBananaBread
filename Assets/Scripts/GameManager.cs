@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
         Application.targetFrameRate = 144;
         microBpm = songBpm * 16f;
         secPerBeat = 60f / microBpm;
-        songTime = (double) AudioSettings.dspTime;
+        songTime = (double) Time.time;
         StartCoroutine(SnareCoroutine());
         SaveData.LoadSettings();
         SaveData.LoadFromFile(1);
@@ -97,16 +97,18 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        songPosition = (float) (AudioSettings.dspTime - songTime - firstBeatOffset);
+        songPosition = (float) (Time.time - songTime - firstBeatOffset);
         double newSongPositionInBeats = songPosition / secPerBeat;
         if (Mathf.Floor((float)newSongPositionInBeats) > Mathf.Floor((float)songPositionInBeats))
         {
             WorldMicroBeat();
         }
         songPositionInBeats = newSongPositionInBeats;
-        double time = AudioSettings.dspTime;
-        if (time + 1.0f > nextLoopTime)
+        double time = Time.time;
+        if (time + 3.0d > nextLoopTime)
         {
+            print((time));
+            print(nextLoopTime);
             //return;
             //print("loop triggered, is flipped?:" + playFlipped);
             AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songA, 0, nextLoopTime, playFlipped);
@@ -114,7 +116,8 @@ public class GameManager : MonoBehaviour
             AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songC, 2, nextLoopTime, playFlipped);
             playFlipped = !playFlipped;
             AudioClip audioClip = AudioManager.Instance.soundToClip[SceneInformation.Instance.songA];
-            nextLoopTime += (double)audioClip.samples / audioClip.frequency;
+            //nextLoopTime += (double)audioClip.samples / audioClip.frequency;
+            nextLoopTime += 60d / (double)songBpm * 64d;
         }
     }
 
@@ -124,9 +127,9 @@ public class GameManager : MonoBehaviour
         // AudioManager.Instance.PlaySong(SceneInformation.Instance.songA, 0);
         // AudioManager.Instance.PlaySong(SceneInformation.Instance.songB, 1);
         // AudioManager.Instance.PlaySong(SceneInformation.Instance.songC, 2);
-        // nextLoopTime = AudioSettings.dspTime + (60f / songBpm * 64f);
+        // nextLoopTime = Time.time + (60f / songBpm * 64f);
         //playFlipped = !playFlipped;
-        nextLoopTime = AudioSettings.dspTime;
+        nextLoopTime = Time.time + 3f;
     }
 
     public void WorldMicroBeat()

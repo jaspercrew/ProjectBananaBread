@@ -21,6 +21,15 @@ using UnityEngine;
          base.Start();
          boxCollider2D = GetComponent<BoxCollider2D>();
          spriteRenderer = GetComponent<SpriteRenderer>();
+         
+         Vector3 bounds = boxCollider2D.bounds.extents;
+         float halfWidth = Mathf.Abs(bounds.x);
+         float halfHeight = Mathf.Abs(bounds.y);
+         Vector2 center = (Vector2) transform.position + boxCollider2D.offset.y * Vector2.up;
+
+         Vector2 bottomMiddle = center + halfHeight * Vector2.down;
+         Vector2 bottomLeft = bottomMiddle + halfWidth * Vector2.left;
+         Vector2 bottomRight = bottomMiddle + halfWidth * Vector2.right;
      }
 
      // protected void Update()

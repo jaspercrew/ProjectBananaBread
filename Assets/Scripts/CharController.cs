@@ -30,6 +30,7 @@ public partial class CharController : BeatEntity
     private Rigidbody2D Rigidbody;
     private Animator Animator;
     
+    
     private Vector2 originalColliderSize;
     private Vector2 originalColliderOffset;
     

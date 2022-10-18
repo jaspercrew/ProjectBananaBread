@@ -112,19 +112,37 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
-  m_AnimatedTiles: {}
+  - first: {x: -2, y: -2, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 1
+      m_TileSpriteIndex: 0
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 1
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 0
+  m_AnimatedTiles:
+  - first: {x: -2, y: -2, z: 0}
+    second:
+      m_AnimatedSprites:
+      - {fileID: 21300000, guid: dbd95e0b0a894e24c80c1feabe91c32b, type: 3}
+      - {fileID: 21300000, guid: b986971d1c7b79f4da924287d73529da, type: 3}
+      m_AnimationSpeed: 1
+      m_AnimationTimeOffset: 0
+      m_IsLooping: 1
   m_TileAssetArray:
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: fc82526c006615c438f47dac062eb8dc, type: 2}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: f49f3529a5928e948ba19378b78c4373, type: 2}
   - m_RefCount: 2
     m_Data: {fileID: 11400000, guid: 2a9e933752c0309458fb6f328fe4439f, type: 2}
   - m_RefCount: 4
     m_Data: {fileID: 11400000, guid: 5feb7d4a266571841baf624c3ed3b850, type: 2}
   m_TileSpriteArray:
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 21300000, guid: b986971d1c7b79f4da924287d73529da, type: 3}
   - m_RefCount: 2
     m_Data: {fileID: 21300000, guid: 8b23302dc63ce6e41a46ada152fb8db1, type: 3}
   - m_RefCount: 1
@@ -132,7 +150,7 @@ Tilemap:
   - m_RefCount: 4
     m_Data: {fileID: 21300000, guid: 78860a8a9b4ab6f49ad02b924999e839, type: 3}
   m_TileMatrixArray:
-  - m_RefCount: 3
+  - m_RefCount: 4
     m_Data:
       e00: 1
       e01: 0
@@ -225,8 +243,8 @@ Tilemap:
   m_TileColorArray:
   - m_RefCount: 0
     m_Data: {r: 2.91345e-19, g: 2.91345e-19, b: 2.91345e-19, a: 2.91345e-19}
-  - m_RefCount: 0
-    m_Data: {r: 0, g: 0, b: 0, a: 0}
+  - m_RefCount: 1
+    m_Data: {r: 1, g: 1, b: 1, a: 1}
   - m_RefCount: 1
     m_Data: {r: 0.13207549, g: 0.13207549, b: 0.13207549, a: 1}
   - m_RefCount: 6
@@ -413,7 +431,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3945271499517466384, guid: fdcccb58d942f514697bce223ce4d391, type: 3}
   m_PrefabInstance: {fileID: 5064805245071301496}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2843867228139744217
+--- !u!114 &2718323053930430710
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

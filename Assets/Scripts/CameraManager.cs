@@ -14,7 +14,7 @@ public class CameraManager : MonoBehaviour {
     private TransitionSlice[] slices;
     private const int numSlices = 8;
     private const float initialDelay = .3f;
-    private const float arppegioTime = .75f;
+    private const float arppegioTime = .55f;
     private const float disappearDelay = .5f;
     public const float sliceFadeTime = .2f;
     public float totalDelayToSpawn;

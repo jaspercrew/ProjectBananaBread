@@ -50,6 +50,8 @@ public partial class CharController : BeatEntity
     private const float MaxYSpeed = 30f;
     private const float DashBoost = 15f;
     private const float heightReducer = 4f;
+
+    private const float inversionForce = 3f;
     // private const float VerticalDrag = 10f;
     [SerializeField]
     private float jumpForce = 12f;
@@ -290,6 +292,7 @@ public partial class CharController : BeatEntity
             return;
         }
         emitFadesTime += .2f;
+        Rigidbody.AddForce(Vector2.up * inversionForce, ForceMode2D.Impulse);
 
         gravityValue = -Mathf.Abs(gravityValue);
         //transform.RotateAround(spriteRenderer.bounds.center, Vector3.forward, 180);
@@ -305,6 +308,7 @@ public partial class CharController : BeatEntity
         {
             return;
         }
+        Rigidbody.AddForce(Vector2.down * inversionForce, ForceMode2D.Impulse);
 
         emitFadesTime += .2f;
         gravityValue = Mathf.Abs(gravityValue);

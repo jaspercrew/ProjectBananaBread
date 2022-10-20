@@ -34,12 +34,13 @@ public class BeatPlatform : ActivatedEntity
         {
             spriteRenderer.color = Color.red;
         }
-
-
-
         if (isWallSlideable)
         {
             spriteRenderer.color = new Color(1f, .5f, 0);
+        }
+        else
+        {
+            spriteRenderer.color = new Color(.7f, .7f, 1f, 1f);
         }
         base.Start();
     }
@@ -280,11 +281,11 @@ public class BeatPlatform : ActivatedEntity
         Color full = original;
         full.a = 1;
         Color fadeTo = toFull ? full : faded;
-        Color initialBurst = toFull ? Color.cyan : Color.black;
+        Color initialBurst = toFull ? Color.white : Color.black;
         
         
         float elapsedTime = 0f;
-        float fadeTime = .35f;
+        float fadeTime = .25f;
         spriteRenderer.color = initialBurst;
 
         while (elapsedTime < fadeTime)

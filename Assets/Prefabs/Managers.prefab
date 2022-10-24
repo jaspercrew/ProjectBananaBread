@@ -2456,6 +2456,10 @@ PrefabInstance:
       propertyPath: m_Priority
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 3272253633093239318, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
+      propertyPath: m_Lens.OrthographicSize
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 3272253633159583768, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_Layer
       value: 5
@@ -2466,7 +2470,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3272253634295666154, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3272253634321267680, guid: c910ddb7a0fbbb341a348cbe0a64e036, type: 3}
       propertyPath: m_RootOrder

@@ -3,10 +3,9 @@ using System.Collections;
 
 public class HazardTile : MonoBehaviour
 {
-
     private void OnCollisionEnter2D(Collision2D col)
     {
-        print("col");
+        //print("col");
         
         if (col.gameObject.CompareTag("Player"))
         {

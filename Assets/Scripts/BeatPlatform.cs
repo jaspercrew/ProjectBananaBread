@@ -22,7 +22,7 @@ public class BeatPlatform : ActivatedEntity
     private bool isPlayerTouching;
     private Vector2 playerRelativePosition;
     
-    private const float deathCheckFactor = .75f;
+    private const float deathCheckFactor = .6f;
     private const float deactivatedAlpha = .3f;
     
     // Start is called before the first frame update

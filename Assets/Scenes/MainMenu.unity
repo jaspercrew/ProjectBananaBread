@@ -22095,6 +22095,7 @@ MonoBehaviour:
   songA: 16
   songB: 0
   songC: 0
+  songD: 0
   playMusic: 1
   defaultSpawn: {fileID: 476372535}
   exitMappings:

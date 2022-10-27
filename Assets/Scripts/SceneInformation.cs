@@ -10,16 +10,19 @@ using UnityEngine.Serialization;
 //     public float speedOnPlayer; 
 //     public bool isHorizontal;
 // }
-
 public enum SpawnPickDirection
 {
-    Leftmost, Rightmost, Highest, Lowest
+    Leftmost,
+    Rightmost,
+    Highest,
+    Lowest
 }
 
 [Serializable]
 public class ExitToNextSpawn
 {
     public Transform exitTrigger;
+
     // public UnityEngine.Object destinationScene;
     // public string sceneNameOverride;
     public string destSceneName;
@@ -39,9 +42,8 @@ public class SceneInformation : MonoBehaviour
 
     public const float SceneTransitionTime = 0.55f;
 
-    [HideInInspector]
-    public Animator sceneFadeAnim;
-    
+    [HideInInspector] public Animator sceneFadeAnim;
+
     // public bool isGravityScene;
     // public bool isWindScene;
     public SoundName songA;
@@ -52,10 +54,11 @@ public class SceneInformation : MonoBehaviour
     public bool playMusic;
 
     public Transform defaultSpawn;
+
     [Header("This configures exits from this scene")]
     public List<ExitToNextSpawn> exitMappings;
 
-    private readonly Dictionary<Transform, ExitToNextSpawn> exitToScene = 
+    private readonly Dictionary<Transform, ExitToNextSpawn> exitToScene =
         new Dictionary<Transform, ExitToNextSpawn>();
 
     [Header("This configures any overrides for entrances to this scene")]
@@ -83,14 +86,17 @@ public class SceneInformation : MonoBehaviour
             {
                 leftmostSpawn = pos;
             }
+
             if (pos.x > rightmostSpawn.x)
             {
                 rightmostSpawn = pos;
             }
+
             if (pos.y > topSpawn.y)
             {
                 topSpawn = pos;
             }
+
             if (pos.y < bottomSpawn.y)
             {
                 bottomSpawn = pos;
@@ -137,54 +143,54 @@ public class SceneInformation : MonoBehaviour
 
     private void Update()
     {
-
     }
 
     public Vector3 GetInitialSpawnPosition()
     {
+        //print("getinitspawn");
         //SpawnAreaController currentArea = CharController.Instance.currentArea;
-        if (!SceneTransitionManager.Instance.LastExitInfo.HasBeenSet)
-        {
-            if (SceneTransitionManager.Instance)
-            {
-                Transform spawns = transform.Find("SpawnAreas");
-                if (spawns != null)
-                {
-                    int checkpoint = SceneTransitionManager.Instance.checkPointToUse;
-                    if (checkpoint >= 0)
-                    {
-                        return spawns.Find("SpawnArea" + checkpoint).position;
-                    }
-                }
-            }
-            Debug.LogWarning("no last exit info or spawn area info, assuming first spawn, using default spawn");
-            return defaultSpawn.position;
-        }
-    
-        string exitName = SceneTransitionManager.Instance.LastExitInfo.exitName;
 
-        if (exitToSpawnOverride.ContainsKey(exitName))
+        //print("prespawn null check");
+        Transform spawns = transform.Find("SpawnAreas");
+        if (spawns != null)
         {
-            Debug.Log("using override entrance spawn for previous exit " + exitName);
-            return exitToSpawnOverride[exitName].position;
+            int checkpoint = SceneTransitionManager.Instance.checkPointToUse;
+            
+            if (checkpoint >= 0)
+            {
+                return spawns.Find("SpawnArea" + checkpoint).GetComponent<SpawnAreaController>().spawnLocation
+                    .localPosition;
+            }
         }
         
-        SpawnPickDirection dir = SceneTransitionManager.Instance.LastExitInfo.SpawnPickDirection;
-
-        switch (dir)
-        {
-            case SpawnPickDirection.Leftmost:
-                return leftmostSpawn;
-            case SpawnPickDirection.Rightmost:
-                return rightmostSpawn;
-            case SpawnPickDirection.Highest:
-                return topSpawn;
-            case SpawnPickDirection.Lowest:
-                return bottomSpawn;
-            default:
-                Debug.LogError("could not pick spawn direction from previous scene, " +
-                               "using default spawn!");
-                return defaultSpawn.position;
-        }
+        Debug.LogWarning("no last exit info or spawn area info, assuming first spawn, using default spawn");
+        return defaultSpawn.position;
+        
+        //
+        // string exitName = SceneTransitionManager.Instance.LastExitInfo.exitName;
+        //
+        // if (exitToSpawnOverride.ContainsKey(exitName))
+        // {
+        //     Debug.Log("using override entrance spawn for previous exit " + exitName);
+        //     return exitToSpawnOverride[exitName].position;
+        // }
+        //
+        // SpawnPickDirection dir = SceneTransitionManager.Instance.LastExitInfo.SpawnPickDirection;
+        //
+        // switch (dir)
+        // {
+        //     case SpawnPickDirection.Leftmost:
+        //         return leftmostSpawn;
+        //     case SpawnPickDirection.Rightmost:
+        //         return rightmostSpawn;
+        //     case SpawnPickDirection.Highest:
+        //         return topSpawn;
+        //     case SpawnPickDirection.Lowest:
+        //         return bottomSpawn;
+        //     default:
+        //         Debug.LogError("could not pick spawn direction from previous scene, " +
+        //                        "using default spawn!");
+        //         return defaultSpawn.position;
+        //}
     }
 }

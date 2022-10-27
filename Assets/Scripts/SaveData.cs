@@ -16,13 +16,9 @@ public class SaveData
     
     //private int playerHealth;
     //private string playerScene;
-    public static bool[][] defaultLevelProgress = new bool[][]
-    {
-        new bool[6], 
-        new bool[1],
-    };
-
-    public bool[][] levelProgress = defaultLevelProgress;
+    public static int[] defaultLevelProgress = new int[5];
+    public static int[] levelLengths = {1, 1, 1, 1, 6};
+    public int[] levelProgress = defaultLevelProgress;
 
     public class Settings
     {

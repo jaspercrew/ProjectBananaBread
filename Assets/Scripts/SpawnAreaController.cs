@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.Assertions.Must;
 using UnityEngine.SceneManagement;
 
 public class SpawnAreaController : MonoBehaviour
@@ -25,12 +26,16 @@ public class SpawnAreaController : MonoBehaviour
             try
             {
                 int numVal = Int32.Parse(spawnLocation.name);
-                SceneTransitionManager.Instance.checkPointToUse = numVal;
+                if (GameManager.Instance.levelProgress[SceneManager.GetActiveScene().buildIndex] < numVal)
+                {
+                    GameManager.Instance.levelProgress[SceneManager.GetActiveScene().buildIndex] = numVal;
+                }
             }
             catch (FormatException e)
             {
                 Console.WriteLine(e.Message);
             }
+            SaveData.SaveToFile(1);
         }
     }
 }

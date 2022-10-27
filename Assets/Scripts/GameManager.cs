@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     private bool playSnares;
     public float snareDelay = 1f;
     public bool isMenu;
-    public bool[][] levelProgress;
+    public int[] levelProgress;
     private bool playFlipped;
 
     // https://www.gamedeveloper.com/audio/coding-to-the-beat---under-the-hood-of-a-rhythm-game-in-unity
@@ -209,10 +209,11 @@ public class GameManager : MonoBehaviour
             .Substring(path.LastIndexOf('/') + 1);       // gets the name of the scene (after directory)
     }
     
-    public void AttemptSwitchScene(int index, int checkpoint = 0)
+    public void AttemptSwitchScene(int index)
     {
         //print(index);
         SaveData.SaveToFile(1);
+        SaveData.SaveSettings();
         StartCoroutine(LoadScene(index));
     }
 
@@ -234,14 +235,17 @@ public class GameManager : MonoBehaviour
     
     
 
-    private IEnumerator LoadScene(int index, int checkpoint = 0)
+    private IEnumerator LoadScene(int sceneIndex)
     {
         
         AudioManager.Instance.AllFadeOut();
+        SceneInformation.Instance.exitMappings[0].destSceneName = SceneNameFromIndex(sceneIndex);
+        int furthestCheckpoint = levelProgress[sceneIndex];
+        SceneTransitionManager.Instance.checkPointToUse = furthestCheckpoint;
         SceneInformation.Instance.sceneFadeAnim.speed = 2 / SceneInformation.SceneTransitionTime;
         SceneInformation.Instance.sceneFadeAnim.SetTrigger(Animator.StringToHash("Start"));
         yield return new WaitForSeconds(SceneInformation.SceneTransitionTime);
-        SceneManager.LoadSceneAsync(index);
+        SceneManager.LoadSceneAsync(sceneIndex);
         //AudioManager.Instance.Awake();
     }
     
@@ -259,8 +263,9 @@ public class GameManager : MonoBehaviour
 
     public void MenuExit(int sceneIndex)
     {
-        bool[] currentLevelCheckPoints = levelProgress[sceneIndex];
-        if (currentLevelCheckPoints[currentLevelCheckPoints.Length - 1] || sceneIndex < 2)
+        SaveData.SaveToFile(1);
+        if (sceneIndex >= levelProgress.Length || //out of indices
+            levelProgress[sceneIndex] == SaveData.levelLengths[sceneIndex] - 1 || sceneIndex < 2)
         {
             PrepMenuExit(sceneIndex);
             StartCoroutine(MenuExitCoroutine());
@@ -286,16 +291,7 @@ public class GameManager : MonoBehaviour
         // SceneInformation.Instance.exitMappings[0].sceneNameOverride = 
         //     path.Substring(0, path.Length - 6).Substring(path.LastIndexOf('/') + 1);
         SceneInformation.Instance.exitMappings[0].destSceneName = SceneNameFromIndex(sceneIndex);
-        int furthestCheckpoint = 0;
-        foreach (bool cp in levelProgress[sceneIndex])
-        {
-            if (!cp)
-            {
-                break;
-            }
-            furthestCheckpoint++;
-        }
-        SceneTransitionManager.Instance.checkPointToUse = furthestCheckpoint;
+        SceneTransitionManager.Instance.checkPointToUse = levelProgress[sceneIndex];
     }
 
     public void Pause()

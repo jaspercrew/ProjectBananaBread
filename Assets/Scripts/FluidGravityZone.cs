@@ -16,7 +16,7 @@ using UnityEngine;
      
      // Start is called before the first frame update
      private BoxCollider2D boxCollider2D;
-     private ParticleSystem particleSystem;
+     private ParticleSystem gravParticleSystem;
      private ParticleSystem.ShapeModule shapeModule;
      private SpriteRenderer spriteRenderer;
      private ParticleSystem.VelocityOverLifetimeModule velocityModule;
@@ -30,21 +30,21 @@ using UnityEngine;
          
          boxCollider2D = GetComponent<BoxCollider2D>();
          spriteRenderer = GetComponent<SpriteRenderer>();
-         particleSystem = GetComponent<ParticleSystem>();
+         gravParticleSystem = GetComponent<ParticleSystem>();
 
          lowerYBound = -boxCollider2D.size.y / 2;
-         shapeModule = particleSystem.shape;
+         shapeModule = gravParticleSystem.shape;
          shapeModule.radius = boxCollider2D.size.x / 2 - edgeGap;
          shapeModule.position = new Vector3(0, lowerYBound, 0);
 
-         var emission = particleSystem.emission;
+         var emission = gravParticleSystem.emission;
 
          var burst = emission.GetBurst(0);
          burst.count = new ParticleSystem.MinMaxCurve(shapeModule.radius * particleDensity);
          emission.SetBurst(0, burst);
 
-         velocityModule = particleSystem.velocityOverLifetime;
-         mainModule = particleSystem.main;
+         velocityModule = gravParticleSystem.velocityOverLifetime;
+         mainModule = gravParticleSystem.main;
 
          // Vector2 bottomLeft = bottomMiddle + halfWidth * Vector2.left;
          // Vector2 bottomRight = bottomMiddle + halfWidth * Vector2.right;
@@ -78,8 +78,8 @@ using UnityEngine;
 
      protected override void Activate() {
          base.Activate();
-         //var velocityModule = particleSystem.velocityOverLifetime;
-         particleSystem.Play();
+         //var velocityModule = gravParticleSystem.velocityOverLifetime;
+         gravParticleSystem.Play();
          velocityModule.speedModifier = 1;
          mainModule.startRotation = new ParticleSystem.MinMaxCurve(Mathf.Deg2Rad * 0);
          shapeModule.position = new Vector3(0, lowerYBound, 0);
@@ -88,9 +88,9 @@ using UnityEngine;
 
      protected override void Deactivate() {
          base.Deactivate();
-         //var velocityModule = particleSystem.velocityOverLifetime;
-         particleSystem.Stop();
-         particleSystem.Clear();
+         //var velocityModule = gravParticleSystem.velocityOverLifetime;
+         gravParticleSystem.Stop();
+         gravParticleSystem.Clear();
          // velocityModule.speedModifier = -1;
          // mainModule.startRotation = new ParticleSystem.MinMaxCurve(Mathf.Deg2Rad * 180);
          // shapeModule.position = new Vector3(0, -lowerYBound, 0);

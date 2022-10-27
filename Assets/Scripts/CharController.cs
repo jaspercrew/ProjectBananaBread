@@ -75,7 +75,7 @@ public partial class CharController : BeatEntity
     private float lastDashTime;
 
     public bool isInverted;
-    public GameAreaController currentArea;
+    public SpawnAreaController currentArea;
     // ReSharper disable once InconsistentNaming
     public bool isJumpBoosted;
     private bool isPlatformGrounded;
@@ -338,7 +338,7 @@ public partial class CharController : BeatEntity
 
         if (currentArea == null || currentArea.spawnLocation == null)
         {
-            transform.position = SceneInformation.Instance.GetSpawnPos();
+            transform.position = SceneInformation.Instance.GetInitialSpawnPosition();
         }
         else
         {

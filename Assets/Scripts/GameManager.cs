@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     private bool playSnares;
     public float snareDelay = 1f;
     public bool isMenu;
-    public bool[] scenesCompleted;
+    public bool[][] levelProgress;
     private bool playFlipped;
 
     // https://www.gamedeveloper.com/audio/coding-to-the-beat---under-the-hood-of-a-rhythm-game-in-unity
@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
             pauseOverlay.gameObject.SetActive(false);
         }
 
-        //print(scenesCompleted.ToList());
+        //print(levelProgress.ToList());
 
     }
     
@@ -114,6 +114,8 @@ public class GameManager : MonoBehaviour
             AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songA, 0, nextLoopTime, playFlipped);
             AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songB, 1, nextLoopTime, playFlipped);
             AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songC, 2, nextLoopTime, playFlipped);
+            AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songD, 3, nextLoopTime, playFlipped);
+
             playFlipped = !playFlipped;
             AudioClip audioClip = AudioManager.Instance.soundToClip[SceneInformation.Instance.songA];
             //nextLoopTime += (double)audioClip.samples / audioClip.frequency;
@@ -207,7 +209,7 @@ public class GameManager : MonoBehaviour
             .Substring(path.LastIndexOf('/') + 1);       // gets the name of the scene (after directory)
     }
     
-    public void AttemptSwitchScene(int index)
+    public void AttemptSwitchScene(int index, int checkpoint = 0)
     {
         //print(index);
         SaveData.SaveToFile(1);
@@ -232,7 +234,7 @@ public class GameManager : MonoBehaviour
     
     
 
-    private IEnumerator LoadScene(int index)
+    private IEnumerator LoadScene(int index, int checkpoint = 0)
     {
         
         AudioManager.Instance.AllFadeOut();
@@ -255,11 +257,12 @@ public class GameManager : MonoBehaviour
     // }
 
 
-    public void MenuExit(int index)
+    public void MenuExit(int sceneIndex)
     {
-        if (scenesCompleted[index - 1] || index < 2)
+        bool[] currentLevelCheckPoints = levelProgress[sceneIndex];
+        if (currentLevelCheckPoints[currentLevelCheckPoints.Length - 1] || sceneIndex < 2)
         {
-            PrepMenuExit(index);
+            PrepMenuExit(sceneIndex);
             StartCoroutine(MenuExitCoroutine());
         }
     }
@@ -275,14 +278,24 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void PrepMenuExit(int index)
+    public void PrepMenuExit(int sceneIndex)
     {
         //SceneManager.LoadScene(index);
         AudioManager.Instance.AllFadeOut();
         // string path = SceneUtility.GetScenePathByBuildIndex(index);
         // SceneInformation.Instance.exitMappings[0].sceneNameOverride = 
         //     path.Substring(0, path.Length - 6).Substring(path.LastIndexOf('/') + 1);
-        SceneInformation.Instance.exitMappings[0].destSceneName = SceneNameFromIndex(index);
+        SceneInformation.Instance.exitMappings[0].destSceneName = SceneNameFromIndex(sceneIndex);
+        int furthestCheckpoint = 0;
+        foreach (bool cp in levelProgress[sceneIndex])
+        {
+            if (!cp)
+            {
+                break;
+            }
+            furthestCheckpoint++;
+        }
+        SceneTransitionManager.Instance.checkPointToUse = furthestCheckpoint;
     }
 
     public void Pause()

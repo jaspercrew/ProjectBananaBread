@@ -23,6 +23,8 @@ public class LastExitInfo
 
 public class SceneTransitionManager : MonoBehaviour
 {
+    public int checkPointToUse = -1;
+
     public static SceneTransitionManager Instance;
     public LastExitInfo LastExitInfo = new LastExitInfo();
 

@@ -51,7 +51,9 @@ public class SceneExitLoadZone : MonoBehaviour
             if (isSceneFinishPoint)
             {
                 //print(SceneManager.GetActiveScene().buildIndex);
-                GameManager.Instance.scenesCompleted[SceneManager.GetActiveScene().buildIndex] = true;
+                bool[] currentLevelCheckpoints =
+                    GameManager.Instance.levelProgress[SceneManager.GetActiveScene().buildIndex];
+                currentLevelCheckpoints[currentLevelCheckpoints.Length - 1] = true;
             }
             //AudioManager.Instance.AllFadeOut();
             //SaveData.SaveToFile(1);

@@ -32,7 +32,7 @@
 //         //mainCamera.rect = new Rect(0, 0, 1, 1);
 //         if (CharController.Instance.currentArea == null || CharController.Instance.currentArea.spawnLocation == null)
 //         {
-//             transform.position = SceneInformation.Instance.GetSpawnPos();
+//             transform.position = SceneInformation.Instance.GetInitialSpawnPosition();
 //         }
 //         else
 //         {

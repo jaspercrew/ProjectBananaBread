@@ -47,6 +47,7 @@ public class SceneInformation : MonoBehaviour
     public SoundName songA;
     public SoundName songB;
     public SoundName songC;
+    public SoundName songD;
 
     public bool playMusic;
 
@@ -139,11 +140,24 @@ public class SceneInformation : MonoBehaviour
 
     }
 
-    public Vector3 GetSpawnPos()
+    public Vector3 GetInitialSpawnPosition()
     {
+        //SpawnAreaController currentArea = CharController.Instance.currentArea;
         if (!SceneTransitionManager.Instance.LastExitInfo.HasBeenSet)
         {
-            Debug.LogWarning("no last exit info, assuming first spawn, using default spawn");
+            if (SceneTransitionManager.Instance)
+            {
+                Transform spawns = transform.Find("SpawnAreas");
+                if (spawns != null)
+                {
+                    int checkpoint = SceneTransitionManager.Instance.checkPointToUse;
+                    if (checkpoint >= 0)
+                    {
+                        return spawns.Find("SpawnArea" + checkpoint).position;
+                    }
+                }
+            }
+            Debug.LogWarning("no last exit info or spawn area info, assuming first spawn, using default spawn");
             return defaultSpawn.position;
         }
     

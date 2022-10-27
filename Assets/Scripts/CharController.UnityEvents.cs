@@ -70,8 +70,8 @@ public partial class CharController
         charLight.enabled = false;
 
         // set char's spawn
-        //Debug.Log(SceneInformation.Instance.GetSpawnPos());
-        transform.position = SceneInformation.Instance.GetSpawnPos();
+        //Debug.Log(SceneInformation.Instance.GetInitialSpawnPosition());
+        transform.position = SceneInformation.Instance.GetInitialSpawnPosition();
         base.Start();
     }
 

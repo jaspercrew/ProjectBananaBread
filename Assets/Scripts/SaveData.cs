@@ -15,8 +15,14 @@ public class SaveData
     private static SaveData instance = new SaveData();
     
     //private int playerHealth;
-    private string playerScene;
-    public bool[] scenesCompleted;
+    //private string playerScene;
+    public static bool[][] defaultLevelProgress = new bool[][]
+    {
+        new bool[6], 
+        new bool[1],
+    };
+
+    public bool[][] levelProgress = defaultLevelProgress;
 
     public class Settings
     {
@@ -101,13 +107,11 @@ public class SaveData
 
     public static void SaveToFile(int saveNum)
     {
-
-
         instance = new SaveData
         {
             // update stuff here, then save to object file
-            playerScene = SceneManager.GetActiveScene().name,
-            scenesCompleted = GameManager.Instance.scenesCompleted,
+            //playerScene = SceneManager.GetActiveScene().name,
+            levelProgress = GameManager.Instance.levelProgress,
         };
 
         // write to file
@@ -130,12 +134,12 @@ public class SaveData
         }
         catch (IOException ioe)
         {
-            Debug.LogError("IO ERROR WHILE LOADING FILE, USING DEFAULT SAVE OBJECT " + saveNum + ": " + ioe.Message);
+            Debug.LogError("IO ERROR WHILE LOADING SAVEFILE, USING DEFAULT SAVE OBJECT " + saveNum + ": " + ioe.Message);
             //DEFAULT SAVE OBJECT
             instance = new SaveData();
-            instance.playerScene = "MainMenu";
-            instance.scenesCompleted = new bool[10];
-            GameManager.Instance.scenesCompleted = instance.scenesCompleted;
+            //instance.playerScene = "MainMenu";
+            instance.levelProgress = defaultLevelProgress;
+            GameManager.Instance.levelProgress = instance.levelProgress;
             return;
         }
 
@@ -145,36 +149,17 @@ public class SaveData
         }
         catch (SerializationException)
         {
-            GameManager.Instance.scenesCompleted = new bool[10];
-            Debug.LogError("something is wrong with the save file, ignoring it");
+            GameManager.Instance.levelProgress = defaultLevelProgress;
+            Debug.LogError("something is wrong with the read save file, using default lvl progress");
             return;
         }
         
-        if (instance.scenesCompleted.Length < 1)
+        if (instance.levelProgress.Length < 1)
         {
-            instance.scenesCompleted = new bool[10];
+            instance.levelProgress = defaultLevelProgress;
             Debug.LogError("save file has null scenes completed, inserted new array");
         }
         
-        
-        
-        //CharController.Instance.currentHealth = instance.playerHealth;
-        //UIManager.Instance.PopulateHealthBarPublic();
-        //GameManager.Instance.LeverDict = instance.levers;
-        // GameManager.Instance.isReady = true;
-        GameManager.Instance.scenesCompleted = instance.scenesCompleted;
-
-        //Debug.Log("scene in save file: " + instance.playerScene + " (not being loaded)");
-        
-        // SceneManager.LoadSceneAsync(instance.playerScene); // TODO ??
-
-        // AsyncOperation op = SceneManager.LoadSceneAsync(instance.playerScene);
-        // // apply save data to player and world here
-        // op.completed += (asyncOp) =>
-        // {
-        //     CharController.Instance.CurrentHealth = instance.playerHealth;
-        //     UIManager.Instance.PopulateHealthBarPublic();
-        //     // Debug.Log("finished loading new scene");
-        // };
+        GameManager.Instance.levelProgress = instance.levelProgress;
     }
 }

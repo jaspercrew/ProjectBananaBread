@@ -18,16 +18,21 @@ public class LockSpriteController : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        // if (GameManager.Instance.scenesCompleted.Length < 1)
+        // if (GameManager.Instance.levelProgress.Length < 1)
         // {
         //     SaveData.LoadFromFile(1);
         // }
-        //print(GameManager.Instance.scenesCompleted.Length);
-        if (GameManager.Instance.scenesCompleted[prevSceneIndex])
+        //print(GameManager.Instance.levelProgress.Length);
+        if (prevSceneIndex < GameManager.Instance.levelProgress.Length)
         {
-            Color temp = spriteRenderer.color;
-            temp.a = 0f;
-            spriteRenderer.color = temp;
+            bool[] checkpointOfPrevious = GameManager.Instance.levelProgress[prevSceneIndex];
+            if (checkpointOfPrevious != null && checkpointOfPrevious.Length > 0 &&
+                checkpointOfPrevious[checkpointOfPrevious.Length - 1])
+            {
+                Color temp = spriteRenderer.color;
+                temp.a = 0f;
+                spriteRenderer.color = temp;
+            }
         }
     }
 

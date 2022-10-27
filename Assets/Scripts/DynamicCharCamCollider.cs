@@ -6,6 +6,7 @@ public class DynamicCharCamCollider : MonoBehaviour
 {
     private CinemachineVirtualCamera cam;
     private PolygonCollider2D camCollider;
+    public int cameraOverridePriority = 0;
     
 
     private void Start()
@@ -20,7 +21,7 @@ public class DynamicCharCamCollider : MonoBehaviour
         cam.Priority = 1;
         if (camCollider.bounds.Contains(CharController.Instance.transform.localPosition) && CharController.Instance.transform.parent == null)
         {
-            cam.Priority = 15;
+            cam.Priority = 15 + cameraOverridePriority;
         }
     }
 

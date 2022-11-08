@@ -110,6 +110,15 @@ public partial class CharController
             float momentumPercentage = .5f;
             momentumVector = mostRecentlyTouchedPlatform.movingVelocity;
             momentumVector = new Vector2(momentumVector.x * momentumPercentage, momentumVector.y < 0 ? 0 : momentumVector.y * momentumPercentage);
+            if (Mathf.Sign(moveVector) != Mathf.Sign(momentumVector.x))
+            {
+                momentumVector.x = 0;
+            }
+
+            if (momentumVector.x != 0)
+            {
+                recentlyImpulsed = true;
+            }
             print(momentumVector);
 
             

@@ -15,12 +15,16 @@ public class BeatPlatform : ActivatedEntity
     public float timeToMove = 2f;
     public Vector2 moveVector;
     public bool isWallSlideable;
+
+    public Vector2 movingVelocity;
     
     private Collider2D platformCollider;
     private SpriteRenderer spriteRenderer;
     private Vector2 originalPosition;
     private bool isPlayerTouching;
     private Vector2 playerRelativePosition;
+    private IEnumerator movingCo;
+    
     
     private const float deathCheckFactor = .6f;
     private const float deactivatedAlpha = .3f;
@@ -28,6 +32,7 @@ public class BeatPlatform : ActivatedEntity
     // Start is called before the first frame update
     protected override void Start()
     {
+        originalPosition = transform.position;
         platformCollider = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (isHazard)
@@ -42,6 +47,9 @@ public class BeatPlatform : ActivatedEntity
         {
             spriteRenderer.color = new Color(.7f, .7f, 1f, 1f);
         }
+
+        GetComponentInChildren<TrailRenderer>().emitting = (type == PlatformType.Moving);
+   
         base.Start();
     }
 
@@ -97,13 +105,15 @@ public class BeatPlatform : ActivatedEntity
                 if (platformBounds.Contains(bottomLeft) || platformBounds.Contains(bottomRight) || 
                     platformBounds.Contains(topLeft) || platformBounds.Contains(topRight) || platformBounds.Contains(center))
                 {
-                    //CharController.Instance.Die();
+                    //CharController.Instance.Die(); //FIND NEW SOLUTION
                 }
                 break;
 
             case PlatformType.Moving:
-                StopCoroutine("MoveToCoroutine");
-                StartCoroutine(MoveToCoroutine(false));
+                if (movingCo != null)
+                    StopCoroutine(movingCo);
+                movingCo = MoveToCoroutine(false);
+                StartCoroutine(movingCo);
                 break;
             
             case PlatformType.Impulse:
@@ -114,74 +124,79 @@ public class BeatPlatform : ActivatedEntity
 
     private IEnumerator ImpulseCoroutine()
     {
-        const float speedFactor = 8;
-        const float enlargeAdder = .5f;
-        
-        //enlarge
-        Vector2 originalScale = transform.localScale;
-        Vector2 positiveMoveVector = new Vector2(Math.Abs(moveVector.normalized.x), Math.Abs(moveVector.normalized.y));
-        Vector2 targetScale = originalScale + (positiveMoveVector * enlargeAdder);
-        Vector2 originalPosition = transform.localPosition;
-        Vector2 targetPosition = originalPosition + (moveVector.normalized * enlargeAdder / 2);
-
-        float elapsedTime = 0f;
-        float moveTime = (60 * timeToMove / GameManager.Instance.songBpm) / speedFactor;
-
-        while (elapsedTime < moveTime)
-        {
-            if (isPlayerTouching /*&& playerRelativePosition == moveVector.normalized*/)
-            {
-                CharController.Instance.isJumpBoosted = true;
-            }
-            transform.localScale = Vector3.Lerp(originalScale, targetScale, (elapsedTime / moveTime));
-            transform.localPosition = Vector3.Lerp(originalPosition, targetPosition, (elapsedTime / moveTime));
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        transform.localScale = targetScale;
-        transform.localPosition = targetPosition;
         yield return null;
-        
-        // if (isPlayerTouching && playerRelativePosition == moveVector.normalized)
+        // const float speedFactor = 8;
+        // const float enlargeAdder = .5f;
+        //
+        // //enlarge
+        // Vector2 originalScale = transform.localScale;
+        // Vector2 positiveMoveVector = new Vector2(Math.Abs(moveVector.normalized.x), Math.Abs(moveVector.normalized.y));
+        // Vector2 targetScale = originalScale + (positiveMoveVector * enlargeAdder);
+        // Vector2 originalPosition = transform.localPosition;
+        // Vector2 targetPosition = originalPosition + (moveVector.normalized * enlargeAdder / 2);
+        //
+        // float elapsedTime = 0f;
+        // float moveTime = (60 * timeToMove / GameManager.Instance.songBpm) / speedFactor;
+        //
+        // while (elapsedTime < moveTime)
         // {
-        //     CharController.Instance.GetComponent<Rigidbody2D>().AddForce(moveVector, ForceMode2D.Impulse);
+        //     if (isPlayerTouching /*&& playerRelativePosition == moveVector.normalized*/)
+        //     {
+        //         CharController.Instance.isJumpBoosted = true;
+        //     }
+        //     transform.localScale = Vector3.Lerp(originalScale, targetScale, (elapsedTime / moveTime));
+        //     transform.localPosition = Vector3.Lerp(originalPosition, targetPosition, (elapsedTime / moveTime));
+        //     elapsedTime += Time.deltaTime;
+        //     yield return null;
         // }
-        
-        
-        //return to original scale
-        elapsedTime = 0f;
-        moveTime = (60 * timeToMove / GameManager.Instance.songBpm) * ((speedFactor - 1) / speedFactor);
+        // transform.localScale = targetScale;
+        // transform.localPosition = targetPosition;
+        // yield return null;
+        //
+        // // if (isPlayerTouching && playerRelativePosition == moveVector.normalized)
+        // // {
+        // //     CharController.Instance.GetComponent<Rigidbody2D>().AddForce(moveVector, ForceMode2D.Impulse);
+        // // }
+        //
+        //
+        // //return to original scale
+        // elapsedTime = 0f;
+        // moveTime = (60 * timeToMove / GameManager.Instance.songBpm) * ((speedFactor - 1) / speedFactor);
+        //
+        // while (elapsedTime < moveTime)
+        // {
+        //     transform.localScale = Vector3.Lerp(targetScale, originalScale, (elapsedTime / moveTime));
+        //     transform.localPosition = Vector3.Lerp(targetPosition, originalPosition, (elapsedTime / moveTime));
+        //     elapsedTime += Time.deltaTime;
+        //     yield return null;
+        // }
+        // transform.localScale = originalScale;
+        // transform.localPosition = originalPosition;
+        // yield return null;
 
-        while (elapsedTime < moveTime)
-        {
-            transform.localScale = Vector3.Lerp(targetScale, originalScale, (elapsedTime / moveTime));
-            transform.localPosition = Vector3.Lerp(targetPosition, originalPosition, (elapsedTime / moveTime));
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        transform.localScale = originalScale;
-        transform.localPosition = originalPosition;
-        yield return null;
-        
-        
+
 
     }
 
     private IEnumerator MoveToCoroutine(bool isMovingBack)
     {
-        Vector2 destination = isMovingBack ? (Vector2)transform.position - moveVector : (Vector2)transform.position + moveVector;
+        Vector2 destination = isMovingBack ? originalPosition : (originalPosition - moveVector);
         float elapsedTime = 0f;
-        float moveTime = 60 * timeToMove / GameManager.Instance.songBpm;
+        float moveTime = 60 / GameManager.Instance.songBpm * timeToMove;
 
         while (elapsedTime < moveTime)
         {
-            transform.position = Vector3.Lerp(transform.position, destination, (elapsedTime / moveTime));
+            Vector3 lerpPosition = Vector3.Lerp(transform.position, destination, (elapsedTime / moveTime));
+            movingVelocity = (lerpPosition - transform.position) / Time.deltaTime;
+            //print((lerpPosition - transform.position) / Time.deltaTime);
+            transform.position = lerpPosition;
             elapsedTime += Time.deltaTime;
  
             // Yield here
-            yield return null;
+            yield return new WaitForEndOfFrame();
         }  
         // Make sure we got there
+        movingVelocity = Vector2.zero;
         transform.position = destination;
         yield return null;
     }
@@ -202,8 +217,10 @@ public class BeatPlatform : ActivatedEntity
                 break;
             
             case PlatformType.Moving:
-                StopCoroutine("MoveToCoroutine");
-                StartCoroutine(MoveToCoroutine(true));
+                if (movingCo != null)
+                    StopCoroutine(movingCo);
+                movingCo = MoveToCoroutine(true);
+                StartCoroutine(movingCo);
                 break;
         }
     }
@@ -224,8 +241,8 @@ public class BeatPlatform : ActivatedEntity
                 StartCoroutine(FadeCoroutine());
             }
 
-            else if (type == PlatformType.Moving  &&
-                     (CharController.Instance.transform.localPosition.y > transform.localPosition.y || isWallSlideable))
+            else if ((type == PlatformType.Moving  &&
+                     CharController.Instance.transform.position.y > transform.position.y) || isWallSlideable)
             {
                 CharController.Instance.transform.SetParent(transform);
             }
@@ -246,7 +263,7 @@ public class BeatPlatform : ActivatedEntity
             playerRelativePosition = Vector2.zero;
             CharController.Instance.transform.SetParent(null);
             isPlayerTouching = false;
-            CharController.Instance.isJumpBoosted = false;
+            //CharController.Instance.isJumpBoosted = false;
         }
     }
     

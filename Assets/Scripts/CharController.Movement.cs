@@ -96,68 +96,60 @@ public partial class CharController
         dust.Play();
         const float wallJumpModX = .7f;
         const float wallJumpModY = 1.4f;
+        float xWallJumpBoostedModifier = 3.0f;
+        float yWallJumpBoostedModifier = 1.1f;
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
-        float adjustedJumpForce = isJumpBoosted ? jumpForce * 2 : jumpForce;
-        //print("grounded?" + isGrounded + ",    isWallSliding?" + isWallSliding);
+        //float adjustedJumpForce = isJumpBoosted ? jumpForce * 2 : jumpForce;
+        Vector2 overallJumpImpulse = new Vector2(0, jumpForce);
+        Vector2 momentumVector = Vector2.zero;
+        bool doWallJump = (isWallSliding || wallJumpAvailable) && !isGrounded;
+        
+        if (mostRecentlyTouchedPlatform != null && mostRecentlyTouchedPlatform.type == PlatformType.Moving) //jump from moving platform
+        {
+            float momentumPercentage = .5f;
+            momentumVector = mostRecentlyTouchedPlatform.movingVelocity;
+            momentumVector = new Vector2(momentumVector.x * momentumPercentage, momentumVector.y < 0 ? 0 : momentumVector.y * momentumPercentage);
+            print(momentumVector);
 
-        if ((isWallSliding || wallJumpAvailable) && !isGrounded)
+            
+        }
+        
+        if (doWallJump) //walljump 
         {
             //Debug.Log("WALLJUMP");
             forcedMoveTime = .38f;
-            if (wallJumpDir == -1)
-            {
-                //FaceLeft();
-                forcedMoveVector = -1;
-            }
-            else if (wallJumpDir == 1)
-            {
-                //FaceRight();
-                forcedMoveVector = 1;
-            }
-            else
-            {
-                Debug.LogError("wall jump dir is bad");
-            }
-
-            if (isJumpBoosted)
-            {
-                emitFadesTime += .3f;
-                recentlyImpulsed = true;
-                float forcedTeleportDistance = .5f;
-                //Debug.Log("teleport distance: " + wallJumpDir);
-                 Vector2 forcedTeleportVector = new Vector2(forcedTeleportDistance * wallJumpDir, 0);
-                 transform.position += (Vector3) forcedTeleportVector;
-                
-                //StartCoroutine(TemporarilyDisablePlatformCollision(mostRecentlyTouchedPlatform.transform));
-                transform.parent = null;
-                isWallSliding = false;
-                
-                float xJumpBoost = 3.0f;
-                float yJumpBoost = 1.1f;
-                Rigidbody.AddForce(new Vector2(jumpForce * wallJumpModX * wallJumpDir * xJumpBoost, 
-                    (isInverted ? -jumpForce : jumpForce) * wallJumpModY * yJumpBoost), ForceMode2D.Impulse);
-            }
-            else
-            {
-                Rigidbody.AddForce(new Vector2(jumpForce * wallJumpModX * wallJumpDir, 
-                    (isInverted ? -jumpForce : jumpForce) * wallJumpModY), ForceMode2D.Impulse);
-            }
+            forcedMoveVector = wallJumpDir;
+            overallJumpImpulse =
+                new Vector2(jumpForce * wallJumpModX * wallJumpDir, overallJumpImpulse.y * wallJumpModY);
 
         }
-        else
+        // if (isJumpBoosted)
+        // {
+        //     emitFadesTime += .3f;
+        //     overallJumpImpulse 
+        //     
+        //     // Rigidbody.AddForce(new Vector2(jumpForce * wallJumpModX * wallJumpDir * xWallJumpBoostedModifier, 
+        //     //     (isInverted ? -jumpForce : jumpForce) * wallJumpModY * yWallJumpBoostedModifier), ForceMode2D.Impulse);
+        // }
+        //
+        // if (doWallJump && isJumpBoosted)
+        // {
+        //     transform.parent = null;
+        //     isWallSliding = false;
+        //     recentlyImpulsed = true;
+        //     float forcedTeleportDistance = .5f;
+        //     Vector2 forcedTeleportVector = new Vector2(forcedTeleportDistance * wallJumpDir, 0);
+        //     transform.position += (Vector3) forcedTeleportVector;
+        // }
+
+        if (isInverted)
         {
-            //print("regular jump" + isJumpBoosted);
-            if (isJumpBoosted)
-            {
-                emitFadesTime += .3f;
-            }
-            Rigidbody.AddForce(new Vector2(0, isInverted ? -adjustedJumpForce : adjustedJumpForce), 
-                ForceMode2D.Impulse); 
+            overallJumpImpulse = new Vector2(overallJumpImpulse.x, -overallJumpImpulse.y);
         }
-        
-        
-        justJumped = true;
+
+        overallJumpImpulse += momentumVector;
+        Rigidbody.AddForce(overallJumpImpulse, ForceMode2D.Impulse);
     }
 
     private IEnumerator TemporarilyDisablePlatformCollision(Transform parent)

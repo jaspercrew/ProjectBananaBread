@@ -45,7 +45,7 @@ public partial class CharController : BeatEntity
     private const float MinGroundSpeed = 0.5f;
     private const float OnGroundAcceleration = 38f;
     private const float OnGroundDeceleration = 30f;
-    private const float InAirAcceleration = 18f;
+    private const float InAirAcceleration = 30f;
     private const float InAirDrag = 1.5f;
     private const float MaxYSpeed = 30f;
     private const float DashBoost = 15f;
@@ -77,7 +77,7 @@ public partial class CharController : BeatEntity
     public bool isInverted;
     public SpawnAreaController currentArea;
     // ReSharper disable once InconsistentNaming
-    public bool isJumpBoosted;
+    //public bool isJumpBoosted;
     private bool isPlatformGrounded;
     public bool isMetronomeLocked;
     private bool _isGrounded;

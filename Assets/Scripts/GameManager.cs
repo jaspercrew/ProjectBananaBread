@@ -169,6 +169,7 @@ public class GameManager : MonoBehaviour
             {
                 BeginSongLoop();
                 musicStart = true;
+                //EchoController.Instance.Init();
                 foreach (SpriteRenderer spr in metronomes)
                 {
                     Color temp1 = spr.color;

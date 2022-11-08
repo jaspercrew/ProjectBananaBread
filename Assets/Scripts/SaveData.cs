@@ -37,7 +37,7 @@ public class SaveData
     
     public static void SaveSettings()
     {
-
+        
         settingsInst = new Settings
         {
             // update stuff here, then save to object file

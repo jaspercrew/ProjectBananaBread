@@ -97,7 +97,7 @@ public class BeatPlatform : ActivatedEntity
                 if (platformBounds.Contains(bottomLeft) || platformBounds.Contains(bottomRight) || 
                     platformBounds.Contains(topLeft) || platformBounds.Contains(topRight) || platformBounds.Contains(center))
                 {
-                    CharController.Instance.Die();
+                    //CharController.Instance.Die();
                 }
                 break;
 

@@ -5,33 +5,45 @@ using UnityEngine;
 
 public enum PlatformType
 {
-    Collider, Moving, Fading, Impulse
+    Collider,
+    Moving,
+    Fading,
+    Impulse
 }
+
 public class BeatPlatform : ActivatedEntity
 {
     public bool isStatic = false;
     public bool isHazard = false;
     public PlatformType type;
-    public float timeToMove = 2f;
+    private float timeToMove = 4f;
     public Vector2 moveVector;
     public bool isWallSlideable;
+    private Vector2 lastPosition;
+    private Vector2 lastVelocity;
 
     public Vector2 movingVelocity;
-    
+
     private Collider2D platformCollider;
     private SpriteRenderer spriteRenderer;
+
     private Vector2 originalPosition;
-    private bool isPlayerTouching;
+
+    //private bool isPlayerTouching;
     private Vector2 playerRelativePosition;
     private IEnumerator movingCo;
-    
-    
+    private bool playerContact;
+
+    private Rigidbody2D platformRigidbody;
+
+
     private const float deathCheckFactor = .6f;
     private const float deactivatedAlpha = .3f;
-    
+
     // Start is called before the first frame update
     protected override void Start()
     {
+        platformRigidbody = GetComponent<Rigidbody2D>();
         originalPosition = transform.position;
         platformCollider = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -39,6 +51,7 @@ public class BeatPlatform : ActivatedEntity
         {
             spriteRenderer.color = Color.red;
         }
+
         if (isWallSlideable)
         {
             spriteRenderer.color = new Color(1f, .5f, 0);
@@ -49,7 +62,8 @@ public class BeatPlatform : ActivatedEntity
         }
 
         GetComponentInChildren<TrailRenderer>().emitting = (type == PlatformType.Moving);
-   
+        lastPosition = transform.position;
+
         base.Start();
     }
 
@@ -65,7 +79,6 @@ public class BeatPlatform : ActivatedEntity
             {
                 Gizmos.DrawWireSphere(transform.localPosition - (Vector3) moveVector, 1f);
             }
-                
         }
     }
 
@@ -75,6 +88,7 @@ public class BeatPlatform : ActivatedEntity
         {
             return;
         }
+
         base.MicroBeatAction();
     }
 
@@ -89,24 +103,27 @@ public class BeatPlatform : ActivatedEntity
 
 
                 BoxCollider2D charCollider = CharController.Instance.GetComponent<BoxCollider2D>();
-                Vector3 bounds = charCollider.bounds.extents; 
+                Vector3 bounds = charCollider.bounds.extents;
                 float halfWidth = Mathf.Abs(bounds.x);
                 float halfHeight = Mathf.Abs(bounds.y);
-                Vector2 center = (Vector2) CharController.Instance.transform.position + charCollider.offset.y * Vector2.up;
+                Vector2 center = (Vector2) CharController.Instance.transform.position +
+                                 charCollider.offset.y * Vector2.up;
 
                 Vector2 bottomMiddle = center + halfHeight * Vector2.down;
                 Vector2 bottomLeft = bottomMiddle + halfWidth * deathCheckFactor * Vector2.left;
                 Vector2 bottomRight = bottomMiddle + halfWidth * deathCheckFactor * Vector2.right;
-                
+
                 Vector2 topMiddle = center + halfHeight * Vector2.up;
                 Vector2 topLeft = topMiddle + halfWidth * deathCheckFactor * Vector2.left;
                 Vector2 topRight = topMiddle + halfWidth * deathCheckFactor * Vector2.right;
                 Bounds platformBounds = platformCollider.bounds;
-                if (platformBounds.Contains(bottomLeft) || platformBounds.Contains(bottomRight) || 
-                    platformBounds.Contains(topLeft) || platformBounds.Contains(topRight) || platformBounds.Contains(center))
+                if (platformBounds.Contains(bottomLeft) || platformBounds.Contains(bottomRight) ||
+                    platformBounds.Contains(topLeft) || platformBounds.Contains(topRight) ||
+                    platformBounds.Contains(center))
                 {
                     //CharController.Instance.Die(); //FIND NEW SOLUTION
                 }
+
                 break;
 
             case PlatformType.Moving:
@@ -115,7 +132,7 @@ public class BeatPlatform : ActivatedEntity
                 movingCo = MoveToCoroutine(false);
                 StartCoroutine(movingCo);
                 break;
-            
+
             case PlatformType.Impulse:
                 StartCoroutine(ImpulseCoroutine());
                 break;
@@ -173,32 +190,61 @@ public class BeatPlatform : ActivatedEntity
         // transform.localScale = originalScale;
         // transform.localPosition = originalPosition;
         // yield return null;
-
-
-
     }
 
     private IEnumerator MoveToCoroutine(bool isMovingBack)
     {
         Vector2 destination = isMovingBack ? originalPosition : (originalPosition - moveVector);
+        Vector2 movementDirection = (destination - (Vector2) transform.position).normalized;
+        float velocityMultiplier = 1.5f;
+        float proximityDetection = .4f;
         float elapsedTime = 0f;
         float moveTime = 60 / GameManager.Instance.songBpm * timeToMove;
 
         while (elapsedTime < moveTime)
         {
-            Vector3 lerpPosition = Vector3.Lerp(transform.position, destination, (elapsedTime / moveTime));
-            movingVelocity = (lerpPosition - transform.position) / Time.deltaTime;
-            //print((lerpPosition - transform.position) / Time.deltaTime);
-            transform.position = lerpPosition;
-            elapsedTime += Time.deltaTime;
- 
+            // Vector3 lerpPosition = Vector3.Lerp(transform.position, destination, (elapsedTime / moveTime));
+
+            // print((lerpPosition - transform.position) / Time.deltaTime);
+            // transform.position = lerpPosition;
+            platformRigidbody.velocity += (movementDirection * (velocityMultiplier * (elapsedTime / moveTime)));
+            movingVelocity = platformRigidbody.velocity;
+            elapsedTime += Time.fixedDeltaTime;
+
+
+            if (Vector2.Distance(transform.position, destination) < proximityDetection
+            ) 
+            {
+                lastVelocity = platformRigidbody.velocity;
+                movingVelocity = lastVelocity;
+                //print(movingVelocity);
+                platformRigidbody.velocity = Vector2.zero;
+                transform.position = destination;
+                break;
+            }
+
+
             // Yield here
-            yield return new WaitForEndOfFrame();
-        }  
+            yield return new WaitForFixedUpdate();
+        }
         // Make sure we got there
+
+        yield return new WaitForSeconds(.35f);
+        //print("moving vel set to 0");
         movingVelocity = Vector2.zero;
-        transform.position = destination;
-        yield return null;
+    }
+
+    private void Update()
+    {
+        if (playerContact && platformRigidbody.velocity.magnitude > 0 &&
+            (CharController.Instance.transform.position.y > transform.position.y || isWallSlideable))
+        {
+            //print("sticking player vel");
+            //CharController.Instance.Rigidbody.velocity += platformRigidbody.velocity;
+            CharController.Instance.transform.position += (transform.position - (Vector3) lastPosition);
+        }
+        
+        lastPosition = transform.position;
     }
 
     protected override void Deactivate()
@@ -206,7 +252,6 @@ public class BeatPlatform : ActivatedEntity
         base.Deactivate();
         switch (type)
         {
-            
             case PlatformType.Collider:
                 base.Deactivate();
                 platformCollider.enabled = false;
@@ -215,7 +260,7 @@ public class BeatPlatform : ActivatedEntity
                 // temp.a = deactivatedAlpha;
                 // spriteRenderer.color = temp;
                 break;
-            
+
             case PlatformType.Moving:
                 if (movingCo != null)
                     StopCoroutine(movingCo);
@@ -230,7 +275,7 @@ public class BeatPlatform : ActivatedEntity
         if (other.gameObject.CompareTag("Player"))
         {
             CharController.Instance.mostRecentlyTouchedPlatform = this;
-            isPlayerTouching = true;
+            //isPlayerTouching = true;
             if (isHazard)
             {
                 CharController.Instance.Die();
@@ -241,18 +286,19 @@ public class BeatPlatform : ActivatedEntity
                 StartCoroutine(FadeCoroutine());
             }
 
-            else if ((type == PlatformType.Moving  &&
-                     CharController.Instance.transform.position.y > transform.position.y) || isWallSlideable)
-            {
-                CharController.Instance.transform.SetParent(transform);
-            }
+            // else if ((type == PlatformType.Moving  &&
+            //          CharController.Instance.transform.position.y > transform.position.y) || isWallSlideable)
+            // {
+            //     CharController.Instance.transform.SetParent(transform, true);
+            // }
 
             // crushed under platform
-            else if (type == PlatformType.Moving  &&
-                     (CharController.Instance.transform.localPosition.y < transform.localPosition.y && CharController.Instance.isGrounded))
-            {
-                CharController.Instance.Die();
-            }
+            // else if (type == PlatformType.Moving &&
+            //          (CharController.Instance.transform.localPosition.y < transform.localPosition.y &&
+            //           CharController.Instance.isGrounded))
+            // {
+            //     CharController.Instance.Die();
+            // }
         }
     }
 
@@ -261,16 +307,19 @@ public class BeatPlatform : ActivatedEntity
         if (other.gameObject.CompareTag("Player"))
         {
             playerRelativePosition = Vector2.zero;
-            CharController.Instance.transform.SetParent(null);
-            isPlayerTouching = false;
+            playerContact = false;
+            CharController.Instance.mostRecentlyTouchedPlatform = null;
+            //CharController.Instance.fixedJoint2D.connectedBody = null;
+            //CharController.Instance.transform.SetParent(null);
+            //isPlayerTouching = false;
             //CharController.Instance.isJumpBoosted = false;
         }
     }
-    
+
     private void OnCollisionStay2D(Collision2D other)
     {
-        if(other.gameObject.CompareTag("Player"))
-        { 
+        if (other.gameObject.CompareTag("Player"))
+        {
             Collider2D collider = other.collider;
             Vector2 contactPoint = other.contacts[0].point;
             Vector2 center = collider.bounds.center;
@@ -278,18 +327,22 @@ public class BeatPlatform : ActivatedEntity
             Vector2 roundedVector;
             if (Math.Abs(dirVector.x) > Math.Abs(dirVector.y))
             {
-                roundedVector = Vector2.right * Math.Sign(dirVector.x); 
+                roundedVector = Vector2.right * Math.Sign(dirVector.x);
             }
             else
             {
-                roundedVector = Vector2.up * Math.Sign(dirVector.y); 
+                roundedVector = Vector2.up * Math.Sign(dirVector.y);
             }
-            
+
             playerRelativePosition = roundedVector;
+            playerContact = true;
+            //CharController.Instance.fixedJoint2D.connectedBody = platformRigidbody;
+
+
             // print(roundedVector);
         }
     }
-    
+
     private IEnumerator BinaryPlatformCoroutine(bool toFull)
     {
         Color original = spriteRenderer.color;
@@ -299,8 +352,8 @@ public class BeatPlatform : ActivatedEntity
         full.a = 1;
         Color fadeTo = toFull ? full : faded;
         Color initialBurst = toFull ? Color.white : Color.black;
-        
-        
+
+
         float elapsedTime = 0f;
         float fadeTime = .25f;
         spriteRenderer.color = initialBurst;
@@ -311,6 +364,7 @@ public class BeatPlatform : ActivatedEntity
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
         spriteRenderer.color = fadeTo;
     }
 
@@ -320,7 +374,7 @@ public class BeatPlatform : ActivatedEntity
         Color original = spriteRenderer.color;
         Color faded = original;
         faded.a = 0f;
-        
+
         float elapsedTime = 0f;
         float fadeTime = .5f;
 
@@ -330,12 +384,11 @@ public class BeatPlatform : ActivatedEntity
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
         platformCollider.enabled = false;
         spriteRenderer.color = faded;
         yield return new WaitForSeconds(3f);
         platformCollider.enabled = true;
         spriteRenderer.color = original;
     }
-   
-    
 }

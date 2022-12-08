@@ -27,7 +27,7 @@ public partial class CharController : BeatEntity
     private LineRenderer grappleLOSRenderer;
     private LineRenderer grappleClearRenderer;
     private BoxCollider2D groundCheck;
-    private Rigidbody2D Rigidbody;
+    public Rigidbody2D Rigidbody;
     private Animator Animator;
     
     
@@ -39,14 +39,14 @@ public partial class CharController : BeatEntity
     
     [Header("Configurable player control values")] 
     // Configurable player control values
-    public float baseSpeed = 8f;
+    public float baseSpeed = 0f;
     private float speed;
 
     private const float MinGroundSpeed = 0.5f;
     private const float OnGroundAcceleration = 38f;
-    private const float OnGroundDeceleration = 30f;
+    private const float OnGroundDeceleration = 40f;
     private const float InAirAcceleration = 30f;
-    private const float InAirDrag = 1.5f;
+    private const float InAirDrag = .7f;
     private const float MaxYSpeed = 30f;
     private const float DashBoost = 15f;
     private const float heightReducer = 4f;
@@ -54,11 +54,12 @@ public partial class CharController : BeatEntity
     private const float inversionForce = 3f;
     // private const float VerticalDrag = 10f;
     [SerializeField]
-    private float jumpForce = 12f;
-    private const float BaseGravity = 0.0f;
+    private float jumpForce = 0f;
+    public static float BaseGravity = 20f;
     
 
     private const float DashCooldown = 1f;
+    private const float BoostCooldown = 1f;
 
     public bool isDashing;
     public float gravityValue = BaseGravity;
@@ -73,6 +74,7 @@ public partial class CharController : BeatEntity
     private IEnumerator dashCoroutine;
 
     private float lastDashTime;
+    private float lastBoostTime;
 
     public bool isInverted;
     public SpawnAreaController currentArea;
@@ -80,6 +82,7 @@ public partial class CharController : BeatEntity
     //public bool isJumpBoosted;
     private bool isPlatformGrounded;
     public bool isMetronomeLocked;
+    private bool recentlyBoosted;
     private bool _isGrounded;
     public bool isGrounded
     {
@@ -140,8 +143,8 @@ public partial class CharController : BeatEntity
     private float moveVector;
     private float inputVector;
     private float prevInVector = 2;
-    private int forcedMoveVector;
-    private float forcedMoveTime;
+    public int forcedMoveVector;
+    public float forcedMoveTime;
     public bool disabledMovement;
     
     // animator values beforehand to save time later
@@ -169,7 +172,7 @@ public partial class CharController : BeatEntity
         public enum EventTypes
         {
             Dash, Jump, Interact, 
-             Crouch, Grapple
+             Crouch, Grapple, Boost
         }
 
         public Event(EventTypes type, float time)
@@ -184,7 +187,8 @@ public partial class CharController : BeatEntity
     private static readonly Dictionary<Func<bool>, Event.EventTypes> KeyToEventType =
         new Dictionary<Func<bool>, Event.EventTypes>
         {
-            {() => Input.GetKeyDown(KeyCode.LeftShift), Event.EventTypes.Dash},
+            {() => Input.GetKeyDown(KeyCode.LeftShift), Event.EventTypes.Boost},
+            {() => Input.GetKeyDown(KeyCode.H), Event.EventTypes.Boost},
             {() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.Jump},
             //{() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.DoubleJump},
             //{() => Input.GetKeyDown(KeyCode.E), Event.EventTypes.Interact},
@@ -205,6 +209,8 @@ public partial class CharController : BeatEntity
             {Event.EventTypes.Dash, @this =>
                 (@this.IsAbleToAct()) && Time.time > @this.lastDashTime + DashCooldown &&
                 !@this.isCrouching},
+            {Event.EventTypes.Boost, @this =>
+                (@this.IsAbleToAct()) && Time.time > @this.lastBoostTime + BoostCooldown && !@this.recentlyBoosted},
             {Event.EventTypes.Jump, @this => 
                 @this.IsAbleToMove() && 
                 (@this.isGrounded || (@this.jumpAvailable && !@this.justJumped) ||
@@ -228,10 +234,11 @@ public partial class CharController : BeatEntity
         {
             {Event.EventTypes.Dash, @this => @this.DoDash()},
             {Event.EventTypes.Jump, @this => @this.DoJump()},
+            {Event.EventTypes.Boost, @this => @this.Boost()},
             //{Event.EventTypes.DoubleJump, @this => @this.DoDoubleJump()},
             //{Event.EventTypes.Interact, @this => @this.DoInteract()},
             //{Event.EventTypes.Crouch, @this => @this.Crouch()},
-            {Event.EventTypes.Grapple, @this => @this.AttemptLaunchGrapple()},
+            //{Event.EventTypes.Grapple, @this => @this.AttemptLaunchGrapple()},
         };
 
 
@@ -240,6 +247,15 @@ public partial class CharController : BeatEntity
         return !isDashing && !isLineGrappling && canFunction && !isRewinding && !isMetronomeLocked && !GameManager.Instance.isMenu;
     }
 
+    private bool RecentlyImpulsed()
+    {
+        return recentImpulseTime > 0;
+    }
+
+    public bool IsFacingLeft()
+    {
+        return transform.localScale.x > 0;
+    }
     
 
     private IEnumerator WallJumpBufferCoroutine()

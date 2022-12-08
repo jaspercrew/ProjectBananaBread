@@ -3,7 +3,7 @@ using System.Collections;
 
 public class HazardTile : MonoBehaviour
 {
-    private void OnCollisionEnter2D(Collision2D col)
+    private void OnCollisionStay2D(Collision2D col)
     {
         //print("col");
         

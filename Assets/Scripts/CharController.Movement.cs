@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 //using TreeEditor;
 using UnityEngine;
@@ -54,6 +55,80 @@ public partial class CharController
         
     }
 
+    private void Boost()
+    {
+        StartCoroutine(BoostCoroutine());
+    }
+
+    private IEnumerator BoostCoroutine()
+    {
+        //float boostFreezeDelay = .0f;
+        float boostForceMultiplier = 12f;
+        float delayGravTime = .2f;
+        recentlyBoosted = true;
+        Vector2 boostDirection = Vector2.zero;
+        if (Input.GetKey(KeyCode.A))
+        {
+            boostDirection += Vector2.left;
+        }
+        if (Input.GetKey(KeyCode.W))
+        {
+            boostDirection += Vector2.up;
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            boostDirection += Vector2.down;
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            boostDirection += Vector2.right;
+        }
+
+        if (boostDirection == Vector2.zero)
+        {
+            boostDirection = (transform.localScale.x > 0 ? Vector2.left : Vector2.right);
+        }
+
+        boostDirection = boostDirection.normalized;
+
+        disabledMovement = true;
+        lastBoostTime = Time.time;
+        emitFadesTime = .28f;
+        Animator.SetTrigger(Dash);
+        gravityValue = 0;
+        boostDirection.Scale(new Vector2(1.5f, 1f));
+        Vector2 boost = boostDirection * boostForceMultiplier;
+        
+        if (Math.Sign(Rigidbody.velocity.x) != Math.Sign(boost.x))
+        {
+            Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
+        }
+        if (Math.Sign(Rigidbody.velocity.y) != Math.Sign(boost.y))
+        {
+            Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, 0);
+        }
+
+        Rigidbody.velocity += (boost * 1f);
+        
+        forcedMoveTime = .3f;
+        forcedMoveVector = 0;
+        recentImpulseTime = .3f;
+
+        yield return new WaitForSeconds(delayGravTime);
+        //Rigidbody.velocity -= boost; //should do negative checkingdsfdsfsdfsd
+        if (Math.Sign(Rigidbody.velocity.x) != Math.Sign(Rigidbody.velocity.x - boost.x))
+        {
+            Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, Rigidbody.velocity.y);
+        }
+        else
+        {
+            Rigidbody.velocity = new Vector2(Rigidbody.velocity.x - (boost.x * .8f), Rigidbody.velocity.y);
+        }
+        disabledMovement = false;
+        gravityValue = BaseGravity;
+
+    }
+
     private bool CheckSpace()
     {
         Vector2 relativeUp = isInverted ? Vector2.down : Vector2.up;
@@ -94,34 +169,35 @@ public partial class CharController
         //print("jumpcall");
         justJumped = true;
         dust.Play();
-        const float wallJumpModX = .7f;
-        const float wallJumpModY = 1.4f;
-        float xWallJumpBoostedModifier = 3.0f;
-        float yWallJumpBoostedModifier = 1.1f;
+        const float wallJumpModX = .6f;
+        const float wallJumpModY = 1.2f;
+        // float xWallJumpBoostedModifier = 3.0f;
+        // float yWallJumpBoostedModifier = 1.1f;
         Animator.SetBool(Grounded, false);
         Animator.SetTrigger(Jump);
         //float adjustedJumpForce = isJumpBoosted ? jumpForce * 2 : jumpForce;
         Vector2 overallJumpImpulse = new Vector2(0, jumpForce);
         Vector2 momentumVector = Vector2.zero;
         bool doWallJump = (isWallSliding || wallJumpAvailable) && !isGrounded;
-        
+        float momentumBreakpoint = 10f;
         if (mostRecentlyTouchedPlatform != null && mostRecentlyTouchedPlatform.type == PlatformType.Moving) //jump from moving platform
         {
             float momentumPercentage = .5f;
+            
             momentumVector = mostRecentlyTouchedPlatform.movingVelocity;
-            momentumVector = new Vector2(momentumVector.x * momentumPercentage, momentumVector.y < 0 ? 0 : momentumVector.y * momentumPercentage);
+            momentumVector = new Vector2(momentumVector.x * momentumPercentage, momentumVector.y < 0 ? 0 : (momentumVector.y * momentumPercentage));
             if (Mathf.Sign(moveVector) != Mathf.Sign(momentumVector.x))
             {
+                //print("wrong sign, set momentum to 0");
                 momentumVector.x = 0;
             }
 
-            if (momentumVector.x != 0)
+            if (momentumVector.magnitude > momentumBreakpoint)
             {
-                recentlyImpulsed = true;
+                recentImpulseTime = .1f;
+                emitFadesTime = .4f;
             }
-            print(momentumVector);
-
-            
+            print("momentum vector: " + momentumVector);
         }
         
         if (doWallJump) //walljump 
@@ -131,53 +207,43 @@ public partial class CharController
             forcedMoveVector = wallJumpDir;
             overallJumpImpulse =
                 new Vector2(jumpForce * wallJumpModX * wallJumpDir, overallJumpImpulse.y * wallJumpModY);
-
         }
-        // if (isJumpBoosted)
-        // {
-        //     emitFadesTime += .3f;
-        //     overallJumpImpulse 
-        //     
-        //     // Rigidbody.AddForce(new Vector2(jumpForce * wallJumpModX * wallJumpDir * xWallJumpBoostedModifier, 
-        //     //     (isInverted ? -jumpForce : jumpForce) * wallJumpModY * yWallJumpBoostedModifier), ForceMode2D.Impulse);
-        // }
-        //
-        // if (doWallJump && isJumpBoosted)
-        // {
-        //     transform.parent = null;
-        //     isWallSliding = false;
-        //     recentlyImpulsed = true;
-        //     float forcedTeleportDistance = .5f;
-        //     Vector2 forcedTeleportVector = new Vector2(forcedTeleportDistance * wallJumpDir, 0);
-        //     transform.position += (Vector3) forcedTeleportVector;
-        // }
-
+        
         if (isInverted)
         {
             overallJumpImpulse = new Vector2(overallJumpImpulse.x, -overallJumpImpulse.y);
         }
 
-        overallJumpImpulse += momentumVector;
+        if (momentumVector.magnitude > momentumBreakpoint)
+        {
+            overallJumpImpulse += momentumVector;
+        }
+        else
+        {
+            overallJumpImpulse += (momentumVector / 2);
+        }
+        
+        print("impulse: " + overallJumpImpulse);
         Rigidbody.AddForce(overallJumpImpulse, ForceMode2D.Impulse);
     }
 
-    private IEnumerator TemporarilyDisablePlatformCollision(Transform parent)
-    {
-        if (parent == null)
-        {
-            Debug.LogError("cannot temporarily disable collision on null!");
-            yield break;
-        }
-
-        BoxCollider2D box = parent.GetComponent<BoxCollider2D>();
-        Debug.Log("disabling box collision");
-        box.enabled = false;
-
-        yield return new WaitForSeconds(0.25f);
-
-        Debug.Log("re-enabling box collision");
-        box.enabled = true;
-    }
+    // private IEnumerator TemporarilyDisablePlatformCollision(Transform parent)
+    // {
+    //     if (parent == null)
+    //     {
+    //         Debug.LogError("cannot temporarily disable collision on null!");
+    //         yield break;
+    //     }
+    //
+    //     BoxCollider2D box = parent.GetComponent<BoxCollider2D>();
+    //     Debug.Log("disabling box collision");
+    //     box.enabled = false;
+    //
+    //     yield return new WaitForSeconds(0.25f);
+    //
+    //     Debug.Log("re-enabling box collision");
+    //     box.enabled = true;
+    // }
 
     
     // private void DoDoubleJump()
@@ -237,6 +303,7 @@ public partial class CharController
     
     private void OnLanding() {
         //canDoubleJump = false;
+        
         justJumped = false;
         isRecentlyGrappled = false;
         dust.Play();
@@ -244,59 +311,59 @@ public partial class CharController
         // Debug.Log("sus");
     }
 
-    private void AttemptLaunchGrapple()
-    {
-        if (GrapplePoint.TargetPoint != null && !isGrappleLaunched && !isLineGrappling && !grappleBlocked)
-        {
-            LaunchLine(GrapplePoint.TargetPoint);
-        }
-    }
-
-    private void LaunchLine(GrapplePoint point)
-    {
-        StartCoroutine(LaunchLineCoroutine());
-        launchedPoint = point;
-        isGrappleLaunched = true;
-        grappleLineRenderer.enabled = true;
-        const float launchSpeed = 25f;
-        const float offset = 1f;
-        Vector3 direction = (point.transform.position - transform.position).normalized;
-        sentProjectile = Instantiate(grappleProjectile, transform.position + (direction * offset), transform.rotation);
-        sentProjectile.gameObject.GetComponent<GrappleProjectile>().SetStats(direction, launchSpeed);
-    }
-
-    private IEnumerator LaunchLineCoroutine()
-    {
-        const float maxGrappleLaunchTime = 2f;
-        yield return new WaitForSeconds(maxGrappleLaunchTime);
-        if (!isLineGrappling)
-        {
-            launchedPoint = null;
-            hookedPoint = null;
-            grappleLineRenderer.enabled = false;
-            isLineGrappling = false;
-            isGrappleLaunched = false;
-        }
-    }
-
-    public void StartLineGrapple(GrapplePoint point)
-    {
-        StopCoroutine(LaunchLineCoroutine());
-        hookedPoint = point;
-        isGrappleLaunched = false;
-        grappleLineRenderer.enabled = true;
-        isLineGrappling = true;
-        isRecentlyGrappled = true;
-    }
-
-    private void DisconnectGrapple()
-    {
-        launchedPoint = null;
-        hookedPoint = null;
-        //Debug.Log("Disconnect");
-        grappleLineRenderer.enabled = false;
-        isLineGrappling = false;
-        Rigidbody.velocity = Vector2.ClampMagnitude(Rigidbody.velocity, speed * 2);
-    }
+    // private void AttemptLaunchGrapple()
+    // {
+    //     if (GrapplePoint.TargetPoint != null && !isGrappleLaunched && !isLineGrappling && !grappleBlocked)
+    //     {
+    //         LaunchLine(GrapplePoint.TargetPoint);
+    //     }
+    // }
+    //
+    // private void LaunchLine(GrapplePoint point)
+    // {
+    //     StartCoroutine(LaunchLineCoroutine());
+    //     launchedPoint = point;
+    //     isGrappleLaunched = true;
+    //     grappleLineRenderer.enabled = true;
+    //     const float launchSpeed = 25f;
+    //     const float offset = 1f;
+    //     Vector3 direction = (point.transform.position - transform.position).normalized;
+    //     sentProjectile = Instantiate(grappleProjectile, transform.position + (direction * offset), transform.rotation);
+    //     sentProjectile.gameObject.GetComponent<GrappleProjectile>().SetStats(direction, launchSpeed);
+    // }
+    //
+    // private IEnumerator LaunchLineCoroutine()
+    // {
+    //     const float maxGrappleLaunchTime = 2f;
+    //     yield return new WaitForSeconds(maxGrappleLaunchTime);
+    //     if (!isLineGrappling)
+    //     {
+    //         launchedPoint = null;
+    //         hookedPoint = null;
+    //         grappleLineRenderer.enabled = false;
+    //         isLineGrappling = false;
+    //         isGrappleLaunched = false;
+    //     }
+    // }
+    //
+    // public void StartLineGrapple(GrapplePoint point)
+    // {
+    //     StopCoroutine(LaunchLineCoroutine());
+    //     hookedPoint = point;
+    //     isGrappleLaunched = false;
+    //     grappleLineRenderer.enabled = true;
+    //     isLineGrappling = true;
+    //     isRecentlyGrappled = true;
+    // }
+    //
+    // private void DisconnectGrapple()
+    // {
+    //     launchedPoint = null;
+    //     hookedPoint = null;
+    //     //Debug.Log("Disconnect");
+    //     grappleLineRenderer.enabled = false;
+    //     isLineGrappling = false;
+    //     Rigidbody.velocity = Vector2.ClampMagnitude(Rigidbody.velocity, speed * 2);
+    // }
     
 }

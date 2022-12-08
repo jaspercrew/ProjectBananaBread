@@ -8,8 +8,10 @@ using UnityEngine.SceneManagement;
 
 public partial class CharController
 {
-    public bool recentlyImpulsed;
+    public float recentImpulseTime;
+    //public float disableInputTime;
     public GameObject fadeSprite;
+    public FixedJoint2D fixedJoint2D;
     public List<Vector3> pointsInTime = new List<Vector3>();
     private bool isRewinding;
     public bool doRecord;
@@ -27,6 +29,7 @@ public partial class CharController
         }
         //DontDestroyOnLoad(gameObject);
         PrepForScene();
+        Rigidbody = transform.GetComponent<Rigidbody2D>();
     }
 
     protected override void Start()
@@ -46,10 +49,10 @@ public partial class CharController
         grappleClearRenderer = transform.Find("GrappleClear").GetComponent<LineRenderer>();
         grappleClearRenderer.enabled = false;
         groundCheck = transform.Find("GroundCheck").GetComponent<BoxCollider2D>();
-
+        fixedJoint2D = GetComponent<FixedJoint2D>();
         charLight = transform.Find("Light").GetComponent<Light2D>();
         particleChild = transform.Find("Particles");
-        Rigidbody = transform.GetComponent<Rigidbody2D>();
+        
         Animator = transform.Find("SpriteHandler").GetComponent<Animator>();
         charCollider = transform.GetComponent<BoxCollider2D>();
         
@@ -167,6 +170,11 @@ public partial class CharController
             moveVector = forcedMoveVector;
             forcedMoveTime -= Time.fixedDeltaTime;
         }
+        // else if (disableInputTime > 0)
+        // {
+        //     moveVector = 0;
+        //     disableInputTime -= Time.fixedDeltaTime;
+        // }
     }
 
     private void StandardMovement_FixedUpdate()
@@ -181,30 +189,35 @@ public partial class CharController
             
             int moveDir = Math.Sign(moveVector);
             // if user is not moving and has speed, then slow down
-            if (moveDir == 0 && Mathf.Abs(xVel) >= MinGroundSpeed)
+            if (moveDir == 0 && Mathf.Abs(xVel) >= MinGroundSpeed && !RecentlyImpulsed())
             {
                 int antiMoveDir = -Math.Sign(xVel);
 
                 // TODO change this if we choose to add ice or something
                 Rigidbody.AddForce(antiMoveDir * OnGroundDeceleration * Vector2.right, ForceMode2D.Force);
             }
-            // otherwise move the player in the direction 
+            // otherwise move the player in the direction (only accelerate if below max speed)
+            else if ((moveDir > 0 && xVel < speed) || (moveDir < 0 && xVel > -speed))
             {
                 Rigidbody.AddForce(moveDir * OnGroundAcceleration * Vector2.right, ForceMode2D.Force);
             }
             
 
             // apply max velocity
-            Rigidbody.velocity = new Vector2(
-                Mathf.Clamp(xVel, -speed, speed),
-                Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
+            if (!RecentlyImpulsed())
+            {
+                Rigidbody.velocity = new Vector2(
+                    Mathf.Clamp(xVel, -speed, speed),
+                    Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
+            }
+            
 
             // apply min velocity
             if (Mathf.Abs(xVel) < MinGroundSpeed)
             {
                 Rigidbody.velocity = new Vector2(0, yVel);
             }
-            recentlyImpulsed = false;
+            //recentlyImpulsed = false;
         }
         // in-air movement
         else
@@ -216,24 +229,29 @@ public partial class CharController
 
             // slow down if player is not inputting horizontal movement
             // and don't apply if grappling
-            if (moveVector == 0 && !isLineGrappling)
+            if (moveVector == 0)
             {
                 // apply horizontal "drag" based on current x velocity
                 Rigidbody.AddForce(-xVel * InAirDrag * Vector2.right, ForceMode2D.Force);
             }
-
-            if (recentlyImpulsed && Math.Abs(xVel) <= speed)
+            else if (Math.Sign(moveVector) == Math.Sign(xVel)) //ONLY APPLY PARTIAL DRAG IF PLAYER IS MATCHING AIR BOOST
             {
-                recentlyImpulsed = false;
+                Rigidbody.AddForce(-xVel * (InAirDrag / 2) * Vector2.right, ForceMode2D.Force);
             }
+            
+            
+            // if (recentlyImpulsed && Math.Abs(xVel) <= speed)
+            // {
+            //     recentlyImpulsed = false;
+            // }
 
             // apply max velocity if not grappling
-            if (!isLineGrappling && !recentlyImpulsed)
-            {
-                Rigidbody.velocity = new Vector2(
-                    Mathf.Clamp(xVel, -speed, speed),
-                    Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
-            }
+            // if (!isLineGrappling && !RecentlyImpulsed())
+            // {
+            //     Rigidbody.velocity = new Vector2(
+            //         Mathf.Clamp(xVel, -speed, speed),
+            //         Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
+            // }
         }
     }
 
@@ -301,9 +319,10 @@ public partial class CharController
         EventHandling_Update();
         ShortJumpDetection_Update();
         WallSlideDetection_Update();
-        LineGrappleUpdate();
+        //LineGrappleUpdate();
         Crouching_Update();
         LookAhead_Update();
+        recentImpulseTime -= Time.deltaTime;
 
     }
 
@@ -341,68 +360,68 @@ public partial class CharController
 
 
 
-    private void LineGrappleUpdate()
-    {
-
-        if (!isLineGrappling && !isGrappleLaunched && GrapplePoint.TargetPoint != null)
-        {
-            Vector3 targetPosition = GrapplePoint.TargetPoint.transform.position;
-            Vector3 direction = (targetPosition - transform.position).normalized;
-            Vector3 offset = Vector3.up * .5f;
-            
-            RaycastHit2D hit = Physics2D.Raycast(transform.position +  offset, direction,
-                Vector2.Distance(transform.position, targetPosition), obstacleLayerMask);
-            
-            if (hit.collider != null)
-            {
-                GrapplePoint.TargetPoint.Blocked();
-                grappleClearRenderer.enabled = false;
-                grappleBlocked = true;
-                grappleLOSRenderer.enabled = true;
-                grappleLOSRenderer.SetPosition(1, transform.position + offset);
-                grappleLOSRenderer.SetPosition(0, GrapplePoint.TargetPoint.transform.position);
-            }
-            else
-            {
-                GrapplePoint.TargetPoint.Cleared();
-                grappleBlocked = false;
-                grappleLOSRenderer.enabled = false;
-                grappleClearRenderer.enabled = true;
-                grappleClearRenderer.SetPosition(1, transform.position + offset);
-                grappleClearRenderer.SetPosition(0, GrapplePoint.TargetPoint.transform.position);
-            }
-        }
-        else
-        {
-            grappleBlocked = false;
-            //Debug.Log("red off");
-            grappleLOSRenderer.enabled = false;
-            grappleClearRenderer.enabled = false;
-        }
-        
-        if (isGrappleLaunched && sentProjectile != null)
-        {
-            grappleLineRenderer.SetPosition(1, transform.position);
-            grappleLineRenderer.SetPosition(0, sentProjectile.transform.position);
-        }
-        const float grappleSpeed = 15f;
-        const float disconnectDistance = .3f;
-        if (isLineGrappling)
-        {
-            Vector3 direction = (launchedPoint.transform.position - transform.position).normalized;
-            Rigidbody.velocity = direction * grappleSpeed;
-            grappleLineRenderer.SetPosition(1, transform.position);
-            grappleLineRenderer.SetPosition(0, launchedPoint.transform.position);
-            
-
-            
-            if (isLineGrappling && 
-                Vector2.Distance(transform.position, launchedPoint.transform.position) < disconnectDistance)
-            {
-                DisconnectGrapple();
-            }
-        }
-    }
+    // private void LineGrappleUpdate()
+    // {
+    //
+    //     if (!isLineGrappling && !isGrappleLaunched && GrapplePoint.TargetPoint != null)
+    //     {
+    //         Vector3 targetPosition = GrapplePoint.TargetPoint.transform.position;
+    //         Vector3 direction = (targetPosition - transform.position).normalized;
+    //         Vector3 offset = Vector3.up * .5f;
+    //         
+    //         RaycastHit2D hit = Physics2D.Raycast(transform.position +  offset, direction,
+    //             Vector2.Distance(transform.position, targetPosition), obstacleLayerMask);
+    //         
+    //         if (hit.collider != null)
+    //         {
+    //             GrapplePoint.TargetPoint.Blocked();
+    //             grappleClearRenderer.enabled = false;
+    //             grappleBlocked = true;
+    //             grappleLOSRenderer.enabled = true;
+    //             grappleLOSRenderer.SetPosition(1, transform.position + offset);
+    //             grappleLOSRenderer.SetPosition(0, GrapplePoint.TargetPoint.transform.position);
+    //         }
+    //         else
+    //         {
+    //             GrapplePoint.TargetPoint.Cleared();
+    //             grappleBlocked = false;
+    //             grappleLOSRenderer.enabled = false;
+    //             grappleClearRenderer.enabled = true;
+    //             grappleClearRenderer.SetPosition(1, transform.position + offset);
+    //             grappleClearRenderer.SetPosition(0, GrapplePoint.TargetPoint.transform.position);
+    //         }
+    //     }
+    //     else
+    //     {
+    //         grappleBlocked = false;
+    //         //Debug.Log("red off");
+    //         grappleLOSRenderer.enabled = false;
+    //         grappleClearRenderer.enabled = false;
+    //     }
+    //     
+    //     if (isGrappleLaunched && sentProjectile != null)
+    //     {
+    //         grappleLineRenderer.SetPosition(1, transform.position);
+    //         grappleLineRenderer.SetPosition(0, sentProjectile.transform.position);
+    //     }
+    //     const float grappleSpeed = 15f;
+    //     const float disconnectDistance = .3f;
+    //     if (isLineGrappling)
+    //     {
+    //         Vector3 direction = (launchedPoint.transform.position - transform.position).normalized;
+    //         Rigidbody.velocity = direction * grappleSpeed;
+    //         grappleLineRenderer.SetPosition(1, transform.position);
+    //         grappleLineRenderer.SetPosition(0, launchedPoint.transform.position);
+    //         
+    //
+    //         
+    //         if (isLineGrappling && 
+    //             Vector2.Distance(transform.position, launchedPoint.transform.position) < disconnectDistance)
+    //         {
+    //             DisconnectGrapple();
+    //         }
+    //     }
+    // }
 
     // private void GetBounds_Update()
     // {
@@ -448,6 +467,10 @@ public partial class CharController
         }
 
         isGrounded = newlyGrounded;
+        if (newlyGrounded && !isWallSliding)
+        {
+            recentlyBoosted = false;
+        }
         Animator.SetBool(Grounded, isGrounded);
     }
     

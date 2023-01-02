@@ -17,6 +17,14 @@ public partial class CharController
     public bool doRecord;
     private int rewindSpeed = 5;
     
+    private LineRenderer grappleLineRenderer;
+    private DistanceJoint2D grappleDistanceJoint;
+    private Rigidbody2D rigidbody2d;
+    public bool isGrappling;
+    private Rigidbody2D instantiatedProjectile;
+    public Rigidbody2D projectilePrefab;
+    private Vector3 attachmentPoint;
+    
     private void Awake()
     {
         if (Instance != null)
@@ -34,29 +42,20 @@ public partial class CharController
 
     protected override void Start()
     {
-
-        //SaveData.LoadFromFile(1);
-        //Interactor.interactors.Clear();
-        //canDoubleJump = false;
+        
         fadeSpriteIterator = 0;
-        //capeAnchor = transform.Find("Cape").Find("CapeAnchor").GetComponent<CapeController>();
-        //capeOutlineAnchor = transform.Find("Cape").Find("CapeAnchor1").GetComponent<CapeController>();
-        speed = baseSpeed;
-        grappleLineRenderer = transform.GetComponent<LineRenderer>();
-        grappleLineRenderer.enabled = false;
-        grappleLOSRenderer = transform.Find("GrappleLOS").GetComponent<LineRenderer>();
-        grappleLOSRenderer.enabled = false;
-        grappleClearRenderer = transform.Find("GrappleClear").GetComponent<LineRenderer>();
-        grappleClearRenderer.enabled = false;
-        groundCheck = transform.Find("GroundCheck").GetComponent<BoxCollider2D>();
+        runSpeed = baseSpeed;
+
         fixedJoint2D = GetComponent<FixedJoint2D>();
         charLight = transform.Find("Light").GetComponent<Light2D>();
         particleChild = transform.Find("Particles");
         
         Animator = transform.Find("SpriteHandler").GetComponent<Animator>();
         charCollider = transform.GetComponent<BoxCollider2D>();
+
+        dashTrail = transform.Find("Particles").Find("DashFX").GetComponent<ParticleSystem>();
         
-        dust = particleChild.Find("DustPS").GetComponent<ParticleSystem>();
+        dust = particleChild.Find("WhiteDust").GetComponent<ParticleSystem>();
         //fadePS = particleChild.Find("FadePS").GetComponent<ParticleSystem>();
         obstacleLayerMask = LayerMask.GetMask("Obstacle");
         obstaclePlusLayerMask = LayerMask.GetMask("Obstacle", "Slide", "Platform");
@@ -71,6 +70,12 @@ public partial class CharController
         originalColliderOffset = charCollider.offset;
         
         charLight.enabled = false;
+        
+        grappleLineRenderer = GetComponent<LineRenderer>();
+        grappleDistanceJoint = GetComponent<DistanceJoint2D>();
+        rigidbody2d = GetComponent<Rigidbody2D>();
+        // grappleLineRenderer.enabled = false;
+        // grappleDistanceJoint.enabled = false;
 
         // set char's spawn
         //Debug.Log(SceneInformation.Instance.GetInitialSpawnPosition());
@@ -188,7 +193,7 @@ public partial class CharController
         {
             
             int moveDir = Math.Sign(moveVector);
-            // if user is not moving and has speed, then slow down
+            // if user is not moving and has runSpeed, then slow down
             if (moveDir == 0 && Mathf.Abs(xVel) >= MinGroundSpeed && !RecentlyImpulsed())
             {
                 int antiMoveDir = -Math.Sign(xVel);
@@ -196,19 +201,46 @@ public partial class CharController
                 // TODO change this if we choose to add ice or something
                 Rigidbody.AddForce(antiMoveDir * OnGroundDeceleration * Vector2.right, ForceMode2D.Force);
             }
-            // otherwise move the player in the direction (only accelerate if below max speed)
-            else if ((moveDir > 0 && xVel < speed) || (moveDir < 0 && xVel > -speed))
+            // otherwise move the player in the direction (only accelerate if below max runSpeed)
+            else if ((moveDir > 0 && xVel < runSpeed) || (moveDir < 0 && xVel > -runSpeed))
             {
                 Rigidbody.AddForce(moveDir * OnGroundAcceleration * Vector2.right, ForceMode2D.Force);
             }
             
 
-            // apply max velocity
+            // decelerate if above limit
             if (!RecentlyImpulsed())
             {
-                Rigidbody.velocity = new Vector2(
-                    Mathf.Clamp(xVel, -speed, speed),
-                    Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
+                if (Mathf.Abs(xVel) > boostedSpeed)
+                {
+                    float xAfterDrag = Rigidbody.velocity.x - (Math.Sign(xVel) * OnGroundDrag * 1.5f);
+                    //
+                    if (xVel > 0)
+                    {
+                        Rigidbody.velocity = new Vector2(Math.Max(xAfterDrag, boostedSpeed), Rigidbody.velocity.y);
+                    }
+                    else if (xVel < 0)
+                    {
+                        Rigidbody.velocity = new Vector2(Math.Min(xAfterDrag, -boostedSpeed), Rigidbody.velocity.y);
+                    }
+                }
+
+                else if (Mathf.Abs(xVel) > runSpeed)
+                {
+                    float xAfterDrag = Rigidbody.velocity.x - (Math.Sign(xVel) * OnGroundDrag);
+                    //
+                    if (xVel > 0)
+                    {
+                        Rigidbody.velocity = new Vector2(Math.Max(xAfterDrag, runSpeed), Rigidbody.velocity.y);
+                    }
+                    else if (xVel < 0)
+                    {
+                        Rigidbody.velocity = new Vector2(Math.Min(xAfterDrag, -runSpeed), Rigidbody.velocity.y);
+                    }
+                }
+                // Rigidbody.velocity = new Vector2(
+                //     Mathf.Clamp(xVel, -runSpeed, runSpeed),
+                //     Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
             }
             
 
@@ -222,7 +254,7 @@ public partial class CharController
         // in-air movement
         else
         {
-            if (!(Math.Sign(moveVector) == Math.Sign(xVel) && Math.Abs(xVel) > speed))
+            if (!(Math.Sign(moveVector) == Math.Sign(xVel) && Math.Abs(xVel) > runSpeed))
             {
             Rigidbody.AddForce(Math.Sign(moveVector) * InAirAcceleration * Vector2.right, ForceMode2D.Force);
             }
@@ -240,7 +272,7 @@ public partial class CharController
             }
             
             
-            // if (recentlyImpulsed && Math.Abs(xVel) <= speed)
+            // if (recentlyImpulsed && Math.Abs(xVel) <= runSpeed)
             // {
             //     recentlyImpulsed = false;
             // }
@@ -249,7 +281,7 @@ public partial class CharController
             // if (!isLineGrappling && !RecentlyImpulsed())
             // {
             //     Rigidbody.velocity = new Vector2(
-            //         Mathf.Clamp(xVel, -speed, speed),
+            //         Mathf.Clamp(xVel, -runSpeed, runSpeed),
             //         Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
             // }
         }
@@ -313,7 +345,7 @@ public partial class CharController
         
 
         Vector2 v = Rigidbody.velocity;
-        Rigidbody.velocity = new Vector2(v.x, v.y - (gravityValue * Time.deltaTime));
+        Rigidbody.velocity = new Vector2(v.x, v.y - ((isWallSliding ? (v.y < 0f ? .8f : .3f) : 1) * gravityValue * Time.deltaTime));
         CheckGrounded_Update();
         CheckPlatformGrounded_Update();
         EventHandling_Update();
@@ -322,8 +354,114 @@ public partial class CharController
         //LineGrappleUpdate();
         Crouching_Update();
         LookAhead_Update();
+        Grapple_Update();
         recentImpulseTime -= Time.deltaTime;
 
+    }
+
+    private void Grapple_Update()
+    {
+ 
+        if (Input.GetKeyUp(KeyCode.Q)) {
+            //TODO kill projectilePrefab as well
+            
+            if (instantiatedProjectile != null) { 
+                Destroy(instantiatedProjectile.gameObject);
+            }
+
+            EndGrapple();
+        }
+        
+        if (instantiatedProjectile != null) //isLaunched
+        {
+            grappleLineRenderer.SetPosition(1, transform.position);
+            grappleLineRenderer.SetPosition(0, instantiatedProjectile.transform.position);
+        }
+        
+        if (isGrappling) {
+            //const float offsetMultiplier = 1f;
+            //float offset = Mathf.Cos(Vector3.Angle(transform.position - attachmentPoint, Vector3.down)) * offsetMultiplier;
+            //Debug.Log(Vector3.Angle(transform.position - attachmentPoint, Vector3.up));
+            //Debug.Log(offset);
+            //Rigidbody.velocity *= 1.001f;
+            float grappleLength = (attachmentPoint - transform.position).magnitude;
+            grappleDistanceJoint.distance = grappleLength;
+            if (Rigidbody.velocity.y < 0 && Rigidbody.velocity.magnitude < grappleSpeedLimit)
+            {
+                Rigidbody.velocity *= 1.01f;
+            }
+            //grappleLineRenderer.SetPosition(0, instantiatedProjectile.transform.position);
+        }
+    }
+    
+    private void LaunchHook()
+    {
+        Vector2 direction = new Vector2(1, 1.4f);
+        if (transform.localScale.x > 0.5) {
+            direction.x = -direction.x;
+        }
+
+        if (isInverted) {
+            direction.y = -direction.y;
+        }
+        
+        print("hook launched");
+        const float speed = 30f;
+        Vector3 offset = isInverted ? new Vector3(0, -1, 0) : new Vector3(0, 1, 0);
+        instantiatedProjectile = Instantiate(projectilePrefab, transform.position + offset, transform.rotation);
+        instantiatedProjectile.gameObject.GetComponent<GrappleProjectile>().Initialize(direction.normalized, speed);
+        grappleLineRenderer.enabled = true;
+        
+    }
+
+    public void StartGrapple(Vector3 grapplePoint)
+    {
+
+        gravityValue = BaseGravity * .5f;
+        attachmentPoint = grapplePoint;
+        const float verticalDisplacementOffset = .5f;
+        //Vector3 diffNormalized = (grapplePoint - transform.position).normalized ;
+        transform.position += new Vector3(0, verticalDisplacementOffset, 0);
+        ReduceHeight(true);
+        
+        
+        isGrappling = true;
+        //charController.isRecentlyGrappled = true;
+        //grappleLineRenderer.SetPosition(0, grapplePoint);
+        //grappleLineRenderer.SetPosition(1, transform.position);
+        grappleDistanceJoint.connectedAnchor = grapplePoint;
+        
+        grappleDistanceJoint.enabled = true;
+        grappleLineRenderer.enabled = true;
+        
+
+        //const float boostForce = 5f;
+        const float gravModifier = .8f;
+        const float minVel = 15f;
+
+        if (IsFacingLeft()) {
+            //facing left
+            rigidbody2d.velocity += (new Vector2(rigidbody2d.velocity.y, 0) * gravModifier);
+            if (rigidbody2d.velocity.x > -minVel) {
+                rigidbody2d.velocity = (Vector2.left * minVel);
+                //Debug.Log("left boost");
+            }
+        }
+        else {
+            rigidbody2d.velocity -= (new Vector2(rigidbody2d.velocity.y, 0) * gravModifier);
+            if (rigidbody2d.velocity.x < minVel) {
+                rigidbody2d.velocity = (Vector2.right * minVel);
+                //Debug.Log("right boost");
+            }
+        }
+    }
+
+    public void EndGrapple() {
+        ReturnHeight();
+        grappleDistanceJoint.enabled = false;
+        grappleLineRenderer.enabled = false;
+        isGrappling = false;
+        gravityValue = BaseGravity;
     }
 
     private void LookAhead_Update()
@@ -631,7 +769,7 @@ public partial class CharController
         // isWallSliding = (isInverted ? -v.y : v.y) <= 0 && 
         //                 ((isNearWallOnRight && moveVector >= 0)|| (isNearWallOnLeft && moveVector <= 0)) &&
         //                 IsAbleToMove();
-        isWallSliding = (isInverted ? -v.y : v.y) <= 0 && 
+        isWallSliding = //(isInverted ? -v.y : v.y) <= 0 && 
                         ((isNearWallOnRight && transform.localScale.x < 0) || 
                          (isNearWallOnLeft && transform.localScale.x > 0)) && IsAbleToMove() && !isGrounded;
         // print("tr" + (bool)topRightHit + "br:" + (bool)bottomRightHit);
@@ -655,8 +793,8 @@ public partial class CharController
         if (isWallSliding)
         {
             justJumped = false;
-            Rigidbody.velocity = new Vector2(v.x,
-                isInverted ? Mathf.Max(-v.y, wallSlideSpeed) : Mathf.Max(v.y, -wallSlideSpeed));
+            // Rigidbody.velocity = new Vector2(v.x,
+            //     isInverted ? Mathf.Max(-v.y, wallSlideSpeed) : Mathf.Max(v.y, -wallSlideSpeed));
         }
 
     }

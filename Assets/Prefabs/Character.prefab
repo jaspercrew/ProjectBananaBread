@@ -5382,22 +5382,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   motifLength: 0
   actionMicroBeats: 
-  recentlyImpulsed: 0
+  recentImpulseTime: 0
   fadeSprite: {fileID: 849027303211011230, guid: 3e65f913ebec9664da23f573e81e5867, type: 3}
+  fixedJoint2D: {fileID: 0}
   pointsInTime: []
   doRecord: 0
-  baseSpeed: 10
+  isGrappling: 0
+  projectilePrefab: {fileID: 0}
+  Rigidbody: {fileID: 0}
   jumpForce: 9
   isDashing: 0
   gravityValue: 17
+  currentBoostZone: {fileID: 0}
   isInverted: 0
   currentArea: {fileID: 0}
-  isJumpBoosted: 0
   isMetronomeLocked: 0
-  grappleProjectile: {fileID: 1920082404479384334, guid: 7f946ab064a4c614a865b845260eaef6, type: 3}
-  isRecentlyGrappled: 0
   isCrouching: 0
+  mostRecentlyTouchedPlatform: {fileID: 0}
   emitFadesTime: 0
+  forcedMoveVector: 0
+  forcedMoveTime: 0
+  disabledMovement: 0
 --- !u!95 &4501482738561307951
 Animator:
   serializedVersion: 3

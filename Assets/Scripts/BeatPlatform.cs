@@ -281,7 +281,7 @@ public class BeatPlatform : ActivatedEntity
                 CharController.Instance.Die();
             }
 
-            else if (type == PlatformType.Fading)
+            else if (type == PlatformType.Fading && (CharController.Instance.transform.position.y > transform.position.y || isWallSlideable))
             {
                 StartCoroutine(FadeCoroutine());
             }
@@ -376,7 +376,7 @@ public class BeatPlatform : ActivatedEntity
         faded.a = 0f;
 
         float elapsedTime = 0f;
-        float fadeTime = .5f;
+        float fadeTime = .8f;
 
         while (elapsedTime < fadeTime)
         {

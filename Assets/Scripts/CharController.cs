@@ -20,13 +20,14 @@ public partial class CharController : BeatEntity
     private ParticleSystem dust;
     private ScreenShakeController screenShakeController;
     private Light2D charLight;
-    // private RadialGrapple grappleController;
+    private RadialGrapple grappleController;
     private SpriteRenderer spriteRenderer;
-    private LineRenderer grappleLineRenderer;
+    //private LineRenderer grappleLineRenderer;
     // ReSharper disable once InconsistentNaming
-    private LineRenderer grappleLOSRenderer;
-    private LineRenderer grappleClearRenderer;
-    private BoxCollider2D groundCheck;
+    // private LineRenderer grappleLOSRenderer;
+    // private LineRenderer grappleClearRenderer;
+    //private BoxCollider2D groundCheck;
+    private ParticleSystem dashTrail;
     public Rigidbody2D Rigidbody;
     private Animator Animator;
     
@@ -39,12 +40,15 @@ public partial class CharController : BeatEntity
     
     [Header("Configurable player control values")] 
     // Configurable player control values
-    public float baseSpeed = 0f;
-    private float speed;
+    private float baseSpeed = 10f;
+    private float runSpeed;
+    private float boostedSpeed = 15f;
+    private float grappleSpeedLimit = 20f;
 
     private const float MinGroundSpeed = 0.5f;
     private const float OnGroundAcceleration = 38f;
     private const float OnGroundDeceleration = 40f;
+    private const float OnGroundDrag = 5f;
     private const float InAirAcceleration = 30f;
     private const float InAirDrag = .7f;
     private const float MaxYSpeed = 30f;
@@ -53,8 +57,8 @@ public partial class CharController : BeatEntity
 
     private const float inversionForce = 3f;
     // private const float VerticalDrag = 10f;
-    [SerializeField]
-    private float jumpForce = 0f;
+    
+    private float jumpForce = 11f;
     public static float BaseGravity = 20f;
     
 
@@ -68,6 +72,8 @@ public partial class CharController : BeatEntity
     
     // Trackers
     private bool canFunction = true;
+
+    public BoostZone currentBoostZone;
     
 
     private HashSet<IEnumerator> toInterrupt = new HashSet<IEnumerator>();
@@ -100,16 +106,15 @@ public partial class CharController : BeatEntity
 
     private bool jumpAvailable;
 
-    private bool isGrappleLaunched;
-    private bool isLineGrappling;
-    public Rigidbody2D grappleProjectile;
-    private Rigidbody2D sentProjectile;
-
-    private bool grappleBlocked;
-    private GrapplePoint launchedPoint;
-    // ReSharper disable once NotAccessedField.Local
-    private GrapplePoint hookedPoint;
-    public bool isRecentlyGrappled;
+    // private bool isGrappleLaunched;
+    // private bool isLineGrappling;
+    // public Rigidbody2D grappleProjectile;
+    // private Rigidbody2D sentProjectile;
+    // private bool grappleBlocked;
+    // private GrapplePoint launchedPoint;
+    // // ReSharper disable once NotAccessedField.Local
+    // private GrapplePoint hookedPoint;
+    // public bool isRecentlyGrappled;
     
     private bool justJumped;
 
@@ -193,7 +198,7 @@ public partial class CharController : BeatEntity
             //{() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.DoubleJump},
             //{() => Input.GetKeyDown(KeyCode.E), Event.EventTypes.Interact},
             //{() => Input.GetKeyDown(KeyCode.LeftControl), Event.EventTypes.Crouch},
-            //{() => Input.GetKeyDown(KeyCode.G), Event.EventTypes.Grapple},
+            {() => Input.GetKeyDown(KeyCode.Q), Event.EventTypes.Grapple},
         };
 
     // maps from event type to a boolean function that says whether the conditions for the 
@@ -238,13 +243,13 @@ public partial class CharController : BeatEntity
             //{Event.EventTypes.DoubleJump, @this => @this.DoDoubleJump()},
             //{Event.EventTypes.Interact, @this => @this.DoInteract()},
             //{Event.EventTypes.Crouch, @this => @this.Crouch()},
-            //{Event.EventTypes.Grapple, @this => @this.AttemptLaunchGrapple()},
+            {Event.EventTypes.Grapple, @this => @this.LaunchHook()},
         };
 
 
     private bool IsAbleToMove()
     {
-        return !isDashing && !isLineGrappling && canFunction && !isRewinding && !isMetronomeLocked && !GameManager.Instance.isMenu;
+        return !isDashing && canFunction && !isRewinding && !isMetronomeLocked && !GameManager.Instance.isMenu && !isGrappling;
     }
 
     private bool RecentlyImpulsed()
@@ -276,7 +281,7 @@ public partial class CharController : BeatEntity
     }
 
     private bool IsAbleToAct() {
-        return !isDashing  && !disabledMovement && canFunction && !isRewinding && !isMetronomeLocked && !GameManager.Instance.isMenu;
+        return !isDashing  && !disabledMovement && canFunction && !isRewinding && !isMetronomeLocked && !GameManager.Instance.isMenu && !isGrappling;
     }
     
     protected void FaceLeft()

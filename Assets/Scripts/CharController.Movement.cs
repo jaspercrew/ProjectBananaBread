@@ -63,8 +63,19 @@ public partial class CharController
     private IEnumerator BoostCoroutine()
     {
         //float boostFreezeDelay = .0f;
-        float boostForceMultiplier = 12f;
-        float delayGravTime = .2f;
+        bool isFree = false;
+        float boostForceMultiplier;
+        if (currentBoostZone != null)
+        {
+            boostForceMultiplier = 13f;
+            isFree = true;
+        }
+        else
+        {
+            boostForceMultiplier = 10f;
+        }
+        
+        float delayGravTime = .25f;
         recentlyBoosted = true;
         Vector2 boostDirection = Vector2.zero;
         if (Input.GetKey(KeyCode.A))
@@ -96,8 +107,9 @@ public partial class CharController
         emitFadesTime = .28f;
         Animator.SetTrigger(Dash);
         gravityValue = 0;
-        boostDirection.Scale(new Vector2(1.5f, 1f));
+        boostDirection.Scale(new Vector2(1.5f, .9f));
         Vector2 boost = boostDirection * boostForceMultiplier;
+        dashTrail.Play();
         
         if (Math.Sign(Rigidbody.velocity.x) != Math.Sign(boost.x))
         {
@@ -115,17 +127,29 @@ public partial class CharController
         recentImpulseTime = .3f;
 
         yield return new WaitForSeconds(delayGravTime);
-        //Rigidbody.velocity -= boost; //should do negative checkingdsfdsfsdfsd
-        if (Math.Sign(Rigidbody.velocity.x) != Math.Sign(Rigidbody.velocity.x - boost.x))
-        {
-            Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, Rigidbody.velocity.y);
+
+        if (Math.Sign(Rigidbody.velocity.x) == Math.Sign(Rigidbody.velocity.x - boost.x) && boostDirection.x != 0)
+        { 
+            //float xToSet = Rigidbody.velocity.x - (boost.x * .8f);
+            if (Rigidbody.velocity.x > 0)
+            {
+                Rigidbody.velocity = new Vector2(Math.Min(Rigidbody.velocity.x, boostedSpeed), Rigidbody.velocity.y);
+            }
+            else
+            {
+                Rigidbody.velocity = new Vector2(Math.Max(Rigidbody.velocity.x, -boostedSpeed), Rigidbody.velocity.y);
+            }
+            
         }
-        else
-        {
-            Rigidbody.velocity = new Vector2(Rigidbody.velocity.x - (boost.x * .8f), Rigidbody.velocity.y);
-        }
+
+        //dashTrail.emitting = false;
         disabledMovement = false;
         gravityValue = BaseGravity;
+        if (isFree)
+        {
+            recentlyBoosted = false;
+        }
+        
 
     }
 
@@ -257,7 +281,7 @@ public partial class CharController
     //     Animator.SetTrigger(Jump);
     // }
 
-    private void ReduceHeight()
+    private void ReduceHeight(bool shiftUp = false)
     {
         charCollider.size = new Vector2(originalColliderSize.x, originalColliderSize.y / heightReducer);
         // charCollider.offset = new Vector2(originalColliderOffset.x, originalColliderOffset.y -  
@@ -270,7 +294,7 @@ public partial class CharController
         else
         {
             charCollider.offset = new Vector2(originalColliderOffset.x, originalColliderOffset.y -  
-                                                                        ((originalColliderSize.y - (originalColliderSize.y / heightReducer)) / 2));
+                                                                        (shiftUp ? -1 : 1) * ((originalColliderSize.y - (originalColliderSize.y / heightReducer)) / 2));
         }
 
     }
@@ -288,7 +312,7 @@ public partial class CharController
         Animator.SetBool("isCrouching", true);
         ReduceHeight();
         isCrouching = true;
-        speed = baseSpeed / 2;
+        runSpeed = baseSpeed / 2;
     }
 
     private void UnCrouch()
@@ -296,7 +320,7 @@ public partial class CharController
         //Assert.IsTrue(isCrouching);
         Animator.SetBool("isCrouching", false);
         ReturnHeight();
-        speed = baseSpeed;
+        runSpeed = baseSpeed;
         isCrouching = false;
 
     }
@@ -305,7 +329,7 @@ public partial class CharController
         //canDoubleJump = false;
         
         justJumped = false;
-        isRecentlyGrappled = false;
+        //isRecentlyGrappled = false;
         dust.Play();
         Animator.SetBool(Grounded, true);
         // Debug.Log("sus");
@@ -329,7 +353,7 @@ public partial class CharController
     //     const float offset = 1f;
     //     Vector3 direction = (point.transform.position - transform.position).normalized;
     //     sentProjectile = Instantiate(grappleProjectile, transform.position + (direction * offset), transform.rotation);
-    //     sentProjectile.gameObject.GetComponent<GrappleProjectile>().SetStats(direction, launchSpeed);
+    //     sentProjectile.gameObject.GetComponent<GrappleProjectile>().Initialize(direction, launchSpeed);
     // }
     //
     // private IEnumerator LaunchLineCoroutine()
@@ -363,7 +387,7 @@ public partial class CharController
     //     //Debug.Log("Disconnect");
     //     grappleLineRenderer.enabled = false;
     //     isLineGrappling = false;
-    //     Rigidbody.velocity = Vector2.ClampMagnitude(Rigidbody.velocity, speed * 2);
+    //     Rigidbody.velocity = Vector2.ClampMagnitude(Rigidbody.velocity, runSpeed * 2);
     // }
     
 }

@@ -117,9 +117,12 @@ public class GameManager : MonoBehaviour
             AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songD, 3, nextLoopTime, playFlipped);
 
             playFlipped = !playFlipped;
-            AudioClip audioClip = AudioManager.Instance.soundToClip[SceneInformation.Instance.songA];
+            //AudioClip audioClip = AudioManager.Instance.soundToClip[SceneInformation.Instance.songA];
             //nextLoopTime += (double)audioClip.samples / audioClip.frequency;
-            nextLoopTime += 60d / (double)songBpm * 64d;
+            
+            //nextLoopTime += (60d / (double)songBpm) * 16d;
+            nextLoopTime += (60d / (double)songBpm) * 32d;
+            print(60d / (double)songBpm);
         }
     }
 

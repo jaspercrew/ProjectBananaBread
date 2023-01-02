@@ -5,7 +5,7 @@
 //     private float speed;
 //     private Vector3 direction;
 //
-//     public void SetStats(Vector3 dir, float newSpeed) {
+//     public void Initialize(Vector3 dir, float newSpeed) {
 //         direction = dir.normalized;
 //         speed = newSpeed;
 //     }

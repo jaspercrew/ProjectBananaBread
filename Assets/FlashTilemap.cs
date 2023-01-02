@@ -14,6 +14,12 @@ public class FlashTilemap : ActivatedEntity
         tilemapCollider2D = GetComponent<TilemapCollider2D>();
         tilemap = GetComponent<Tilemap>();
         base.Start();
+        Color temp = Color.cyan;
+        temp.a = 0;
+        tilemap.color = temp;
+        tilemapCollider2D.enabled = false;
+        SimpleVolumeManager.instance.volume.enabled = false;
+
     }
 
     protected override void MicroBeatAction()
@@ -32,43 +38,60 @@ public class FlashTilemap : ActivatedEntity
         base.MicroBeatAction();
     }
 
-    private IEnumerator ColorFade(bool fadeIn)
+    private IEnumerator ColorFade(bool fadeIn, bool hazard)
     {
-        float fadeTime = .1f;
+        float fadeTime = .05f;
         float timeElapsed = 0;
-        Color start = tilemap.color;
-        Color full = start;
+        Color empty = tilemap.color;
+        empty.a = 0f;
+        Color full = tilemap.color;
         full.a = 1f;
-        Color faded = start;
-        faded.a = .5f;
+        Color faded = tilemap.color;
+        faded.a = .2f;
 
-        Color destination = fadeIn ? full : faded;
+        Color start = fadeIn ? empty : tilemap.color;
+        Color destination;
+        
+        
+        
+        if (fadeIn)
+        {
+            destination = hazard ? full : faded;
+        }
+
+        else 
+        {
+            destination = empty;
+        }
+        
         while (timeElapsed < fadeTime)
         {
             tilemap.color = Color.Lerp(start, destination, timeElapsed / fadeTime);
             timeElapsed += Time.deltaTime;
             yield return null;
         }
-
+        
         tilemap.color = destination;
     }
     
     private IEnumerator HazardCoroutine()
     {
+        SimpleVolumeManager.instance.volume.enabled = true;
         tilemapCollider2D.enabled = true;
-        StartCoroutine(ColorFade(true));
-        float flashDuration = .8f;
+        StartCoroutine(ColorFade(true, true));
+        float flashDuration = .6f;
         yield return new WaitForSeconds(flashDuration);
-        StartCoroutine(ColorFade(false));
+        StartCoroutine(ColorFade(false, true));
         tilemapCollider2D.enabled = false;
+        SimpleVolumeManager.instance.volume.enabled = false;
     }
 
     private IEnumerator FlashCoroutine()
     {
-        StartCoroutine(ColorFade(true));
-        float flashDuration = .25f;
+        StartCoroutine(ColorFade(true, false));
+        float flashDuration = .15f;
         yield return new WaitForSeconds(flashDuration);
-        StartCoroutine(ColorFade(false));
+        StartCoroutine(ColorFade(false, false));
     }
 
 

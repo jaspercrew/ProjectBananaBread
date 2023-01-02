@@ -12,12 +12,17 @@ public class GameArea : MonoBehaviour
     public PolygonCollider2D polygonCollider2D;
     private CinemachineVirtualCamera cam;
 
-    // Start is called before the first frame update
-    void Start()
+
+    void Awake()
     {
         cam = GetComponentInChildren<CinemachineVirtualCamera>();
         cam.Follow = FindObjectOfType<CharController>().transform;
         polygonCollider2D = GetComponent<PolygonCollider2D>();
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+        
         if (polygonCollider2D.bounds.Contains(CharController.Instance.transform.localPosition))
         {
             AudioManager.Instance.UpdateCurrentSongs(audioLayers, false);

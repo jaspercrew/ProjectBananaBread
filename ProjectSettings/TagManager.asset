@@ -20,13 +20,13 @@ TagManager:
   - 
   - Player
   - Obstacle
-  - Moveable
-  - Slide
-  - GroundCheck
+  - Hazard
+  - 
+  - 
   - SpawnCamera/Ignore
   - MainCamera
   - Platform
-  - 
+  - PlayerHazardCheck
   - 
   - 
   - 

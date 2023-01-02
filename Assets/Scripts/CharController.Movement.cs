@@ -189,11 +189,12 @@ public partial class CharController
         {
             return;
         }
-        
+
+        lastJumpTime = Time.time;
         //print("jumpcall");
         justJumped = true;
         dust.Play();
-        const float wallJumpModX = .6f;
+        const float wallJumpModX = .5f;
         const float wallJumpModY = 1.2f;
         // float xWallJumpBoostedModifier = 3.0f;
         // float yWallJumpBoostedModifier = 1.1f;
@@ -202,7 +203,8 @@ public partial class CharController
         //float adjustedJumpForce = isJumpBoosted ? jumpForce * 2 : jumpForce;
         Vector2 overallJumpImpulse = new Vector2(0, jumpForce);
         Vector2 momentumVector = Vector2.zero;
-        bool doWallJump = (isWallSliding || wallJumpAvailable) && !isGrounded;
+        //bool doWallJump = (isWallSliding || wallJumpAvailable) && !isGrounded;
+        bool doWallJump = isNearWallOnLeft || isNearWallOnRight;
         float momentumBreakpoint = 10f;
         if (mostRecentlyTouchedPlatform != null && mostRecentlyTouchedPlatform.type == PlatformType.Moving) //jump from moving platform
         {
@@ -232,6 +234,12 @@ public partial class CharController
             forcedMoveVector = wallJumpDir;
             overallJumpImpulse =
                 new Vector2(jumpForce * wallJumpModX * wallJumpDir, overallJumpImpulse.y * wallJumpModY);
+        }
+
+        //regular jump
+        if (lastJumpTime + JumpCooldown < Time.time)
+        {
+            return;
         }
         
         if (isInverted)
@@ -282,7 +290,7 @@ public partial class CharController
     //     Animator.SetTrigger(Jump);
     // }
 
-    private void ReduceHeight(bool shiftUp = false)
+    private void ReduceHeight(bool shiftMiddle = false)
     {
         charCollider.size = new Vector2(originalColliderSize.x, originalColliderSize.y / heightReducer);
         // charCollider.offset = new Vector2(originalColliderOffset.x, originalColliderOffset.y -  
@@ -295,7 +303,7 @@ public partial class CharController
         else
         {
             charCollider.offset = new Vector2(originalColliderOffset.x, originalColliderOffset.y -  
-                                                                        (shiftUp ? -1 : 1) * ((originalColliderSize.y - (originalColliderSize.y / heightReducer)) / 2));
+                                                                        (shiftMiddle ? 0 : 1) * ((originalColliderSize.y - (originalColliderSize.y / heightReducer)) / 2));
         }
 
     }

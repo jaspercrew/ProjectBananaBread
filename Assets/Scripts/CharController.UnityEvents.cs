@@ -285,6 +285,8 @@ public partial class CharController
             //         Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
             // }
         }
+
+        Rigidbody.velocity = Vector2.ClampMagnitude(Rigidbody.velocity, AbsoluteMaxVelocity);
     }
 
     
@@ -384,11 +386,18 @@ public partial class CharController
             //Debug.Log(Vector3.Angle(transform.position - attachmentPoint, Vector3.up));
             //Debug.Log(offset);
             //Rigidbody.velocity *= 1.001f;
+            
             float grappleLength = (attachmentPoint - transform.position).magnitude;
             grappleDistanceJoint.distance = grappleLength;
             if (Rigidbody.velocity.y < 0 && Rigidbody.velocity.magnitude < grappleSpeedLimit)
             {
                 Rigidbody.velocity *= 1.01f;
+            }
+
+            float xVel = Rigidbody.velocity.x;
+            if ((xVel > 0 && isNearWallOnRight) || (xVel < 0 && isNearWallOnLeft))
+            {
+                EndGrapple();
             }
             //grappleLineRenderer.SetPosition(0, instantiatedProjectile.transform.position);
         }
@@ -718,11 +727,12 @@ public partial class CharController
     private void WallSlideDetection_Update() {
         const float wallSlideSpeed = 0.75f;
         const float groundDistance = 0.05f;
+        const float horizontalBuffer = .1f;
         
         Vector2 v = Rigidbody.velocity;
 
         Vector3 bounds = charCollider.bounds.extents;
-        float halfWidth = Mathf.Abs(bounds.x) - groundDistance;
+        float halfWidth = Mathf.Abs(bounds.x) - groundDistance + horizontalBuffer;
         float halfHeight = Mathf.Abs(bounds.y) - groundDistance;
         Vector2 center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
         
@@ -743,7 +753,7 @@ public partial class CharController
             Physics2D.Linecast(bottomLeft, bottomLeft + aLittleLeft, obstacleLayerMask);
         RaycastHit2D topLeftHit = 
             Physics2D.Linecast(topLeft, topLeft + aLittleLeft, obstacleLayerMask);
-        bool isNearWallOnLeft = bottomLeftHit && topLeftHit && 
+        isNearWallOnLeft = bottomLeftHit && topLeftHit && 
                                 bottomLeftHit.transform.GetComponent<BeatPlatform>() != null && 
                                 bottomLeftHit.transform.GetComponent<BeatPlatform>().isWallSlideable && 
                                 topLeftHit.transform.GetComponent<BeatPlatform>() != null && 
@@ -756,11 +766,13 @@ public partial class CharController
             Physics2D.Linecast(bottomRight, bottomRight + aLittleRight, obstacleLayerMask);
         RaycastHit2D topRightHit = 
             Physics2D.Linecast(topRight, topRight + aLittleRight, obstacleLayerMask);
-        bool isNearWallOnRight = bottomRightHit && topRightHit && 
+        isNearWallOnRight = bottomRightHit && topRightHit && 
                                  bottomRightHit.transform.GetComponent<BeatPlatform>() != null && 
                                  bottomRightHit.transform.GetComponent<BeatPlatform>().isWallSlideable && 
                                  topRightHit.transform.GetComponent<BeatPlatform>() != null && 
                                  topRightHit.transform.GetComponent<BeatPlatform>().isWallSlideable;
+
+        
         
         //print(bottomRightHit.transform.gameObject);
 
@@ -772,11 +784,12 @@ public partial class CharController
         isWallSliding = //(isInverted ? -v.y : v.y) <= 0 && 
                         ((isNearWallOnRight && transform.localScale.x < 0) || 
                          (isNearWallOnLeft && transform.localScale.x > 0)) && IsAbleToMove() && !isGrounded;
+        
         // print("tr" + (bool)topRightHit + "br:" + (bool)bottomRightHit);
-        Debug.DrawLine(bottomRight, bottomRight + aLittleRight);
-        Debug.DrawLine(topRight, topRight + aLittleRight);
-        Debug.DrawLine(bottomLeft, bottomLeft + aLittleLeft);
-        Debug.DrawLine(topLeft, topLeft + aLittleLeft);
+        // Debug.DrawLine(bottomRight, bottomRight + aLittleRight);
+        // Debug.DrawLine(topRight, topRight + aLittleRight);
+        // Debug.DrawLine(bottomLeft, bottomLeft + aLittleLeft);
+        // Debug.DrawLine(topLeft, topLeft + aLittleLeft);
 
         if (isNearWallOnLeft)
         {

@@ -40,10 +40,11 @@ public partial class CharController : BeatEntity
     
     [Header("Configurable player control values")] 
     // Configurable player control values
-    private float baseSpeed = 12f;
+    private const float baseSpeed = 12f;
     private float runSpeed;
-    private float boostedSpeed = 15f;
-    private float grappleSpeedLimit = 20f;
+    private const float boostedSpeed = 15f;
+    private const float grappleSpeedLimit = 20f;
+    private const float AbsoluteMaxVelocity = 50f;
 
     private const float MinGroundSpeed = 0.5f;
     private const float OnGroundAcceleration = 30f;
@@ -53,7 +54,8 @@ public partial class CharController : BeatEntity
     private const float InAirDrag = .7f;
     private const float MaxYSpeed = 30f;
     private const float DashBoost = 15f;
-    private const float heightReducer = 4f;
+    private const float heightReducer = 5f;
+    
 
     private const float inversionForce = 3f;
     // private const float VerticalDrag = 10f;
@@ -64,6 +66,7 @@ public partial class CharController : BeatEntity
 
     private const float DashCooldown = 1f;
     private const float BoostCooldown = 1f;
+    private const float JumpCooldown = .2f;
 
     public bool isDashing;
     public float gravityValue = BaseGravity;
@@ -104,7 +107,7 @@ public partial class CharController : BeatEntity
         }
     }
 
-    private bool jumpAvailable;
+    private bool jumpAvailable = true;
 
     // private bool isGrappleLaunched;
     // private bool isLineGrappling;
@@ -117,6 +120,7 @@ public partial class CharController : BeatEntity
     // public bool isRecentlyGrappled;
     
     private bool justJumped;
+    private float lastJumpTime;
 
     public bool isCrouching;
     //private bool canDoubleJump;
@@ -130,15 +134,18 @@ public partial class CharController : BeatEntity
         get {return _isWallSliding;}
         set
         {
-            if (_isWallSliding && !value)
-            {
-                StartCoroutine(WallJumpBufferCoroutine());
-            }
+            // if (_isWallSliding && !value)
+            // {
+            //     StartCoroutine(WallJumpBufferCoroutine());
+            // }
             //Update the boolean variable
             _isWallSliding = value;
         }
     }
     private int wallJumpDir;
+
+    private bool isNearWallOnRight;
+    private bool isNearWallOnLeft;
     //private int wallJumpFramesLeft;
     public BeatPlatform mostRecentlyTouchedPlatform;
 
@@ -218,8 +225,7 @@ public partial class CharController : BeatEntity
                 (@this.IsAbleToAct()) && Time.time > @this.lastBoostTime + BoostCooldown && !@this.recentlyBoosted},
             {Event.EventTypes.Jump, @this => 
                 @this.IsAbleToMove() && 
-                (@this.isGrounded || (@this.jumpAvailable && !@this.justJumped) ||
-                 @this.isWallSliding || (@this.wallJumpAvailable && !@this.justJumped)) &&
+                (@this.isGrounded || (@this.jumpAvailable && !@this.justJumped) || @this.isNearWallOnLeft || @this.isNearWallOnRight) &&
                 !@this.isCrouching && !@this.disabledMovement} ,
             // {Event.EventTypes.DoubleJump, @this => 
             //     @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && 
@@ -263,15 +269,15 @@ public partial class CharController : BeatEntity
     }
     
 
-    private IEnumerator WallJumpBufferCoroutine()
-    {
-        
-        print("walljump buffer");
-        const float buffer = .25f;
-        wallJumpAvailable = true;
-        yield return new WaitForSeconds(buffer);
-        wallJumpAvailable = false;
-    }
+    // private IEnumerator WallJumpBufferCoroutine()
+    // {
+    //     
+    //     print("walljump buffer");
+    //     const float buffer = .25f;
+    //     wallJumpAvailable = true;
+    //     yield return new WaitForSeconds(buffer);
+    //     wallJumpAvailable = false;
+    // }
     
     private IEnumerator JumpBufferCoroutine()
     {

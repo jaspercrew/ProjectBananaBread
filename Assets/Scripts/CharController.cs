@@ -40,13 +40,13 @@ public partial class CharController : BeatEntity
     
     [Header("Configurable player control values")] 
     // Configurable player control values
-    private float baseSpeed = 10f;
+    private float baseSpeed = 12f;
     private float runSpeed;
     private float boostedSpeed = 15f;
     private float grappleSpeedLimit = 20f;
 
     private const float MinGroundSpeed = 0.5f;
-    private const float OnGroundAcceleration = 38f;
+    private const float OnGroundAcceleration = 30f;
     private const float OnGroundDeceleration = 40f;
     private const float OnGroundDrag = 5f;
     private const float InAirAcceleration = 30f;
@@ -266,7 +266,8 @@ public partial class CharController : BeatEntity
     private IEnumerator WallJumpBufferCoroutine()
     {
         
-        const float buffer = .15f;
+        print("walljump buffer");
+        const float buffer = .25f;
         wallJumpAvailable = true;
         yield return new WaitForSeconds(buffer);
         wallJumpAvailable = false;

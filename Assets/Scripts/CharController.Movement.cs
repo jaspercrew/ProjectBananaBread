@@ -107,7 +107,7 @@ public partial class CharController
         emitFadesTime = .28f;
         Animator.SetTrigger(Dash);
         gravityValue = 0;
-        boostDirection.Scale(new Vector2(1.5f, .9f));
+        boostDirection.Scale(new Vector2(1.4f, 1.1f));
         Vector2 boost = boostDirection * boostForceMultiplier;
         dashTrail.Play();
         
@@ -227,6 +227,7 @@ public partial class CharController
         if (doWallJump) //walljump 
         {
             //Debug.Log("WALLJUMP");
+            Rigidbody.velocity = Vector2.zero;
             forcedMoveTime = .38f;
             forcedMoveVector = wallJumpDir;
             overallJumpImpulse =

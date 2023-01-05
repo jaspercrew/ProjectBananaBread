@@ -78,7 +78,7 @@ public class SceneInformation : MonoBehaviour
         sceneFadeAnim = GetComponentInChildren<Animator>();
 
         // get spawn bounds
-        Transform spawnsParent = transform.Find("Spawns");
+        Transform spawnsParent = GameObject.FindWithTag("Spawns").transform;
         foreach (Transform child in spawnsParent)
         {
             Vector3 pos = child.transform.position;

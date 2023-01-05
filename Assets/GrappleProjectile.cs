@@ -34,7 +34,7 @@ public class GrappleProjectile : Projectile {
         
         if (other.gameObject.layer == LayerMask.NameToLayer("Obstacle"))
         {
-            print(other.gameObject.name);
+            //print(other.gameObject.name);
             Rigidbody2D.velocity = Vector2.zero;
             Vector3 pos = transform.position;
             CharController.Instance.StartGrapple(pos);

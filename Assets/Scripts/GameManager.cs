@@ -122,7 +122,7 @@ public class GameManager : MonoBehaviour
             
             //nextLoopTime += (60d / (double)songBpm) * 16d;
             nextLoopTime += (60d / (double)songBpm) * 32d;
-            print(60d / (double)songBpm);
+            //print(60d / (double)songBpm);
         }
     }
 
@@ -382,7 +382,7 @@ public class GameManager : MonoBehaviour
     {
         GameObject prefab = Resources.Load<GameObject>("Prefabs/TextNotification");
         GameObject created = Instantiate(prefab);
-        created.transform.position = CharController.position;
+        created.transform.position = CharController.Instance.transform.position;
         Destroy(created, duration);
         TMP_Text tmp = created.transform.Find("Canvas").Find("Text").GetComponent<TMP_Text>();
         StartCoroutine(TextPopCoroutine(created, duration));

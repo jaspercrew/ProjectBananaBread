@@ -16,7 +16,7 @@ public class TeleportBox : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            CharController.position = point;
+            CharController.Instance.transform.position = point;
         }
     }
 }

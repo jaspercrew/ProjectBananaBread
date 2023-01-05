@@ -10,6 +10,7 @@ TagManager:
   - CenterCam
   - AudioSlider
   - DynamicCamera
+  - Spawns
   layers:
   - Default
   - TransparentFX

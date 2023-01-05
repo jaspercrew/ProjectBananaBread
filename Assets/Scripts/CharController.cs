@@ -4,74 +4,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public partial class CharController : BeatEntity
 {
     public static CharController Instance;
 
-    public static Vector3 position
-    {
-        get => Instance.transform.position;
-        set => Instance.transform.position = value;
-    }
-    
-    // Components
-    private BoxCollider2D charCollider;
-    private ParticleSystem dust;
-    private ScreenShakeController screenShakeController;
-    private Light2D charLight;
-    private RadialGrapple grappleController;
-    private SpriteRenderer spriteRenderer;
-    //private LineRenderer grappleLineRenderer;
-    // ReSharper disable once InconsistentNaming
-    // private LineRenderer grappleLOSRenderer;
-    // private LineRenderer grappleClearRenderer;
-    //private BoxCollider2D groundCheck;
-    private ParticleSystem dashTrail;
-    public Rigidbody2D Rigidbody;
-    private Animator Animator;
-    
-    
+
     private Vector2 originalColliderSize;
     private Vector2 originalColliderOffset;
     
-    
-    
-    
-    [Header("Configurable player control values")] 
-    // Configurable player control values
-    private const float baseSpeed = 12f;
     private float runSpeed;
-    private const float boostedSpeed = 15f;
-    private const float grappleSpeedLimit = 20f;
-    private const float AbsoluteMaxVelocity = 50f;
-
-    private const float MinGroundSpeed = 0.5f;
-    private const float OnGroundAcceleration = 30f;
-    private const float OnGroundDeceleration = 40f;
-    private const float OnGroundDrag = 5f;
-    private const float InAirAcceleration = 30f;
-    private const float InAirDrag = .7f;
-    private const float MaxYSpeed = 30f;
-    private const float DashBoost = 15f;
-    private const float heightReducer = 5f;
-    
-
-    private const float inversionForce = 3f;
-    // private const float VerticalDrag = 10f;
-    
-    private float jumpForce = 11f;
-    public static float BaseGravity = 20f;
-    
-
-    private const float DashCooldown = 1f;
-    private const float BoostCooldown = 1f;
-    private const float JumpCooldown = .2f;
 
     public bool isDashing;
+    
+    
+    
     public float gravityValue = BaseGravity;
-    //Children
-    private Transform particleChild;
+
+    
     
     // Trackers
     private bool canFunction = true;
@@ -82,13 +33,12 @@ public partial class CharController : BeatEntity
     private HashSet<IEnumerator> toInterrupt = new HashSet<IEnumerator>();
     private IEnumerator dashCoroutine;
 
-    private float lastDashTime;
+    //private float lastDashTime;
     private float lastBoostTime;
 
     public bool isInverted;
     public SpawnAreaController currentArea;
-    // ReSharper disable once InconsistentNaming
-    //public bool isJumpBoosted;
+
     private bool isPlatformGrounded;
     public bool isMetronomeLocked;
     private bool recentlyBoosted;
@@ -107,18 +57,21 @@ public partial class CharController : BeatEntity
         }
     }
 
-    private bool jumpAvailable = true;
-
-    // private bool isGrappleLaunched;
-    // private bool isLineGrappling;
-    // public Rigidbody2D grappleProjectile;
-    // private Rigidbody2D sentProjectile;
-    // private bool grappleBlocked;
-    // private GrapplePoint launchedPoint;
-    // // ReSharper disable once NotAccessedField.Local
-    // private GrapplePoint hookedPoint;
-    // public bool isRecentlyGrappled;
+    private bool groundedAfterBoost = true;
     
+    public float recentImpulseTime;
+
+    public List<Vector3> pointsInTime = new List<Vector3>();
+    private bool isRewinding;
+    public bool doRecord;
+
+    private Rigidbody2D instantiatedProjectile;
+    private Vector3 attachmentPoint;
+
+    private bool jumpAvailable = true;
+    private int facingDirection;
+    public bool isGrappling;
+
     private bool justJumped;
     private float lastJumpTime;
 
@@ -149,8 +102,10 @@ public partial class CharController : BeatEntity
     //private int wallJumpFramesLeft;
     public BeatPlatform mostRecentlyTouchedPlatform;
 
+    private float savedRotationalVelocity;
+
     private int fadeSpriteIterator;
-    [FormerlySerializedAs("fadeTime")] public float emitFadesTime;
+    [FormerlySerializedAs("lifetime")] public float emitFadesTime;
     
     private float moveVector;
     private float inputVector;
@@ -160,12 +115,12 @@ public partial class CharController : BeatEntity
     public bool disabledMovement;
     
     // animator values beforehand to save time later
-    protected static readonly int AnimState = Animator.StringToHash("AnimState");
-    protected static readonly int Idle = Animator.StringToHash("Idle");
-    protected static readonly int Jump = Animator.StringToHash("Jump");
-    protected static readonly int Death = Animator.StringToHash("Death");
-    protected static readonly int Grounded = Animator.StringToHash("Grounded");
-    protected static readonly int Dash = Animator.StringToHash("Dash");
+    // protected static readonly int AnimState = Animator.StringToHash("AnimState");
+    // protected static readonly int Idle = Animator.StringToHash("Idle");
+    // protected static readonly int Jump = Animator.StringToHash("Jump");
+    // protected static readonly int Death = Animator.StringToHash("Death");
+    // protected static readonly int Grounded = Animator.StringToHash("Grounded");
+    // protected static readonly int Dash = Animator.StringToHash("Dash");
     
     
     private LayerMask obstacleLayerMask;
@@ -200,7 +155,7 @@ public partial class CharController : BeatEntity
         new Dictionary<Func<bool>, Event.EventTypes>
         {
             {() => Input.GetKeyDown(KeyCode.LeftShift), Event.EventTypes.Boost},
-            {() => Input.GetKeyDown(KeyCode.H), Event.EventTypes.Boost},
+            //{() => Input.GetKeyDown(KeyCode.H), Event.EventTypes.Boost},
             {() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.Jump},
             //{() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.DoubleJump},
             //{() => Input.GetKeyDown(KeyCode.E), Event.EventTypes.Interact},
@@ -218,9 +173,9 @@ public partial class CharController : BeatEntity
     private static readonly Dictionary<Event.EventTypes, Func<CharController, bool>> EventConditions =
         new Dictionary<Event.EventTypes, Func<CharController, bool>>
         {
-            {Event.EventTypes.Dash, @this =>
-                (@this.IsAbleToAct()) && Time.time > @this.lastDashTime + DashCooldown &&
-                !@this.isCrouching},
+            // {Event.EventTypes.Dash, @this =>
+            //     (@this.IsAbleToAct()) && Time.time > @this.lastDashTime + DashCooldown &&
+            //     !@this.isCrouching},
             {Event.EventTypes.Boost, @this =>
                 (@this.IsAbleToAct()) && Time.time > @this.lastBoostTime + BoostCooldown && !@this.recentlyBoosted},
             {Event.EventTypes.Jump, @this => 
@@ -243,7 +198,7 @@ public partial class CharController : BeatEntity
     private static readonly Dictionary<Event.EventTypes, Action<CharController>> EventActions =
         new Dictionary<Event.EventTypes, Action<CharController>>
         {
-            {Event.EventTypes.Dash, @this => @this.DoDash()},
+            //{Event.EventTypes.Dash, @this => @this.DoDash()},
             {Event.EventTypes.Jump, @this => @this.DoJump()},
             {Event.EventTypes.Boost, @this => @this.Boost()},
             //{Event.EventTypes.DoubleJump, @this => @this.DoDoubleJump()},
@@ -255,7 +210,7 @@ public partial class CharController : BeatEntity
 
     private bool IsAbleToMove()
     {
-        return !isDashing && canFunction && !isRewinding && !isMetronomeLocked && !GameManager.Instance.isMenu && !isGrappling;
+        return canFunction && !isRewinding && !isMetronomeLocked && !GameManager.Instance.isMenu && !isGrappling;
     }
 
     private bool RecentlyImpulsed()
@@ -265,7 +220,7 @@ public partial class CharController : BeatEntity
 
     public bool IsFacingLeft()
     {
-        return transform.localScale.x > 0;
+        return facingDirection == -1;
     }
     
 
@@ -294,17 +249,19 @@ public partial class CharController : BeatEntity
     protected void FaceLeft()
     {
         //Debug.Log("face left");
-        Transform t = transform; // more efficient, according to Rider
-        Vector3 s = t.localScale;
-        t.localScale = new Vector3(Mathf.Abs(s.x), s.y, s.z);
+        // Transform t = transform; // more efficient, according to Rider
+        // Vector3 s = t.localScale;
+        // t.localScale = new Vector3(Mathf.Abs(s.x), s.y, s.z);
+        facingDirection = -1;
     }
 
     protected void FaceRight()
     {
         //Debug.Log("face right");
-        Transform t = transform; // more efficient, according to Rider
-        Vector3 s = t.localScale;
-        t.localScale = new Vector3(-Mathf.Abs(s.x), s.y, s.z);
+        // Transform t = transform; // more efficient, according to Rider
+        // Vector3 s = t.localScale;
+        // t.localScale = new Vector3(-Mathf.Abs(s.x), s.y, s.z);
+        facingDirection = 1;
     }
     
     public void SpawnExtendedFadeSprite()
@@ -360,7 +317,7 @@ public partial class CharController : BeatEntity
     private IEnumerator DieCoroutine()
     {
         CameraManager.Instance.DoTransition(true);
-        Animator.SetTrigger(Death);
+        //Animator.SetTrigger(Death);
 
         yield return new WaitForSeconds(CameraManager.Instance.totalDelayToSpawn);
 

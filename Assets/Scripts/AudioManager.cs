@@ -246,16 +246,16 @@ public class AudioManager : MonoBehaviour
     //
     //     isAlt = !isAlt;
     //     
-    //     const float fadeTime = .25f;
+    //     const float lifetime = .25f;
     //     if (isAlt)
     //     {
-    //         StartCoroutine(FadeOut(songSourceA, fadeTime));   
-    //         StartCoroutine(FadeIn(songSourceB, fadeTime));
+    //         StartCoroutine(FadeOut(songSourceA, lifetime));   
+    //         StartCoroutine(FadeIn(songSourceB, lifetime));
     //     }
     //     else
     //     {
-    //         StartCoroutine(FadeOut(songSourceB, fadeTime)); 
-    //         StartCoroutine(FadeIn(songSourceA, fadeTime));
+    //         StartCoroutine(FadeOut(songSourceB, lifetime)); 
+    //         StartCoroutine(FadeIn(songSourceA, lifetime));
     //     }
     //     
     // }

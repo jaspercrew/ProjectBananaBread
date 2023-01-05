@@ -6,54 +6,55 @@ using UnityEngine.Assertions;
 
 public partial class CharController
 {
+    private IEnumerator smoothRotationCoroutineInstance;
 
-    private void DoDash()
-    {
-        if (!IsAbleToAct() || !isGrounded) {
-            return;
-        }
-        Interrupt();
-        
-        // float xScale = transform.localScale.x;
-        //float dashDir = moveVector == 0 ? -xScale : moveVector;
-        float dashDir = inputVector;
-        float dashSpeed = DashBoost * dashDir;
-        const float dashTime = .23f;
-        emitFadesTime = .28f;
-        isDashing = true;
-
-        dashCoroutine = DashCoroutine(dashTime /*, dashSpeed*/);
-        toInterrupt.Add(dashCoroutine);
-        StartCoroutine(dashCoroutine);
-        
-        Rigidbody.velocity = new Vector2(Rigidbody.velocity.x + dashSpeed, Rigidbody.velocity.y);
-        dust.Play();
-        Animator.SetTrigger(Dash);
-        lastDashTime = Time.time;
-    }
-
-    // dash coroutine handles stopping the dash
-    private IEnumerator DashCoroutine(float dashTime /*, float dashSpeed*/)
-    {
-        UnCrouch();
-        ReduceHeight();
-        yield return new WaitForSeconds(dashTime);
-        //check if space
-        isDashing = false;
-        // if (isCrouching && CheckSpace())
-        // {
-        //     UnCrouch();
-        // }
-        if (CheckSpace())
-        {
-            ReturnHeight();
-        }
-        else if (!isCrouching)
-        {
-            Crouch();
-        }
-        
-    }
+    // private void DoDash()
+    // {
+    //     if (!IsAbleToAct() || !isGrounded) {
+    //         return;
+    //     }
+    //     Interrupt();
+    //     
+    //     // float xScale = transform.localScale.x;
+    //     //float dashDir = moveVector == 0 ? -xScale : moveVector;
+    //     float dashDir = inputVector;
+    //     float dashSpeed = DashBoost * dashDir;
+    //     const float dashTime = .23f;
+    //     //emitFadesTime = .28f;
+    //     isDashing = true;
+    //
+    //     dashCoroutine = DashCoroutine(dashTime /*, dashSpeed*/);
+    //     toInterrupt.Add(dashCoroutine);
+    //     StartCoroutine(dashCoroutine);
+    //     
+    //     Rigidbody.velocity = new Vector2(Rigidbody.velocity.x + dashSpeed, Rigidbody.velocity.y);
+    //     dust.Play();
+    //     //Animator.SetTrigger(Dash);
+    //     lastDashTime = Time.time;
+    // }
+    //
+    // // dash coroutine handles stopping the dash
+    // private IEnumerator DashCoroutine(float dashTime /*, float dashSpeed*/)
+    // {
+    //     UnCrouch();
+    //     ReduceHeight();
+    //     yield return new WaitForSeconds(dashTime);
+    //     //check if space
+    //     isDashing = false;
+    //     // if (isCrouching && CheckSpace())
+    //     // {
+    //     //     UnCrouch();
+    //     // }
+    //     if (CheckSpace())
+    //     {
+    //         ReturnHeight();
+    //     }
+    //     else if (!isCrouching)
+    //     {
+    //         Crouch();
+    //     }
+    //     
+    // }
 
     private void Boost()
     {
@@ -64,6 +65,8 @@ public partial class CharController
     {
         //float boostFreezeDelay = .0f;
         bool isFree = false;
+        isDashing = true;
+        
         float boostForceMultiplier;
         if (currentBoostZone != null)
         {
@@ -77,6 +80,7 @@ public partial class CharController
         
         float delayGravTime = .25f;
         recentlyBoosted = true;
+        groundedAfterBoost = false;
         Vector2 boostDirection = Vector2.zero;
         if (Input.GetKey(KeyCode.A))
         {
@@ -104,12 +108,12 @@ public partial class CharController
 
         disabledMovement = true;
         lastBoostTime = Time.time;
-        emitFadesTime = .28f;
-        Animator.SetTrigger(Dash);
+        //emitFadesTime = .28f;
+        //Animator.SetTrigger(Dash);
         gravityValue = 0;
         boostDirection.Scale(new Vector2(1.4f, 1.1f));
         Vector2 boost = boostDirection * boostForceMultiplier;
-        dashTrail.Play();
+        dashTrail.emitting = true;
         
         if (Math.Sign(Rigidbody.velocity.x) != Math.Sign(boost.x))
         {
@@ -124,33 +128,56 @@ public partial class CharController
         
         forcedMoveTime = .3f;
         forcedMoveVector = 0;
-        recentImpulseTime = .3f;
+        recentImpulseTime = .40f;
+        
+        
 
         yield return new WaitForSeconds(delayGravTime);
 
         if (Math.Sign(Rigidbody.velocity.x) == Math.Sign(Rigidbody.velocity.x - boost.x) && boostDirection.x != 0)
         { 
             //float xToSet = Rigidbody.velocity.x - (boost.x * .8f);
-            if (Rigidbody.velocity.x > 0)
+            if (isGrounded)
             {
-                Rigidbody.velocity = new Vector2(Math.Min(Rigidbody.velocity.x, boostedSpeed), Rigidbody.velocity.y);
+                if (Rigidbody.velocity.x > 0)
+                {
+                    Rigidbody.velocity = new Vector2(Math.Min(Rigidbody.velocity.x, groundDragThreshholdA), Rigidbody.velocity.y);
+                }
+                else
+                {
+                    Rigidbody.velocity = new Vector2(Math.Max(Rigidbody.velocity.x, -groundDragThreshholdA), Rigidbody.velocity.y);
+                }
             }
             else
             {
-                Rigidbody.velocity = new Vector2(Math.Max(Rigidbody.velocity.x, -boostedSpeed), Rigidbody.velocity.y);
+                if (Rigidbody.velocity.x > 0)
+                {
+                    Rigidbody.velocity = new Vector2(Math.Min(Rigidbody.velocity.x, airDragThreshholdA), Rigidbody.velocity.y);
+                }
+                else
+                {
+                    Rigidbody.velocity = new Vector2(Math.Max(Rigidbody.velocity.x, -airDragThreshholdA), Rigidbody.velocity.y);
+                }
             }
+
             
         }
 
-        //dashTrail.emitting = false;
+        dashTrail.emitting = false;
         disabledMovement = false;
         gravityValue = BaseGravity;
         if (isFree)
         {
             recentlyBoosted = false;
         }
-        
 
+        isDashing = false;
+        
+    }
+
+    private IEnumerator BoostVisualsUp()
+    {
+        yield return null;
     }
 
     private bool CheckSpace()
@@ -198,8 +225,8 @@ public partial class CharController
         const float wallJumpModY = 1.2f;
         // float xWallJumpBoostedModifier = 3.0f;
         // float yWallJumpBoostedModifier = 1.1f;
-        Animator.SetBool(Grounded, false);
-        Animator.SetTrigger(Jump);
+        //Animator.SetBool(Grounded, false);
+        //Animator.SetTrigger(Jump);
         //float adjustedJumpForce = isJumpBoosted ? jumpForce * 2 : jumpForce;
         Vector2 overallJumpImpulse = new Vector2(0, jumpForce);
         Vector2 momentumVector = Vector2.zero;
@@ -230,7 +257,7 @@ public partial class CharController
         {
             //Debug.Log("WALLJUMP");
             Rigidbody.velocity = Vector2.zero;
-            forcedMoveTime = .38f;
+            forcedMoveTime = .30f;
             forcedMoveVector = wallJumpDir;
             overallJumpImpulse =
                 new Vector2(jumpForce * wallJumpModX * wallJumpDir, overallJumpImpulse.y * wallJumpModY);
@@ -256,7 +283,7 @@ public partial class CharController
             overallJumpImpulse += (momentumVector / 2);
         }
         
-        print("impulse: " + overallJumpImpulse);
+        //print("impulse: " + overallJumpImpulse);
         Rigidbody.AddForce(overallJumpImpulse, ForceMode2D.Impulse);
     }
 
@@ -318,31 +345,112 @@ public partial class CharController
     private void Crouch()
     {
         //Assert.IsTrue(!isCrouching);
-        Animator.SetBool("isCrouching", true);
+        //Animator.SetBool("isCrouching", true);
         ReduceHeight();
         isCrouching = true;
         runSpeed = baseSpeed / 2;
     }
 
+    private void SmoothRotationEnd()
+    {
+        smoothRotationCoroutineInstance = SmoothRotationEndCoroutine();
+        StartCoroutine(smoothRotationCoroutineInstance);
+    }
+
+    private IEnumerator SmoothRotationEndCoroutine()
+    {
+        const float maxRotationSpeed = 5f;
+        // const float RotationRateDegrees = 20f;
+        //
+        // float elapsedRotation = 0f;
+        //
+        // int rotationDirection = Rigidbody.velocity.x > 0 ? 1 : -1;
+        // float rotationLeft = rotationDirection == 1 ? (90 - (spriteHandler.rotation.z % 90)) : (spriteHandler.rotation.z % 90);
+        //
+        // while (rotationLeft > 0f)
+        // {
+        //     float rotationToAdd = (RotationRateDegrees * Time.deltaTime * rotationDirection);
+        //     rotationLeft -= Math.Abs(rotationToAdd);
+        //     spriteHandler.rotation = Quaternion.Euler(spriteHandler.rotation.x, spriteHandler.rotation.y, spriteHandler.rotation.z + rotationToAdd);
+        //     yield return null;
+        // }
+        //
+        // ForceRotationEnd();
+        
+        while (true)
+        {
+            //print("continue rotation");
+            savedRotationalVelocity /= 3f;
+            savedRotationalVelocity = savedRotationalVelocity > 0 ? Math.Max(savedRotationalVelocity, maxRotationSpeed) : Math.Min(savedRotationalVelocity, -maxRotationSpeed);
+            
+            spriteHandler.Rotate(Vector3.forward, savedRotationalVelocity);
+            if (isGrounded || isNearWallOnLeft || isNearWallOnRight)
+            {
+                break;
+            }
+
+            yield return new WaitForFixedUpdate();
+
+        }
+        
+    }
+
+    private void ForceRotationEnd()
+    {
+        //GameManager.Instance.TextPop("forced rotation end");
+
+        if (smoothRotationCoroutineInstance != null)
+        {
+            StopCoroutine(smoothRotationCoroutineInstance);
+        }
+        
+        
+        spriteHandler.rotation = Quaternion.Euler(Vector3.zero);
+    }
+
     private void UnCrouch()
     {
         //Assert.IsTrue(isCrouching);
-        Animator.SetBool("isCrouching", false);
+        //Animator.SetBool("isCrouching", false);
         ReturnHeight();
         runSpeed = baseSpeed;
         isCrouching = false;
 
     }
     
-    private void OnLanding() {
+    private void OnGroundLanding() {
         //canDoubleJump = false;
-        
+        if (isGrappling)
+        {
+            EndGrapple();
+        }
+
+        //TryRefreshBoost();
         justJumped = false;
-        //isRecentlyGrappled = false;
         dust.Play();
-        Animator.SetBool(Grounded, true);
-        // Debug.Log("sus");
+        ForceRotationEnd();
+        
     }
+
+    private void OnWallLanding()
+    {
+        // if (isGrappling)
+        // {
+        //     EndGrapple();
+        // }
+        Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, Rigidbody.velocity.y / 2);
+        //TryRefreshBoost();
+        
+        ForceRotationEnd();
+    }
+
+    // private void TryRefreshBoost()
+    // {
+    //     if (lastBoostTime + boostRefreshCooldown < Time.time)
+    //     {
+    //         recentlyBoosted = false;
+    //     }
+    // }
 
     // private void AttemptLaunchGrapple()
     // {

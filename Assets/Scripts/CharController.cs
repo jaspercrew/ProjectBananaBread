@@ -58,7 +58,7 @@ public partial class CharController : BeatEntity
     }
 
     private bool groundedAfterBoost = true;
-    
+    private Color originalBoostVisualColor;
     public float recentImpulseTime;
 
     public List<Vector3> pointsInTime = new List<Vector3>();

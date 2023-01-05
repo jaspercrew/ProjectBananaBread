@@ -757,7 +757,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 516113152}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6, y: 0, z: 0}
+  m_LocalPosition: {x: 0.6, y: 0, z: 0}
   m_LocalScale: {x: 0.25, y: 1.3, z: 1}
   m_Children: []
   m_Father: {fileID: 1060642983}
@@ -1282,13 +1282,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 803863113}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.38268343, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 1}
+  m_LocalScale: {x: 0.65, y: 0.65, z: 1}
   m_Children: []
   m_Father: {fileID: 1603974110}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
@@ -1578,7 +1578,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1018134912}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6, y: 0, z: 0}
+  m_LocalPosition: {x: -0.6, y: 0, z: 0}
   m_LocalScale: {x: 0.25, y: 1.3, z: 1}
   m_Children: []
   m_Father: {fileID: 1060642983}
@@ -7005,6 +7005,14 @@ PrefabInstance:
     - target: {fileID: 4501482738561307949, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
       propertyPath: m_RootOrder
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501482738561307949, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501482738561307949, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.1
       objectReference: {fileID: 0}
     - target: {fileID: 4501482738561307949, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
       propertyPath: m_LocalPosition.x
@@ -13167,7 +13175,7 @@ Tilemap:
       m_AnimatedSprites:
       - {fileID: 21300000, guid: 0dadf2d817d593342ac90de0f2a98828, type: 3}
       - {fileID: 21300000, guid: 4c4102e7edc0dcb4c9745a33f91d6322, type: 3}
-      m_AnimationSpeed: 7
+      m_AnimationSpeed: 7.0000005
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -523, y: 398, z: 0}
@@ -13263,7 +13271,7 @@ Tilemap:
       m_AnimatedSprites:
       - {fileID: 21300000, guid: 4c4102e7edc0dcb4c9745a33f91d6322, type: 3}
       - {fileID: 21300000, guid: 0dadf2d817d593342ac90de0f2a98828, type: 3}
-      m_AnimationSpeed: 7
+      m_AnimationSpeed: 7.0000005
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -524, y: 402, z: 0}

@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.VFX;
 
 public partial class CharController
 {
@@ -39,6 +40,7 @@ public partial class CharController
         charLight.enabled = false;
 
         transform.position = SceneInformation.Instance.GetInitialSpawnPosition();
+        originalBoostVisualColor = boostUseIndicator.color;
         base.Start();
     }
 
@@ -254,7 +256,7 @@ public partial class CharController
         }
 
         Rigidbody.velocity = Vector2.ClampMagnitude(Rigidbody.velocity, AbsoluteMaxVelocity);
-        //speedIndicator.fillAmount = Rigidbody.velocity.magnitude / AbsoluteMaxVelocity;
+        //boostUseIndicator.fillAmount = Rigidbody.velocity.magnitude / AbsoluteMaxVelocity;
         if (Rigidbody.velocity.magnitude > 20f && !isDashing)
         {
             emitFadesTime = .3f;
@@ -339,12 +341,12 @@ public partial class CharController
 
     private void BoostRefreshCheck_Update()
     {
-        if (!groundedAfterBoost && isGrounded)
+        if (!groundedAfterBoost && (isGrounded || isNearWallOnLeft || isNearWallOnRight) && (lastBoostTime + boostRefreshCooldown < Time.time) && recentlyBoosted)
         {
+            StartCoroutine(BoostRefreshVisualEffect());
             groundedAfterBoost = true;
         }
-        if (recentlyBoosted && lastBoostTime + BoostCooldown < Time.time &&
-            ((isGrounded || isNearWallOnLeft || isNearWallOnRight) && lastBoostTime + boostRefreshCooldown < Time.time))
+        if (recentlyBoosted && lastBoostTime + BoostCooldown < Time.time && groundedAfterBoost)
         {
             recentlyBoosted = false;
         }
@@ -649,11 +651,7 @@ public partial class CharController
         }
         
         isGrounded = newlyGrounded;
-        if (recentlyBoosted && isGrounded && lastBoostTime + boostRefreshCooldown < Time.time)
-        {
-            //print("boost refreshed in update - lastDashTime = " + lastBoostTime + "-- current time = " + Time.time);
-            recentlyBoosted = false;
-        }
+
 
 
         //Animator.SetBool(Grounded, isGrounded);

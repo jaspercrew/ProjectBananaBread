@@ -81,6 +81,7 @@ public partial class CharController
         float delayGravTime = .25f;
         recentlyBoosted = true;
         groundedAfterBoost = false;
+        
         Vector2 boostDirection = Vector2.zero;
         if (Input.GetKey(KeyCode.A))
         {
@@ -105,7 +106,7 @@ public partial class CharController
         }
 
         boostDirection = boostDirection.normalized;
-
+        StartCoroutine(BoostUseVisualEffect());
         disabledMovement = true;
         lastBoostTime = Time.time;
         //emitFadesTime = .28f;
@@ -175,9 +176,39 @@ public partial class CharController
         
     }
 
-    private IEnumerator BoostVisualsUp()
+    private IEnumerator BoostRefreshVisualEffect()
     {
-        yield return null;
+        print("boost visual effect: refresh");
+        Color original = boostUseIndicator.color;
+        Color destination = originalBoostVisualColor;
+        float elapsedTime = 0f;
+        float fadeTime = .3f;
+
+        while (elapsedTime < fadeTime)
+        {
+            boostUseIndicator.color = Color.Lerp(original, destination, elapsedTime / fadeTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        
+        boostUseIndicator.color = destination;
+    }
+    
+    private IEnumerator BoostUseVisualEffect()
+    {
+        Color original = boostUseIndicator.color;
+        Color destination = Color.gray;
+        float elapsedTime = 0f;
+        float fadeTime = .3f;
+
+        while (elapsedTime < fadeTime)
+        {
+            boostUseIndicator.color = Color.Lerp(original, destination, elapsedTime / fadeTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        
+        boostUseIndicator.color = destination;
     }
 
     private bool CheckSpace()
@@ -284,7 +315,18 @@ public partial class CharController
         }
         
         //print("impulse: " + overallJumpImpulse);
+        //savedRotationalVelocity = 5f * Math.Sign(Rigidbody.velocity.x);
+        StartCoroutine(JumpRotationDelay());
         Rigidbody.AddForce(overallJumpImpulse, ForceMode2D.Impulse);
+    }
+
+    private IEnumerator JumpRotationDelay()
+    {
+        savedRotationalVelocity = .5f * (IsFacingLeft() ? 1 : -1) * (Math.Abs(Rigidbody.velocity.x));
+        yield return new WaitForSeconds(.05f);
+        SmoothRotationEnd();
+
+        
     }
 
     // private IEnumerator TemporarilyDisablePlatformCollision(Transform parent)
@@ -360,32 +402,21 @@ public partial class CharController
     private IEnumerator SmoothRotationEndCoroutine()
     {
         const float maxRotationSpeed = 5f;
-        // const float RotationRateDegrees = 20f;
-        //
-        // float elapsedRotation = 0f;
-        //
-        // int rotationDirection = Rigidbody.velocity.x > 0 ? 1 : -1;
-        // float rotationLeft = rotationDirection == 1 ? (90 - (spriteHandler.rotation.z % 90)) : (spriteHandler.rotation.z % 90);
-        //
-        // while (rotationLeft > 0f)
-        // {
-        //     float rotationToAdd = (RotationRateDegrees * Time.deltaTime * rotationDirection);
-        //     rotationLeft -= Math.Abs(rotationToAdd);
-        //     spriteHandler.rotation = Quaternion.Euler(spriteHandler.rotation.x, spriteHandler.rotation.y, spriteHandler.rotation.z + rotationToAdd);
-        //     yield return null;
-        // }
-        //
-        // ForceRotationEnd();
-        
+
         while (true)
         {
             //print("continue rotation");
-            savedRotationalVelocity /= 3f;
-            savedRotationalVelocity = savedRotationalVelocity > 0 ? Math.Max(savedRotationalVelocity, maxRotationSpeed) : Math.Min(savedRotationalVelocity, -maxRotationSpeed);
+            //print("before clamp: " + savedRotationalVelocity);
+            //savedRotationalVelocity /= 3f;
+            //savedRotationalVelocity = savedRotationalVelocity > 0 ? Math.Max(savedRotationalVelocity, maxRotationSpeed) : Math.Min(savedRotationalVelocity, -maxRotationSpeed);
+            //Mathf.Clamp(savedRotationalVelocity, -maxRotationSpeed, maxRotationSpeed);
             
+            //print("after clamp: " + savedRotationalVelocity);
             spriteHandler.Rotate(Vector3.forward, savedRotationalVelocity);
             if (isGrounded || isNearWallOnLeft || isNearWallOnRight)
             {
+                
+                ForceRotationEnd();
                 break;
             }
 

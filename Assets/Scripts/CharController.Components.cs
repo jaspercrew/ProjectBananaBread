@@ -13,7 +13,7 @@ public partial class CharController //COMPONENTS
     private Light2D charLight;
     private RadialGrapple grappleController;
     private SpriteRenderer spriteRenderer;
-    private Image speedIndicator;
+    private Image boostUseIndicator;
     private TrailRenderer dashTrail;
     public Rigidbody2D Rigidbody;
     private Transform particleChild;
@@ -36,7 +36,7 @@ public partial class CharController //COMPONENTS
         particleChild = transform.Find("Particles");
         leftWallPS = particleChild.Find("LeftWallDust").GetComponent<ParticleSystem>();
         rightWallPS = particleChild.Find("RightWallDust").GetComponent<ParticleSystem>();
-        speedIndicator = GetComponentInChildren<Image>();
+        boostUseIndicator = GetComponentInChildren<Image>();
         charCollider = transform.GetComponent<BoxCollider2D>();
         dashTrail = transform.Find("Particles").Find("DashFX").GetComponent<TrailRenderer>();
         dust = particleChild.Find("FeetDust").GetComponent<ParticleSystem>();

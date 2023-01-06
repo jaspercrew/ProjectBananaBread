@@ -178,7 +178,7 @@ public partial class CharController
 
     private IEnumerator BoostRefreshVisualEffect()
     {
-        print("boost visual effect: refresh");
+        //print("boost visual effect: refresh");
         Color original = boostUseIndicator.color;
         Color destination = originalBoostVisualColor;
         float elapsedTime = 0f;
@@ -316,16 +316,24 @@ public partial class CharController
         
         //print("impulse: " + overallJumpImpulse);
         //savedRotationalVelocity = 5f * Math.Sign(Rigidbody.velocity.x);
-        StartCoroutine(JumpRotationDelay());
+        StartCoroutine(JumpRotationDelay(doWallJump));
         Rigidbody.AddForce(overallJumpImpulse, ForceMode2D.Impulse);
     }
 
-    private IEnumerator JumpRotationDelay()
+    private IEnumerator JumpRotationDelay(bool wallJump = false)
     {
-        savedRotationalVelocity = .5f * (IsFacingLeft() ? 1 : -1) * (Math.Abs(Rigidbody.velocity.x));
-        yield return new WaitForSeconds(.05f);
-        SmoothRotationEnd();
-
+        if (wallJump)
+        {
+            savedRotationalVelocity = -.5f * wallJumpDir;
+            yield return new WaitForSeconds(.05f);
+            SmoothRotationEnd();
+        }
+        else
+        {
+            savedRotationalVelocity = .5f * (IsFacingLeft() ? 1 : -1) * (Math.Abs(Rigidbody.velocity.x));
+            yield return new WaitForSeconds(.05f);
+            SmoothRotationEnd();
+        }
         
     }
 
@@ -390,7 +398,7 @@ public partial class CharController
         //Animator.SetBool("isCrouching", true);
         ReduceHeight();
         isCrouching = true;
-        runSpeed = baseSpeed / 2;
+        runSpeed = maxMoveSpeedGround / 2;
     }
 
     private void SmoothRotationEnd()
@@ -401,7 +409,8 @@ public partial class CharController
 
     private IEnumerator SmoothRotationEndCoroutine()
     {
-        const float maxRotationSpeed = 5f;
+        const float maxRotationSpeed = 8f;
+        const float minRotationSpeed = 4f;
 
         while (true)
         {
@@ -409,7 +418,13 @@ public partial class CharController
             //print("before clamp: " + savedRotationalVelocity);
             //savedRotationalVelocity /= 3f;
             //savedRotationalVelocity = savedRotationalVelocity > 0 ? Math.Max(savedRotationalVelocity, maxRotationSpeed) : Math.Min(savedRotationalVelocity, -maxRotationSpeed);
-            //Mathf.Clamp(savedRotationalVelocity, -maxRotationSpeed, maxRotationSpeed);
+            Mathf.Clamp(savedRotationalVelocity, -maxRotationSpeed, maxRotationSpeed);
+            if (savedRotationalVelocity != 0)
+            {
+                savedRotationalVelocity = savedRotationalVelocity > 0
+                    ? Math.Max(savedRotationalVelocity, minRotationSpeed)
+                    : Math.Min(savedRotationalVelocity, -minRotationSpeed);
+            }
             
             //print("after clamp: " + savedRotationalVelocity);
             spriteHandler.Rotate(Vector3.forward, savedRotationalVelocity);
@@ -444,7 +459,7 @@ public partial class CharController
         //Assert.IsTrue(isCrouching);
         //Animator.SetBool("isCrouching", false);
         ReturnHeight();
-        runSpeed = baseSpeed;
+        runSpeed = maxMoveSpeedGround;
         isCrouching = false;
 
     }

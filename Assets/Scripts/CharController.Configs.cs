@@ -4,7 +4,8 @@ using UnityEngine;
 
 public partial class CharController //CONFIGS
 {
-    private const float baseSpeed = 12f;
+    private const float maxMoveSpeedGround = 12f;
+    private const float maxMoveSpeedAir = 15f;
     private const float BoostCooldown = .75f;
     private const float JumpCooldown = .2f;
     

@@ -7084,7 +7084,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4501482738769117711, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
       propertyPath: m_Time
-      value: 0.2
+      value: 0.23
       objectReference: {fileID: 0}
     - target: {fileID: 4501482738769117711, guid: fbb92a999b84cb3428748eb9de38de62, type: 3}
       propertyPath: m_Emitting
@@ -13167,7 +13167,7 @@ Tilemap:
       m_AnimatedSprites:
       - {fileID: 21300000, guid: 4c4102e7edc0dcb4c9745a33f91d6322, type: 3}
       - {fileID: 21300000, guid: 0dadf2d817d593342ac90de0f2a98828, type: 3}
-      m_AnimationSpeed: 7
+      m_AnimationSpeed: 7.0000005
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -524, y: 398, z: 0}
@@ -13175,7 +13175,7 @@ Tilemap:
       m_AnimatedSprites:
       - {fileID: 21300000, guid: 0dadf2d817d593342ac90de0f2a98828, type: 3}
       - {fileID: 21300000, guid: 4c4102e7edc0dcb4c9745a33f91d6322, type: 3}
-      m_AnimationSpeed: 7.0000005
+      m_AnimationSpeed: 7
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -523, y: 398, z: 0}
@@ -13271,7 +13271,7 @@ Tilemap:
       m_AnimatedSprites:
       - {fileID: 21300000, guid: 4c4102e7edc0dcb4c9745a33f91d6322, type: 3}
       - {fileID: 21300000, guid: 0dadf2d817d593342ac90de0f2a98828, type: 3}
-      m_AnimationSpeed: 7.0000005
+      m_AnimationSpeed: 7
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -524, y: 402, z: 0}

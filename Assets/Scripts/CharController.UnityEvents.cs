@@ -32,7 +32,7 @@ public partial class CharController
     protected override void Start()
     {
         fadeSpriteIterator = 0;
-        runSpeed = baseSpeed;
+        runSpeed = maxMoveSpeedGround;
 
         originalColliderSize = charCollider.size;
         originalColliderOffset = charCollider.offset;
@@ -181,29 +181,31 @@ public partial class CharController
                 if (Mathf.Abs(xVel) > groundDragThreshholdB)
                 {
                     float xAfterDrag = Rigidbody.velocity.x - (Math.Sign(xVel) * OnGroundDrag * 1.5f);
+                    Rigidbody.velocity = new Vector2(xAfterDrag, Rigidbody.velocity.y);
                     //
-                    if (xVel > 0)
-                    {
-                        Rigidbody.velocity = new Vector2(Math.Max(xAfterDrag, groundDragThreshholdB), Rigidbody.velocity.y);
-                    }
-                    else if (xVel < 0)
-                    {
-                        Rigidbody.velocity = new Vector2(Math.Min(xAfterDrag, -groundDragThreshholdB), Rigidbody.velocity.y);
-                    }
+                    // if (xVel > 0)
+                    // {
+                    //     Rigidbody.velocity = new Vector2(Math.Max(xAfterDrag, groundDragThreshholdB), Rigidbody.velocity.y);
+                    // }
+                    // else if (xVel < 0)
+                    // {
+                    //     Rigidbody.velocity = new Vector2(Math.Min(xAfterDrag, -groundDragThreshholdB), Rigidbody.velocity.y);
+                    // }
                 }
 
                 else if (Mathf.Abs(xVel) > groundDragThreshholdA) 
                 {
                     float xAfterDrag = Rigidbody.velocity.x - (Math.Sign(xVel) * OnGroundDrag);
+                    Rigidbody.velocity = new Vector2(xAfterDrag, Rigidbody.velocity.y);
                     //
-                    if (xVel > 0)
-                    {
-                        Rigidbody.velocity = new Vector2(Math.Max(xAfterDrag, groundDragThreshholdA), Rigidbody.velocity.y);
-                    }
-                    else if (xVel < 0)
-                    {
-                        Rigidbody.velocity = new Vector2(Math.Min(xAfterDrag, -groundDragThreshholdA), Rigidbody.velocity.y);
-                    }
+                    // if (xVel > 0)
+                    // {
+                    //     Rigidbody.velocity = new Vector2(Math.Max(xAfterDrag, groundDragThreshholdA), Rigidbody.velocity.y);
+                    // }
+                    // else if (xVel < 0)
+                    // {
+                    //     Rigidbody.velocity = new Vector2(Math.Min(xAfterDrag, -groundDragThreshholdA), Rigidbody.velocity.y);
+                    // }
                 }
 
                 // Rigidbody.velocity = new Vector2(
@@ -223,7 +225,7 @@ public partial class CharController
         // in-air movement
         else
         {
-            if (!(Math.Sign(moveVector) == Math.Sign(xVel) && Math.Abs(xVel) > runSpeed))
+            if (!(Math.Sign(moveVector) == Math.Sign(xVel) && Math.Abs(xVel) > maxMoveSpeedAir))
             {
                 Rigidbody.AddForce(Math.Sign(moveVector) * InAirAcceleration * Vector2.right, ForceMode2D.Force);
             }
@@ -322,9 +324,7 @@ public partial class CharController
         //     SaveData.LoadFromFile(1);
 
 
-        Vector2 v = Rigidbody.velocity;
-        Rigidbody.velocity = new Vector2(v.x,
-            v.y - ((isWallSliding ? (v.y < 0f ? .4f : .3f) : 1) * gravityValue * Time.deltaTime));
+        Gravity_Update();
         CheckGrounded_Update();
         CheckPlatformGrounded_Update();
         EventHandling_Update();
@@ -337,6 +337,13 @@ public partial class CharController
         BoostRefreshCheck_Update();
         
         recentImpulseTime -= Time.deltaTime;
+    }
+
+    private void Gravity_Update()
+    {
+        Vector2 v = Rigidbody.velocity;
+        Rigidbody.velocity = new Vector2(v.x,
+            v.y - ((isWallSliding ? (v.y < 0f ? .4f : .3f) : 1) * gravityValue * Time.deltaTime));
     }
 
     private void BoostRefreshCheck_Update()
@@ -817,8 +824,7 @@ public partial class CharController
         // isWallSliding = (isInverted ? -v.y : v.y) <= 0 && 
         //                 ((isNearWallOnRight && moveVector >= 0)|| (isNearWallOnLeft && moveVector <= 0)) &&
         //                 IsAbleToMove();
-        bool newlyWallSliding = ((isNearWallOnRight && transform.localScale.x < 0) ||
-                                 (isNearWallOnLeft && transform.localScale.x > 0)) && IsAbleToMove() && !isGrounded;
+        bool newlyWallSliding = (isNearWallOnRight || isNearWallOnLeft) && IsAbleToMove() && !isGrounded;
         if (!isWallSliding && newlyWallSliding)
         {
             OnWallLanding();
@@ -862,9 +868,6 @@ public partial class CharController
         if (isWallSliding)
         {
             justJumped = false;
-            
-            // Rigidbody.velocity = new Vector2(v.x,
-            //     isInverted ? Mathf.Max(-v.y, wallSlideSpeed) : Mathf.Max(v.y, -wallSlideSpeed));
         }
     }
 }

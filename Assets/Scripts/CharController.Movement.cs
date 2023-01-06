@@ -252,7 +252,7 @@ public partial class CharController
         //print("jumpcall");
         justJumped = true;
         dust.Play();
-        const float wallJumpModX = .5f;
+        const float wallJumpModX = .4f;
         const float wallJumpModY = 1.2f;
         // float xWallJumpBoostedModifier = 3.0f;
         // float yWallJumpBoostedModifier = 1.1f;

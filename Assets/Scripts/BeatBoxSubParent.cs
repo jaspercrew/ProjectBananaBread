@@ -8,6 +8,7 @@ public class BeatBoxSubParent : MonoBehaviour
     private void Start()
     {
         children = GetComponentsInChildren<BeatBox>();
+        SetDoChanging(true);
         // Debug.Log("found " + children.Length + " children");
     }
 

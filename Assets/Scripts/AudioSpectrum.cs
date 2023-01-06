@@ -78,12 +78,14 @@ public class AudioSpectrum : MonoBehaviour
             {
                 bufferSpectrum[i] = compressedSpectrum[i];
                 //bufferDecrease[i] = .005f;
-                bufferDecrease[i] = .008f;
+                //bufferDecrease[i] = .008f;
+                bufferDecrease[i] = .004f;
             }
             if (compressedSpectrum[i] < bufferSpectrum[i])
             {
                 bufferSpectrum[i] -= bufferDecrease[i];
-                bufferDecrease[i] *= 1.2f;
+                //bufferDecrease[i] *= 1.2f;
+                bufferDecrease[i] *= 1.15f;
             }
         }
     }

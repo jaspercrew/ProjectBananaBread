@@ -49,6 +49,7 @@ public partial class CharController
         //Animstate_FixedUpdate();
         inputVector = Input.GetAxisRaw("Horizontal");
         FadeParticle_FixedUpdate();
+        Gravity_FixedUpdate();
         // AdjustCape_FixedUpdate();
         if (disabledMovement)
         {
@@ -164,8 +165,6 @@ public partial class CharController
             if (moveDir == 0 && Mathf.Abs(xVel) >= MinGroundSpeed && !RecentlyImpulsed())
             {
                 int antiMoveDir = -Math.Sign(xVel);
-
-                // TODO change this if we choose to add ice or something
                 Rigidbody.AddForce(antiMoveDir * OnGroundDeceleration * Vector2.right, ForceMode2D.Force);
             }
             // otherwise move the player in the direction (only accelerate if below max runSpeed)
@@ -173,44 +172,22 @@ public partial class CharController
             {
                 Rigidbody.AddForce(moveDir * OnGroundAcceleration * Vector2.right, ForceMode2D.Force);
             }
-
-
+            
             // decelerate if above limit
             if (!RecentlyImpulsed())
             {
-                if (Mathf.Abs(xVel) > groundDragThreshholdB)
+                if (Mathf.Abs(xVel) > groundDragThreshholdB) //decelerate a lot if above threshold B
                 {
                     float xAfterDrag = Rigidbody.velocity.x - (Math.Sign(xVel) * OnGroundDrag * 1.5f);
                     Rigidbody.velocity = new Vector2(xAfterDrag, Rigidbody.velocity.y);
-                    //
-                    // if (xVel > 0)
-                    // {
-                    //     Rigidbody.velocity = new Vector2(Math.Max(xAfterDrag, groundDragThreshholdB), Rigidbody.velocity.y);
-                    // }
-                    // else if (xVel < 0)
-                    // {
-                    //     Rigidbody.velocity = new Vector2(Math.Min(xAfterDrag, -groundDragThreshholdB), Rigidbody.velocity.y);
-                    // }
                 }
 
-                else if (Mathf.Abs(xVel) > groundDragThreshholdA) 
+                else if (Mathf.Abs(xVel) > groundDragThreshholdA) //otherwise, decelerate a little if above threshold A
                 {
                     float xAfterDrag = Rigidbody.velocity.x - (Math.Sign(xVel) * OnGroundDrag);
                     Rigidbody.velocity = new Vector2(xAfterDrag, Rigidbody.velocity.y);
-                    //
-                    // if (xVel > 0)
-                    // {
-                    //     Rigidbody.velocity = new Vector2(Math.Max(xAfterDrag, groundDragThreshholdA), Rigidbody.velocity.y);
-                    // }
-                    // else if (xVel < 0)
-                    // {
-                    //     Rigidbody.velocity = new Vector2(Math.Min(xAfterDrag, -groundDragThreshholdA), Rigidbody.velocity.y);
-                    // }
                 }
 
-                // Rigidbody.velocity = new Vector2(
-                //     Mathf.Clamp(xVel, -runSpeed, runSpeed),
-                //     Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
             }
 
 
@@ -225,9 +202,9 @@ public partial class CharController
         // in-air movement
         else
         {
-            if (!(Math.Sign(moveVector) == Math.Sign(xVel) && Math.Abs(xVel) > maxMoveSpeedAir))
+            if (Math.Abs(xVel) < maxMoveSpeedAir)
             {
-                Rigidbody.AddForce(Math.Sign(moveVector) * InAirAcceleration * Vector2.right, ForceMode2D.Force);
+                Rigidbody.AddForce(Math.Sign(moveVector) * InAirAcceleration * Vector2.right * (Math.Sign(moveVector) != Math.Sign(xVel) ? 2 : 1), ForceMode2D.Force);
             }
 
             // slow down if player is not inputting horizontal movement
@@ -237,24 +214,11 @@ public partial class CharController
                 // apply horizontal "drag" based on current x velocity
                 Rigidbody.AddForce(-xVel * InAirDrag * Vector2.right, ForceMode2D.Force);
             }
-            else if (Math.Sign(moveVector) == Math.Sign(xVel)) //ONLY APPLY PARTIAL DRAG IF PLAYER IS MATCHING AIR BOOST
+            else if (Math.Sign(moveVector) == Math.Sign(xVel) && Math.Abs(xVel) > airDragThreshholdA) //apply drag
             {
-                Rigidbody.AddForce(-xVel * (InAirDrag / 2) * Vector2.right, ForceMode2D.Force);
+                Rigidbody.AddForce(-xVel * (InAirDrag) * Vector2.right, ForceMode2D.Force);
             }
-
-
-            // if (recentlyImpulsed && Math.Abs(xVel) <= runSpeed)
-            // {
-            //     recentlyImpulsed = false;
-            // }
-
-            // apply max velocity if not grappling
-            // if (!isLineGrappling && !RecentlyImpulsed())
-            // {
-            //     Rigidbody.velocity = new Vector2(
-            //         Mathf.Clamp(xVel, -runSpeed, runSpeed),
-            //         Mathf.Clamp(yVel, -MaxYSpeed, MaxYSpeed));
-            // }
+            
         }
 
         Rigidbody.velocity = Vector2.ClampMagnitude(Rigidbody.velocity, AbsoluteMaxVelocity);
@@ -282,7 +246,7 @@ public partial class CharController
 
         prevInVector = inputVector;
 
-        Vector3 scale = transform.localScale;
+        //Vector3 scale = transform.localScale;
         // direction switching
         // if (isWallSliding || (wallJumpAvailable && !justJumped))
         // {
@@ -324,7 +288,7 @@ public partial class CharController
         //     SaveData.LoadFromFile(1);
 
 
-        Gravity_Update();
+        
         CheckGrounded_Update();
         CheckPlatformGrounded_Update();
         EventHandling_Update();
@@ -339,11 +303,14 @@ public partial class CharController
         recentImpulseTime -= Time.deltaTime;
     }
 
-    private void Gravity_Update()
+    private void Gravity_FixedUpdate()
     {
         Vector2 v = Rigidbody.velocity;
-        Rigidbody.velocity = new Vector2(v.x,
-            v.y - ((isWallSliding ? (v.y < 0f ? .4f : .3f) : 1) * gravityValue * Time.deltaTime));
+        float yVelToSet = v.y - ((isWallSliding ? (v.y < 0f ? .4f : .3f) : 1) * gravityValue * Time.fixedDeltaTime);
+        yVelToSet = Math.Max(-MaxDownwardSpeedFromGravity, yVelToSet);
+        //print(yVelToSet);
+        Rigidbody.velocity = new Vector2(v.x, yVelToSet);
+        
     }
 
     private void BoostRefreshCheck_Update()
@@ -772,9 +739,7 @@ public partial class CharController
     {
         //const float wallSlideSpeed = 0.75f;
         const float groundDistance = 0.05f;
-        const float horizontalBuffer = .1f;
-
-        Vector2 v = Rigidbody.velocity;
+        const float horizontalBuffer = .15f;
 
         Vector3 bounds = charCollider.bounds.extents;
         float halfWidth = Mathf.Abs(bounds.x) - groundDistance + horizontalBuffer;
@@ -817,13 +782,7 @@ public partial class CharController
                             topRightHit.transform.GetComponent<BeatPlatform>().isWallSlideable;
 
 
-        //print(bottomRightHit.transform.gameObject);
 
-        // isWallSliding = v.y <= 0 && ((moveVector > 0 && isNearWallOnRight) 
-        //                              || (moveVector < 0 && isNearWallOnLeft)) && IsAbleToMove();
-        // isWallSliding = (isInverted ? -v.y : v.y) <= 0 && 
-        //                 ((isNearWallOnRight && moveVector >= 0)|| (isNearWallOnLeft && moveVector <= 0)) &&
-        //                 IsAbleToMove();
         bool newlyWallSliding = (isNearWallOnRight || isNearWallOnLeft) && IsAbleToMove() && !isGrounded;
         if (!isWallSliding && newlyWallSliding)
         {
@@ -832,17 +791,15 @@ public partial class CharController
 
         isWallSliding = newlyWallSliding;
 
-
-        // print("tr" + (bool)topRightHit + "br:" + (bool)bottomRightHit);
-        // Debug.DrawLine(bottomRight, bottomRight + aLittleRight);
-        // Debug.DrawLine(topRight, topRight + aLittleRight);
-        // Debug.DrawLine(bottomLeft, bottomLeft + aLittleLeft);
-        // Debug.DrawLine(topLeft, topLeft + aLittleLeft);
-
         if (isNearWallOnLeft)
         {
-            //print("left play");
-            leftWallPS.Play();
+            if (!leftWallPS.isEmitting)
+            {
+                print("left play");
+                leftWallPS.Play();
+            }
+            
+            //inputVector = Mathf.Clamp(inputVector, 0f, 1f);
 
             leftWallIndicator.enabled = true;
             rightWallIndicator.enabled = false;
@@ -850,8 +807,13 @@ public partial class CharController
         }
         else if (isNearWallOnRight)
         {
-            //print("right play");
-            rightWallPS.Play();
+            if (!rightWallPS.isEmitting)
+            {
+                print("right play");
+                rightWallPS.Play();
+            }
+            
+            //inputVector = Mathf.Clamp(inputVector, -1f, 0f);
             
             leftWallIndicator.enabled = false;
             rightWallIndicator.enabled = true;

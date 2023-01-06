@@ -236,7 +236,7 @@ public partial class CharController : BeatEntity
     
     private IEnumerator JumpBufferCoroutine()
     {
-        const float buffer = .15f;
+        const float buffer = .20f;
         jumpAvailable = true;
         yield return new WaitForSeconds(buffer);
         jumpAvailable = false;

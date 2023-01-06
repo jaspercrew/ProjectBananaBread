@@ -19,9 +19,9 @@ public partial class CharController //CONFIGS
     private const float OnGroundAcceleration = 30f;
     private const float OnGroundDeceleration = 40f;
     private const float OnGroundDrag = 5f;
-    private const float InAirAcceleration = 30f;
+    private const float InAirAcceleration = 20f;
     private const float InAirDrag = 1.0f;
-    private const float MaxYSpeed = 30f;
+    private const float MaxDownwardSpeedFromGravity = 20f;
 
     private const float heightReducer = 3f;
 
@@ -29,7 +29,7 @@ public partial class CharController //CONFIGS
     
     private const float inversionForce = 3f;
     private const float jumpForce = 11f;
-    public static float BaseGravity = 20f;
+    public static float BaseGravity = 23f;
     
     private const int rewindSpeed = 5;
     

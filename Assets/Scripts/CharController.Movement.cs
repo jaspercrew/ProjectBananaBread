@@ -37,7 +37,7 @@ public partial class CharController
     // private IEnumerator DashCoroutine(float dashTime /*, float dashSpeed*/)
     // {
     //     UnCrouch();
-    //     ReduceHeight();
+    //     ReduceSize();
     //     yield return new WaitForSeconds(dashTime);
     //     //check if space
     //     isDashing = false;
@@ -47,7 +47,7 @@ public partial class CharController
     //     // }
     //     if (CheckSpace())
     //     {
-    //         ReturnHeight();
+    //         ReturnSize();
     //     }
     //     else if (!isCrouching)
     //     {
@@ -85,24 +85,24 @@ public partial class CharController
         Vector2 boostDirection = Vector2.zero;
         if (Input.GetKey(KeyCode.A))
         {
-            boostDirection += Vector2.left;
+            boostDirection = Vector2.left;
         }
         if (Input.GetKey(KeyCode.W))
         {
-            boostDirection += Vector2.up;
+            boostDirection = Vector2.up;
         }
         if (Input.GetKey(KeyCode.S))
         {
-            boostDirection += Vector2.down;
+            boostDirection = Vector2.down;
         }
         if (Input.GetKey(KeyCode.D))
         {
-            boostDirection += Vector2.right;
+            boostDirection = Vector2.right;
         }
 
         if (boostDirection == Vector2.zero)
         {
-            boostDirection = (transform.localScale.x > 0 ? Vector2.left : Vector2.right);
+            boostDirection = (IsFacingLeft() ? Vector2.left : Vector2.right);
         }
 
         boostDirection = boostDirection.normalized;
@@ -116,11 +116,11 @@ public partial class CharController
         Vector2 boost = boostDirection * boostForceMultiplier;
         dashTrail.emitting = true;
         
-        if (Math.Sign(Rigidbody.velocity.x) != Math.Sign(boost.x))
+        if (Math.Sign(Rigidbody.velocity.x) != Math.Sign(boost.x) && boost.x != 0)
         {
             Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
         }
-        if (Math.Sign(Rigidbody.velocity.y) != Math.Sign(boost.y))
+        if (Math.Sign(Rigidbody.velocity.y) != Math.Sign(boost.y) && boost.y != 0)
         {
             Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, 0);
         }
@@ -287,7 +287,7 @@ public partial class CharController
         if (doWallJump) //walljump 
         {
             //Debug.Log("WALLJUMP");
-            Rigidbody.velocity = Vector2.zero;
+            Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
             forcedMoveTime = .30f;
             forcedMoveVector = wallJumpDir;
             overallJumpImpulse =
@@ -367,28 +367,28 @@ public partial class CharController
     //     Animator.SetTrigger(Jump);
     // }
 
-    private void ReduceHeight(bool shiftMiddle = false)
+    private void ReduceSize()
     {
-        charCollider.size = new Vector2(originalColliderSize.x, originalColliderSize.y / heightReducer);
+        charCollider.size = new Vector2(originalColliderSize.x / heightReducer, originalColliderSize.y / heightReducer);
         // charCollider.offset = new Vector2(originalColliderOffset.x, originalColliderOffset.y -  
         //                                                             ((originalColliderSize.y - (originalColliderSize.y / heightReducer)) / 2));
-        if (isInverted)
-        {
-            charCollider.offset = new Vector2(originalColliderOffset.x,
-                -originalColliderOffset.y + (originalColliderSize.y / 2) * (1 - (1 / heightReducer)));
-        }
-        else
-        {
-            charCollider.offset = new Vector2(originalColliderOffset.x, originalColliderOffset.y -  
-                                                                        (shiftMiddle ? 0 : 1) * ((originalColliderSize.y - (originalColliderSize.y / heightReducer)) / 2));
-        }
+        // if (isInverted)
+        // {
+        //     charCollider.offset = new Vector2(originalColliderOffset.x,
+        //         -originalColliderOffset.y + (originalColliderSize.y / 2) * (1 - (1 / heightReducer)));
+        // }
+        // else
+        // {
+        //     charCollider.offset = new Vector2(originalColliderOffset.x, originalColliderOffset.y -  
+        //                                                                 (shiftMiddle ? 0 : 1) * ((originalColliderSize.y - (originalColliderSize.y / heightReducer)) / 2));
+        // }
 
     }
 
-    private void ReturnHeight()
+    private void ReturnSize()
     {
         charCollider.size = originalColliderSize;
-        charCollider.offset = new Vector2(originalColliderOffset.x, (isInverted ? -1 : 1) * originalColliderOffset.y);
+        //charCollider.offset = new Vector2(originalColliderOffset.x, (isInverted ? -1 : 1) * originalColliderOffset.y);
     }
     
 
@@ -396,7 +396,7 @@ public partial class CharController
     {
         //Assert.IsTrue(!isCrouching);
         //Animator.SetBool("isCrouching", true);
-        ReduceHeight();
+        ReduceSize();
         isCrouching = true;
         runSpeed = maxMoveSpeedGround / 2;
     }
@@ -458,7 +458,7 @@ public partial class CharController
     {
         //Assert.IsTrue(isCrouching);
         //Animator.SetBool("isCrouching", false);
-        ReturnHeight();
+        ReturnSize();
         runSpeed = maxMoveSpeedGround;
         isCrouching = false;
 

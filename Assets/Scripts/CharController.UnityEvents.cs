@@ -207,13 +207,13 @@ public partial class CharController
                 Rigidbody.AddForce(Math.Sign(moveVector) * InAirAcceleration * Vector2.right * (Math.Sign(moveVector) != Math.Sign(xVel) ? 2 : 1), ForceMode2D.Force);
             }
 
-            // slow down if player is not inputting horizontal movement
-            // and don't apply if grappling
-            if (moveVector == 0)
-            {
-                // apply horizontal "drag" based on current x velocity
-                Rigidbody.AddForce(-xVel * InAirDrag * Vector2.right, ForceMode2D.Force);
-            }
+            // // slow down if player is not inputting horizontal movement
+            // // and don't apply if grappling
+            // if (moveVector == 0)
+            // {
+            //     // apply horizontal "drag" based on current x velocity
+            //     Rigidbody.AddForce(-xVel * InAirDrag * Vector2.right, ForceMode2D.Force);
+            // }
             else if (Math.Sign(moveVector) == Math.Sign(xVel) && Math.Abs(xVel) > airDragThreshholdA) //apply drag
             {
                 Rigidbody.AddForce(-xVel * (InAirDrag) * Vector2.right, ForceMode2D.Force);
@@ -427,7 +427,7 @@ public partial class CharController
         const float verticalDisplacementOffset = .5f;
         //Vector3 diffNormalized = (grapplePoint - transform.position).normalized ;
         transform.position += new Vector3(0, verticalDisplacementOffset, 0);
-        ReduceHeight(true);
+        ReduceSize();
         dashTrail.emitting = true;
 
 
@@ -473,7 +473,7 @@ public partial class CharController
             Destroy(instantiatedProjectile.gameObject);
         }
 
-        ReturnHeight();
+        ReturnSize();
         dashTrail.emitting = false;
         grappleDistanceJoint.enabled = false;
         isGrappling = false;

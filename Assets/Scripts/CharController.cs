@@ -177,7 +177,7 @@ public partial class CharController : BeatEntity
             //     (@this.IsAbleToAct()) && Time.time > @this.lastDashTime + DashCooldown &&
             //     !@this.isCrouching},
             {Event.EventTypes.Boost, @this =>
-                (@this.IsAbleToAct()) && Time.time > @this.lastBoostTime + BoostCooldown && !@this.recentlyBoosted},
+                (@this.IsAbleToAct()) && !@this.recentlyBoosted},
             {Event.EventTypes.Jump, @this => 
                 @this.IsAbleToMove() && 
                 (@this.isGrounded || (@this.jumpAvailable && !@this.justJumped) || @this.isNearWallOnLeft || @this.isNearWallOnRight) &&

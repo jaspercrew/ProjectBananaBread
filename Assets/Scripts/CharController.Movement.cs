@@ -64,21 +64,19 @@ public partial class CharController
     private IEnumerator BoostCoroutine()
     {
         //float boostFreezeDelay = .0f;
-        bool isFree = false;
+        bool isGoldenBoost = false;
         isDashing = true;
-        
-        float boostForceMultiplier;
+        float delayGravTime = .25f;
+        float boostForceMultiplier = 10f;
+        forcedMoveTime = .3f;
+        recentImpulseTime = .40f;
         if (currentBoostZone != null)
         {
             boostForceMultiplier = 13f;
-            isFree = true;
+            isGoldenBoost = true;
         }
-        else
-        {
-            boostForceMultiplier = 10f;
-        }
-        
-        float delayGravTime = .25f;
+
+        forcedMoveVector = 0;
         recentlyBoosted = true;
         groundedAfterBoost = false;
         
@@ -126,10 +124,7 @@ public partial class CharController
         }
 
         Rigidbody.velocity += (boost * 1f);
-        
-        forcedMoveTime = .3f;
-        forcedMoveVector = 0;
-        recentImpulseTime = .40f;
+
         
         
 
@@ -167,7 +162,7 @@ public partial class CharController
         dashTrail.emitting = false;
         disabledMovement = false;
         gravityValue = BaseGravity;
-        if (isFree)
+        if (isGoldenBoost)
         {
             recentlyBoosted = false;
         }
@@ -243,22 +238,18 @@ public partial class CharController
             return;
         }
 
-        if ((!isInverted && Rigidbody.velocity.y > 0.01) || (isInverted && Rigidbody.velocity.y < -0.01))
-        {
-            return;
-        }
+        // if ((!isInverted && Rigidbody.velocity.y > 0.01) || (isInverted && Rigidbody.velocity.y < -0.01))
+        // {
+        //     return;
+        // }
 
         lastJumpTime = Time.time;
         //print("jumpcall");
         justJumped = true;
         dust.Play();
-        const float wallJumpModX = .4f;
+        const float wallJumpModX = .55f;
         const float wallJumpModY = 1.2f;
-        // float xWallJumpBoostedModifier = 3.0f;
-        // float yWallJumpBoostedModifier = 1.1f;
-        //Animator.SetBool(Grounded, false);
-        //Animator.SetTrigger(Jump);
-        //float adjustedJumpForce = isJumpBoosted ? jumpForce * 2 : jumpForce;
+
         Vector2 overallJumpImpulse = new Vector2(0, jumpForce);
         Vector2 momentumVector = Vector2.zero;
         //bool doWallJump = (isWallSliding || wallJumpAvailable) && !isGrounded;
@@ -484,7 +475,12 @@ public partial class CharController
         // {
         //     EndGrapple();
         // }
-        Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, Rigidbody.velocity.y / 2);
+        if (Rigidbody.velocity.y < 0)
+        {
+            Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, Rigidbody.velocity.y / 2);
+        }
+        
+        
         //TryRefreshBoost();
         
         ForceRotationEnd();

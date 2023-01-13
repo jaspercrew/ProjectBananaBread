@@ -28,6 +28,8 @@ public partial class CharController //COMPONENTS
     public FixedJoint2D fixedJoint2D;
     private LineRenderer grappleLineRenderer;
     private DistanceJoint2D grappleDistanceJoint;
+    private Transform backgroundSpeedSprite;
+    private Transform mainSpeedSprite;
 
     private void GrabComponents_Awake()
     {
@@ -42,6 +44,9 @@ public partial class CharController //COMPONENTS
         dust = particleChild.Find("FeetDust").GetComponent<ParticleSystem>();
         leftWallIndicator = transform.Find("Borders").Find("LeftIndicator").GetComponent<SpriteRenderer>();
         rightWallIndicator = transform.Find("Borders").Find("RightIndicator").GetComponent<SpriteRenderer>();
+
+        backgroundSpeedSprite = transform.Find("SpeedIndicator").Find("BackgroundSpeedSprite");
+        mainSpeedSprite = transform.Find("SpeedIndicator").Find("MainSpeedSprite");
 
         obstacleLayerMask = LayerMask.GetMask("Obstacle");
         obstaclePlusLayerMask = LayerMask.GetMask("Obstacle", "Slide", "Platform");

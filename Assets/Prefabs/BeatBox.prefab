@@ -219,6 +219,7 @@ MonoBehaviour:
   mainBox: {fileID: 3434885017001974632}
   backdropA: {fileID: 8595839812354709460}
   backdropB: {fileID: 6960683889852803057}
+  doChanging: 0
 --- !u!61 &5804134438750005023
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -313,11 +314,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -2047769683
-  m_SortingLayer: -3
+  m_SortingLayerID: 1600556957
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: df0e9172d8529894cb1dd21db03b1ed8, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.4627451}
+  m_Color: {r: 0, g: 1, b: 0.9286413, a: 0.4627451}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

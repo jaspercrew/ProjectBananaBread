@@ -202,7 +202,7 @@ public partial class CharController
         // in-air movement
         else
         {
-            if (Math.Abs(xVel) < maxMoveSpeedAir)
+            if (Math.Abs(xVel) < maxMoveSpeedAir || Math.Sign(moveVector) != Math.Sign(xVel))
             {
                 Rigidbody.AddForce(Math.Sign(moveVector) * InAirAcceleration * Vector2.right * (Math.Sign(moveVector) != Math.Sign(xVel) ? 2 : 1), ForceMode2D.Force);
             }
@@ -214,7 +214,7 @@ public partial class CharController
             //     // apply horizontal "drag" based on current x velocity
             //     Rigidbody.AddForce(-xVel * InAirDrag * Vector2.right, ForceMode2D.Force);
             // }
-            else if (Math.Sign(moveVector) == Math.Sign(xVel) && Math.Abs(xVel) > airDragThreshholdA) //apply drag
+            if (Math.Sign(moveVector) == Math.Sign(xVel) && Math.Abs(xVel) > airDragThreshholdA) //apply drag
             {
                 Rigidbody.AddForce(-xVel * (InAirDrag) * Vector2.right, ForceMode2D.Force);
             }
@@ -442,8 +442,8 @@ public partial class CharController
 
 
         //const float boostForce = 5f;
-        const float gravModifier = .5f;
-        const float minVel = 10f;
+        const float gravModifier = .4f;
+        const float minVel = 12f;
 
         if (IsFacingLeft())
         {
@@ -763,11 +763,10 @@ public partial class CharController
             Physics2D.Linecast(bottomLeft, bottomLeft + aLittleLeft, obstacleLayerMask);
         RaycastHit2D topLeftHit =
             Physics2D.Linecast(topLeft, topLeft + aLittleLeft, obstacleLayerMask);
-        isNearWallOnLeft = bottomLeftHit && topLeftHit &&
-                           bottomLeftHit.transform.GetComponent<BeatPlatform>() != null &&
-                           bottomLeftHit.transform.GetComponent<BeatPlatform>().isWallSlideable &&
-                           topLeftHit.transform.GetComponent<BeatPlatform>() != null &&
-                           topLeftHit.transform.GetComponent<BeatPlatform>().isWallSlideable;
+        isNearWallOnLeft = (bottomLeftHit && bottomLeftHit.transform.GetComponent<BeatPlatform>() != null &&
+                           bottomLeftHit.transform.GetComponent<BeatPlatform>().isWallSlideable) || 
+                           (topLeftHit && topLeftHit.transform.GetComponent<BeatPlatform>() != null &&
+                           topLeftHit.transform.GetComponent<BeatPlatform>().isWallSlideable);
 
 
         // right linecasts
@@ -775,11 +774,10 @@ public partial class CharController
             Physics2D.Linecast(bottomRight, bottomRight + aLittleRight, obstacleLayerMask);
         RaycastHit2D topRightHit =
             Physics2D.Linecast(topRight, topRight + aLittleRight, obstacleLayerMask);
-        isNearWallOnRight = bottomRightHit && topRightHit &&
-                            bottomRightHit.transform.GetComponent<BeatPlatform>() != null &&
-                            bottomRightHit.transform.GetComponent<BeatPlatform>().isWallSlideable &&
-                            topRightHit.transform.GetComponent<BeatPlatform>() != null &&
-                            topRightHit.transform.GetComponent<BeatPlatform>().isWallSlideable;
+        isNearWallOnRight = (bottomRightHit&& bottomRightHit.transform.GetComponent<BeatPlatform>() != null &&
+                            bottomRightHit.transform.GetComponent<BeatPlatform>().isWallSlideable) || 
+                            (topRightHit && topRightHit.transform.GetComponent<BeatPlatform>() != null &&
+                            topRightHit.transform.GetComponent<BeatPlatform>().isWallSlideable);
 
 
 

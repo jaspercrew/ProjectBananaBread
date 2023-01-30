@@ -29,7 +29,7 @@ public partial class CharController //CONFIGS
     
     private const float inversionForce = 3f;
     private const float jumpForce = 11f;
-    public static float BaseGravity = 23f;
+    public static float BaseGravity = 20f;
     
     private const int rewindSpeed = 5;
     

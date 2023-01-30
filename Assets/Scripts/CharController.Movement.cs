@@ -68,8 +68,8 @@ public partial class CharController
         isDashing = true;
         float delayGravTime = .25f;
         float boostForceMultiplier = 10f;
-        forcedMoveTime = .3f;
-        recentImpulseTime = .40f;
+        //forcedMoveTime = .3f;
+        //recentImpulseTime = .40f;
         if (currentBoostZone != null)
         {
             boostForceMultiplier = 13f;
@@ -105,7 +105,7 @@ public partial class CharController
 
         boostDirection = boostDirection.normalized;
         StartCoroutine(BoostUseVisualEffect());
-        disabledMovement = true;
+        //disabledMovement = true;
         lastBoostTime = Time.time;
         //emitFadesTime = .28f;
         //Animator.SetTrigger(Dash);
@@ -114,14 +114,23 @@ public partial class CharController
         Vector2 boost = boostDirection * boostForceMultiplier;
         dashTrail.emitting = true;
         
-        if (Math.Sign(Rigidbody.velocity.x) != Math.Sign(boost.x) && boost.x != 0)
+        if (Math.Sign(Rigidbody.velocity.x) != Math.Sign(boost.x))
         {
             Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
         }
-        if (Math.Sign(Rigidbody.velocity.y) != Math.Sign(boost.y) && boost.y != 0)
+        if (Math.Sign(Rigidbody.velocity.y) != Math.Sign(boost.y))
         {
             Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, 0);
         }
+        
+        // if (Math.Sign(Rigidbody.velocity.x) != Math.Sign(boost.x) && boost.x != 0)
+        // {
+        //     Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
+        // }
+        // if (Math.Sign(Rigidbody.velocity.y) != Math.Sign(boost.y) && boost.y != 0)
+        // {
+        //     Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, 0);
+        // }
 
         Rigidbody.velocity += (boost * 1f);
 
@@ -160,7 +169,7 @@ public partial class CharController
         }
 
         dashTrail.emitting = false;
-        disabledMovement = false;
+        //disabledMovement = false;
         gravityValue = BaseGravity;
         if (isGoldenBoost)
         {
@@ -278,11 +287,13 @@ public partial class CharController
         if (doWallJump) //walljump 
         {
             //Debug.Log("WALLJUMP");
-            Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
+            
             forcedMoveTime = .30f;
             forcedMoveVector = wallJumpDir;
             overallJumpImpulse =
-                new Vector2(jumpForce * wallJumpModX * wallJumpDir, overallJumpImpulse.y * wallJumpModY);
+                new Vector2(jumpForce * wallJumpModX * wallJumpDir, Math.Max(Math.Max(overallJumpImpulse.y * wallJumpModY, 0), Rigidbody.velocity.y));
+            //Rigidbody.velocity = new Vector2(0, Math.Max(0, Rigidbody.velocity.y));
+            Rigidbody.velocity = Vector2.zero;
         }
 
         //regular jump
@@ -308,7 +319,7 @@ public partial class CharController
         //print("impulse: " + overallJumpImpulse);
         //savedRotationalVelocity = 5f * Math.Sign(Rigidbody.velocity.x);
         StartCoroutine(JumpRotationDelay(doWallJump));
-        Rigidbody.AddForce(overallJumpImpulse, ForceMode2D.Impulse);
+        Rigidbody.velocity += overallJumpImpulse;
     }
 
     private IEnumerator JumpRotationDelay(bool wallJump = false)

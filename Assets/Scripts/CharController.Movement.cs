@@ -102,7 +102,8 @@ public partial class CharController
         {
             boostDirection = (IsFacingLeft() ? Vector2.left : Vector2.right);
         }
-
+        
+        ScreenShakeController.Instance.LightShake();
         boostDirection = boostDirection.normalized;
         StartCoroutine(BoostUseVisualEffect());
         //disabledMovement = true;
@@ -139,7 +140,8 @@ public partial class CharController
 
         yield return new WaitForSeconds(delayGravTime);
 
-        if (Math.Sign(Rigidbody.velocity.x) == Math.Sign(Rigidbody.velocity.x - boost.x) && boostDirection.x != 0)
+        bool doVelSubtraction = true;
+        if (Math.Sign(Rigidbody.velocity.x) == Math.Sign(Rigidbody.velocity.x - boost.x) && boostDirection.x != 0 && doVelSubtraction)
         { 
             //float xToSet = Rigidbody.velocity.x - (boost.x * .8f);
             if (isGrounded)
@@ -157,11 +159,11 @@ public partial class CharController
             {
                 if (Rigidbody.velocity.x > 0)
                 {
-                    Rigidbody.velocity = new Vector2(Math.Min(Rigidbody.velocity.x, airDragThreshholdA), Rigidbody.velocity.y);
+                    Rigidbody.velocity = new Vector2(Math.Min(Rigidbody.velocity.x, airDragThreshholdB), Rigidbody.velocity.y);
                 }
                 else
                 {
-                    Rigidbody.velocity = new Vector2(Math.Max(Rigidbody.velocity.x, -airDragThreshholdA), Rigidbody.velocity.y);
+                    Rigidbody.velocity = new Vector2(Math.Max(Rigidbody.velocity.x, -airDragThreshholdB), Rigidbody.velocity.y);
                 }
             }
 
@@ -180,8 +182,14 @@ public partial class CharController
         
     }
 
-    private IEnumerator BoostRefreshVisualEffect()
+    public void BoostRefresh()
     {
+        StartCoroutine(BoostRefreshCoroutine());
+    }
+
+    private IEnumerator BoostRefreshCoroutine()
+    {
+        groundedAfterBoost = true;
         //print("boost visual effect: refresh");
         Color original = boostUseIndicator.color;
         Color destination = originalBoostVisualColor;
@@ -246,12 +254,6 @@ public partial class CharController
             TileStateManager.Instance.DeactivatePlatforms();
             return;
         }
-
-        // if ((!isInverted && Rigidbody.velocity.y > 0.01) || (isInverted && Rigidbody.velocity.y < -0.01))
-        // {
-        //     return;
-        // }
-
         lastJumpTime = Time.time;
         //print("jumpcall");
         justJumped = true;
@@ -295,27 +297,41 @@ public partial class CharController
             //Rigidbody.velocity = new Vector2(0, Math.Max(0, Rigidbody.velocity.y));
             Rigidbody.velocity = Vector2.zero;
         }
-
-        //regular jump
-        if (lastJumpTime + JumpCooldown < Time.time)
-        {
-            return;
-        }
         
-        if (isInverted)
+        else if (!isGrounded)
         {
-            overallJumpImpulse = new Vector2(overallJumpImpulse.x, -overallJumpImpulse.y);
+            if (lastJumpTime + JumpCooldown < Time.time)
+            {
+                return;
+            }
+
+            Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, Math.Max(Rigidbody.velocity.y, 0));
+            doubleJumpAvailable = false;
         }
 
-        if (momentumVector.magnitude > momentumBreakpoint)
-        {
-            overallJumpImpulse += momentumVector;
-        }
         else
         {
-            overallJumpImpulse += (momentumVector / 2);
+            //regular jump
+            if (lastJumpTime + JumpCooldown < Time.time)
+            {
+                return;
+            }
+
+            if (isInverted)
+            {
+                overallJumpImpulse = new Vector2(overallJumpImpulse.x, -overallJumpImpulse.y);
+            }
+
+            if (momentumVector.magnitude > momentumBreakpoint)
+            {
+                overallJumpImpulse += momentumVector;
+            }
+            else
+            {
+                overallJumpImpulse += (momentumVector / 2);
+            }
         }
-        
+
         //print("impulse: " + overallJumpImpulse);
         //savedRotationalVelocity = 5f * Math.Sign(Rigidbody.velocity.x);
         StartCoroutine(JumpRotationDelay(doWallJump));
@@ -327,12 +343,14 @@ public partial class CharController
         if (wallJump)
         {
             savedRotationalVelocity = -.5f * wallJumpDir;
+            //savedRotationalVelocity = Mathf.Clamp(savedRotationalVelocity, -maxRotationSpeed, maxRotationSpeed);
             yield return new WaitForSeconds(.05f);
             SmoothRotationEnd();
         }
         else
         {
             savedRotationalVelocity = .5f * (IsFacingLeft() ? 1 : -1) * (Math.Abs(Rigidbody.velocity.x));
+            //savedRotationalVelocity = Mathf.Clamp(savedRotationalVelocity, -maxRotationSpeed, maxRotationSpeed);
             yield return new WaitForSeconds(.05f);
             SmoothRotationEnd();
         }
@@ -411,16 +429,13 @@ public partial class CharController
 
     private IEnumerator SmoothRotationEndCoroutine()
     {
-        const float maxRotationSpeed = 8f;
-        const float minRotationSpeed = 4f;
-
-        while (true)
+        while (!isGrappling)
         {
             //print("continue rotation");
             //print("before clamp: " + savedRotationalVelocity);
             //savedRotationalVelocity /= 3f;
             //savedRotationalVelocity = savedRotationalVelocity > 0 ? Math.Max(savedRotationalVelocity, maxRotationSpeed) : Math.Min(savedRotationalVelocity, -maxRotationSpeed);
-            Mathf.Clamp(savedRotationalVelocity, -maxRotationSpeed, maxRotationSpeed);
+            savedRotationalVelocity = Mathf.Clamp(savedRotationalVelocity, -maxRotationSpeed, maxRotationSpeed);
             if (savedRotationalVelocity != 0)
             {
                 savedRotationalVelocity = savedRotationalVelocity > 0
@@ -474,6 +489,7 @@ public partial class CharController
         }
 
         //TryRefreshBoost();
+        doubleJumpAvailable = true;
         justJumped = false;
         dust.Play();
         ForceRotationEnd();
@@ -490,8 +506,9 @@ public partial class CharController
         {
             Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, Rigidbody.velocity.y / 2);
         }
-        
-        
+
+        doubleJumpAvailable = true;
+        StartCoroutine(BoostRefreshCoroutine());
         //TryRefreshBoost();
         
         ForceRotationEnd();

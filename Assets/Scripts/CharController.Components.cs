@@ -18,6 +18,7 @@ public partial class CharController //COMPONENTS
     public Rigidbody2D Rigidbody;
     private Transform particleChild;
     private Transform spriteHandler;
+    private Text charDebugText;
 
     private ParticleSystem rightWallPS;
     private ParticleSystem leftWallPS;
@@ -33,6 +34,7 @@ public partial class CharController //COMPONENTS
 
     private void GrabComponents_Awake()
     {
+        charDebugText = transform.Find("DebugText").GetComponentInChildren<Text>();
         fixedJoint2D = GetComponent<FixedJoint2D>();
         charLight = transform.Find("Light").GetComponent<Light2D>();
         particleChild = transform.Find("Particles");

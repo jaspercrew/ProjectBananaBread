@@ -43,9 +43,11 @@ public partial class CharController
         originalBoostVisualColor = boostUseIndicator.color;
         base.Start();
     }
-
+    
     private void FixedUpdate()
     {
+        charDebugText.text = Math.Floor(Rigidbody.velocity.magnitude) + "   " + '\n' + 
+                             Math.Floor(Rigidbody.velocity.x) + "   " + Math.Floor(Rigidbody.velocity.y);
         //Animstate_FixedUpdate();
         inputVector = Input.GetAxisRaw("Horizontal");
         FadeParticle_FixedUpdate();
@@ -68,6 +70,7 @@ public partial class CharController
 
         Record_FixedUpdate();
     }
+
 
     private void Record_FixedUpdate()
     {
@@ -317,8 +320,8 @@ public partial class CharController
     {
         if (!groundedAfterBoost && (isGrounded || isNearWallOnLeft || isNearWallOnRight) && (lastBoostTime + boostRefreshCooldown < Time.time) && recentlyBoosted)
         {
-            StartCoroutine(BoostRefreshVisualEffect());
-            groundedAfterBoost = true;
+            StartCoroutine(BoostRefreshCoroutine());
+            
         }
         if (recentlyBoosted && lastBoostTime + BoostCooldown < Time.time && groundedAfterBoost)
         {
@@ -359,7 +362,8 @@ public partial class CharController
             float rotationToSet = Vector2.Angle(Vector2.right, attachmentPoint - transform.position);
             
             //print(rotationToSet);
-            savedRotationalVelocity = rotationToSet - spriteHandler.eulerAngles.z;
+            savedRotationalVelocity = rotationToSet - spriteHandler.eulerAngles.z; //calculate rotational velocity
+            savedRotationalVelocity *= 1.5f; //boost
             //print(rotationToSet + "  -- " +  spriteHandler.eulerAngles.z + " -- " + savedRotationalVelocity);
             
             spriteHandler.rotation =
@@ -421,7 +425,9 @@ public partial class CharController
 
     public void StartGrapple(Vector3 grapplePoint)
     {
+        BoostRefresh();
         ForceRotationEnd();
+        doubleJumpAvailable = true;
         gravityValue = BaseGravity * .5f;
         attachmentPoint = grapplePoint;
         const float verticalDisplacementOffset = .5f;
@@ -442,8 +448,8 @@ public partial class CharController
 
 
         //const float boostForce = 5f;
-        const float gravModifier = .4f;
-        const float minVel = 12f;
+        const float gravModifier = .6f;
+        const float minVel = 15f;
 
         if (IsFacingLeft())
         {

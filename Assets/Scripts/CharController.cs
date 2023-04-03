@@ -17,19 +17,14 @@ public partial class CharController : BeatEntity
     private float runSpeed;
 
     public bool isDashing;
-    
-    
-    
-    public float gravityValue = BaseGravity;
 
-    
+    public float gravityValue = BaseGravity;
     
     // Trackers
     private bool canFunction = true;
 
     public BoostZone currentBoostZone;
     
-
     private HashSet<IEnumerator> toInterrupt = new HashSet<IEnumerator>();
     private IEnumerator dashCoroutine;
 
@@ -74,6 +69,8 @@ public partial class CharController : BeatEntity
 
     private bool justJumped;
     private float lastJumpTime;
+
+    private bool doubleJumpAvailable;
 
     public bool isCrouching;
     //private bool canDoubleJump;
@@ -180,7 +177,7 @@ public partial class CharController : BeatEntity
                 (@this.IsAbleToAct()) && !@this.recentlyBoosted},
             {Event.EventTypes.Jump, @this => 
                 @this.IsAbleToMove() && 
-                (@this.isGrounded || (@this.jumpAvailable && !@this.justJumped) || @this.isNearWallOnLeft || @this.isNearWallOnRight) &&
+                (@this.isGrounded || (@this.jumpAvailable && !@this.justJumped) || @this.isNearWallOnLeft || @this.isNearWallOnRight || @this.doubleJumpAvailable) &&
                 !@this.isCrouching && !@this.disabledMovement} ,
             // {Event.EventTypes.DoubleJump, @this => 
             //     @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding && 

@@ -63,7 +63,7 @@ public class RadialGrapple : MonoBehaviour{
         print("hook launched");
         const float speed = 20f;
         Vector3 offset = CharController.Instance.isInverted ? new Vector3(0, -1, 0) : new Vector3(0, 1, 0);
-        instantiatedProjectile = Instantiate(projectilePrefab, transform.position + offset, transform.rotation);
+        instantiatedProjectile = Instantiate(projectilePrefab, transform.position + offset, transform.rotation, CharController.Instance.transform);
         instantiatedProjectile.gameObject.GetComponent<GrappleProjectile>().Initialize(direction.normalized, speed);
         grappleLineRenderer.enabled = true;
         
@@ -76,7 +76,7 @@ public class RadialGrapple : MonoBehaviour{
         //Vector3 diffNormalized = (grapplePoint - transform.position).normalized ;
         transform.position += new Vector3(0, verticalDisplacementOffset, 0);
         
-        
+        CharController.Instance.BoostRefresh();
         isGrappling = true;
         //charController.isRecentlyGrappled = true;
         //grappleLineRenderer.SetPosition(0, grapplePoint);
@@ -85,22 +85,23 @@ public class RadialGrapple : MonoBehaviour{
         
         grappleDistanceJoint.enabled = true;
         grappleLineRenderer.enabled = true;
-        
 
+        float savedVelMag = rigidbody2d.velocity.magnitude;
+        rigidbody2d.velocity = Vector2.zero;
         //const float boostForce = 5f;
         const float gravModifier = .8f;
         const float minVel = 10f;
 
         if (transform.localScale.x > 0.5) {
             //facing left
-            rigidbody2d.velocity += (new Vector2(rigidbody2d.velocity.y, 0) * gravModifier);
+            rigidbody2d.velocity += (new Vector2(savedVelMag, 0) * gravModifier);
             if (rigidbody2d.velocity.x > -minVel) {
                 rigidbody2d.velocity = (Vector2.left * minVel);
                 //Debug.Log("left boost");
             }
         }
         else if (transform.localScale.x < -0.5) {
-            rigidbody2d.velocity -= (new Vector2(rigidbody2d.velocity.y, 0) * gravModifier);
+            rigidbody2d.velocity -= (new Vector2(savedVelMag, 0) * gravModifier);
             if (rigidbody2d.velocity.x < minVel) {
                 rigidbody2d.velocity = (Vector2.right * minVel);
                 //Debug.Log("right boost");

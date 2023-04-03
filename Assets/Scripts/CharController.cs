@@ -56,6 +56,9 @@ public partial class CharController : BeatEntity
     private Color originalBoostVisualColor;
     public float recentImpulseTime;
 
+    private float currentSpeedBar;
+    private float maxSpeedBar;
+
     public List<Vector3> pointsInTime = new List<Vector3>();
     private bool isRewinding;
     public bool doRecord;
@@ -315,7 +318,7 @@ public partial class CharController : BeatEntity
     {
         CameraManager.Instance.DoTransition(true);
         //Animator.SetTrigger(Death);
-
+        
         yield return new WaitForSeconds(CameraManager.Instance.totalDelayToSpawn);
 
         if (currentArea == null || currentArea.spawnLocation == null)

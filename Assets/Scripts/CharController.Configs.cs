@@ -11,16 +11,22 @@ public partial class CharController //CONFIGS
     
     private const float groundDragThreshholdA = 15f;
     private const float groundDragThreshholdB = 24f;
-    private const float airDragThreshholdA = 20f;
-    private const float airDragThreshholdB = 30f;
+    private const float airDragThreshholdA = 15f;
+    private const float airDragThreshholdB = 25f;
     private const float AbsoluteMaxVelocity = 50f;
+
+    private const float MaxSpeedBar = 100f;
+    private const float speedBarDecayMultiplier = 1f;
+    private const float speedBarGainMultiplier = 1f;
+    private const float speedBarVelThreshhold = 20f;
+    private const float startingSpeedBar = 70f;
 
     private const float MinGroundSpeed = 0.5f;
     private const float OnGroundAcceleration = 30f;
     private const float OnGroundDeceleration = 40f;
-    private const float OnGroundDrag = .2f;
+    private const float OnGroundDrag = .4f;
     private const float InAirAcceleration = 20f;
-    private const float InAirDrag = .05f;
+    private const float InAirDrag = .01f;
     private const float MaxDownwardSpeedFromGravity = 23f;
     
     const float maxRotationSpeed = 4f;

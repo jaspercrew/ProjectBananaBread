@@ -67,7 +67,7 @@ public partial class CharController
         bool isGoldenBoost = false;
         isDashing = true;
         float delayGravTime = .25f;
-        float boostForceMultiplier = 10f;
+        float boostForceMultiplier = 8f;
         //forcedMoveTime = .3f;
         //recentImpulseTime = .40f;
         if (currentBoostZone != null)
@@ -111,7 +111,7 @@ public partial class CharController
         //emitFadesTime = .28f;
         //Animator.SetTrigger(Dash);
         gravityValue = 0;
-        boostDirection.Scale(new Vector2(1.4f, 1.1f));
+        boostDirection.Scale(new Vector2(1.4f, 1.4f));
         Vector2 boost = boostDirection * boostForceMultiplier;
         dashTrail.emitting = true;
         

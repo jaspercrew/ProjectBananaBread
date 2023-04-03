@@ -41,6 +41,8 @@ public partial class CharController
 
         transform.position = SceneInformation.Instance.GetInitialSpawnPosition();
         originalBoostVisualColor = boostUseIndicator.color;
+        maxSpeedBar = MaxSpeedBar;
+        currentSpeedBar = startingSpeedBar;
         base.Start();
     }
     
@@ -69,6 +71,22 @@ public partial class CharController
         //gravityValue = isInverted ? -Mathf.Abs(gravityValue) : Mathf.Abs(gravityValue);
 
         Record_FixedUpdate();
+        SpeedBar_FixedUpdate();
+    }
+
+    private void SpeedBar_FixedUpdate()
+    {
+        print(currentSpeedBar);
+        float currentSpeed = Rigidbody.velocity.magnitude;
+        float multiplier = currentSpeed > speedBarVelThreshhold ? speedBarGainMultiplier : speedBarDecayMultiplier;
+        currentSpeedBar += (currentSpeed - speedBarVelThreshhold) * Time.fixedDeltaTime * multiplier;
+        
+        if (currentSpeedBar < 1)
+        {
+            currentSpeedBar = startingSpeedBar;
+            //Die();
+            
+        }
     }
 
 
@@ -373,7 +391,7 @@ public partial class CharController
             grappleDistanceJoint.distance = grappleLength;
             if (Rigidbody.velocity.y < 0 && Rigidbody.velocity.magnitude < airDragThreshholdB)
             {
-                Rigidbody.velocity *= 1.01f;
+                Rigidbody.velocity *= 1.001f;
             }
 
             float xVel = Rigidbody.velocity.x;
@@ -428,7 +446,7 @@ public partial class CharController
         BoostRefresh();
         ForceRotationEnd();
         doubleJumpAvailable = true;
-        gravityValue = BaseGravity * .5f;
+        gravityValue = BaseGravity * .3f;
         attachmentPoint = grapplePoint;
         const float verticalDisplacementOffset = .5f;
         //Vector3 diffNormalized = (grapplePoint - transform.position).normalized ;
@@ -442,14 +460,16 @@ public partial class CharController
         //grappleLineRenderer.SetPosition(0, grapplePoint);
         //grappleLineRenderer.SetPosition(1, transform.position);
         grappleDistanceJoint.connectedAnchor = grapplePoint;
+        
 
         grappleDistanceJoint.enabled = true;
+        grappleDistanceJoint.distance = Math.Max(grappleDistanceJoint.distance, 3f);
         //grappleLineRenderer.enabled = true;
 
 
         //const float boostForce = 5f;
-        const float gravModifier = .6f;
-        const float minVel = 15f;
+        const float gravModifier = .45f;
+        const float minVel = 12f;
 
         if (IsFacingLeft())
         {

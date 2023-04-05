@@ -474,7 +474,7 @@ public partial class CharController
         if (IsFacingLeft())
         {
             //facing left
-            Rigidbody.velocity += (new Vector2(Rigidbody.velocity.y, 0) * gravModifier);
+            Rigidbody.velocity -= (new Vector2(Math.Abs(Rigidbody.velocity.y), 0) * gravModifier);
             if (Rigidbody.velocity.x > -minVel)
             {
                 Rigidbody.velocity = (Vector2.left * minVel);
@@ -483,7 +483,7 @@ public partial class CharController
         }
         else
         {
-            Rigidbody.velocity -= (new Vector2(Rigidbody.velocity.y, 0) * gravModifier);
+            Rigidbody.velocity += (new Vector2(Math.Abs(Rigidbody.velocity.y), 0) * gravModifier);
             if (Rigidbody.velocity.x < minVel)
             {
                 Rigidbody.velocity = (Vector2.right * minVel);

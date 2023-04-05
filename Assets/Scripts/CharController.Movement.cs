@@ -67,7 +67,7 @@ public partial class CharController
         bool isGoldenBoost = false;
         isDashing = true;
         float delayGravTime = .25f;
-        float boostForceMultiplier = 8f;
+        float boostForceMultiplier = 4.5f;
         //forcedMoveTime = .3f;
         //recentImpulseTime = .40f;
         if (currentBoostZone != null)
@@ -118,10 +118,12 @@ public partial class CharController
         if (Math.Sign(Rigidbody.velocity.x) != Math.Sign(boost.x))
         {
             Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
+            boost *= 1.5f;
         }
         if (Math.Sign(Rigidbody.velocity.y) != Math.Sign(boost.y))
         {
             Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, 0);
+            boost *= 1.5f;
         }
         
         // if (Math.Sign(Rigidbody.velocity.x) != Math.Sign(boost.x) && boost.x != 0)

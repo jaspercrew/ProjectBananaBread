@@ -29,6 +29,12 @@ public partial class CharController //CONFIGS
     private const float InAirDrag = .01f;
     private const float MaxDownwardSpeedFromGravity = 23f;
     
+    private const float grappleGravityBoostModifier = .55f;
+    private const float minGrappleVelocity = 15f;
+    private const float grappleVerticalDisplacement = .5f;
+    private const float grappleAcceleration = 1.0015f;
+    private const float grappleLaunchSpeed = 40f;
+    
     const float maxRotationSpeed = 4f;
     const float minRotationSpeed = 3f;
 

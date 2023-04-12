@@ -391,7 +391,7 @@ public partial class CharController
             grappleDistanceJoint.distance = grappleLength;
             if (Rigidbody.velocity.y < 0 && Rigidbody.velocity.magnitude < airDragThreshholdB)
             {
-                Rigidbody.velocity *= 1.001f;
+                Rigidbody.velocity *= grappleAcceleration;
             }
 
             float xVel = Rigidbody.velocity.x;
@@ -429,7 +429,6 @@ public partial class CharController
         }
 
         //print("hook launched");
-        const float speed = 30f;
         Vector3 offset = isInverted ? new Vector3(0, -1, 0) : new Vector3(0, 1, 0);
         if (instantiatedProjectile != null)
         {
@@ -437,7 +436,7 @@ public partial class CharController
         }
 
         instantiatedProjectile = Instantiate(projectilePrefab, transform.position + offset, transform.rotation);
-        instantiatedProjectile.gameObject.GetComponent<GrappleProjectile>().Initialize(direction.normalized, speed);
+        instantiatedProjectile.gameObject.GetComponent<GrappleProjectile>().Initialize(direction.normalized, grappleLaunchSpeed);
         
     }
 
@@ -448,9 +447,9 @@ public partial class CharController
         doubleJumpAvailable = true;
         gravityValue = BaseGravity * .3f;
         attachmentPoint = grapplePoint;
-        const float verticalDisplacementOffset = .5f;
+        
         //Vector3 diffNormalized = (grapplePoint - transform.position).normalized ;
-        transform.position += new Vector3(0, verticalDisplacementOffset, 0);
+        transform.position += new Vector3(0, grappleVerticalDisplacement, 0);
         ReduceSize();
         dashTrail.emitting = true;
 
@@ -463,30 +462,29 @@ public partial class CharController
         
 
         grappleDistanceJoint.enabled = true;
-        grappleDistanceJoint.distance = Math.Max(grappleDistanceJoint.distance, 3f);
+        //grappleDistanceJoint.distance = Math.Max(grappleDistanceJoint.distance, 3f);
         //grappleLineRenderer.enabled = true;
 
 
         //const float boostForce = 5f;
-        const float gravModifier = .45f;
-        const float minVel = 12f;
+        float initialGrappleBoost = minGrappleVelocity * Math.Max(grappleDistanceJoint.distance / 5, 1);
 
         if (IsFacingLeft())
         {
             //facing left
-            Rigidbody.velocity -= (new Vector2(Math.Abs(Rigidbody.velocity.y), 0) * gravModifier);
-            if (Rigidbody.velocity.x > -minVel)
+            Rigidbody.velocity -= (new Vector2(Math.Abs(Rigidbody.velocity.y), 0) * grappleGravityBoostModifier);
+            if (Rigidbody.velocity.x > -minGrappleVelocity)
             {
-                Rigidbody.velocity = (Vector2.left * minVel);
+                Rigidbody.velocity = (Vector2.left * initialGrappleBoost);
                 //Debug.Log("left boost");
             }
         }
         else
         {
-            Rigidbody.velocity += (new Vector2(Math.Abs(Rigidbody.velocity.y), 0) * gravModifier);
-            if (Rigidbody.velocity.x < minVel)
+            Rigidbody.velocity += (new Vector2(Math.Abs(Rigidbody.velocity.y), 0) * grappleGravityBoostModifier);
+            if (Rigidbody.velocity.x < minGrappleVelocity)
             {
-                Rigidbody.velocity = (Vector2.right * minVel);
+                Rigidbody.velocity = (Vector2.right * initialGrappleBoost);
                 //Debug.Log("right boost");
             }
         }

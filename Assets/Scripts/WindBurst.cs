@@ -1,4 +1,4 @@
-using System.Collections;
+/*using System.Collections;
 using UnityEngine;
 
 public class WindBurst : BeatEntity
@@ -56,4 +56,5 @@ public class WindBurst : BeatEntity
         spriteRenderer.color = initialColor;
         yield return null;
     }
-}
+}*/
+

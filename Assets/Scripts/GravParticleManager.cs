@@ -1,3 +1,4 @@
+/*
 using UnityEngine;
 
 public class GravParticleManager : MonoBehaviour
@@ -77,3 +78,5 @@ public class GravParticleManager : MonoBehaviour
         prevGrav = newGrav;
     }
 }
+*/
+

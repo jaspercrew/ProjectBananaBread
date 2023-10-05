@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using UnityEngine;
 
 public class BeatWave : MonoBehaviour
@@ -32,4 +32,5 @@ public class BeatWave : MonoBehaviour
         playerVelocityMultiplier = scalar;
         rigidbody2D.velocity = vel;
     }
-}
+}*/
+

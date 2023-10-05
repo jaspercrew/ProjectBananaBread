@@ -239,11 +239,11 @@ public partial class CharController
     private void DoJump()
     {
         //GameManager.Instance.TextPop(isJumpBoosted.ToString(), 2f);
-        if (Input.GetKey(KeyCode.S) && isPlatformGrounded)
+        /*if (Input.GetKey(KeyCode.S) && isPlatformGrounded)
         {
             TileStateManager.instance.DeactivatePlatforms();
             return;
-        }
+        }*/
 
         lastJumpTime = Time.time;
         //print("jumpcall");
@@ -256,7 +256,7 @@ public partial class CharController
         var momentumVector = Vector2.zero;
         //bool doWallJump = (isWallSliding || wallJumpAvailable) && !isGrounded;
         var doWallJump = isNearWallOnLeft || isNearWallOnRight;
-        var momentumBreakpoint = 10f;
+        /*var momentumBreakpoint = 10f;
         if (
             mostRecentlyTouchedPlatform != null
             && mostRecentlyTouchedPlatform.type == PlatformType.Moving
@@ -280,7 +280,7 @@ public partial class CharController
             }
 
             print("momentum vector: " + momentumVector);
-        }
+        }*/
 
         if (doWallJump) //walljump
         {
@@ -313,10 +313,10 @@ public partial class CharController
             if (isInverted)
                 overallJumpImpulse = new Vector2(overallJumpImpulse.x, -overallJumpImpulse.y);
 
-            if (momentumVector.magnitude > momentumBreakpoint)
+            /*if (momentumVector.magnitude > momentumBreakpoint)
                 overallJumpImpulse += momentumVector;
             else
-                overallJumpImpulse += momentumVector / 2;
+                overallJumpImpulse += momentumVector / 2;*/
         }
 
         //print("impulse: " + overallJumpImpulse);

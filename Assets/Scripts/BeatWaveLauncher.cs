@@ -1,3 +1,4 @@
+/*
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,3 +31,5 @@ public class BeatWaveLauncher : BeatEntity
         base.MicroBeatAction();
     }
 }
+*/
+

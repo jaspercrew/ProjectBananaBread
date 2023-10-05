@@ -13,13 +13,13 @@ public partial class CharController : BeatEntity
     private static readonly Dictionary<Func<bool>, Event.EventTypes> KeyToEventType =
         new Dictionary<Func<bool>, Event.EventTypes>
         {
-            {() => Input.GetKeyDown(KeyCode.LeftShift), Event.EventTypes.Boost},
+            { () => Input.GetKeyDown(KeyCode.LeftShift), Event.EventTypes.Boost },
             //{() => Input.GetKeyDown(KeyCode.H), Event.EventTypes.Boost},
-            {() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.Jump},
+            { () => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.Jump },
             //{() => Input.GetKeyDown(KeyCode.Space), Event.EventTypes.DoubleJump},
             //{() => Input.GetKeyDown(KeyCode.E), Event.EventTypes.Interact},
             //{() => Input.GetKeyDown(KeyCode.LeftControl), Event.EventTypes.Crouch},
-            {() => Input.GetKeyDown(KeyCode.Q), Event.EventTypes.Grapple}
+            { () => Input.GetKeyDown(KeyCode.Q), Event.EventTypes.Grapple }
         };
 
     // maps from event type to a boolean function that says whether the conditions for the
@@ -37,7 +37,7 @@ public partial class CharController : BeatEntity
         // {Event.EventTypes.Dash, @this =>
         //     (@this.IsAbleToAct()) && Time.time > @this.lastDashTime + DashCooldown &&
         //     !@this.isCrouching},
-        {Event.EventTypes.Boost, @this => @this.IsAbleToAct() && !@this.recentlyBoosted},
+        { Event.EventTypes.Boost, @this => @this.IsAbleToAct() && !@this.recentlyBoosted },
         {
             Event.EventTypes.Jump,
             @this =>
@@ -55,10 +55,10 @@ public partial class CharController : BeatEntity
         // {Event.EventTypes.DoubleJump, @this =>
         //     @this.IsAbleToMove() && !@this.isGrounded && !@this.isWallSliding &&
         //     @this.canDoubleJump && Input.GetKeyDown(KeyCode.Space)},
-        {Event.EventTypes.Interact, @this => @this.IsAbleToAct()},
+        { Event.EventTypes.Interact, @this => @this.IsAbleToAct() },
         // {Event.EventTypes.Crouch,
         //     @this => @this.IsAbleToAct()},
-        {Event.EventTypes.Grapple, @this => @this.IsAbleToAct()}
+        { Event.EventTypes.Grapple, @this => @this.IsAbleToAct() }
     };
 
     // maps from event type to a void function (action) that actually executes the action
@@ -67,12 +67,12 @@ public partial class CharController : BeatEntity
         new Dictionary<Event.EventTypes, Action<CharController>>
         {
             //{Event.EventTypes.Dash, @this => @this.DoDash()},
-            {Event.EventTypes.Jump, @this => @this.DoJump()},
-            {Event.EventTypes.Boost, @this => @this.Boost()},
+            { Event.EventTypes.Jump, @this => @this.DoJump() },
+            { Event.EventTypes.Boost, @this => @this.Boost() },
             //{Event.EventTypes.DoubleJump, @this => @this.DoDoubleJump()},
             //{Event.EventTypes.Interact, @this => @this.DoInteract()},
             //{Event.EventTypes.Crouch, @this => @this.Crouch()},
-            {Event.EventTypes.Grapple, @this => @this.LaunchHook()}
+            { Event.EventTypes.Grapple, @this => @this.LaunchHook() }
         };
 
     public bool isDashing;
@@ -96,7 +96,8 @@ public partial class CharController : BeatEntity
     //private int wallJumpFramesLeft;
     public BeatPlatform mostRecentlyTouchedPlatform;
 
-    [FormerlySerializedAs("lifetime")] public float emitFadesTime;
+    [FormerlySerializedAs("lifetime")]
+    public float emitFadesTime;
 
     public float dashTrailEmitTime;
     public int forcedMoveVector;
@@ -191,10 +192,10 @@ public partial class CharController : BeatEntity
     private bool IsAbleToMove()
     {
         return canFunction
-               && !isRewinding
-               && !isMetronomeLocked
-               && !GameManager.instance.isMenu
-               && !isGrappling;
+            && !isRewinding
+            && !isMetronomeLocked
+            && !GameManager.instance.isMenu
+            && !isGrappling;
     }
 
     private bool RecentlyImpulsed()
@@ -228,12 +229,12 @@ public partial class CharController : BeatEntity
     private bool IsAbleToAct()
     {
         return !isDashing
-               && !disabledMovement
-               && canFunction
-               && !isRewinding
-               && !isMetronomeLocked
-               && !GameManager.instance.isMenu
-               && !isGrappling;
+            && !disabledMovement
+            && canFunction
+            && !isRewinding
+            && !isMetronomeLocked
+            && !GameManager.instance.isMenu
+            && !isGrappling;
     }
 
     protected void FaceLeft()

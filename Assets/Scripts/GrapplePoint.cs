@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 
 public class GrapplePoint : MonoBehaviour
 {
@@ -58,4 +58,4 @@ public class GrapplePoint : MonoBehaviour
     {
         loopFX.color = clearColor;
     }
-}
+}*/

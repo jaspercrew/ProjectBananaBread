@@ -21,6 +21,7 @@ public class BeatPlatform : ActivatedEntity
     public bool isWallSlideable;
 
     public Vector2 movingVelocity;
+    private readonly float timeToMove = 4f;
     private Vector2 lastPosition;
     private Vector2 lastVelocity;
     private IEnumerator movingCo;
@@ -35,7 +36,6 @@ public class BeatPlatform : ActivatedEntity
     //private bool isPlayerTouching;
     private Vector2 playerRelativePosition;
     private SpriteRenderer spriteRenderer;
-    private readonly float timeToMove = 4f;
 
     // Start is called before the first frame update
     protected override void Start()
@@ -44,7 +44,8 @@ public class BeatPlatform : ActivatedEntity
         originalPosition = transform.position;
         platformCollider = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        if (isHazard) spriteRenderer.color = Color.red;
+        if (isHazard)
+            spriteRenderer.color = Color.red;
 
         if (isWallSlideable)
             spriteRenderer.color = new Color(1f, .5f, 0);
@@ -69,7 +70,8 @@ public class BeatPlatform : ActivatedEntity
             )
             //print("sticking player vel");
             //CharController.Instance.Rigidbody.velocity += platformRigidbody.velocity;
-            CharController.instance.transform.position += transform.position - (Vector3) lastPosition;
+            CharController.instance.transform.position +=
+                transform.position - (Vector3) lastPosition;
 
         lastPosition = transform.position;
     }
@@ -157,7 +159,8 @@ public class BeatPlatform : ActivatedEntity
 
     protected override void MicroBeatAction()
     {
-        if (isStatic) return;
+        if (isStatic)
+            return;
 
         base.MicroBeatAction();
     }
@@ -281,7 +284,8 @@ public class BeatPlatform : ActivatedEntity
 
             // print((lerpPosition - transform.position) / Time.deltaTime);
             // transform.position = lerpPosition;
-            platformRigidbody.velocity += movementDirection * (velocityMultiplier * (elapsedTime / moveTime));
+            platformRigidbody.velocity +=
+                movementDirection * (velocityMultiplier * (elapsedTime / moveTime));
             movingVelocity = platformRigidbody.velocity;
             elapsedTime += Time.fixedDeltaTime;
 

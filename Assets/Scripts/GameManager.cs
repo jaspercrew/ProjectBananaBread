@@ -211,7 +211,8 @@ public class GameManager : MonoBehaviour
 
     public int BuildIndexFromSceneName(string sceneName)
     {
-        if (sceneNameToBuildIndex.ContainsKey(sceneName)) return sceneNameToBuildIndex[sceneName];
+        if (sceneNameToBuildIndex.ContainsKey(sceneName))
+            return sceneNameToBuildIndex[sceneName];
 
         Debug.LogError("Scene \"" + sceneName + "\" not in build settings!");
         return -1;
@@ -286,10 +287,10 @@ public class GameManager : MonoBehaviour
         GameObject.Find("CenterCanvas").GetComponent<Canvas>().enabled = false;
         menuCenterCam.GetComponent<CinemachineVirtualCamera>().m_Priority = 100;
         yield return new WaitForSeconds(dropDelay);
-        TileStateManager.instance.transform
+        /*TileStateManager.instance.transform
             .Find("GridMain")
             .transform.Find("Menu-Exit")
-            .gameObject.SetActive(false);
+            .gameObject.SetActive(false);*/
         AudioManager.instance.IsolatedPlay(SoundName.ExtendedSnare, .25f);
     }
 
@@ -336,13 +337,13 @@ public class GameManager : MonoBehaviour
 
     public void PlayerDeath()
     {
-        var tokens = FindObjectsOfType<Token>();
+        /*var tokens = FindObjectsOfType<Token>();
         foreach (var token in tokens)
-            token.ResetToken();
+            token.ResetToken();*/
 
-        var gates = FindObjectsOfType<Gate>();
+        /*var gates = FindObjectsOfType<Gate>();
         foreach (var gate in gates)
-            gate.ResetGate();
+            gate.ResetGate();*/
     }
 
     // public void ChangeAudio(float slider)

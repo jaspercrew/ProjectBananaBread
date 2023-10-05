@@ -1,4 +1,4 @@
-using Cinemachine;
+/*using Cinemachine;
 using UnityEngine;
 
 public class CameraModifier : MonoBehaviour
@@ -45,4 +45,5 @@ public class CameraModifier : MonoBehaviour
                 .GetComponent<CinemachineVirtualCamera>()
                 .m_Lens.OrthographicSize /= size;
     }
-}
+}*/
+

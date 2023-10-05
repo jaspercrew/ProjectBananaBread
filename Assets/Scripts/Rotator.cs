@@ -1,4 +1,4 @@
-using System.Collections;
+/*using System.Collections;
 using UnityEngine;
 
 public class Rotator : BeatEntity
@@ -27,4 +27,5 @@ public class Rotator : BeatEntity
         yield return null;
         transform.eulerAngles = originalAngle + new Vector3(0, 0, 90);
     }
-}
+}*/
+

@@ -1,3 +1,4 @@
+/*
 using UnityEngine;
 
 public class BouncePad : ActivatedEntity
@@ -32,3 +33,5 @@ public class BouncePad : ActivatedEntity
         }
     }
 }
+*/
+

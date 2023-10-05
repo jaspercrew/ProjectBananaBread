@@ -1,3 +1,4 @@
+/*
 using System;
 using Cinemachine;
 using UnityEngine;
@@ -31,3 +32,5 @@ public class StaticCamTrigger : MonoBehaviour
         }
     }
 }
+*/
+

@@ -1,1 +1,4 @@
+/*
 public class StaticPlatform : Platform { }
+*/
+

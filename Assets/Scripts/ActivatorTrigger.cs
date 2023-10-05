@@ -1,3 +1,4 @@
+/*
 using UnityEngine;
 
 public class ActivatorTrigger : MonoBehaviour
@@ -14,3 +15,5 @@ public class ActivatorTrigger : MonoBehaviour
         isActivated = false;
     }
 }
+*/
+

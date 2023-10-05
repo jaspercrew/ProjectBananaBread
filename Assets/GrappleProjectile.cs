@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class GrappleProjectile : Projectile
 {
+    private Vector3 direction;
     //components
     //private LineRenderer lineRenderer;
     //private CharController characterController;
@@ -12,23 +13,16 @@ public class GrappleProjectile : Projectile
 
     // parameters
     private float speed;
-    private Vector3 direction;
-
-    public void Initialize(Vector3 dir, float newSpeed)
-    {
-        direction = dir.normalized;
-        speed = newSpeed;
-    }
 
     protected override void Start()
     {
-        Collider2D = GetComponent<BoxCollider2D>();
-        Rigidbody2D = GetComponent<Rigidbody2D>();
+        collider2D = GetComponent<BoxCollider2D>();
+        rigidbody2D = GetComponent<Rigidbody2D>();
         //characterController = FindObjectOfType<CharController>();
         //grappleController = FindObjectOfType<RadialGrapple>();
         //Rigidbody2D.gravityScale = GravityScale;
         //lineRenderer = GetComponent<LineRenderer>();
-        Rigidbody2D.velocity = direction * speed;
+        rigidbody2D.velocity = direction * speed;
         base.Start();
     }
 
@@ -37,9 +31,15 @@ public class GrappleProjectile : Projectile
         if (other.gameObject.layer == LayerMask.NameToLayer("Obstacle"))
         {
             //print(other.gameObject.name);
-            Rigidbody2D.velocity = Vector2.zero;
-            Vector3 pos = transform.position;
-            CharController.Instance.StartGrapple(pos);
+            rigidbody2D.velocity = Vector2.zero;
+            var pos = transform.position;
+            CharController.instance.StartGrapple(pos);
         }
+    }
+
+    public void Initialize(Vector3 dir, float newSpeed)
+    {
+        direction = dir.normalized;
+        speed = newSpeed;
     }
 }

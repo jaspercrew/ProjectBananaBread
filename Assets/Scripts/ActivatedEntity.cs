@@ -1,12 +1,7 @@
-using System.Text;
-using UnityEngine;
-
 public class ActivatedEntity : BeatEntity
 {
-
-    public bool initialIsActive = false;
+    public bool initialIsActive;
     public bool IsActive { get; private set; }
-    
 
     //Start is called before the first frame update
     protected override void Start()
@@ -14,27 +9,17 @@ public class ActivatedEntity : BeatEntity
         base.Start();
         IsActive = initialIsActive;
         if (initialIsActive)
-        {
             Activate();
-        }
         else
-        {
             Deactivate();
-        }
     }
 
     protected override void MicroBeatAction()
     {
         if (IsActive)
-        {
             Deactivate();
-        }
         else
-        {
             Activate();
-        }
-        
-        
     }
 
     protected virtual void Activate()

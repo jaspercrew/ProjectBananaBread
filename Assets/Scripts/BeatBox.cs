@@ -13,10 +13,10 @@ public class BeatBox : MonoBehaviour
     public Transform backdropA;
     public Transform backdropB;
 
-    private bool wasZeroLastFrame;
-
     // private bool wasChangingLastFrame;
     public bool doChanging;
+
+    private bool wasZeroLastFrame;
 
     // Update is called once per frame
     private void Update()
@@ -27,13 +27,13 @@ public class BeatBox : MonoBehaviour
             // {
             //     Debug.Log("started changing");
             // }
-            float height = Math.Min(
-                heightMultiplier * AudioSpectrum.Instance.bufferSpectrum[spectrumIndex] + minLength,
+            var height = Math.Min(
+                heightMultiplier * AudioSpectrum.instance.bufferSpectrum[spectrumIndex] + minLength,
                 maxHeight
             );
-            Vector3 sM = mainBox.localScale;
-            Vector3 sA = backdropA.localScale;
-            Vector3 sB = backdropB.localScale;
+            var sM = mainBox.localScale;
+            var sA = backdropA.localScale;
+            var sB = backdropB.localScale;
             sM = new Vector3(sM.x, doChanging ? height + 0 * backdropHeight : 0, sM.z);
             sA = new Vector3(sA.x, doChanging ? height + 1 * backdropHeight : 0, sA.z);
             sB = new Vector3(sB.x, doChanging ? height + 2 * backdropHeight : 0, sB.z);
@@ -45,9 +45,9 @@ public class BeatBox : MonoBehaviour
         }
         else if (!wasZeroLastFrame)
         {
-            Vector3 sM = mainBox.localScale;
-            Vector3 sA = backdropA.localScale;
-            Vector3 sB = backdropB.localScale;
+            var sM = mainBox.localScale;
+            var sA = backdropA.localScale;
+            var sB = backdropB.localScale;
             sM = new Vector3(sM.x, 0, sM.z);
             sA = new Vector3(sA.x, 0, sA.z);
             sB = new Vector3(sB.x, 0, sB.z);
@@ -57,10 +57,7 @@ public class BeatBox : MonoBehaviour
             wasZeroLastFrame = true;
             // wasChangingLastFrame = false;
         }
-        else
-        {
-            // already zero, no need to do anything
-        }
+        // already zero, no need to do anything
     }
 
     public void Initialize(

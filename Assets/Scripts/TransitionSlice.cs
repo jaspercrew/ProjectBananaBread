@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TransitionSlice : MonoBehaviour
@@ -8,12 +7,12 @@ public class TransitionSlice : MonoBehaviour
     private SpriteRenderer spriteRenderer;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.color = Color.clear;
 
-        fadeTime = CameraManager.sliceFadeTime;
+        fadeTime = CameraManager.SliceFadeTime;
     }
 
     public void Appear()
@@ -23,21 +22,22 @@ public class TransitionSlice : MonoBehaviour
 
     private IEnumerator AppearCoroutine()
     {
-        Color original = spriteRenderer.color;
+        var original = spriteRenderer.color;
 
-        Color full = original;
+        var full = original;
         full.a = 1f;
 
         //Color full = Color.white;
 
 
-        float elapsedTime = 0f;
+        var elapsedTime = 0f;
         while (elapsedTime < fadeTime)
         {
             spriteRenderer.color = Color.Lerp(original, full, elapsedTime / fadeTime);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
         spriteRenderer.color = full;
     }
 
@@ -48,17 +48,18 @@ public class TransitionSlice : MonoBehaviour
 
     private IEnumerator DisappearCoroutine()
     {
-        Color original = spriteRenderer.color;
-        Color faded = original;
+        var original = spriteRenderer.color;
+        var faded = original;
         faded.a = 0f;
 
-        float elapsedTime = 0f;
+        var elapsedTime = 0f;
         while (elapsedTime < fadeTime)
         {
             spriteRenderer.color = Color.Lerp(original, faded, elapsedTime / fadeTime);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
         spriteRenderer.color = faded;
     }
 }

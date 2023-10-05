@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Rotator : BeatEntity
@@ -11,15 +10,15 @@ public class Rotator : BeatEntity
 
     private IEnumerator RotateCoroutine()
     {
-        Vector3 originalAngle = transform.eulerAngles;
+        var originalAngle = transform.eulerAngles;
         float elapsedTime = 0;
-        float rotateTime = .5f;
+        var rotateTime = .5f;
         while (elapsedTime < rotateTime)
         {
             transform.RotateAround(
-                CharController.Instance.transform.position,
+                CharController.instance.transform.position,
                 Vector3.forward,
-                Time.deltaTime * (90f / (rotateTime))
+                Time.deltaTime * (90f / rotateTime)
             );
             elapsedTime += Time.deltaTime;
             yield return null;

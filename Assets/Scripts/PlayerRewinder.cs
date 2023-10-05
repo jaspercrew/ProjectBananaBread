@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class PlayerRewinder : BeatEntity
 {
     // Start is called before the first frame update
@@ -12,6 +8,6 @@ public class PlayerRewinder : BeatEntity
 
     protected override void MicroBeatAction()
     {
-        StartCoroutine(CharController.Instance.StartRewind());
+        StartCoroutine(CharController.instance.StartRewind());
     }
 }

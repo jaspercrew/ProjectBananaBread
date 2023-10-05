@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class WindBurst : BeatEntity
 {
@@ -18,28 +16,36 @@ public class WindBurst : BeatEntity
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Player")) playerInRange = false;
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Player")) playerInRange = true;
+    }
+
     protected override void MicroBeatAction()
     {
         if (playerInRange)
-        {
             //Vector2 vel = CharController.Instance.GetComponent<Rigidbody2D>().velocity;
-            CharController.Instance.GetComponent<Rigidbody2D>().velocity =
+            CharController.instance.GetComponent<Rigidbody2D>().velocity =
                 windVelocity * direction.normalized;
-        }
 
         StartCoroutine(FlashCoroutine());
     }
 
     private IEnumerator FlashCoroutine()
     {
-        Color initialColor = spriteRenderer.color;
+        var initialColor = spriteRenderer.color;
 
-        Color fullAlpha = initialColor;
+        var fullAlpha = initialColor;
         fullAlpha.a = 1;
         spriteRenderer.color = fullAlpha;
 
-        float elapsedTime = 0f;
-        float flashTime = 1.5f;
+        var elapsedTime = 0f;
+        var flashTime = 1.5f;
         while (elapsedTime < flashTime)
         {
             spriteRenderer.color = Color.Lerp(fullAlpha, initialColor, elapsedTime / flashTime);
@@ -49,21 +55,5 @@ public class WindBurst : BeatEntity
 
         spriteRenderer.color = initialColor;
         yield return null;
-    }
-
-    private void OnTriggerStay2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("Player"))
-        {
-            playerInRange = true;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("Player"))
-        {
-            playerInRange = false;
-        }
     }
 }

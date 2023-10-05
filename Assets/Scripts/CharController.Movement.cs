@@ -93,7 +93,7 @@ public partial class CharController
         if (boostDirection == Vector2.zero)
             boostDirection = IsFacingLeft() ? Vector2.left : Vector2.right;
 
-        ScreenShakeController.Instance.LightShake();
+        ScreenShakeController.instance.LightShake();
         boostDirection = boostDirection.normalized;
         StartCoroutine(BoostUseVisualEffect());
         //disabledMovement = true;
@@ -103,17 +103,17 @@ public partial class CharController
         gravityValue = 0;
         boostDirection.Scale(new Vector2(1.4f, 1.4f));
         var boost = boostDirection * boostForceMultiplier;
-        dashTrail.emitting = true;
+        dashTrailEmitTime = .3f;
 
-        if (Math.Sign(Rigidbody.velocity.x) != Math.Sign(boost.x))
+        if (Math.Sign(rigidbody.velocity.x) != Math.Sign(boost.x))
         {
-            Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
+            rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
             boost *= 1.5f;
         }
 
-        if (Math.Sign(Rigidbody.velocity.y) != Math.Sign(boost.y))
+        if (Math.Sign(rigidbody.velocity.y) != Math.Sign(boost.y))
         {
-            Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, 0);
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
             boost *= 1.5f;
         }
 
@@ -126,49 +126,48 @@ public partial class CharController
         //     Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, 0);
         // }
 
-        Rigidbody.velocity += boost * 1f;
+        rigidbody.velocity += boost * 1f;
 
         yield return new WaitForSeconds(delayGravTime);
 
         var doVelSubtraction = true;
         if (
-            Math.Sign(Rigidbody.velocity.x) == Math.Sign(Rigidbody.velocity.x - boost.x)
+            Math.Sign(rigidbody.velocity.x) == Math.Sign(rigidbody.velocity.x - boost.x)
             && boostDirection.x != 0
             && doVelSubtraction
         )
         {
             //float xToSet = Rigidbody.velocity.x - (boost.x * .8f);
-            if (isGrounded)
+            if (IsGrounded)
             {
-                if (Rigidbody.velocity.x > 0)
-                    Rigidbody.velocity = new Vector2(
-                        Math.Min(Rigidbody.velocity.x, groundDragThreshholdA),
-                        Rigidbody.velocity.y
+                if (rigidbody.velocity.x > 0)
+                    rigidbody.velocity = new Vector2(
+                        Math.Min(rigidbody.velocity.x, GroundDragThreshholdA),
+                        rigidbody.velocity.y
                     );
                 else
-                    Rigidbody.velocity = new Vector2(
-                        Math.Max(Rigidbody.velocity.x, -groundDragThreshholdA),
-                        Rigidbody.velocity.y
+                    rigidbody.velocity = new Vector2(
+                        Math.Max(rigidbody.velocity.x, -GroundDragThreshholdA),
+                        rigidbody.velocity.y
                     );
             }
             else
             {
-                if (Rigidbody.velocity.x > 0)
-                    Rigidbody.velocity = new Vector2(
-                        Math.Min(Rigidbody.velocity.x, airDragThreshholdB),
-                        Rigidbody.velocity.y
+                if (rigidbody.velocity.x > 0)
+                    rigidbody.velocity = new Vector2(
+                        Math.Min(rigidbody.velocity.x, AirDragThreshholdB),
+                        rigidbody.velocity.y
                     );
                 else
-                    Rigidbody.velocity = new Vector2(
-                        Math.Max(Rigidbody.velocity.x, -airDragThreshholdB),
-                        Rigidbody.velocity.y
+                    rigidbody.velocity = new Vector2(
+                        Math.Max(rigidbody.velocity.x, -AirDragThreshholdB),
+                        rigidbody.velocity.y
                     );
             }
         }
 
-        dashTrail.emitting = false;
         //disabledMovement = false;
-        gravityValue = BaseGravity;
+        gravityValue = baseGravity;
         if (isGoldenBoost)
             recentlyBoosted = false;
 
@@ -242,7 +241,7 @@ public partial class CharController
         //GameManager.Instance.TextPop(isJumpBoosted.ToString(), 2f);
         if (Input.GetKey(KeyCode.S) && isPlatformGrounded)
         {
-            TileStateManager.Instance.DeactivatePlatforms();
+            TileStateManager.instance.DeactivatePlatforms();
             return;
         }
 
@@ -253,7 +252,7 @@ public partial class CharController
         const float wallJumpModX = .55f;
         const float wallJumpModY = 1.2f;
 
-        var overallJumpImpulse = new Vector2(0, jumpForce);
+        var overallJumpImpulse = new Vector2(0, JumpForce);
         var momentumVector = Vector2.zero;
         //bool doWallJump = (isWallSliding || wallJumpAvailable) && !isGrounded;
         var doWallJump = isNearWallOnLeft || isNearWallOnRight;
@@ -287,20 +286,21 @@ public partial class CharController
         {
             //Debug.Log("WALLJUMP");
             forcedMoveTime = .30f;
+            dashTrailEmitTime = .3f;
             forcedMoveVector = wallJumpDir;
             overallJumpImpulse = new Vector2(
-                jumpForce * wallJumpModX * wallJumpDir + wallJumpDir * Rigidbody.velocity.x,
-                Math.Max(Math.Max(overallJumpImpulse.y * wallJumpModY, 0), Rigidbody.velocity.y)
+                JumpForce * wallJumpModX * wallJumpDir + wallJumpDir * rigidbody.velocity.x,
+                Math.Max(Math.Max(overallJumpImpulse.y * wallJumpModY, 0), rigidbody.velocity.y)
             );
-            Rigidbody.velocity = Vector2.zero;
+            rigidbody.velocity = Vector2.zero;
         }
-        else if (!isGrounded)
+        else if (!IsGrounded)
         {
             if (lastJumpTime + JumpCooldown < Time.time)
                 return;
-            Rigidbody.velocity = new Vector2(
-                Rigidbody.velocity.x,
-                Math.Max(Rigidbody.velocity.y, 0)
+            rigidbody.velocity = new Vector2(
+                rigidbody.velocity.x,
+                Math.Max(rigidbody.velocity.y, 0)
             );
             doubleJumpAvailable = false;
         }
@@ -322,7 +322,7 @@ public partial class CharController
         //print("impulse: " + overallJumpImpulse);
         //savedRotationalVelocity = 5f * Math.Sign(Rigidbody.velocity.x);
         StartCoroutine(JumpRotationDelay(doWallJump));
-        Rigidbody.velocity += overallJumpImpulse;
+        rigidbody.velocity += overallJumpImpulse;
     }
 
     private IEnumerator JumpRotationDelay(bool wallJump = false)
@@ -337,7 +337,7 @@ public partial class CharController
         else
         {
             savedRotationalVelocity =
-                .5f * (IsFacingLeft() ? 1 : -1) * Math.Abs(Rigidbody.velocity.x);
+                .5f * (IsFacingLeft() ? 1 : -1) * Math.Abs(rigidbody.velocity.x);
             //savedRotationalVelocity = Mathf.Clamp(savedRotationalVelocity, -maxRotationSpeed, maxRotationSpeed);
             yield return new WaitForSeconds(.05f);
             SmoothRotationEnd();
@@ -377,8 +377,8 @@ public partial class CharController
     private void ReduceSize()
     {
         charCollider.size = new Vector2(
-            originalColliderSize.x / heightReducer,
-            originalColliderSize.y / heightReducer
+            originalColliderSize.x / HeightReducer,
+            originalColliderSize.y / HeightReducer
         );
         // charCollider.offset = new Vector2(originalColliderOffset.x, originalColliderOffset.y -
         //                                                             ((originalColliderSize.y - (originalColliderSize.y / heightReducer)) / 2));
@@ -406,7 +406,7 @@ public partial class CharController
         //Animator.SetBool("isCrouching", true);
         ReduceSize();
         isCrouching = true;
-        runSpeed = maxMoveSpeedGround / 2;
+        runSpeed = MaxMoveSpeedGround / 2;
     }
 
     private void SmoothRotationEnd()
@@ -425,18 +425,18 @@ public partial class CharController
             //savedRotationalVelocity = savedRotationalVelocity > 0 ? Math.Max(savedRotationalVelocity, maxRotationSpeed) : Math.Min(savedRotationalVelocity, -maxRotationSpeed);
             savedRotationalVelocity = Mathf.Clamp(
                 savedRotationalVelocity,
-                -maxRotationSpeed,
-                maxRotationSpeed
+                -MaxRotationSpeed,
+                MaxRotationSpeed
             );
             if (savedRotationalVelocity != 0)
                 savedRotationalVelocity =
                     savedRotationalVelocity > 0
-                        ? Math.Max(savedRotationalVelocity, minRotationSpeed)
-                        : Math.Min(savedRotationalVelocity, -minRotationSpeed);
+                        ? Math.Max(savedRotationalVelocity, MinRotationSpeed)
+                        : Math.Min(savedRotationalVelocity, -MinRotationSpeed);
 
             //print("after clamp: " + savedRotationalVelocity);
             spriteHandler.Rotate(Vector3.forward, savedRotationalVelocity);
-            if (isGrounded || isNearWallOnLeft || isNearWallOnRight)
+            if (IsGrounded || isNearWallOnLeft || isNearWallOnRight)
             {
                 ForceRotationEnd();
                 break;
@@ -461,7 +461,7 @@ public partial class CharController
         //Assert.IsTrue(isCrouching);
         //Animator.SetBool("isCrouching", false);
         ReturnSize();
-        runSpeed = maxMoveSpeedGround;
+        runSpeed = MaxMoveSpeedGround;
         isCrouching = false;
     }
 
@@ -484,8 +484,8 @@ public partial class CharController
         // {
         //     EndGrapple();
         // }
-        if (Rigidbody.velocity.y < 0)
-            Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, Rigidbody.velocity.y / 2);
+        if (rigidbody.velocity.y < 0)
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x, rigidbody.velocity.y / 2);
 
         doubleJumpAvailable = true;
         StartCoroutine(BoostRefreshCoroutine());

@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FluidGravityZone : ActivatedEntity // active = inverted gravity
@@ -14,20 +11,20 @@ public class FluidGravityZone : ActivatedEntity // active = inverted gravity
         None
     }
 
-    private const float particleDensity = 2f;
-    private const float edgeGap = 1f;
-    private float lowerYBound;
+    private const float ParticleDensity = 2f;
+    private const float EdgeGap = 1f;
+
+    public GravityDirection inactiveGravityDirection;
+    public GravityDirection activeGravityDirection;
 
     // Start is called before the first frame update
     private BoxCollider2D boxCollider2D;
     private ParticleSystem gravParticleSystem;
+    private float lowerYBound;
+    private ParticleSystem.MainModule mainModule;
     private ParticleSystem.ShapeModule shapeModule;
     private SpriteRenderer spriteRenderer;
     private ParticleSystem.VelocityOverLifetimeModule velocityModule;
-    private ParticleSystem.MainModule mainModule;
-
-    public GravityDirection inactiveGravityDirection;
-    public GravityDirection activeGravityDirection;
 
     protected override void Start()
     {
@@ -37,13 +34,13 @@ public class FluidGravityZone : ActivatedEntity // active = inverted gravity
 
         lowerYBound = -boxCollider2D.size.y / 2;
         shapeModule = gravParticleSystem.shape;
-        shapeModule.radius = boxCollider2D.size.x / 2 - edgeGap;
+        shapeModule.radius = boxCollider2D.size.x / 2 - EdgeGap;
         shapeModule.position = new Vector3(0, lowerYBound, 0);
 
         var emission = gravParticleSystem.emission;
 
         var burst = emission.GetBurst(0);
-        burst.count = new ParticleSystem.MinMaxCurve(shapeModule.radius * particleDensity);
+        burst.count = new ParticleSystem.MinMaxCurve(shapeModule.radius * ParticleDensity);
         emission.SetBurst(0, burst);
 
         velocityModule = gravParticleSystem.velocityOverLifetime;
@@ -52,6 +49,11 @@ public class FluidGravityZone : ActivatedEntity // active = inverted gravity
         // Vector2 bottomLeft = bottomMiddle + halfWidth * Vector2.left;
         // Vector2 bottomRight = bottomMiddle + halfWidth * Vector2.right;
         base.Start();
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Player")) other.GetComponent<CharController>().DeInvert();
     }
 
     // protected void Update()
@@ -65,21 +67,9 @@ public class FluidGravityZone : ActivatedEntity // active = inverted gravity
             // TODO: change this to work with activeGravityDirection and inactiveGravityDirection
 
             if (IsActive)
-            {
                 other.GetComponent<CharController>().Invert();
-            }
             else
-            {
                 other.GetComponent<CharController>().DeInvert();
-            }
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("Player"))
-        {
-            other.GetComponent<CharController>().DeInvert();
         }
     }
 

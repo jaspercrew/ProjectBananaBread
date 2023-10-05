@@ -1,59 +1,49 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class CameraManager : MonoBehaviour
 {
-    public static CameraManager Instance;
+    private const int NumSlices = 8;
+    private const float InitialDelay = .3f;
+    private const float ArppegioTime = .55f;
+    private const float DisappearDelay = .5f;
+    public const float SliceFadeTime = .2f;
+    public static CameraManager instance;
     public CinemachineVirtualCamera currentCam;
     public GameObject slicePrefab;
-    private Camera unityCam;
-    private TransitionSlice[] slices;
-    private const int numSlices = 8;
-    private const float initialDelay = .3f;
-    private const float arppegioTime = .55f;
-    private const float disappearDelay = .5f;
-    public const float sliceFadeTime = .2f;
     public float totalDelayToSpawn;
+    private TransitionSlice[] slices;
+    private Camera unityCam;
 
     private void Awake()
     {
-        if (Instance != null)
-        {
+        if (instance != null)
             Destroy(gameObject);
-        }
         else
-        {
-            Instance = this;
-        }
+            instance = this;
     }
 
     private void Start()
     {
         unityCam = GetComponent<Camera>();
 
-        if (slicePrefab is null)
-        {
-            return;
-        }
+        if (slicePrefab is null) return;
 
-        totalDelayToSpawn = initialDelay + arppegioTime + disappearDelay / 2;
-        slices = new TransitionSlice[numSlices];
-        float distanceFromCamera = unityCam.nearClipPlane; // Change this value if you want
-        Vector3 midLeft = unityCam.ViewportToWorldPoint(new Vector3(0, .5f, distanceFromCamera));
-        Vector3 midRight = unityCam.ViewportToWorldPoint(new Vector3(1, .5f, distanceFromCamera));
-        Vector3 topMid = unityCam.ViewportToWorldPoint(new Vector3(.5f, 1f, distanceFromCamera));
-        Vector3 botMid = unityCam.ViewportToWorldPoint(new Vector3(.5f, 0f, distanceFromCamera));
+        totalDelayToSpawn = InitialDelay + ArppegioTime + DisappearDelay / 2;
+        slices = new TransitionSlice[NumSlices];
+        var distanceFromCamera = unityCam.nearClipPlane; // Change this value if you want
+        var midLeft = unityCam.ViewportToWorldPoint(new Vector3(0, .5f, distanceFromCamera));
+        var midRight = unityCam.ViewportToWorldPoint(new Vector3(1, .5f, distanceFromCamera));
+        var topMid = unityCam.ViewportToWorldPoint(new Vector3(.5f, 1f, distanceFromCamera));
+        var botMid = unityCam.ViewportToWorldPoint(new Vector3(.5f, 0f, distanceFromCamera));
 
-        Vector3 sliceGap = new Vector3((midRight.x - midLeft.x) / (numSlices + 1), 0, 0);
-        float camHeight = topMid.y - botMid.y;
-        for (int i = 0; i < numSlices; i++)
+        var sliceGap = new Vector3((midRight.x - midLeft.x) / (NumSlices + 1), 0, 0);
+        var camHeight = topMid.y - botMid.y;
+        for (var i = 0; i < NumSlices; i++)
         {
-            Vector3 spawnPoint = midLeft + sliceGap * (i + 1);
-            GameObject clone = Instantiate(slicePrefab, spawnPoint, Quaternion.identity, transform);
+            var spawnPoint = midLeft + sliceGap * (i + 1);
+            var clone = Instantiate(slicePrefab, spawnPoint, Quaternion.identity, transform);
             clone.transform.localScale = new Vector3(sliceGap.x * 2, camHeight, 1f);
             slices[i] = clone.GetComponent<TransitionSlice>();
         }
@@ -61,12 +51,10 @@ public class CameraManager : MonoBehaviour
 
     private void Update()
     {
-        if (GetComponent<CinemachineBrain>().ActiveVirtualCamera is null)
-        {
-            return;
-        }
+        if (GetComponent<CinemachineBrain>().ActiveVirtualCamera is null) return;
         currentCam =
-            GetComponent<CinemachineBrain>().ActiveVirtualCamera.VirtualCameraGameObject.GetComponent<CinemachineVirtualCamera>();
+            GetComponent<CinemachineBrain>().ActiveVirtualCamera.VirtualCameraGameObject
+                .GetComponent<CinemachineVirtualCamera>();
     }
 
     public void DoTransition(bool invertDirection = false)
@@ -76,36 +64,32 @@ public class CameraManager : MonoBehaviour
 
     private IEnumerator TransitionCoroutine(bool invertDirection)
     {
-        CharController.Instance.disabledMovement = true;
-        yield return new WaitForSeconds(initialDelay);
-        float sliceInterval = arppegioTime / numSlices;
+        CharController.instance.disabledMovement = true;
+        yield return new WaitForSeconds(InitialDelay);
+        var sliceInterval = ArppegioTime / NumSlices;
 
-        for (int i = 0; i < numSlices; i++)
+        for (var i = 0; i < NumSlices; i++)
         {
             yield return new WaitForSeconds(sliceInterval);
             slices[i].Appear();
         }
 
-        yield return new WaitForSeconds(disappearDelay);
+        yield return new WaitForSeconds(DisappearDelay);
 
         if (!invertDirection)
-        {
-            for (int i = 0; i < numSlices; i++)
+            for (var i = 0; i < NumSlices; i++)
             {
                 yield return new WaitForSeconds(sliceInterval);
                 slices[i].Disappear();
             }
-        }
         else
-        {
-            for (int i = numSlices - 1; i >= 0; i--)
+            for (var i = NumSlices - 1; i >= 0; i--)
             {
                 yield return new WaitForSeconds(sliceInterval);
                 slices[i].Disappear();
             }
-        }
 
-        CharController.Instance.disabledMovement = false;
+        CharController.instance.disabledMovement = false;
     }
 
     // public void SwitchCam(CinemachineVirtualCamera cam) {

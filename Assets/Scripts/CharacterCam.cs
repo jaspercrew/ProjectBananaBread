@@ -8,12 +8,10 @@ public class CharacterCam : MonoBehaviour
     {
         transform.GetComponent<CinemachineVirtualCamera>().Follow =
             FindObjectOfType<CharController>().transform;
-        Transform bounds = SceneInformation.Instance.transform.Find("CameraBounds");
-        if (bounds! is null && transform.GetComponent<CinemachineConfiner>().enabled == true)
-        {
+        var bounds = SceneInformation.instance.transform.Find("CameraBounds");
+        if (bounds! is null && transform.GetComponent<CinemachineConfiner>().enabled)
             transform.GetComponent<CinemachineConfiner>().m_BoundingShape2D =
                 bounds.GetComponent<PolygonCollider2D>();
-        }
     }
 
     // Update is called once per frame

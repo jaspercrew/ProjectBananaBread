@@ -8,7 +8,7 @@ public class GameAreaManager : MonoBehaviour
     private GameObject instantiatedGameArea;
     public float generalY;
     public float initialX;
-    private const float maxHeight = 150f;
+    private const float MaxHeight = 150f;
     public List<float> xVals = new List<float>();
     public List<int> songLayers = new List<int>();
     public int totalLayers;
@@ -33,10 +33,10 @@ public class GameAreaManager : MonoBehaviour
             float xToUseA = i == 0 ? initialX : xVals[i - 1];
             float xToUseB = xVals[i];
             Vector2[] pointsToSet = new Vector2[4];
-            pointsToSet[0] = new Vector2(xToUseA, generalY + maxHeight);
-            pointsToSet[1] = new Vector2(xToUseB, generalY + maxHeight);
-            pointsToSet[2] = new Vector2(xToUseB, generalY - maxHeight);
-            pointsToSet[3] = new Vector2(xToUseA, generalY - maxHeight);
+            pointsToSet[0] = new Vector2(xToUseA, generalY + MaxHeight);
+            pointsToSet[1] = new Vector2(xToUseB, generalY + MaxHeight);
+            pointsToSet[2] = new Vector2(xToUseB, generalY - MaxHeight);
+            pointsToSet[3] = new Vector2(xToUseA, generalY - MaxHeight);
             gameArea.polygonCollider2D.points = pointsToSet;
             // gameArea.polygonCollider2D.size =
             //     new Vector2(Mathf.Abs(i == 0 ? initialX - xVals[0] : xVals[i] - xVals[i + 1]), maxHeight);
@@ -51,14 +51,14 @@ public class GameAreaManager : MonoBehaviour
     void OnDrawGizmos()
     {
         Gizmos.DrawLine(
-            new Vector3(initialX, generalY - maxHeight, 0),
-            new Vector3(initialX, generalY + maxHeight, 0)
+            new Vector3(initialX, generalY - MaxHeight, 0),
+            new Vector3(initialX, generalY + MaxHeight, 0)
         );
         foreach (float x in xVals)
         {
             Gizmos.DrawLine(
-                new Vector3(x, generalY - maxHeight, 0),
-                new Vector3(x, generalY + maxHeight, 0)
+                new Vector3(x, generalY - MaxHeight, 0),
+                new Vector3(x, generalY + MaxHeight, 0)
             );
         }
     }

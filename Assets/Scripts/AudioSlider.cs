@@ -1,25 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class AudioSlider : MonoBehaviour
 {
-    public Slider slider;
     public static AudioSlider instance;
+    public Slider slider;
 
     // Start is called before the first frame update
-    void Awake()
+    private void Awake()
     {
         slider = GetComponent<Slider>();
         instance = this;
     }
 
     // Update is called once per frame
-    void Update() { }
+    private void Update()
+    {
+    }
 
     public void UpdateVolume()
     {
-        AudioManager.Instance.UpdateVolume(slider.value);
+        AudioManager.instance.UpdateVolume(slider.value);
     }
 }

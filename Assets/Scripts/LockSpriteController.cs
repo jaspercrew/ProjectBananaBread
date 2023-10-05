@@ -1,18 +1,20 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class LockSpriteController : MonoBehaviour
 {
+    public int prevSceneIndex;
     private SpriteRenderer spriteRenderer;
 
-    public int prevSceneIndex;
-
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         StartCoroutine(LateStart());
+    }
+
+    // Update is called once per frame
+    private void Update()
+    {
     }
 
     private IEnumerator LateStart()
@@ -25,17 +27,14 @@ public class LockSpriteController : MonoBehaviour
         // }
         //print(GameManager.Instance.levelProgress.Length);
         if (
-            prevSceneIndex < GameManager.Instance.levelProgress.Length
-            && GameManager.Instance.levelProgress[prevSceneIndex]
-                == SaveData.levelLengths[prevSceneIndex] - 1
+            prevSceneIndex < GameManager.instance.levelProgress.Length
+            && GameManager.instance.levelProgress[prevSceneIndex]
+            == SaveData.levelLengths[prevSceneIndex] - 1
         )
         {
-            Color temp = spriteRenderer.color;
+            var temp = spriteRenderer.color;
             temp.a = 0f;
             spriteRenderer.color = temp;
         }
     }
-
-    // Update is called once per frame
-    void Update() { }
 }

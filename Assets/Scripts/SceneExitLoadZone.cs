@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,26 +6,6 @@ public class SceneExitLoadZone : MonoBehaviour
     // public string exitName;
     private static readonly int Start = Animator.StringToHash("Start");
     public bool isSceneFinishPoint;
-
-    private void SwitchScene()
-    {
-        // if (SceneInformation.Instance.SceneInfoForExit(transform).sceneNameOverride.Length < 1)
-        // {
-        // print( SceneInformation.Instance.SceneInfoForExit(transform));
-        // print( SceneInformation.Instance.SceneInfoForExit(transform).destSceneName);
-        string destSceneName = SceneInformation.Instance.SceneInfoForExit(transform).destSceneName;
-        int buildIndex = GameManager.Instance.BuildIndexFromSceneName(destSceneName);
-        GameManager.Instance.AttemptSwitchScene(buildIndex);
-        // }
-        // else if (GameManager.Instance.isMenu)
-        // {
-        //     GameManager.Instance.AttemptSwitchScene(SceneInformation.Instance.SceneInfoForExit(transform).sceneNameOverride);
-        // }
-        // else
-        // {
-        //     print("switch scene matches no conditions");
-        // }
-    }
 
     // public IEnumerator LoadScene()
     // {
@@ -50,16 +29,37 @@ public class SceneExitLoadZone : MonoBehaviour
         {
             if (isSceneFinishPoint)
             {
-                int sceneIndex = SaveData.levelLengths[SceneManager.GetActiveScene().buildIndex];
-                GameManager.Instance.levelProgress[sceneIndex] =
+                var sceneIndex = SaveData.levelLengths[SceneManager.GetActiveScene().buildIndex];
+                GameManager.instance.levelProgress[sceneIndex] =
                     SaveData.levelLengths[sceneIndex] - 1;
             }
+
             //AudioManager.Instance.AllFadeOut();
             //SaveData.SaveToFile(1);
-            ExitToNextSpawn e = SceneInformation.Instance.SceneInfoForExit(transform);
+            var e = SceneInformation.instance.SceneInfoForExit(transform);
             Debug.Log("exit touched, setting last exit to " + e.exitTrigger);
-            SceneTransitionManager.Instance.LastExitInfo = new LastExitInfo(e);
+            SceneTransitionManager.instance.lastExitInfo = new LastExitInfo(e);
             SwitchScene();
         }
+    }
+
+    private void SwitchScene()
+    {
+        // if (SceneInformation.Instance.SceneInfoForExit(transform).sceneNameOverride.Length < 1)
+        // {
+        // print( SceneInformation.Instance.SceneInfoForExit(transform));
+        // print( SceneInformation.Instance.SceneInfoForExit(transform).destSceneName);
+        var destSceneName = SceneInformation.instance.SceneInfoForExit(transform).destSceneName;
+        var buildIndex = GameManager.instance.BuildIndexFromSceneName(destSceneName);
+        GameManager.instance.AttemptSwitchScene(buildIndex);
+        // }
+        // else if (GameManager.Instance.isMenu)
+        // {
+        //     GameManager.Instance.AttemptSwitchScene(SceneInformation.Instance.SceneInfoForExit(transform).sceneNameOverride);
+        // }
+        // else
+        // {
+        //     print("switch scene matches no conditions");
+        // }
     }
 }

@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Cinemachine;
 using TMPro;
 using UnityEngine;
@@ -11,95 +9,78 @@ using UnityEngine.Serialization;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
-    public const int microBeatsInBeat = 16;
+    public const int MicroBeatsInBeat = 16;
+    public static GameManager instance;
     public bool musicStart;
-    private bool playSnares;
     public float snareDelay = 1f;
     public bool isMenu;
     public int[] levelProgress;
-    private bool playFlipped;
+    public float songBpm;
+    public float firstBeatOffset; //DOES THIS EVEN DO ANYTHING?????????
+    public float coroutineDelay = .5f;
+    public int snareToSongDelay = 2;
+    public bool isPaused;
+
+    [FormerlySerializedAs("MenuCenterCam")]
+    public GameObject menuCenterCam;
+
+    private readonly Dictionary<string, int> sceneNameToBuildIndex = new Dictionary<string, int>();
+    private BeatEntity[] entities;
+    private SpriteRenderer[] metronomes;
 
     // https://www.gamedeveloper.com/audio/coding-to-the-beat---under-the-hood-of-a-rhythm-game-in-unity
     private float microBpm;
-    public float songBpm;
-    public float firstBeatOffset; //DOES THIS EVEN DO ANYTHING?????????
+    private double nextLoopTime;
+    private Transform pauseOverlay;
+    private bool playFlipped;
+    private bool playSnares;
     private float secPerBeat;
+    private int snareCount;
+    private int snareMicroBeatCount;
     private double songPosition;
     private double songPositionInBeats = float.NegativeInfinity;
     private double songTime;
-    public float coroutineDelay = .5f;
-    private int snareMicroBeatCount = 0;
-    private int snareCount = 0;
-    public int snareToSongDelay = 2;
-    private double nextLoopTime;
-    public bool isPaused;
-    public GameObject MenuCenterCam;
-    private BeatEntity[] entities;
-    private SpriteRenderer[] metronomes;
-    private Transform pauseOverlay;
-
-    private Dictionary<string, int> sceneNameToBuildIndex = new Dictionary<string, int>();
 
     private void Awake()
     {
-        if (Instance == null)
-        {
+        if (instance == null)
             // Debug.Log("setting gm instance");
-            Instance = this;
-        }
+            instance = this;
         GetSceneIndices();
-    }
-
-    public void ToggleFullScreen()
-    {
-        Screen.fullScreen = !Screen.fullScreen;
     }
 
     // Start is called before the first frame update
     private void Start()
     {
         // TODO
-        nextLoopTime = Double.MaxValue;
+        nextLoopTime = double.MaxValue;
         Application.targetFrameRate = 144;
         microBpm = songBpm * 16f;
         secPerBeat = 60f / microBpm;
-        songTime = (double)Time.time;
+        songTime = Time.time;
         StartCoroutine(SnareCoroutine());
         SaveData.LoadSettings();
         SaveData.LoadFromFile(1);
         entities = FindObjectsOfType<BeatEntity>();
-        metronomes = CameraManager.Instance.transform
+        metronomes = CameraManager.instance.transform
             .Find("MetronomeUI")
             .GetComponentsInChildren<SpriteRenderer>();
         //print(metronomes.Length);
         if (!isMenu)
         {
-            pauseOverlay = CameraManager.Instance.transform.Find("PauseOverlay");
+            pauseOverlay = CameraManager.instance.transform.Find("PauseOverlay");
             pauseOverlay.gameObject.SetActive(false);
         }
 
         //print(levelProgress.ToList());
     }
 
-    private IEnumerator SnareCoroutine()
-    {
-        CharController.Instance.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-        CharController.Instance.isMetronomeLocked = true;
-        yield return new WaitForSeconds(snareDelay);
-        playSnares = true;
-    }
-
-    private void OnAudioFilterRead(float[] data, int channels) { }
-
     private void Update()
     {
-        songPosition = (float)(Time.time - songTime - firstBeatOffset);
-        double newSongPositionInBeats = songPosition / secPerBeat;
-        if (Mathf.Floor((float)newSongPositionInBeats) > Mathf.Floor((float)songPositionInBeats))
-        {
+        songPosition = (float) (Time.time - songTime - firstBeatOffset);
+        var newSongPositionInBeats = songPosition / secPerBeat;
+        if (Mathf.Floor((float) newSongPositionInBeats) > Mathf.Floor((float) songPositionInBeats))
             WorldMicroBeat();
-        }
         songPositionInBeats = newSongPositionInBeats;
         double time = Time.time;
         if (time + 3.0d > nextLoopTime)
@@ -108,26 +89,26 @@ public class GameManager : MonoBehaviour
             //print(nextLoopTime);
             //return;
             //print("loop triggered, is flipped?:" + playFlipped);
-            AudioManager.Instance.PlaySongScheduled(
-                SceneInformation.Instance.songA,
+            AudioManager.instance.PlaySongScheduled(
+                SceneInformation.instance.songA,
                 0,
                 nextLoopTime,
                 playFlipped
             );
-            AudioManager.Instance.PlaySongScheduled(
-                SceneInformation.Instance.songB,
+            AudioManager.instance.PlaySongScheduled(
+                SceneInformation.instance.songB,
                 1,
                 nextLoopTime,
                 playFlipped
             );
-            AudioManager.Instance.PlaySongScheduled(
-                SceneInformation.Instance.songC,
+            AudioManager.instance.PlaySongScheduled(
+                SceneInformation.instance.songC,
                 2,
                 nextLoopTime,
                 playFlipped
             );
-            AudioManager.Instance.PlaySongScheduled(
-                SceneInformation.Instance.songD,
+            AudioManager.instance.PlaySongScheduled(
+                SceneInformation.instance.songD,
                 3,
                 nextLoopTime,
                 playFlipped
@@ -138,9 +119,32 @@ public class GameManager : MonoBehaviour
             //nextLoopTime += (double)audioClip.samples / audioClip.frequency;
 
             //nextLoopTime += (60d / (double)songBpm) * 16d;
-            nextLoopTime += (60d / (double)songBpm) * 32d;
+            nextLoopTime += 60d / songBpm * 32d;
             //print(60d / (double)songBpm);
         }
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveSettings();
+        SaveData.SaveToFile(1);
+    }
+
+    private void OnAudioFilterRead(float[] data, int channels)
+    {
+    }
+
+    public void ToggleFullScreen()
+    {
+        Screen.fullScreen = !Screen.fullScreen;
+    }
+
+    private IEnumerator SnareCoroutine()
+    {
+        CharController.instance.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        CharController.instance.isMetronomeLocked = true;
+        yield return new WaitForSeconds(snareDelay);
+        playSnares = true;
     }
 
     private void BeginSongLoop()
@@ -164,35 +168,31 @@ public class GameManager : MonoBehaviour
         if (musicStart)
         {
             yield return new WaitForSeconds(coroutineDelay);
-            CharController.Instance.isMetronomeLocked = false;
+            CharController.instance.isMetronomeLocked = false;
             if (entities.Length > 0)
-            {
-                foreach (BeatEntity entity in entities)
-                {
+                foreach (var entity in entities)
                     entity.MicroBeat();
-                }
-            }
         }
         else if (playSnares)
         {
             snareMicroBeatCount++;
             if (snareMicroBeatCount % 16 == 0 && snareMicroBeatCount <= 64)
             {
-                AudioManager.Instance.Play(SoundName.Snare, .5f);
-                Color temp = metronomes[snareCount].color;
+                AudioManager.instance.Play(SoundName.Snare, .5f);
+                var temp = metronomes[snareCount].color;
                 temp.a = 1f;
                 metronomes[snareCount].color = temp;
                 snareCount++;
             }
 
-            if (snareMicroBeatCount == (4 * microBeatsInBeat) + snareToSongDelay)
+            if (snareMicroBeatCount == 4 * MicroBeatsInBeat + snareToSongDelay)
             {
                 BeginSongLoop();
                 musicStart = true;
                 //EchoController.Instance.Init();
-                foreach (SpriteRenderer spr in metronomes)
+                foreach (var spr in metronomes)
                 {
-                    Color temp1 = spr.color;
+                    var temp1 = spr.color;
                     temp1.a = 0f;
                     spr.color = temp1;
                 }
@@ -202,29 +202,24 @@ public class GameManager : MonoBehaviour
 
     private void GetSceneIndices()
     {
-        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+        for (var i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
         {
-            string sceneName = SceneNameFromIndex(i);
+            var sceneName = SceneNameFromIndex(i);
             sceneNameToBuildIndex[sceneName] = i;
         }
     }
 
     public int BuildIndexFromSceneName(string sceneName)
     {
-        if (sceneNameToBuildIndex.ContainsKey(sceneName))
-        {
-            return sceneNameToBuildIndex[sceneName];
-        }
-        else
-        {
-            Debug.LogError("Scene \"" + sceneName + "\" not in build settings!");
-            return -1;
-        }
+        if (sceneNameToBuildIndex.ContainsKey(sceneName)) return sceneNameToBuildIndex[sceneName];
+
+        Debug.LogError("Scene \"" + sceneName + "\" not in build settings!");
+        return -1;
     }
 
     private static string SceneNameFromIndex(int index)
     {
-        string path = SceneUtility.GetScenePathByBuildIndex(index);
+        var path = SceneUtility.GetScenePathByBuildIndex(index);
         return path.Substring(0, path.Length - 6) // gets rid of ".scene"
             .Substring(path.LastIndexOf('/') + 1); // gets the name of the scene (after directory)
     }
@@ -237,12 +232,6 @@ public class GameManager : MonoBehaviour
         StartCoroutine(LoadScene(index));
     }
 
-    private void OnApplicationQuit()
-    {
-        SaveSettings();
-        SaveData.SaveToFile(1);
-    }
-
     // public void AttemptSwitchScene(string sceneName)
     // {
     //     //print(index);
@@ -251,18 +240,14 @@ public class GameManager : MonoBehaviour
     //
     // }
 
-
-
-
-
     private IEnumerator LoadScene(int sceneIndex)
     {
-        AudioManager.Instance.AllFadeOut();
-        SceneInformation.Instance.exitMappings[0].destSceneName = SceneNameFromIndex(sceneIndex);
-        int furthestCheckpoint = levelProgress[sceneIndex];
-        SceneTransitionManager.Instance.checkPointToUse = furthestCheckpoint;
-        SceneInformation.Instance.sceneFadeAnim.speed = 2 / SceneInformation.SceneTransitionTime;
-        SceneInformation.Instance.sceneFadeAnim.SetTrigger(Animator.StringToHash("Start"));
+        AudioManager.instance.AllFadeOut();
+        SceneInformation.instance.exitMappings[0].destSceneName = SceneNameFromIndex(sceneIndex);
+        var furthestCheckpoint = levelProgress[sceneIndex];
+        SceneTransitionManager.instance.checkPointToUse = furthestCheckpoint;
+        SceneInformation.instance.sceneFadeAnim.speed = 2 / SceneInformation.SceneTransitionTime;
+        SceneInformation.instance.sceneFadeAnim.SetTrigger(Animator.StringToHash("Start"));
         yield return new WaitForSeconds(SceneInformation.SceneTransitionTime);
         SceneManager.LoadSceneAsync(sceneIndex);
         //AudioManager.Instance.Awake();
@@ -297,36 +282,34 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator MenuExitCoroutine()
     {
-        float dropDelay = 2.0f;
+        var dropDelay = 2.0f;
         GameObject.Find("CenterCanvas").GetComponent<Canvas>().enabled = false;
-        MenuCenterCam.GetComponent<CinemachineVirtualCamera>().m_Priority = 100;
+        menuCenterCam.GetComponent<CinemachineVirtualCamera>().m_Priority = 100;
         yield return new WaitForSeconds(dropDelay);
-        TileStateManager.Instance.transform
+        TileStateManager.instance.transform
             .Find("GridMain")
             .transform.Find("Menu-Exit")
             .gameObject.SetActive(false);
-        AudioManager.Instance.IsolatedPlay(SoundName.ExtendedSnare, .25f);
+        AudioManager.instance.IsolatedPlay(SoundName.ExtendedSnare, .25f);
     }
 
     public void PrepMenuExit(int sceneIndex)
     {
         //SceneManager.LoadScene(index);
-        AudioManager.Instance.AllFadeOut();
+        AudioManager.instance.AllFadeOut();
         // string path = SceneUtility.GetScenePathByBuildIndex(index);
         // SceneInformation.Instance.exitMappings[0].sceneNameOverride =
         //     path.Substring(0, path.Length - 6).Substring(path.LastIndexOf('/') + 1);
-        SceneInformation.Instance.exitMappings[0].destSceneName = SceneNameFromIndex(sceneIndex);
-        SceneTransitionManager.Instance.checkPointToUse = levelProgress[sceneIndex];
+        SceneInformation.instance.exitMappings[0].destSceneName = SceneNameFromIndex(sceneIndex);
+        SceneTransitionManager.instance.checkPointToUse = levelProgress[sceneIndex];
     }
 
     public void Pause()
     {
         Assert.IsTrue(!isPaused);
         if (isMenu)
-        {
             return;
-        }
-        AudioManager.Instance.PauseAudio();
+        AudioManager.instance.PauseAudio();
         isPaused = true;
         Time.timeScale = 0f;
         AudioListener.pause = true;
@@ -337,10 +320,8 @@ public class GameManager : MonoBehaviour
     {
         Assert.IsTrue(isPaused);
         if (isMenu)
-        {
             return;
-        }
-        AudioManager.Instance.UnpauseAudio();
+        AudioManager.instance.UnpauseAudio();
         isPaused = false;
         Time.timeScale = 1f;
         AudioListener.pause = false;
@@ -355,17 +336,13 @@ public class GameManager : MonoBehaviour
 
     public void PlayerDeath()
     {
-        Token[] tokens = FindObjectsOfType<Token>();
-        foreach (Token token in tokens)
-        {
+        var tokens = FindObjectsOfType<Token>();
+        foreach (var token in tokens)
             token.ResetToken();
-        }
 
-        Gate[] gates = FindObjectsOfType<Gate>();
-        foreach (Gate gate in gates)
-        {
+        var gates = FindObjectsOfType<Gate>();
+        foreach (var gate in gates)
             gate.ResetGate();
-        }
     }
 
     // public void ChangeAudio(float slider)
@@ -401,11 +378,11 @@ public class GameManager : MonoBehaviour
 
     public void TextPop(string text, float duration = 2f)
     {
-        GameObject prefab = Resources.Load<GameObject>("Prefabs/TextNotification");
-        GameObject created = Instantiate(prefab);
-        created.transform.position = CharController.Instance.transform.position;
+        var prefab = Resources.Load<GameObject>("Prefabs/TextNotification");
+        var created = Instantiate(prefab);
+        created.transform.position = CharController.instance.transform.position;
         Destroy(created, duration);
-        TMP_Text tmp = created.transform.Find("Canvas").Find("Text").GetComponent<TMP_Text>();
+        var tmp = created.transform.Find("Canvas").Find("Text").GetComponent<TMP_Text>();
         StartCoroutine(TextPopCoroutine(created, duration));
         tmp.text = text;
     }
@@ -413,28 +390,24 @@ public class GameManager : MonoBehaviour
     private IEnumerator TextPopCoroutine(GameObject created, float time)
     {
         if (created == null)
-        {
             yield break;
-        }
-        Transform t = CharController.Instance.transform;
-        TMP_Text tmp = created.transform.Find("Canvas").Find("Text").GetComponent<TMP_Text>();
+        var t = CharController.instance.transform;
+        var tmp = created.transform.Find("Canvas").Find("Text").GetComponent<TMP_Text>();
         float elapsedTime = 0;
 
-        Vector3 offset = new Vector3(.5f, 1.5f, 0);
-        float effectHeight = 2f;
+        var offset = new Vector3(.5f, 1.5f, 0);
+        var effectHeight = 2f;
         while (elapsedTime < time)
         {
             if (created == null)
-            {
                 yield break;
-            }
-            Color c = tmp.color;
+            var c = tmp.color;
             c.a -= 1 * Time.fixedDeltaTime / time;
             tmp.color = c;
 
-            Vector3 startingPos = t.position + offset;
-            Vector3 finalPos = t.position + offset + (t.up * effectHeight);
-            created.transform.position = Vector3.Lerp(startingPos, finalPos, (elapsedTime / time));
+            var startingPos = t.position + offset;
+            var finalPos = t.position + offset + t.up * effectHeight;
+            created.transform.position = Vector3.Lerp(startingPos, finalPos, elapsedTime / time);
             elapsedTime += Time.deltaTime;
             yield return null;
         }

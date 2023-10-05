@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class InversionHandler : BeatEntity
 {
     // Start is called before the first frame update
@@ -11,20 +7,18 @@ public class InversionHandler : BeatEntity
     }
 
     // Update is called once per frame
-    void Update() { }
+    private void Update()
+    {
+    }
 
     protected override void MicroBeatAction()
     {
         VolumeManager.instance.ToggleVolume();
 
-        if (CharController.Instance.isInverted)
-        {
-            CharController.Instance.DeInvert();
-        }
+        if (CharController.instance.isInverted)
+            CharController.instance.DeInvert();
         else
-        {
-            CharController.Instance.Invert();
-        }
+            CharController.instance.Invert();
 
         base.MicroBeatAction();
     }

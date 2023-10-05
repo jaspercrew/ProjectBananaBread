@@ -3,29 +3,25 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-public class PPManager : MonoBehaviour
+public class PpManager : MonoBehaviour
 {
-    private Volume volume;
-    public static PPManager Instance;
+    public static PpManager instance;
 
     // private bool shiftEffecting;
     private Bloom bloom;
     private ChromaticAberration chromaticAberration;
     private FilmGrain filmGrain;
-    private ShadowsMidtonesHighlights smh;
 
     private float shiftEffectDuration = .3f;
+    private ShadowsMidtonesHighlights smh;
+    private Volume volume;
 
     private void Awake()
     {
-        if (Instance != null)
-        {
+        if (instance != null)
             Destroy(gameObject);
-        }
         else
-        {
-            Instance = this;
-        }
+            instance = this;
     }
 
     // Start is called before the first frame update
@@ -50,10 +46,10 @@ public class PPManager : MonoBehaviour
 
         //Debug.Log(smh.highlights.value);
         //Debug.Log(smh.shadows.value);
-        float timeElapsed = 0f;
+        var timeElapsed = 0f;
 
-        Vector4 highlightValue = new Vector4(1f, .3f, .8f, 0);
-        Vector4 shadowValue = new Vector4(.4f, .4f, 1f, 0);
+        var highlightValue = new Vector4(1f, .3f, .8f, 0);
+        var shadowValue = new Vector4(.4f, .4f, 1f, 0);
         while (timeElapsed < shiftEffectDuration)
         {
             timeElapsed += Time.deltaTime;
@@ -89,7 +85,7 @@ public class PPManager : MonoBehaviour
         const float chromaticAberrationIntensity = .7f;
         const float filmGrainIntensity = .4f;
 
-        float increaseTimeElapsed = 0f;
+        var increaseTimeElapsed = 0f;
         while (increaseTimeElapsed < increaseDuration)
         {
             bloom.intensity.value = Mathf.Lerp(
@@ -110,9 +106,10 @@ public class PPManager : MonoBehaviour
             increaseTimeElapsed += Time.deltaTime;
             yield return null;
         }
+
         yield return new WaitForSeconds(increaseDuration);
 
-        float decreaseTimeElapsed = 0f;
+        var decreaseTimeElapsed = 0f;
         while (decreaseTimeElapsed < increaseDuration)
         {
             bloom.intensity.value = Mathf.Lerp(
@@ -133,6 +130,7 @@ public class PPManager : MonoBehaviour
             decreaseTimeElapsed += Time.deltaTime;
             yield return null;
         }
+
         bloom.intensity.value = 0f;
         chromaticAberration.intensity.value = 0f;
         filmGrain.intensity.value = 0f;

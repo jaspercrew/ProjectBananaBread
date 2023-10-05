@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BoostZone : MonoBehaviour
@@ -7,28 +5,28 @@ public class BoostZone : MonoBehaviour
     private bool consumed;
     private SpriteRenderer spriteRenderer;
 
-    void Start()
-    {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-    }
-
-    public void Consume()
-    {
-        consumed = true;
-    }
-
     public void Reset()
     {
         consumed = false;
     }
 
-    void OnTriggerStay2D(Collider2D other)
+    private void Start()
     {
-        CharController.Instance.currentBoostZone = this;
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    void OnTriggerExit2D(Collider2D other)
+    private void OnTriggerExit2D(Collider2D other)
     {
-        CharController.Instance.currentBoostZone = null;
+        CharController.instance.currentBoostZone = null;
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        CharController.instance.currentBoostZone = this;
+    }
+
+    public void Consume()
+    {
+        consumed = true;
     }
 }

@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class TerrainGenerationManager : MonoBehaviour
 {
-    private const int nodeWidth = 30;
+    private const int NodeWidth = 30;
 
-    private const int nodeHeight = 30;
+    private const int NodeHeight = 30;
 
     // Start is called before the first frame update
     void Start() { }

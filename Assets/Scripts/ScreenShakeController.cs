@@ -1,19 +1,45 @@
-﻿using System.Collections;
-using Cinemachine;
+﻿using Cinemachine;
 using UnityEngine;
 
 public class ScreenShakeController : BeatEntity
 {
-    public static ScreenShakeController Instance;
+    public static ScreenShakeController instance;
     public CinemachineVirtualCamera virtualCamera;
     private float shakeTimer;
-    private float startingIntensity;
     private float shakeTimerTotal;
+    private float startingIntensity;
 
     //public float rotationMultiplier = 10f;
-    void Awake()
+    private void Awake()
     {
-        Instance = this;
+        instance = this;
+    }
+
+    // Update is called once per frame
+    private void Update()
+    {
+        if (GetComponent<CinemachineBrain>().ActiveVirtualCamera is null) return;
+        virtualCamera =
+            GetComponent<CinemachineBrain>().ActiveVirtualCamera.VirtualCameraGameObject
+                .GetComponent<CinemachineVirtualCamera>();
+        if (shakeTimer > 0)
+        {
+            shakeTimer -= Time.deltaTime;
+            if (shakeTimer <= 0f)
+                virtualCamera
+                    .GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>()
+                    .m_AmplitudeGain = Mathf.Lerp(
+                    startingIntensity,
+                    0f,
+                    1 - shakeTimer / shakeTimerTotal
+                );
+        }
+
+        virtualCamera.transform.localRotation = Quaternion.Euler(
+            0,
+            0,
+            virtualCamera.transform.localRotation.z
+        );
     }
 
     // Start is called before the first frame update
@@ -21,12 +47,9 @@ public class ScreenShakeController : BeatEntity
 
     public void StartShake(float length, float power)
     {
-        CinemachineBasicMultiChannelPerlin perlin =
+        var perlin =
             virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
-        if (perlin is null)
-        {
-            return;
-        }
+        if (perlin is null) return;
         perlin.m_AmplitudeGain = power;
         startingIntensity = power;
         shakeTimer = length;
@@ -36,40 +59,7 @@ public class ScreenShakeController : BeatEntity
 
     protected override void MicroBeatAction()
     {
-        if (!GameManager.Instance.isMenu)
-        {
-            MediumShake();
-        }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (GetComponent<CinemachineBrain>().ActiveVirtualCamera is null)
-        {
-            return;
-        }
-        virtualCamera =
-            GetComponent<CinemachineBrain>().ActiveVirtualCamera.VirtualCameraGameObject.GetComponent<CinemachineVirtualCamera>();
-        if (shakeTimer > 0)
-        {
-            shakeTimer -= Time.deltaTime;
-            if (shakeTimer <= 0f)
-            {
-                virtualCamera
-                    .GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>()
-                    .m_AmplitudeGain = Mathf.Lerp(
-                    startingIntensity,
-                    0f,
-                    1 - (shakeTimer / shakeTimerTotal)
-                );
-            }
-        }
-        virtualCamera.transform.localRotation = Quaternion.Euler(
-            0,
-            0,
-            virtualCamera.transform.localRotation.z
-        );
+        if (!GameManager.instance.isMenu) MediumShake();
     }
 
     public void MediumShake()

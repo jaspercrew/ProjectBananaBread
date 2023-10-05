@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 
 public class TileStateManager : MonoBehaviour
 {
-    public static TileStateManager Instance;
+    public static TileStateManager instance;
     public GameObject lineRendererPrefab;
 
     // private Transform realGround;
@@ -25,8 +25,8 @@ public class TileStateManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null)
-            Instance = this;
+        if (instance == null)
+            instance = this;
     }
 
     // Start is called before the first frame update

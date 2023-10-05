@@ -15,9 +15,6 @@ public class TeleportBox : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
-        {
-            CharController.Instance.transform.position = point;
-        }
+        if (other.CompareTag("Player")) CharController.instance.transform.position = point;
     }
 }

@@ -15,6 +15,6 @@ public class EchoController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        StartCoroutine(DelayCoroutine(CharController.Instance.transform.position));
+        StartCoroutine(DelayCoroutine(CharController.instance.transform.position));
     }
 }

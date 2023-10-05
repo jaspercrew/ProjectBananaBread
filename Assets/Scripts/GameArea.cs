@@ -22,9 +22,9 @@ public class GameArea : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (polygonCollider2D.bounds.Contains(CharController.Instance.transform.localPosition))
+        if (polygonCollider2D.bounds.Contains(CharController.instance.transform.localPosition))
         {
-            AudioManager.Instance.UpdateCurrentSongs(audioLayers, false);
+            AudioManager.instance.UpdateCurrentSongs(audioLayers, false);
         }
     }
 
@@ -32,7 +32,7 @@ public class GameArea : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            AudioManager.Instance.UpdateCurrentSongs(audioLayers);
+            AudioManager.instance.UpdateCurrentSongs(audioLayers);
             SaveData.SaveToFile(1);
         }
     }

@@ -2,39 +2,36 @@ using UnityEngine;
 
 public class LastExitInfo
 {
-    public bool HasBeenSet = false;
     public string exitName;
+    public bool hasBeenSet;
 
     // public Object DestinationScene;
-    public SpawnPickDirection SpawnPickDirection;
+    public SpawnPickDirection spawnPickDirection;
 
-    public LastExitInfo() { }
+    public LastExitInfo()
+    {
+    }
 
     public LastExitInfo(ExitToNextSpawn e)
     {
-        HasBeenSet = true;
+        hasBeenSet = true;
         exitName = e.exitTrigger.gameObject.name;
         // DestinationScene = e.destinationScene;
-        SpawnPickDirection = e.spawnToPick;
+        spawnPickDirection = e.spawnToPick;
     }
 }
 
 public class SceneTransitionManager : MonoBehaviour
 {
+    public static SceneTransitionManager instance;
     public int checkPointToUse = -1;
-
-    public static SceneTransitionManager Instance;
-    public LastExitInfo LastExitInfo = new LastExitInfo();
+    public LastExitInfo lastExitInfo = new LastExitInfo();
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
+        if (instance == null)
+            instance = this;
         else
-        {
             Destroy(gameObject);
-        }
     }
 }

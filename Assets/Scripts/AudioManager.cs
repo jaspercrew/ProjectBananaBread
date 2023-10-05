@@ -3,58 +3,52 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
-using UnityEngine.PlayerLoop;
-using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
-    public static AudioManager Instance;
-
-    // private const float SongVolume = 5f;
-    private AudioSource[] SongsA;
-    private AudioSource[] SongsB;
-
-    private AudioSource effectSource;
-    private AudioSource songSourceA;
-    private AudioSource songSourceB;
-    private AudioSource songSourceC;
-    private AudioSource songSourceD;
-
-    private AudioSource isolatedSource;
-    private AudioSource songSourceAf;
-    private AudioSource songSourceBf;
-    private AudioSource songSourceCf;
-    private AudioSource songSourceDf;
-
-    public readonly Dictionary<SoundName, AudioClip> soundToClip =
-        new Dictionary<SoundName, AudioClip>();
+    public static AudioManager instance;
 
     public float normalizedVolume;
-
-    private AudioMixer audioMixer;
 
     //private readonly Dictionary<SoundName, AudioClip> soundToClipf = new Dictionary<SoundName, AudioClip>();
     public AudioSource[] mainSources;
 
+    public readonly Dictionary<SoundName, AudioClip> soundToClip =
+        new Dictionary<SoundName, AudioClip>();
+
+    private AudioMixer audioMixer;
+
+    private AudioSource effectSource;
+
+    private AudioSource isolatedSource;
+
     private SoundName savedSong;
+
+    // private const float SongVolume = 5f;
+    private AudioSource[] songsA;
+    private AudioSource[] songsB;
+    private AudioSource songSourceA;
+    private AudioSource songSourceAf;
+    private AudioSource songSourceB;
+    private AudioSource songSourceBf;
+    private AudioSource songSourceC;
+    private AudioSource songSourceCf;
+    private AudioSource songSourceD;
+    private AudioSource songSourceDf;
 
     // public AudioMixerGroup mixerGroup;
 
     public void Awake()
     {
-        if (Instance != null)
-        {
+        if (instance != null)
             Destroy(gameObject);
-        }
         else
-        {
-            Instance = this;
-        }
+            instance = this;
 
         foreach (SoundName sound in Enum.GetValues(typeof(SoundName)))
         {
             // TODO: set a naming scheme for files
-            AudioClip clip = Resources.Load<AudioClip>("Sounds/" + sound.ToString().ToLower());
+            var clip = Resources.Load<AudioClip>("Sounds/" + sound.ToString().ToLower());
             soundToClip[sound] = clip;
         }
 
@@ -65,19 +59,19 @@ public class AudioManager : MonoBehaviour
         //     soundToClipf[sound] = clip;
         // }
 
-        SongsA = transform.Find("SongSourcesA").GetComponents<AudioSource>();
-        SongsB = transform.Find("SongSourcesB").GetComponents<AudioSource>();
+        songsA = transform.Find("SongSourcesA").GetComponents<AudioSource>();
+        songsB = transform.Find("SongSourcesB").GetComponents<AudioSource>();
 
         effectSource = transform.Find("EffectSource").GetComponent<AudioSource>();
-        songSourceA = SongsA[0];
-        songSourceB = SongsA[1];
-        songSourceC = SongsA[2];
-        songSourceD = SongsA[3];
+        songSourceA = songsA[0];
+        songSourceB = songsA[1];
+        songSourceC = songsA[2];
+        songSourceD = songsA[3];
         isolatedSource = transform.Find("NonFadeSource").GetComponent<AudioSource>();
-        songSourceAf = SongsB[0];
-        songSourceBf = SongsB[1];
-        songSourceCf = SongsB[2];
-        songSourceDf = SongsB[3];
+        songSourceAf = songsB[0];
+        songSourceBf = songsB[1];
+        songSourceCf = songsB[2];
+        songSourceDf = songsB[3];
 
         mainSources = new AudioSource[9];
         mainSources[0] = songSourceA;
@@ -92,7 +86,7 @@ public class AudioManager : MonoBehaviour
         mainSources[7] = songSourceCf;
         mainSources[8] = songSourceDf;
 
-        audioMixer = (AudioMixer)Resources.Load("MainMixer");
+        audioMixer = (AudioMixer) Resources.Load("MainMixer");
     }
 
     public void Start()
@@ -107,18 +101,12 @@ public class AudioManager : MonoBehaviour
 
     public void PauseAudio()
     {
-        foreach (AudioSource source in mainSources)
-        {
-            source.Pause();
-        }
+        foreach (var source in mainSources) source.Pause();
     }
 
     public void UnpauseAudio()
     {
-        foreach (AudioSource source in mainSources)
-        {
-            source.UnPause();
-        }
+        foreach (var source in mainSources) source.UnPause();
     }
 
     public void UpdateVolume(float sliderValue)
@@ -137,13 +125,13 @@ public class AudioManager : MonoBehaviour
 
     public void Play(SoundName sound, float volume)
     {
-        AudioClip clip = soundToClip[sound];
+        var clip = soundToClip[sound];
         effectSource.PlayOneShot(clip, volume);
     }
 
     public void IsolatedPlay(SoundName sound, float volume)
     {
-        AudioClip clip = soundToClip[sound];
+        var clip = soundToClip[sound];
         isolatedSource.PlayOneShot(clip, volume);
     }
 
@@ -158,17 +146,11 @@ public class AudioManager : MonoBehaviour
         //print("playsong()");
         AudioSource sourceToUse;
         if (source == 0)
-        {
             sourceToUse = songSourceA;
-        }
         else if (source == 1)
-        {
             sourceToUse = songSourceB;
-        }
         else
-        {
             sourceToUse = songSourceC;
-        }
         if (song == SoundName.None)
         {
             sourceToUse.Stop();
@@ -186,25 +168,17 @@ public class AudioManager : MonoBehaviour
         //print("scheduled play");
         AudioSource sourceToUse;
         if (source == 0)
-        {
             sourceToUse = flipped ? songSourceAf : songSourceA;
-            //print(flipped ? "Af" : "A");
-        }
+        //print(flipped ? "Af" : "A");
         else if (source == 1)
-        {
             sourceToUse = flipped ? songSourceBf : songSourceB;
-            //print(flipped ? "Bf" : "B");
-        }
+        //print(flipped ? "Bf" : "B");
         else if (source == 2)
-        {
             sourceToUse = flipped ? songSourceCf : songSourceC;
-            //print(flipped ? "Cf" : "C");
-        }
+        //print(flipped ? "Cf" : "C");
         else
-        {
             sourceToUse = flipped ? songSourceDf : songSourceD;
-            //print(flipped ? "Cf" : "C");
-        }
+        //print(flipped ? "Cf" : "C");
         if (song == SoundName.None)
         {
             sourceToUse.Stop();
@@ -249,73 +223,57 @@ public class AudioManager : MonoBehaviour
 
     public void AllFadeOut()
     {
-        foreach (AudioSource source in mainSources)
-        {
-            StartCoroutine(FadeOut(source, 1.5f));
-        }
+        foreach (var source in mainSources) StartCoroutine(FadeOut(source, 1.5f));
     }
 
     public void UpdateCurrentSongs(bool[] songsToPlay, bool fade = true)
     {
-        bool[] currentSongStates = new bool[songsToPlay.Length];
-        for (int i = 0; i < songsToPlay.Length; i++)
-        {
-            currentSongStates[i] = SongsA[i].volume > Double.Epsilon;
-        }
+        var currentSongStates = new bool[songsToPlay.Length];
+        for (var i = 0; i < songsToPlay.Length; i++) currentSongStates[i] = songsA[i].volume > double.Epsilon;
 
-        for (int i = 0; i < songsToPlay.Length; i++)
-        {
+        for (var i = 0; i < songsToPlay.Length; i++)
             if (songsToPlay[i] != currentSongStates[i])
             {
                 if (fade)
-                {
                     //print("start f");
                     StartCoroutine(SongFade(i, !songsToPlay[i]));
-                }
                 else
-                {
-                    SongsA[i].volume = SongsB[i].volume = songsToPlay[i] ? .3f : 0f;
-                }
+                    songsA[i].volume = songsB[i].volume = songsToPlay[i] ? .3f : 0f;
             }
-        }
     }
 
     private IEnumerator SongFade(int source, bool fadeOut)
     {
         //print("SongFade()" + source + "  " + fadeOut);
-        AudioSource[] song = { SongsA[source], SongsB[source] };
-        float fadeTime = .25f;
-        float startingVol = SongsA[source].volume;
-        float fullVol = .3f;
-        float destinationVolume = fadeOut ? 0f : fullVol;
+        AudioSource[] song = {songsA[source], songsB[source]};
+        var fadeTime = .25f;
+        var startingVol = songsA[source].volume;
+        var fullVol = .3f;
+        var destinationVolume = fadeOut ? 0f : fullVol;
 
-        float currentVolume = startingVol;
+        var currentVolume = startingVol;
 
         if (fadeOut)
-        {
             while (currentVolume > destinationVolume)
             {
                 currentVolume -= startingVol * Time.deltaTime / fadeTime;
                 song[0].volume = song[1].volume = currentVolume;
                 yield return null;
             }
-        }
         else
-        {
             while (currentVolume < destinationVolume)
             {
                 currentVolume += fullVol * Time.deltaTime / fadeTime;
                 song[0].volume = song[1].volume = currentVolume;
                 yield return null;
             }
-        }
 
         song[0].volume = song[1].volume = destinationVolume;
     }
 
     private IEnumerator FadeOut(AudioSource audioSource, float fadeTime)
     {
-        float startingVol = audioSource.volume;
+        var startingVol = audioSource.volume;
 
         while (audioSource.volume > 0)
         {

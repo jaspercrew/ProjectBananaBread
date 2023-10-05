@@ -3,16 +3,16 @@ using UnityEngine;
 public class GrapplePoint : MonoBehaviour
 {
     private const float HoverRange = 1.5f;
-    public static GrapplePoint TargetPoint;
-
-    // ReSharper disable once NotAccessedField.Local
-    private SpriteRenderer spriteRenderer;
-    private new Camera camera;
-    private SpriteRenderer loopFX;
     private const float RotateSpeed = 150f;
+    public static GrapplePoint targetPoint;
 
     public Color clearColor;
     public Color blockedColor;
+    private new Camera camera;
+    private SpriteRenderer loopFX;
+
+    // ReSharper disable once NotAccessedField.Local
+    private SpriteRenderer spriteRenderer;
 
     private void Start()
     {
@@ -24,16 +24,16 @@ public class GrapplePoint : MonoBehaviour
 
     private void Update()
     {
-        Vector3 mousePos = camera.ScreenToWorldPoint(Input.mousePosition);
+        var mousePos = camera.ScreenToWorldPoint(Input.mousePosition);
 
-        float thisDist = Vector2.Distance(mousePos, transform.position);
-        float currDist =
-            (TargetPoint == null)
+        var thisDist = Vector2.Distance(mousePos, transform.position);
+        var currDist =
+            targetPoint == null
                 ? float.MaxValue
-                : Vector2.Distance(mousePos, TargetPoint.transform.position);
+                : Vector2.Distance(mousePos, targetPoint.transform.position);
         // Debug.Log(thisDist);
         // Debug.Log(currDist);
-        if (TargetPoint == this)
+        if (targetPoint == this)
         {
             loopFX.enabled = true;
             loopFX.gameObject.transform.Rotate(Vector3.forward, RotateSpeed * Time.deltaTime);
@@ -44,14 +44,9 @@ public class GrapplePoint : MonoBehaviour
         }
 
         if (thisDist < HoverRange && thisDist < currDist)
-        {
             //Debug.Log("point set");
-            TargetPoint = this;
-        }
-        else if (currDist >= HoverRange)
-        {
-            TargetPoint = null;
-        }
+            targetPoint = this;
+        else if (currDist >= HoverRange) targetPoint = null;
     }
 
     public void Blocked()

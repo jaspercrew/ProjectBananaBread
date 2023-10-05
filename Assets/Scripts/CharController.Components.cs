@@ -1,35 +1,35 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public partial class CharController //COMPONENTS
 {
-    private BoxCollider2D charCollider;
-    private ParticleSystem dust;
-    private ScreenShakeController screenShakeController;
-    private Light2D charLight;
-    private RadialGrapple grappleController;
-    private SpriteRenderer spriteRenderer;
-    private Image boostUseIndicator;
-    private TrailRenderer dashTrail;
-    public Rigidbody2D Rigidbody;
-    private Transform particleChild;
-    private Transform spriteHandler;
-    private Text charDebugText;
-
-    private ParticleSystem rightWallPS;
-    private ParticleSystem leftWallPS;
-
-    private SpriteRenderer leftWallIndicator;
-    private SpriteRenderer rightWallIndicator;
+    [FormerlySerializedAs("Rigidbody")] public Rigidbody2D rigidbody;
 
     public FixedJoint2D fixedJoint2D;
-    private LineRenderer grappleLineRenderer;
-    private DistanceJoint2D grappleDistanceJoint;
     private Transform backgroundSpeedSprite;
+    private Image boostUseIndicator;
+    private BoxCollider2D charCollider;
+    private Text charDebugText;
+    private Light2D charLight;
+    private TrailRenderer dashTrail;
+    private ParticleSystem dust;
+    private DistanceJoint2D grappleDistanceJoint;
+    private LineRenderer grappleLineRenderer;
+
+    private SpriteRenderer leftWallIndicator;
+    private ParticleSystem leftWallPS;
     private Transform mainSpeedSprite;
+    private Transform particleChild;
+    private SpriteRenderer rightWallIndicator;
+
+    private ParticleSystem rightWallPS;
+    private ScreenShakeController screenShakeController;
+    private Transform spriteHandler;
+
+    // private RadialGrapple grappleController;
+    private SpriteRenderer spriteRenderer;
 
     private void GrabComponents_Awake()
     {

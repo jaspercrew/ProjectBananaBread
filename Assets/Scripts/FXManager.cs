@@ -2,17 +2,13 @@ using UnityEngine;
 
 public class FXManager : MonoBehaviour
 {
-    public static FXManager Instance;
+    public static FXManager instance;
 
     private void Awake()
     {
-        if (Instance != null)
-        {
+        if (instance != null)
             Destroy(gameObject);
-        }
         else
-        {
-            Instance = this;
-        }
+            instance = this;
     }
 }

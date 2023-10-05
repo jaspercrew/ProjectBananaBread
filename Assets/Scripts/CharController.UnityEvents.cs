@@ -1,28 +1,16 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering.Universal;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using UnityEngine.VFX;
 
 public partial class CharController
 {
-
-
-
     private void Awake()
     {
         if (Instance != null)
-        {
             Destroy(gameObject);
-        }
         else
-        {
             Instance = this;
-        }
         //DontDestroyOnLoad(gameObject);
         PrepForScene();
         Rigidbody = transform.GetComponent<Rigidbody2D>();
@@ -45,20 +33,52 @@ public partial class CharController
         currentSpeedBar = startingSpeedBar;
         base.Start();
     }
-    
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (GameManager.Instance.isPaused)
+                GameManager.Instance.Unpause();
+            else
+                GameManager.Instance.Pause();
+        }
+
+        // if (Input.GetKeyDown(KeyCode.LeftBracket))
+        //     SaveData.SaveToFile(1);
+        // if (Input.GetKeyDown(KeyCode.RightBracket))
+        //     SaveData.LoadFromFile(1);
+
+
+        CheckGrounded_Update();
+        CheckPlatformGrounded_Update();
+        EventHandling_Update();
+        ShortJumpDetection_Update();
+        WallSlideDetection_Update();
+        //LineGrappleUpdate();
+        GrappleInput_Update();
+        Crouching_Update();
+        LookAhead_Update();
+        BoostRefreshCheck_Update();
+
+        recentImpulseTime -= Time.deltaTime;
+    }
+
     private void FixedUpdate()
     {
-        charDebugText.text = Math.Floor(Rigidbody.velocity.magnitude) + "   " + '\n' + 
-                             Math.Floor(Rigidbody.velocity.x) + "   " + Math.Floor(Rigidbody.velocity.y);
+        charDebugText.text =
+            Math.Floor(Rigidbody.velocity.magnitude)
+            + "   "
+            + '\n'
+            + Math.Floor(Rigidbody.velocity.x)
+            + "   "
+            + Math.Floor(Rigidbody.velocity.y);
         //Animstate_FixedUpdate();
         inputVector = Input.GetAxisRaw("Horizontal");
         FadeParticle_FixedUpdate();
         Gravity_FixedUpdate();
         // AdjustCape_FixedUpdate();
-        if (disabledMovement)
-        {
-            moveVector = 0;
-        }
+        if (disabledMovement) moveVector = 0;
 
         if (IsAbleToMove())
         {
@@ -66,6 +86,7 @@ public partial class CharController
             ApplyForcedMovement_FixedUpdate();
             TurnAround_FixedUpdate();
         }
+
         GrapplePhysics_FixedUpdate();
         // movement animations
         //gravityValue = isInverted ? -Mathf.Abs(gravityValue) : Mathf.Abs(gravityValue);
@@ -77,25 +98,19 @@ public partial class CharController
     private void SpeedBar_FixedUpdate()
     {
         print(currentSpeedBar);
-        float currentSpeed = Rigidbody.velocity.magnitude;
-        float multiplier = currentSpeed > speedBarVelThreshhold ? speedBarGainMultiplier : speedBarDecayMultiplier;
-        currentSpeedBar += (currentSpeed - speedBarVelThreshhold) * Time.fixedDeltaTime * multiplier;
-        
-        if (currentSpeedBar < 1)
-        {
-            currentSpeedBar = startingSpeedBar;
-            //Die();
-            
-        }
-    }
+        var currentSpeed = Rigidbody.velocity.magnitude;
+        var multiplier =
+            currentSpeed > speedBarVelThreshhold ? speedBarGainMultiplier : speedBarDecayMultiplier;
+        currentSpeedBar +=
+            (currentSpeed - speedBarVelThreshhold) * Time.fixedDeltaTime * multiplier;
 
+        if (currentSpeedBar < 1) currentSpeedBar = startingSpeedBar;
+        //Die();
+    }
 
     private void Record_FixedUpdate()
     {
-        if (!doRecord || isRewinding)
-        {
-            return;
-        }
+        if (!doRecord || isRewinding) return;
 
         if (pointsInTime.Count == 0)
         {
@@ -103,16 +118,13 @@ public partial class CharController
             return;
         }
 
-        Vector3 last = pointsInTime[0];
-        if (last != transform.position)
-        {
-            pointsInTime.Insert(0, transform.position);
-        }
+        var last = pointsInTime[0];
+        if (last != transform.position) pointsInTime.Insert(0, transform.position);
     }
 
     public IEnumerator StartRewind()
     {
-        int savedPriority = CameraManager.Instance.currentCam.Priority;
+        var savedPriority = CameraManager.Instance.currentCam.Priority;
         CameraManager.Instance.currentCam.Priority = 50;
         doRecord = false;
         Rigidbody.velocity = Vector3.zero; //diving fix (LOL RERUN XD)
@@ -121,9 +133,9 @@ public partial class CharController
         Rigidbody.bodyType = RigidbodyType2D.Static;
         emitFadesTime += .45f;
         //while (pointsInTime.Count > 0) {
-        for (int i = 0; i < pointsInTime.Count; i += rewindSpeed)
+        for (var i = 0; i < pointsInTime.Count; i += rewindSpeed)
         {
-            Vector3 pointInTime = pointsInTime[i];
+            var pointInTime = pointsInTime[i];
             transform.position = pointInTime;
             yield return new WaitForFixedUpdate();
         }
@@ -174,49 +186,50 @@ public partial class CharController
 
     private void StandardMovement_FixedUpdate()
     {
-        Vector2 v = Rigidbody.velocity;
-        float xVel = v.x;
-        float yVel = v.y;
+        var v = Rigidbody.velocity;
+        var xVel = v.x;
+        var yVel = v.y;
 
         // regular ground movement
         if (isGrounded)
         {
-            int moveDir = Math.Sign(moveVector);
+            var moveDir = Math.Sign(moveVector);
             // if user is not moving and has runSpeed, then slow down
             if (moveDir == 0 && Mathf.Abs(xVel) >= MinGroundSpeed && !RecentlyImpulsed())
             {
-                int antiMoveDir = -Math.Sign(xVel);
-                Rigidbody.AddForce(antiMoveDir * OnGroundDeceleration * Vector2.right, ForceMode2D.Force);
+                var antiMoveDir = -Math.Sign(xVel);
+                Rigidbody.AddForce(
+                    antiMoveDir * OnGroundDeceleration * Vector2.right,
+                    ForceMode2D.Force
+                );
             }
             // otherwise move the player in the direction (only accelerate if below max runSpeed)
             else if ((moveDir > 0 && xVel < runSpeed) || (moveDir < 0 && xVel > -runSpeed))
             {
-                Rigidbody.AddForce(moveDir * OnGroundAcceleration * Vector2.right, ForceMode2D.Force);
+                Rigidbody.AddForce(
+                    moveDir * OnGroundAcceleration * Vector2.right,
+                    ForceMode2D.Force
+                );
             }
-            
+
             // decelerate if above limit
             if (!RecentlyImpulsed())
             {
                 if (Mathf.Abs(xVel) > groundDragThreshholdB) //decelerate a lot if above threshold B
                 {
-                    float xAfterDrag = Rigidbody.velocity.x - (Math.Sign(xVel) * OnGroundDrag * 1.5f);
+                    var xAfterDrag =
+                        Rigidbody.velocity.x - Math.Sign(xVel) * OnGroundDrag * 1.5f;
                     Rigidbody.velocity = new Vector2(xAfterDrag, Rigidbody.velocity.y);
                 }
-
                 else if (Mathf.Abs(xVel) > groundDragThreshholdA) //otherwise, decelerate a little if above threshold A
                 {
-                    float xAfterDrag = Rigidbody.velocity.x - (Math.Sign(xVel) * OnGroundDrag);
+                    var xAfterDrag = Rigidbody.velocity.x - Math.Sign(xVel) * OnGroundDrag;
                     Rigidbody.velocity = new Vector2(xAfterDrag, Rigidbody.velocity.y);
                 }
-
             }
-
 
             // apply min velocity
-            if (Mathf.Abs(xVel) < MinGroundSpeed)
-            {
-                Rigidbody.velocity = new Vector2(0, yVel);
-            }
+            if (Mathf.Abs(xVel) < MinGroundSpeed) Rigidbody.velocity = new Vector2(0, yVel);
 
             //recentlyImpulsed = false;
         }
@@ -224,9 +237,13 @@ public partial class CharController
         else
         {
             if (Math.Abs(xVel) < maxMoveSpeedAir || Math.Sign(moveVector) != Math.Sign(xVel))
-            {
-                Rigidbody.AddForce(Math.Sign(moveVector) * InAirAcceleration * Vector2.right * (Math.Sign(moveVector) != Math.Sign(xVel) ? 2 : 1), ForceMode2D.Force);
-            }
+                Rigidbody.AddForce(
+                    Math.Sign(moveVector)
+                    * InAirAcceleration
+                    * Vector2.right
+                    * (Math.Sign(moveVector) != Math.Sign(xVel) ? 2 : 1),
+                    ForceMode2D.Force
+                );
 
             // // slow down if player is not inputting horizontal movement
             // // and don't apply if grappling
@@ -236,35 +253,21 @@ public partial class CharController
             //     Rigidbody.AddForce(-xVel * InAirDrag * Vector2.right, ForceMode2D.Force);
             // }
             if (Math.Sign(moveVector) == Math.Sign(xVel) && Math.Abs(xVel) > airDragThreshholdA) //apply drag
-            {
-                Rigidbody.AddForce(-xVel * (InAirDrag) * Vector2.right, ForceMode2D.Force);
-            }
-            
+                Rigidbody.AddForce(-xVel * InAirDrag * Vector2.right, ForceMode2D.Force);
         }
 
         Rigidbody.velocity = Vector2.ClampMagnitude(Rigidbody.velocity, AbsoluteMaxVelocity);
         //boostUseIndicator.fillAmount = Rigidbody.velocity.magnitude / AbsoluteMaxVelocity;
-        if (Rigidbody.velocity.magnitude > 20f && !isDashing)
-        {
-            emitFadesTime = .3f;
-        }
+        if (Rigidbody.velocity.magnitude > 20f && !isDashing) emitFadesTime = .3f;
     }
-
 
     private void TurnAround_FixedUpdate()
     {
-        if (disabledMovement)
-        {
-            return;
-        }
+        if (disabledMovement) return;
 
         // feet dust logic
-        if (Math.Abs(prevInVector - inputVector) > 0.01f && isGrounded && inputVector != 0)
-        {
-            dust.Play();
-            //parentWindFX.transform.localScale = new Vector3(-parentWindFX.transform.localScale.x, 1, 1);
-        }
-
+        if (Math.Abs(prevInVector - inputVector) > 0.01f && isGrounded && inputVector != 0) dust.Play();
+        //parentWindFX.transform.localScale = new Vector3(-parentWindFX.transform.localScale.x, 1, 1);
         prevInVector = inputVector;
 
         //Vector3 scale = transform.localScale;
@@ -280,86 +283,39 @@ public partial class CharController
         // }
         //
         if (moveVector > 0)
-        {
             FaceRight();
-        }
-        else if (moveVector < 0)
-        {
-            FaceLeft();
-        }
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (GameManager.Instance.isPaused)
-            {
-                GameManager.Instance.Unpause();
-            }
-            else
-            {
-                GameManager.Instance.Pause();
-            }
-        }
-
-        // if (Input.GetKeyDown(KeyCode.LeftBracket))
-        //     SaveData.SaveToFile(1);
-        // if (Input.GetKeyDown(KeyCode.RightBracket))
-        //     SaveData.LoadFromFile(1);
-
-
-        
-        CheckGrounded_Update();
-        CheckPlatformGrounded_Update();
-        EventHandling_Update();
-        ShortJumpDetection_Update();
-        WallSlideDetection_Update();
-        //LineGrappleUpdate();
-        GrappleInput_Update();
-        Crouching_Update();
-        LookAhead_Update();
-        BoostRefreshCheck_Update();
-        
-        recentImpulseTime -= Time.deltaTime;
+        else if (moveVector < 0) FaceLeft();
     }
 
     private void Gravity_FixedUpdate()
     {
-        Vector2 v = Rigidbody.velocity;
-        float yVelToSet = v.y - ((isWallSliding ? (v.y < 0f ? .4f : .3f) : 1) * gravityValue * Time.fixedDeltaTime);
+        var v = Rigidbody.velocity;
+        var yVelToSet =
+            v.y
+            - (isWallSliding ? v.y < 0f ? .4f : .3f : 1) * gravityValue * Time.fixedDeltaTime;
         yVelToSet = Math.Max(-MaxDownwardSpeedFromGravity, yVelToSet);
         //print(yVelToSet);
         Rigidbody.velocity = new Vector2(v.x, yVelToSet);
-        
     }
 
     private void BoostRefreshCheck_Update()
     {
-        if (!groundedAfterBoost && (isGrounded || isNearWallOnLeft || isNearWallOnRight) && (lastBoostTime + boostRefreshCooldown < Time.time) && recentlyBoosted)
-        {
+        if (
+            !groundedAfterBoost
+            && (isGrounded || isNearWallOnLeft || isNearWallOnRight)
+            && lastBoostTime + boostRefreshCooldown < Time.time
+            && recentlyBoosted
+        )
             StartCoroutine(BoostRefreshCoroutine());
-            
-        }
-        if (recentlyBoosted && lastBoostTime + BoostCooldown < Time.time && groundedAfterBoost)
-        {
-            recentlyBoosted = false;
-        }
+        if (recentlyBoosted && lastBoostTime + BoostCooldown < Time.time && groundedAfterBoost) recentlyBoosted = false;
     }
 
     private void GrappleInput_Update()
     {
-        if (Input.GetKeyUp(KeyCode.Q) )
+        if (Input.GetKeyUp(KeyCode.Q))
         {
-            if (isGrappling)
-            {
-                EndGrapple();
-            }
-            if (instantiatedProjectile != null)
-            {
-                Destroy(instantiatedProjectile.gameObject);
-            }
-            
+            if (isGrappling) EndGrapple();
+            if (instantiatedProjectile != null) Destroy(instantiatedProjectile.gameObject);
         }
     }
 
@@ -376,35 +332,34 @@ public partial class CharController
             grappleLineRenderer.SetPosition(1, transform.position);
             grappleLineRenderer.SetPosition(0, attachmentPoint);
 
+            var rotationToSet = Vector2.Angle(
+                Vector2.right,
+                attachmentPoint - transform.position
+            );
 
-            float rotationToSet = Vector2.Angle(Vector2.right, attachmentPoint - transform.position);
-            
             //print(rotationToSet);
             savedRotationalVelocity = rotationToSet - spriteHandler.eulerAngles.z; //calculate rotational velocity
             savedRotationalVelocity *= 1.5f; //boost
             //print(rotationToSet + "  -- " +  spriteHandler.eulerAngles.z + " -- " + savedRotationalVelocity);
-            
-            spriteHandler.rotation =
-                Quaternion.Euler(spriteHandler.rotation.x, spriteHandler.rotation.y, rotationToSet);
 
-            float grappleLength = (attachmentPoint - transform.position).magnitude;
+            spriteHandler.rotation = Quaternion.Euler(
+                spriteHandler.rotation.x,
+                spriteHandler.rotation.y,
+                rotationToSet
+            );
+
+            var grappleLength = (attachmentPoint - transform.position).magnitude;
             grappleDistanceJoint.distance = grappleLength;
             if (Rigidbody.velocity.y < 0 && Rigidbody.velocity.magnitude < airDragThreshholdB)
-            {
                 Rigidbody.velocity *= grappleAcceleration;
-            }
 
-            float xVel = Rigidbody.velocity.x;
-            if ((xVel > 0 && isNearWallOnRight) || (xVel < 0 && isNearWallOnLeft))
-            {
-                EndGrapple();
-            }
+            var xVel = Rigidbody.velocity.x;
+            if ((xVel > 0 && isNearWallOnRight) || (xVel < 0 && isNearWallOnLeft)) EndGrapple();
 
             //grappleLineRenderer.SetPosition(0, instantiatedProjectile.transform.position);
         }
         else if (instantiatedProjectile != null)
         {
-            
             grappleLineRenderer.SetPosition(1, transform.position);
             grappleLineRenderer.SetPosition(0, instantiatedProjectile.transform.position);
         }
@@ -417,27 +372,23 @@ public partial class CharController
     private void LaunchHook()
     {
         //grappleLineRenderer.enabled = true;
-        Vector2 direction = new Vector2(1, 1.4f);
-        if (IsFacingLeft())
-        {
-            direction.x = -direction.x;
-        }
+        var direction = new Vector2(1, 1.4f);
+        if (IsFacingLeft()) direction.x = -direction.x;
 
-        if (isInverted)
-        {
-            direction.y = -direction.y;
-        }
+        if (isInverted) direction.y = -direction.y;
 
         //print("hook launched");
-        Vector3 offset = isInverted ? new Vector3(0, -1, 0) : new Vector3(0, 1, 0);
-        if (instantiatedProjectile != null)
-        {
-            Destroy(instantiatedProjectile);
-        }
+        var offset = isInverted ? new Vector3(0, -1, 0) : new Vector3(0, 1, 0);
+        if (instantiatedProjectile != null) Destroy(instantiatedProjectile);
 
-        instantiatedProjectile = Instantiate(projectilePrefab, transform.position + offset, transform.rotation);
-        instantiatedProjectile.gameObject.GetComponent<GrappleProjectile>().Initialize(direction.normalized, grappleLaunchSpeed);
-        
+        instantiatedProjectile = Instantiate(
+            projectilePrefab,
+            transform.position + offset,
+            transform.rotation
+        );
+        instantiatedProjectile.gameObject
+            .GetComponent<GrappleProjectile>()
+            .Initialize(direction.normalized, grappleLaunchSpeed);
     }
 
     public void StartGrapple(Vector3 grapplePoint)
@@ -447,19 +398,17 @@ public partial class CharController
         doubleJumpAvailable = true;
         gravityValue = BaseGravity * .3f;
         attachmentPoint = grapplePoint;
-        
+
         //Vector3 diffNormalized = (grapplePoint - transform.position).normalized ;
         transform.position += new Vector3(0, grappleVerticalDisplacement, 0);
         ReduceSize();
         dashTrail.emitting = true;
-
 
         isGrappling = true;
         //charController.isRecentlyGrappled = true;
         //grappleLineRenderer.SetPosition(0, grapplePoint);
         //grappleLineRenderer.SetPosition(1, transform.position);
         grappleDistanceJoint.connectedAnchor = grapplePoint;
-        
 
         grappleDistanceJoint.enabled = true;
         //grappleDistanceJoint.distance = Math.Max(grappleDistanceJoint.distance, 3f);
@@ -467,35 +416,28 @@ public partial class CharController
 
 
         //const float boostForce = 5f;
-        float initialGrappleBoost = minGrappleVelocity * Math.Max(grappleDistanceJoint.distance / 5, 1);
+        var initialGrappleBoost =
+            minGrappleVelocity * Math.Max(grappleDistanceJoint.distance / 5, 1);
 
-        if (IsFacingLeft())
+        var grapplingLeft = transform.position.x > grapplePoint.x;
+        if (grapplingLeft)
         {
             //facing left
-            Rigidbody.velocity -= (new Vector2(Math.Abs(Rigidbody.velocity.y), 0) * grappleGravityBoostModifier);
-            if (Rigidbody.velocity.x > -minGrappleVelocity)
-            {
-                Rigidbody.velocity = (Vector2.left * initialGrappleBoost);
-                //Debug.Log("left boost");
-            }
+            Rigidbody.velocity -= new Vector2(Math.Abs(Rigidbody.velocity.y), 0) * grappleGravityBoostModifier;
+            if (Rigidbody.velocity.x > -minGrappleVelocity) Rigidbody.velocity = Vector2.left * initialGrappleBoost;
+            //Debug.Log("left boost");
         }
         else
         {
-            Rigidbody.velocity += (new Vector2(Math.Abs(Rigidbody.velocity.y), 0) * grappleGravityBoostModifier);
-            if (Rigidbody.velocity.x < minGrappleVelocity)
-            {
-                Rigidbody.velocity = (Vector2.right * initialGrappleBoost);
-                //Debug.Log("right boost");
-            }
+            Rigidbody.velocity += new Vector2(Math.Abs(Rigidbody.velocity.y), 0) * grappleGravityBoostModifier;
+            if (Rigidbody.velocity.x < minGrappleVelocity) Rigidbody.velocity = Vector2.right * initialGrappleBoost;
+            //Debug.Log("right boost");
         }
     }
 
     public void EndGrapple()
     {
-        if (instantiatedProjectile != null)
-        {
-            Destroy(instantiatedProjectile.gameObject);
-        }
+        if (instantiatedProjectile != null) Destroy(instantiatedProjectile.gameObject);
 
         ReturnSize();
         dashTrail.emitting = false;
@@ -508,38 +450,35 @@ public partial class CharController
 
     private void LookAhead_Update()
     {
-        if (CameraManager.Instance.currentCam is null)
-        {
-            return;
-        }
+        if (CameraManager.Instance.currentCam is null) return;
 
-        CinemachineFramingTransposer transposer =
+        var transposer =
             CameraManager.Instance.currentCam.GetCinemachineComponent<CinemachineFramingTransposer>();
 
-        if (Input.GetKeyDown(KeyCode.F) && CameraManager.Instance.currentCam.gameObject.CompareTag("DynamicCamera") &&
-            !(transposer is null))
-        {
-            transposer
-                    .m_TrackedObjectOffset.x = CameraManager.Instance.currentCam.m_Lens.OrthographicSize * -1.8f *
-                                               transform.localScale.x;
-        }
+        if (
+            Input.GetKeyDown(KeyCode.F)
+            && CameraManager.Instance.currentCam.gameObject.CompareTag("DynamicCamera")
+            && !(transposer is null)
+        )
+            transposer.m_TrackedObjectOffset.x =
+                CameraManager.Instance.currentCam.m_Lens.OrthographicSize
+                * -1.8f
+                * transform.localScale.x;
 
-        if (!(transposer is null) && (Input.GetKeyUp(KeyCode.F) ||
-                                      !CameraManager.Instance.currentCam.gameObject.CompareTag("DynamicCamera")))
-        {
+        if (
+            !(transposer is null)
+            && (
+                Input.GetKeyUp(KeyCode.F)
+                || !CameraManager.Instance.currentCam.gameObject.CompareTag("DynamicCamera")
+            )
+        )
             transposer.m_TrackedObjectOffset.x = 0;
-        }
     }
-
 
     private void Crouching_Update()
     {
-        if (isCrouching && CheckSpace())
-        {
-            UnCrouch();
-        }
+        if (isCrouching && CheckSpace()) UnCrouch();
     }
-
 
     // private void LineGrappleUpdate()
     // {
@@ -549,10 +488,10 @@ public partial class CharController
     //         Vector3 targetPosition = GrapplePoint.TargetPoint.transform.position;
     //         Vector3 direction = (targetPosition - transform.position).normalized;
     //         Vector3 offset = Vector3.up * .5f;
-    //         
+    //
     //         RaycastHit2D hit = Physics2D.Raycast(transform.position +  offset, direction,
     //             Vector2.Distance(transform.position, targetPosition), obstacleLayerMask);
-    //         
+    //
     //         if (hit.collider != null)
     //         {
     //             GrapplePoint.TargetPoint.Blocked();
@@ -579,7 +518,7 @@ public partial class CharController
     //         grappleLOSRenderer.enabled = false;
     //         grappleClearRenderer.enabled = false;
     //     }
-    //     
+    //
     //     if (isGrappleLaunched && sentProjectile != null)
     //     {
     //         grappleLineRenderer.SetPosition(1, transform.position);
@@ -593,10 +532,10 @@ public partial class CharController
     //         Rigidbody.velocity = direction * grappleSpeed;
     //         grappleLineRenderer.SetPosition(1, transform.position);
     //         grappleLineRenderer.SetPosition(0, launchedPoint.transform.position);
-    //         
     //
-    //         
-    //         if (isLineGrappling && 
+    //
+    //
+    //         if (isLineGrappling &&
     //             Vector2.Distance(transform.position, launchedPoint.transform.position) < disconnectDistance)
     //         {
     //             DisconnectGrapple();
@@ -622,35 +561,36 @@ public partial class CharController
     private void CheckGrounded_Update()
     {
         const float groundDistance = 0.05f;
-        Vector2 relativeDown = isInverted ? Vector2.up : Vector2.down;
+        var relativeDown = isInverted ? Vector2.up : Vector2.down;
 
-        Vector3 bounds = charCollider.bounds.extents;
-        float halfWidth = Mathf.Abs(bounds.x) - groundDistance;
-        float halfHeight = Mathf.Abs(bounds.y) - groundDistance;
-        Vector2 center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
+        var bounds = charCollider.bounds.extents;
+        var halfWidth = Mathf.Abs(bounds.x) - groundDistance;
+        var halfHeight = Mathf.Abs(bounds.y) - groundDistance;
+        var center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
 
-        Vector2 bottomMiddle = center + halfHeight * relativeDown;
-        Vector2 bottomLeft = bottomMiddle + halfWidth * Vector2.left;
-        Vector2 bottomRight = bottomMiddle + halfWidth * Vector2.right;
-        Vector2 aLittleDown = 3 * groundDistance * relativeDown;
+        var bottomMiddle = center + halfHeight * relativeDown;
+        var bottomLeft = bottomMiddle + halfWidth * Vector2.left;
+        var bottomRight = bottomMiddle + halfWidth * Vector2.right;
+        var aLittleDown = 3 * groundDistance * relativeDown;
 
         Debug.DrawLine(bottomLeft, bottomLeft + aLittleDown, Color.magenta);
         Debug.DrawLine(bottomRight, bottomRight + aLittleDown, Color.magenta);
 
-        RaycastHit2D hit1 =
-            Physics2D.Linecast(bottomLeft, bottomLeft + aLittleDown, obstaclePlusLayerMask);
-        RaycastHit2D hit2 =
-            Physics2D.Linecast(bottomRight, bottomRight + aLittleDown, obstaclePlusLayerMask);
+        var hit1 = Physics2D.Linecast(
+            bottomLeft,
+            bottomLeft + aLittleDown,
+            obstaclePlusLayerMask
+        );
+        var hit2 = Physics2D.Linecast(
+            bottomRight,
+            bottomRight + aLittleDown,
+            obstaclePlusLayerMask
+        );
 
-        bool newlyGrounded = (hit1 || hit2) && !isWallSliding;
-        if (!isGrounded && newlyGrounded)
-        {
-            OnGroundLanding();
-        }
-        
+        var newlyGrounded = (hit1 || hit2) && !isWallSliding;
+        if (!isGrounded && newlyGrounded) OnGroundLanding();
+
         isGrounded = newlyGrounded;
-
-
 
         //Animator.SetBool(Grounded, isGrounded);
     }
@@ -658,25 +598,31 @@ public partial class CharController
     private void CheckPlatformGrounded_Update()
     {
         const float groundDistance = 0.05f;
-        Vector2 relativeDown = isInverted ? Vector2.up : Vector2.down;
+        var relativeDown = isInverted ? Vector2.up : Vector2.down;
 
-        Vector3 bounds = charCollider.bounds.extents;
-        float halfWidth = Mathf.Abs(bounds.x) - groundDistance;
-        float halfHeight = Mathf.Abs(bounds.y) - groundDistance;
-        Vector2 center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
+        var bounds = charCollider.bounds.extents;
+        var halfWidth = Mathf.Abs(bounds.x) - groundDistance;
+        var halfHeight = Mathf.Abs(bounds.y) - groundDistance;
+        var center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
 
-        Vector2 bottomMiddle = center + halfHeight * relativeDown;
-        Vector2 bottomLeft = bottomMiddle + halfWidth * Vector2.left;
-        Vector2 bottomRight = bottomMiddle + halfWidth * Vector2.right;
-        Vector2 aLittleDown = 3 * groundDistance * relativeDown;
+        var bottomMiddle = center + halfHeight * relativeDown;
+        var bottomLeft = bottomMiddle + halfWidth * Vector2.left;
+        var bottomRight = bottomMiddle + halfWidth * Vector2.right;
+        var aLittleDown = 3 * groundDistance * relativeDown;
 
         Debug.DrawLine(bottomLeft, bottomLeft + aLittleDown, Color.magenta);
         Debug.DrawLine(bottomRight, bottomRight + aLittleDown, Color.magenta);
 
-        RaycastHit2D hit1 =
-            Physics2D.Linecast(bottomLeft, bottomLeft + aLittleDown, platformLayerMask);
-        RaycastHit2D hit2 =
-            Physics2D.Linecast(bottomRight, bottomRight + aLittleDown, platformLayerMask);
+        var hit1 = Physics2D.Linecast(
+            bottomLeft,
+            bottomLeft + aLittleDown,
+            platformLayerMask
+        );
+        var hit2 = Physics2D.Linecast(
+            bottomRight,
+            bottomRight + aLittleDown,
+            platformLayerMask
+        );
 
         isPlatformGrounded = hit1 || hit2;
     }
@@ -684,19 +630,15 @@ public partial class CharController
     private void EventHandling_Update()
     {
         // add events if their respective buttons are pressed
-        foreach (KeyValuePair<Func<bool>, Event.EventTypes> pair in KeyToEventType)
-        {
+        foreach (var pair in KeyToEventType)
             if (pair.Key.Invoke())
-            {
                 // Debug.Log("enqueueing " + pair.Value + " event");
                 eventQueue.AddLast(new Event(pair.Value, Time.time));
-            }
-        }
 
         // parse event queue
-        for (LinkedListNode<Event> node = eventQueue.First; node != null; node = node.Next)
+        for (var node = eventQueue.First; node != null; node = node.Next)
         {
-            Event e = node.Value;
+            var e = node.Value;
 
             // remove expired events
             if (Time.time > e.TimeCreated + Event.EventTimeout)
@@ -707,8 +649,8 @@ public partial class CharController
             // execute events whose conditions are met
             else
             {
-                Func<CharController, bool> conditions = EventConditions[e.EventType];
-                Action<CharController> actionToDo = EventActions[e.EventType];
+                var conditions = EventConditions[e.EventType];
+                var actionToDo = EventActions[e.EventType];
 
                 if (conditions.Invoke(this))
                 {
@@ -720,17 +662,20 @@ public partial class CharController
         }
     }
 
-
     private void ShortJumpDetection_Update()
     {
-        if (Input.GetButtonUp("Jump") && !isGrounded &&
-            ((!isInverted && Rigidbody.velocity.y > 0) || (isInverted && Rigidbody.velocity.y < 0)))
-        {
+        if (
+                Input.GetButtonUp("Jump")
+                && !isGrounded
+                && (
+                    (!isInverted && Rigidbody.velocity.y > 0)
+                    || (isInverted && Rigidbody.velocity.y < 0)
+                )
+            )
             //print("short");
-
             Rigidbody.velocity = Vector2.Scale(Rigidbody.velocity, new Vector2(1f, 0.5f));
-        }
     }
+
     // private void JumpCooldown_Update()
     // {
     //     //Debug.Log(justJumped);
@@ -751,13 +696,17 @@ public partial class CharController
             if (fadeSpriteIterator == fadeSpriteLimiter)
             {
                 fadeSpriteIterator = 0;
-                GameObject newFadeSprite = Instantiate(fadeSprite, transform.position, transform.rotation);
-                newFadeSprite.GetComponent<FadeSprite>()
+                var newFadeSprite = Instantiate(
+                    fadeSprite,
+                    transform.position,
+                    transform.rotation
+                );
+                newFadeSprite
+                    .GetComponent<FadeSprite>()
                     .Initialize(spriteRenderer.sprite, transform.localScale.x > 0, isInverted);
             }
         }
     }
-
 
     private void WallSlideDetection_Update()
     {
@@ -765,51 +714,72 @@ public partial class CharController
         const float groundDistance = 0.05f;
         const float horizontalBuffer = .15f;
 
-        Vector3 bounds = charCollider.bounds.extents;
-        float halfWidth = Mathf.Abs(bounds.x) - groundDistance + horizontalBuffer;
-        float halfHeight = Mathf.Abs(bounds.y) - groundDistance;
-        Vector2 center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
+        var bounds = charCollider.bounds.extents;
+        var halfWidth = Mathf.Abs(bounds.x) - groundDistance + horizontalBuffer;
+        var halfHeight = Mathf.Abs(bounds.y) - groundDistance;
+        var center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
 
         // left points
-        Vector2 middleLeft = center + halfWidth * Vector2.left;
-        Vector2 topLeft = middleLeft + halfHeight * Vector2.up;
-        Vector2 bottomLeft = middleLeft + halfHeight * Vector2.down;
-        Vector2 aLittleLeft = 2 * groundDistance * Vector2.left;
+        var middleLeft = center + halfWidth * Vector2.left;
+        var topLeft = middleLeft + halfHeight * Vector2.up;
+        var bottomLeft = middleLeft + halfHeight * Vector2.down;
+        var aLittleLeft = 2 * groundDistance * Vector2.left;
 
         // right points
-        Vector2 middleRight = center + halfWidth * Vector2.right;
-        Vector2 topRight = middleRight + halfHeight * Vector2.up;
-        Vector2 bottomRight = middleRight + halfHeight * Vector2.down;
-        Vector2 aLittleRight = 2 * groundDistance * Vector2.right;
+        var middleRight = center + halfWidth * Vector2.right;
+        var topRight = middleRight + halfHeight * Vector2.up;
+        var bottomRight = middleRight + halfHeight * Vector2.down;
+        var aLittleRight = 2 * groundDistance * Vector2.right;
 
         // left linecasts
-        RaycastHit2D bottomLeftHit =
-            Physics2D.Linecast(bottomLeft, bottomLeft + aLittleLeft, obstacleLayerMask);
-        RaycastHit2D topLeftHit =
-            Physics2D.Linecast(topLeft, topLeft + aLittleLeft, obstacleLayerMask);
-        isNearWallOnLeft = (bottomLeftHit && bottomLeftHit.transform.GetComponent<BeatPlatform>() != null &&
-                           bottomLeftHit.transform.GetComponent<BeatPlatform>().isWallSlideable) || 
-                           (topLeftHit && topLeftHit.transform.GetComponent<BeatPlatform>() != null &&
-                           topLeftHit.transform.GetComponent<BeatPlatform>().isWallSlideable);
-
+        var bottomLeftHit = Physics2D.Linecast(
+            bottomLeft,
+            bottomLeft + aLittleLeft,
+            obstacleLayerMask
+        );
+        var topLeftHit = Physics2D.Linecast(
+            topLeft,
+            topLeft + aLittleLeft,
+            obstacleLayerMask
+        );
+        isNearWallOnLeft =
+            (
+                bottomLeftHit
+                && bottomLeftHit.transform.GetComponent<BeatPlatform>() != null
+                && bottomLeftHit.transform.GetComponent<BeatPlatform>().isWallSlideable
+            )
+            || (
+                topLeftHit
+                && topLeftHit.transform.GetComponent<BeatPlatform>() != null
+                && topLeftHit.transform.GetComponent<BeatPlatform>().isWallSlideable
+            );
 
         // right linecasts
-        RaycastHit2D bottomRightHit =
-            Physics2D.Linecast(bottomRight, bottomRight + aLittleRight, obstacleLayerMask);
-        RaycastHit2D topRightHit =
-            Physics2D.Linecast(topRight, topRight + aLittleRight, obstacleLayerMask);
-        isNearWallOnRight = (bottomRightHit&& bottomRightHit.transform.GetComponent<BeatPlatform>() != null &&
-                            bottomRightHit.transform.GetComponent<BeatPlatform>().isWallSlideable) || 
-                            (topRightHit && topRightHit.transform.GetComponent<BeatPlatform>() != null &&
-                            topRightHit.transform.GetComponent<BeatPlatform>().isWallSlideable);
+        var bottomRightHit = Physics2D.Linecast(
+            bottomRight,
+            bottomRight + aLittleRight,
+            obstacleLayerMask
+        );
+        var topRightHit = Physics2D.Linecast(
+            topRight,
+            topRight + aLittleRight,
+            obstacleLayerMask
+        );
+        isNearWallOnRight =
+            (
+                bottomRightHit
+                && bottomRightHit.transform.GetComponent<BeatPlatform>() != null
+                && bottomRightHit.transform.GetComponent<BeatPlatform>().isWallSlideable
+            )
+            || (
+                topRightHit
+                && topRightHit.transform.GetComponent<BeatPlatform>() != null
+                && topRightHit.transform.GetComponent<BeatPlatform>().isWallSlideable
+            );
 
-
-
-        bool newlyWallSliding = (isNearWallOnRight || isNearWallOnLeft) && IsAbleToMove() && !isGrounded;
-        if (!isWallSliding && newlyWallSliding)
-        {
-            OnWallLanding();
-        }
+        var newlyWallSliding =
+            (isNearWallOnRight || isNearWallOnLeft) && IsAbleToMove() && !isGrounded;
+        if (!isWallSliding && newlyWallSliding) OnWallLanding();
 
         isWallSliding = newlyWallSliding;
 
@@ -820,7 +790,7 @@ public partial class CharController
                 print("left play");
                 leftWallPS.Play();
             }
-            
+
             //inputVector = Mathf.Clamp(inputVector, 0f, 1f);
 
             leftWallIndicator.enabled = true;
@@ -834,9 +804,9 @@ public partial class CharController
                 print("right play");
                 rightWallPS.Play();
             }
-            
+
             //inputVector = Mathf.Clamp(inputVector, -1f, 0f);
-            
+
             leftWallIndicator.enabled = false;
             rightWallIndicator.enabled = true;
             wallJumpDir = -1;
@@ -848,10 +818,6 @@ public partial class CharController
             rightWallIndicator.enabled = false;
         }
 
-
-        if (isWallSliding)
-        {
-            justJumped = false;
-        }
+        if (isWallSliding) justJumped = false;
     }
 }

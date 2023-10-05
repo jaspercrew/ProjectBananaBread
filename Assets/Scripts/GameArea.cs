@@ -7,11 +7,10 @@ using UnityEngine;
 public class GameArea : MonoBehaviour
 {
     public bool[] audioLayers;
-    
+
     [HideInInspector]
     public PolygonCollider2D polygonCollider2D;
     private CinemachineVirtualCamera cam;
-
 
     void Awake()
     {
@@ -19,10 +18,10 @@ public class GameArea : MonoBehaviour
         cam.Follow = FindObjectOfType<CharController>().transform;
         polygonCollider2D = GetComponent<PolygonCollider2D>();
     }
+
     // Start is called before the first frame update
     void Start()
     {
-        
         if (polygonCollider2D.bounds.Contains(CharController.Instance.transform.localPosition))
         {
             AudioManager.Instance.UpdateCurrentSongs(audioLayers, false);
@@ -37,8 +36,6 @@ public class GameArea : MonoBehaviour
             SaveData.SaveToFile(1);
         }
     }
-    
-    
 
     private void OnTriggerStay2D(Collider2D other)
     {
@@ -56,5 +53,3 @@ public class GameArea : MonoBehaviour
         }
     }
 }
-
-

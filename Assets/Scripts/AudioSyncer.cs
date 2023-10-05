@@ -24,7 +24,7 @@
 //     /// ..defined by the child class
 //     /// </summary>
 //     public virtual void OnUpdate()
-//     { 
+//     {
 //         // update audio value
 //         m_previousAudioValue = m_audioValue;
 //         m_audioValue = AudioSpectrum.spectrumValue;

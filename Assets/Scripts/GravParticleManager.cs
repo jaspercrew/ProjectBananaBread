@@ -13,7 +13,7 @@ public class GravParticleManager : MonoBehaviour
     private ParticleSystem.MinMaxCurve speedNoneCurve;
     private ParticleSystem.MinMaxCurve speedUpCurve;
     private ParticleSystem.MinMaxCurve speedDownCurve;
-    
+
     private void Start()
     {
         Transform parent = transform.parent;
@@ -23,7 +23,7 @@ public class GravParticleManager : MonoBehaviour
         psVelOverLife = ps.velocityOverLifetime;
         ParticleSystem.ShapeModule sm = ps.shape;
         sm.scale = parent.localScale;
-    
+
         halfToOneCurve = new AnimationCurve(new Keyframe(0, 0.5f), new Keyframe(1, 1));
         speedNoneCurve = new ParticleSystem.MinMaxCurve(0, halfToOneCurve);
         speedUpCurve = new ParticleSystem.MinMaxCurve(1, halfToOneCurve);
@@ -32,13 +32,15 @@ public class GravParticleManager : MonoBehaviour
 
     private void Update()
     {
-        FluidGravityZone.GravityDirection newGrav =
-            fgz.IsActive? fgz.activeGravityDirection : fgz.inactiveGravityDirection;
-        
-        if (newGrav == prevGrav) return;
-        
+        FluidGravityZone.GravityDirection newGrav = fgz.IsActive
+            ? fgz.activeGravityDirection
+            : fgz.inactiveGravityDirection;
+
+        if (newGrav == prevGrav)
+            return;
+
         ps.Clear();
-        
+
         switch (newGrav)
         {
             case FluidGravityZone.GravityDirection.North:
@@ -61,7 +63,7 @@ public class GravParticleManager : MonoBehaviour
                 psVelOverLife.x = speedDownCurve;
                 psVelOverLife.y = speedNoneCurve;
                 break;
-            case FluidGravityZone.GravityDirection.None:  // should never happen but just in case
+            case FluidGravityZone.GravityDirection.None: // should never happen but just in case
                 Debug.LogWarning("gravity direction none! was this on purpose?");
                 psMain.startRotation = new ParticleSystem.MinMaxCurve(Mathf.Deg2Rad * 0);
                 psVelOverLife.x = speedNoneCurve;

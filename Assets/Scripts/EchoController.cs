@@ -7,7 +7,6 @@ public class EchoController : MonoBehaviour
 {
     public float echoDelay = 2f;
 
-
     private IEnumerator DelayCoroutine(Vector3 pos)
     {
         yield return new WaitForSeconds(echoDelay);

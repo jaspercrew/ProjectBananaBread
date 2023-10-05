@@ -10,6 +10,4 @@ public class PlayerRecorder : BeatEntity
         CharController.Instance.SpawnExtendedFadeSprite();
         CharController.Instance.doRecord = true;
     }
-    
-    
 }

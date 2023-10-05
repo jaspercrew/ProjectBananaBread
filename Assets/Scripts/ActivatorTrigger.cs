@@ -3,10 +3,10 @@ using UnityEngine;
 public class ActivatorTrigger : MonoBehaviour
 {
     public bool isActivated;
-    
+
     public virtual void Activate()
     {
-        isActivated  = true;
+        isActivated = true;
     }
 
     public virtual void Deactivate()

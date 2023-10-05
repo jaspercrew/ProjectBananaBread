@@ -1,11 +1,12 @@
 using UnityEngine;
 
-public class GrappleProjectile : Projectile {
+public class GrappleProjectile : Projectile
+{
     //components
     //private LineRenderer lineRenderer;
     //private CharController characterController;
     //private RadialGrapple grappleController;
-    
+
     // configs
     //private const float GravityScale = 0f;
 
@@ -13,12 +14,14 @@ public class GrappleProjectile : Projectile {
     private float speed;
     private Vector3 direction;
 
-    public void Initialize(Vector3 dir, float newSpeed) {
+    public void Initialize(Vector3 dir, float newSpeed)
+    {
         direction = dir.normalized;
         speed = newSpeed;
     }
-    
-    protected override void Start() {
+
+    protected override void Start()
+    {
         Collider2D = GetComponent<BoxCollider2D>();
         Rigidbody2D = GetComponent<Rigidbody2D>();
         //characterController = FindObjectOfType<CharController>();
@@ -31,7 +34,6 @@ public class GrappleProjectile : Projectile {
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        
         if (other.gameObject.layer == LayerMask.NameToLayer("Obstacle"))
         {
             //print(other.gameObject.name);

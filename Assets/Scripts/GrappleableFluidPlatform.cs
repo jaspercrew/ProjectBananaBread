@@ -4,7 +4,7 @@
 // {
 //     private Collider2D boxCollider;
 //     private SpriteRenderer spriteRenderer;
-//     
+//
 //     // Start is called before the first frame update
 //     private void Awake() {
 //         boxCollider = GetComponent<Collider2D>();
@@ -20,4 +20,4 @@
 //     }
 // }
 //
-//     
+//

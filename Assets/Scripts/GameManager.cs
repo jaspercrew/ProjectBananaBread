@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
     private Transform pauseOverlay;
 
     private Dictionary<string, int> sceneNameToBuildIndex = new Dictionary<string, int>();
-    
+
     private void Awake()
     {
         if (Instance == null)
@@ -49,7 +49,6 @@ public class GameManager : MonoBehaviour
             Instance = this;
         }
         GetSceneIndices();
-
     }
 
     public void ToggleFullScreen()
@@ -65,12 +64,14 @@ public class GameManager : MonoBehaviour
         Application.targetFrameRate = 144;
         microBpm = songBpm * 16f;
         secPerBeat = 60f / microBpm;
-        songTime = (double) Time.time;
+        songTime = (double)Time.time;
         StartCoroutine(SnareCoroutine());
         SaveData.LoadSettings();
         SaveData.LoadFromFile(1);
         entities = FindObjectsOfType<BeatEntity>();
-        metronomes = CameraManager.Instance.transform.Find("MetronomeUI").GetComponentsInChildren<SpriteRenderer>();
+        metronomes = CameraManager.Instance.transform
+            .Find("MetronomeUI")
+            .GetComponentsInChildren<SpriteRenderer>();
         //print(metronomes.Length);
         if (!isMenu)
         {
@@ -79,9 +80,8 @@ public class GameManager : MonoBehaviour
         }
 
         //print(levelProgress.ToList());
-
     }
-    
+
     private IEnumerator SnareCoroutine()
     {
         CharController.Instance.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
@@ -90,14 +90,11 @@ public class GameManager : MonoBehaviour
         playSnares = true;
     }
 
-    private void OnAudioFilterRead(float[] data, int channels)
-    {
-        
-    }
+    private void OnAudioFilterRead(float[] data, int channels) { }
 
     private void Update()
     {
-        songPosition = (float) (Time.time - songTime - firstBeatOffset);
+        songPosition = (float)(Time.time - songTime - firstBeatOffset);
         double newSongPositionInBeats = songPosition / secPerBeat;
         if (Mathf.Floor((float)newSongPositionInBeats) > Mathf.Floor((float)songPositionInBeats))
         {
@@ -111,15 +108,35 @@ public class GameManager : MonoBehaviour
             //print(nextLoopTime);
             //return;
             //print("loop triggered, is flipped?:" + playFlipped);
-            AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songA, 0, nextLoopTime, playFlipped);
-            AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songB, 1, nextLoopTime, playFlipped);
-            AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songC, 2, nextLoopTime, playFlipped);
-            AudioManager.Instance.PlaySongScheduled(SceneInformation.Instance.songD, 3, nextLoopTime, playFlipped);
+            AudioManager.Instance.PlaySongScheduled(
+                SceneInformation.Instance.songA,
+                0,
+                nextLoopTime,
+                playFlipped
+            );
+            AudioManager.Instance.PlaySongScheduled(
+                SceneInformation.Instance.songB,
+                1,
+                nextLoopTime,
+                playFlipped
+            );
+            AudioManager.Instance.PlaySongScheduled(
+                SceneInformation.Instance.songC,
+                2,
+                nextLoopTime,
+                playFlipped
+            );
+            AudioManager.Instance.PlaySongScheduled(
+                SceneInformation.Instance.songD,
+                3,
+                nextLoopTime,
+                playFlipped
+            );
 
             playFlipped = !playFlipped;
             //AudioClip audioClip = AudioManager.Instance.soundToClip[SceneInformation.Instance.songA];
             //nextLoopTime += (double)audioClip.samples / audioClip.frequency;
-            
+
             //nextLoopTime += (60d / (double)songBpm) * 16d;
             nextLoopTime += (60d / (double)songBpm) * 32d;
             //print(60d / (double)songBpm);
@@ -167,7 +184,7 @@ public class GameManager : MonoBehaviour
                 metronomes[snareCount].color = temp;
                 snareCount++;
             }
-            
+
             if (snareMicroBeatCount == (4 * microBeatsInBeat) + snareToSongDelay)
             {
                 BeginSongLoop();
@@ -178,15 +195,15 @@ public class GameManager : MonoBehaviour
                     Color temp1 = spr.color;
                     temp1.a = 0f;
                     spr.color = temp1;
-
                 }
-                
             }
         }
     }
 
-    private void GetSceneIndices() {
-        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++) {
+    private void GetSceneIndices()
+    {
+        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+        {
             string sceneName = SceneNameFromIndex(i);
             sceneNameToBuildIndex[sceneName] = i;
         }
@@ -200,19 +217,18 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Scene \"" +sceneName + "\" not in build settings!");
+            Debug.LogError("Scene \"" + sceneName + "\" not in build settings!");
             return -1;
         }
     }
-    
+
     private static string SceneNameFromIndex(int index)
     {
         string path = SceneUtility.GetScenePathByBuildIndex(index);
-        return path
-            .Substring(0, path.Length - 6)  // gets rid of ".scene"
-            .Substring(path.LastIndexOf('/') + 1);       // gets the name of the scene (after directory)
+        return path.Substring(0, path.Length - 6) // gets rid of ".scene"
+            .Substring(path.LastIndexOf('/') + 1); // gets the name of the scene (after directory)
     }
-    
+
     public void AttemptSwitchScene(int index)
     {
         //print(index);
@@ -226,22 +242,21 @@ public class GameManager : MonoBehaviour
         SaveSettings();
         SaveData.SaveToFile(1);
     }
-    
+
     // public void AttemptSwitchScene(string sceneName)
     // {
     //     //print(index);
     //     SaveData.SaveToFile(1);
     //     StartCoroutine(LoadScene(sceneName));
-    //     
+    //
     // }
-    
-    
-    
-    
+
+
+
+
 
     private IEnumerator LoadScene(int sceneIndex)
     {
-        
         AudioManager.Instance.AllFadeOut();
         SceneInformation.Instance.exitMappings[0].destSceneName = SceneNameFromIndex(sceneIndex);
         int furthestCheckpoint = levelProgress[sceneIndex];
@@ -252,10 +267,10 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadSceneAsync(sceneIndex);
         //AudioManager.Instance.Awake();
     }
-    
+
     // private IEnumerator LoadScene(string sceneName)
     // {
-    //     
+    //
     //     AudioManager.Instance.AllFadeOut();
     //     SceneInformation.Instance.sceneFadeAnim.speed = 2 / SceneInformation.SceneTransitionTime;
     //     SceneInformation.Instance.sceneFadeAnim.SetTrigger(Animator.StringToHash("Start"));
@@ -268,8 +283,12 @@ public class GameManager : MonoBehaviour
     public void MenuExit(int sceneIndex)
     {
         SaveData.SaveToFile(1);
-        if (sceneIndex >= levelProgress.Length || //out of indices
-            levelProgress[sceneIndex] == SaveData.levelLengths[sceneIndex] - 1 || sceneIndex < 2)
+        if (
+            sceneIndex >= levelProgress.Length
+            || //out of indices
+            levelProgress[sceneIndex] == SaveData.levelLengths[sceneIndex] - 1
+            || sceneIndex < 2
+        )
         {
             PrepMenuExit(sceneIndex);
             StartCoroutine(MenuExitCoroutine());
@@ -282,9 +301,11 @@ public class GameManager : MonoBehaviour
         GameObject.Find("CenterCanvas").GetComponent<Canvas>().enabled = false;
         MenuCenterCam.GetComponent<CinemachineVirtualCamera>().m_Priority = 100;
         yield return new WaitForSeconds(dropDelay);
-        TileStateManager.Instance.transform.Find("GridMain").transform.Find("Menu-Exit").gameObject.SetActive(false);
+        TileStateManager.Instance.transform
+            .Find("GridMain")
+            .transform.Find("Menu-Exit")
+            .gameObject.SetActive(false);
         AudioManager.Instance.IsolatedPlay(SoundName.ExtendedSnare, .25f);
-
     }
 
     public void PrepMenuExit(int sceneIndex)
@@ -292,7 +313,7 @@ public class GameManager : MonoBehaviour
         //SceneManager.LoadScene(index);
         AudioManager.Instance.AllFadeOut();
         // string path = SceneUtility.GetScenePathByBuildIndex(index);
-        // SceneInformation.Instance.exitMappings[0].sceneNameOverride = 
+        // SceneInformation.Instance.exitMappings[0].sceneNameOverride =
         //     path.Substring(0, path.Length - 6).Substring(path.LastIndexOf('/') + 1);
         SceneInformation.Instance.exitMappings[0].destSceneName = SceneNameFromIndex(sceneIndex);
         SceneTransitionManager.Instance.checkPointToUse = levelProgress[sceneIndex];
@@ -311,7 +332,7 @@ public class GameManager : MonoBehaviour
         AudioListener.pause = true;
         pauseOverlay.gameObject.SetActive(true);
     }
-    
+
     public void Unpause()
     {
         Assert.IsTrue(isPaused);
@@ -345,7 +366,7 @@ public class GameManager : MonoBehaviour
         {
             gate.ResetGate();
         }
-}
+    }
 
     // public void ChangeAudio(float slider)
     // {
@@ -388,6 +409,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(TextPopCoroutine(created, duration));
         tmp.text = text;
     }
+
     private IEnumerator TextPopCoroutine(GameObject created, float time)
     {
         if (created == null)
@@ -397,7 +419,7 @@ public class GameManager : MonoBehaviour
         Transform t = CharController.Instance.transform;
         TMP_Text tmp = created.transform.Find("Canvas").Find("Text").GetComponent<TMP_Text>();
         float elapsedTime = 0;
-        
+
         Vector3 offset = new Vector3(.5f, 1.5f, 0);
         float effectHeight = 2f;
         while (elapsedTime < time)

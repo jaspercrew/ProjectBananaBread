@@ -22,10 +22,13 @@ public class BouncePad : ActivatedEntity
             }
             else
             {
-                rb.velocity = new Vector2(rb.velocity.x, isInverted ? 
-                    (-bounceVelocity * CharMultiplier) : (bounceVelocity * CharMultiplier));
+                rb.velocity = new Vector2(
+                    rb.velocity.x,
+                    isInverted
+                        ? (-bounceVelocity * CharMultiplier)
+                        : (bounceVelocity * CharMultiplier)
+                );
             }
         }
     }
-
 }

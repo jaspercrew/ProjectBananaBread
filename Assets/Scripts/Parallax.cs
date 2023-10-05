@@ -3,6 +3,7 @@ using UnityEngine;
 public class Parallax : MonoBehaviour
 {
     public Camera cam;
+
     [Header("0 = follows camera exactly, 1 = does not move at all")]
     [SerializeField]
     public float parallaxEffectX;
@@ -14,7 +15,7 @@ public class Parallax : MonoBehaviour
         cam = Camera.main;
         lastCameraPos = cam.transform.position;
     }
-    
+
     private void FixedUpdate()
     {
         Vector3 pos = cam.transform.position;

@@ -6,7 +6,6 @@ public class StaticCamTrigger : MonoBehaviour
 {
     private CinemachineVirtualCamera cam;
     private BoxCollider2D camCollider;
-    
 
     private void Start()
     {
@@ -16,15 +15,16 @@ public class StaticCamTrigger : MonoBehaviour
         // camCollider.size = colliderRatio * (cam.m_Lens.OrthographicSize / 10);
     }
 
-
-    private void OnTriggerStay2D(Collider2D other) {
+    private void OnTriggerStay2D(Collider2D other)
+    {
         if (other.CompareTag("Player"))
         {
             cam.Priority = 15;
         }
     }
 
-    private void OnTriggerExit2D(Collider2D other) {
+    private void OnTriggerExit2D(Collider2D other)
+    {
         if (other.CompareTag("Player"))
         {
             cam.Priority = 1;

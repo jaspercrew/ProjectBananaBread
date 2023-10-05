@@ -41,7 +41,7 @@ public class SceneExitLoadZone : MonoBehaviour
     //     {
     //         SceneManager.LoadSceneAsync(SceneInformation.Instance.SceneInfoForExit(transform).sceneNameOverride);
     //     }
-    //     
+    //
     // }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -51,7 +51,8 @@ public class SceneExitLoadZone : MonoBehaviour
             if (isSceneFinishPoint)
             {
                 int sceneIndex = SaveData.levelLengths[SceneManager.GetActiveScene().buildIndex];
-                GameManager.Instance.levelProgress[sceneIndex] = SaveData.levelLengths[sceneIndex] - 1;
+                GameManager.Instance.levelProgress[sceneIndex] =
+                    SaveData.levelLengths[sceneIndex] - 1;
             }
             //AudioManager.Instance.AllFadeOut();
             //SaveData.SaveToFile(1);

@@ -4,32 +4,21 @@ using UnityEngine.Serialization;
 
 public class BeatEntity : Entity
 {
-    [Min(1)] public int motifLength = 1; //length of motif in beats
+    [Min(1)]
+    public int motifLength = 1; //length of motif in beats
     protected int beatsCounter = 0;
-    public List<int> actionMicroBeats= new List<int>();
+    public List<int> actionMicroBeats = new List<int>();
     protected int microBeatCount = 0;
+
     // Start is called before the first frame update
-    protected virtual void Start()
-    {
-        
-    }
+    protected virtual void Start() { }
 
-    protected virtual void MicroBeatAction()
-    {
-        
-    }
+    protected virtual void MicroBeatAction() { }
 
+    protected virtual void FullBeatAction() { }
 
-    protected virtual void FullBeatAction()
-    {
-        
-    }
+    protected virtual void MotifResetAction() { }
 
-    protected virtual void MotifResetAction()
-    {
-        
-    }
-    
     public void MicroBeat()
     {
         //print(actionMicroBeats.Contains(microbeat));
@@ -44,7 +33,7 @@ public class BeatEntity : Entity
             FullBeatAction();
             beatsCounter++;
         }
-        
+
         microBeatCount++;
         if (microBeatCount == GameManager.microBeatsInBeat * motifLength)
         {
@@ -52,5 +41,4 @@ public class BeatEntity : Entity
             MotifResetAction();
         }
     }
-        
 }

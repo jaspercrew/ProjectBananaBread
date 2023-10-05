@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public partial class CharController //COMPONENTS
 {
-    
     private BoxCollider2D charCollider;
     private ParticleSystem dust;
     private ScreenShakeController screenShakeController;
@@ -25,7 +24,7 @@ public partial class CharController //COMPONENTS
 
     private SpriteRenderer leftWallIndicator;
     private SpriteRenderer rightWallIndicator;
-    
+
     public FixedJoint2D fixedJoint2D;
     private LineRenderer grappleLineRenderer;
     private DistanceJoint2D grappleDistanceJoint;
@@ -44,8 +43,14 @@ public partial class CharController //COMPONENTS
         charCollider = transform.GetComponent<BoxCollider2D>();
         dashTrail = transform.Find("Particles").Find("DashFX").GetComponent<TrailRenderer>();
         dust = particleChild.Find("FeetDust").GetComponent<ParticleSystem>();
-        leftWallIndicator = transform.Find("Borders").Find("LeftIndicator").GetComponent<SpriteRenderer>();
-        rightWallIndicator = transform.Find("Borders").Find("RightIndicator").GetComponent<SpriteRenderer>();
+        leftWallIndicator = transform
+            .Find("Borders")
+            .Find("LeftIndicator")
+            .GetComponent<SpriteRenderer>();
+        rightWallIndicator = transform
+            .Find("Borders")
+            .Find("RightIndicator")
+            .GetComponent<SpriteRenderer>();
 
         backgroundSpeedSprite = transform.Find("SpeedIndicator").Find("BackgroundSpeedSprite");
         mainSpeedSprite = transform.Find("SpeedIndicator").Find("MainSpeedSprite");
@@ -54,13 +59,11 @@ public partial class CharController //COMPONENTS
         obstaclePlusLayerMask = LayerMask.GetMask("Obstacle", "Slide", "Platform");
         wallSlideLayerMask = LayerMask.GetMask("Slide");
         platformLayerMask = LayerMask.GetMask("Platform");
-        
+
         spriteHandler = transform.Find("SpriteHandler");
         spriteRenderer = spriteHandler.GetComponent<SpriteRenderer>();
-        
+
         grappleLineRenderer = GetComponent<LineRenderer>();
         grappleDistanceJoint = GetComponent<DistanceJoint2D>();
     }
-
-    
 }

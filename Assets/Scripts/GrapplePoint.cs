@@ -4,6 +4,7 @@ public class GrapplePoint : MonoBehaviour
 {
     private const float HoverRange = 1.5f;
     public static GrapplePoint TargetPoint;
+
     // ReSharper disable once NotAccessedField.Local
     private SpriteRenderer spriteRenderer;
     private new Camera camera;
@@ -20,14 +21,16 @@ public class GrapplePoint : MonoBehaviour
         loopFX = transform.Find("LoopFX").GetComponent<SpriteRenderer>();
         loopFX.enabled = false;
     }
-    
+
     private void Update()
     {
         Vector3 mousePos = camera.ScreenToWorldPoint(Input.mousePosition);
 
         float thisDist = Vector2.Distance(mousePos, transform.position);
-        float currDist = (TargetPoint == null) ? float.MaxValue :
-            Vector2.Distance(mousePos, TargetPoint.transform.position);
+        float currDist =
+            (TargetPoint == null)
+                ? float.MaxValue
+                : Vector2.Distance(mousePos, TargetPoint.transform.position);
         // Debug.Log(thisDist);
         // Debug.Log(currDist);
         if (TargetPoint == this)
@@ -39,17 +42,15 @@ public class GrapplePoint : MonoBehaviour
         {
             loopFX.enabled = false;
         }
-        
+
         if (thisDist < HoverRange && thisDist < currDist)
         {
             //Debug.Log("point set");
             TargetPoint = this;
-            
-        } 
+        }
         else if (currDist >= HoverRange)
         {
             TargetPoint = null;
-            
         }
     }
 
@@ -62,5 +63,4 @@ public class GrapplePoint : MonoBehaviour
     {
         loopFX.color = clearColor;
     }
-
 }

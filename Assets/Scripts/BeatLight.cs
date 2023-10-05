@@ -3,7 +3,7 @@ using UnityEngine.Experimental.Rendering.Universal;
 public class BeatLight : BeatEntity
 {
     private Light2D lightComponent;
-    
+
     // Start is called before the first frame update
     protected override void Start()
     {
@@ -26,6 +26,6 @@ public class BeatLight : BeatEntity
     // Update is called once per frame
     // void Update()
     // {
-    //     
+    //
     // }
 }

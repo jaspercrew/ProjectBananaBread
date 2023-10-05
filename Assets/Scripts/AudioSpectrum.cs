@@ -14,9 +14,10 @@ public class AudioSpectrum : MonoBehaviour
     // public int spectrumIndex = 0;
     // Unity fills this up for us
     private float[] largeSpectrum;
-    
+
     [HideInInspector]
     private float[] compressedSpectrum;
+
     [HideInInspector]
     public float[] bufferSpectrum;
 
@@ -28,19 +29,16 @@ public class AudioSpectrum : MonoBehaviour
 
     private int indicesPerBar;
     private AudioMixer audioMixer;
-    
 
     public static AudioSpectrum Instance;
 
     private void Start()
     {
         audioMixer = (AudioMixer)Resources.Load("MainMixer");
-
     }
-    
+
     private void Update()
     {
-        
         // get the data
         AudioListener.GetSpectrumData(largeSpectrum, 0, FFTWindow.Blackman);
         for (int i = 0; i < compressedSpectrumSize; i++)
@@ -52,7 +50,7 @@ public class AudioSpectrum : MonoBehaviour
             }
             float average = sum / indicesPerBar;
             float vol = AudioManager.Instance.normalizedVolume;
-            compressedSpectrum[i] = average / (vol + .001f); // + small number to prevent / 0 
+            compressedSpectrum[i] = average / (vol + .001f); // + small number to prevent / 0
         }
         BandBuffer();
         //print(string.Join(" ", bufferSpectrum));
@@ -66,7 +64,7 @@ public class AudioSpectrum : MonoBehaviour
         compressedSpectrum = new float[compressedSpectrumSize];
         bufferSpectrum = new float[compressedSpectrumSize];
         bufferDecrease = new float[compressedSpectrumSize];
-        
+
         indicesPerBar = largeSpectrumSize / compressedSpectrumSize;
     }
 
@@ -89,7 +87,4 @@ public class AudioSpectrum : MonoBehaviour
             }
         }
     }
-
-
-
 }

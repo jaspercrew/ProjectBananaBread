@@ -34,7 +34,7 @@
 //     protected override void MicroBeatAction()
 //     {
 //         //print(circleIterator);
-//         
+//
 //         if (circleIterator == actionMicroBeats.Count - 1)
 //         {
 //             PlayerImpulse();
@@ -60,14 +60,14 @@
 //         }
 //
 //     }
-//     
+//
 //
 //
 //     protected override void MotifResetAction()
 //     {
 //         circleIterator = 0;
 //     }
-//     
+//
 //     public Vector3 beatScale;
 //     public Vector3 restScale;
 //     public float timeToBeat;

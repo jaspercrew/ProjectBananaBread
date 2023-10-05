@@ -9,13 +9,13 @@ using UnityEngine.SceneManagement;
 public class SpawnAreaController : MonoBehaviour
 {
     public Transform spawnLocation;
+
     //public bool useCamera;
 
     // Start is called before the first frame update
     void Start()
     {
         //GetComponentInChildren<CinemachineVirtualCamera>().enabled = useCamera;
-
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -26,9 +26,13 @@ public class SpawnAreaController : MonoBehaviour
             try
             {
                 int numVal = Int32.Parse(spawnLocation.name);
-                if (GameManager.Instance.levelProgress[SceneManager.GetActiveScene().buildIndex] < numVal)
+                if (
+                    GameManager.Instance.levelProgress[SceneManager.GetActiveScene().buildIndex]
+                    < numVal
+                )
                 {
-                    GameManager.Instance.levelProgress[SceneManager.GetActiveScene().buildIndex] = numVal;
+                    GameManager.Instance.levelProgress[SceneManager.GetActiveScene().buildIndex] =
+                        numVal;
                 }
             }
             catch (FormatException e)

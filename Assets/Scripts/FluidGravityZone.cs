@@ -3,97 +3,104 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
- public class FluidGravityZone : ActivatedEntity // active = inverted gravity
- {
-     public enum GravityDirection
-     {
-         North, South, East, West, None
-     }
+public class FluidGravityZone : ActivatedEntity // active = inverted gravity
+{
+    public enum GravityDirection
+    {
+        North,
+        South,
+        East,
+        West,
+        None
+    }
 
-     private const float particleDensity = 2f;
-     private const float edgeGap = 1f;
-     private float lowerYBound;
-     
-     // Start is called before the first frame update
-     private BoxCollider2D boxCollider2D;
-     private ParticleSystem gravParticleSystem;
-     private ParticleSystem.ShapeModule shapeModule;
-     private SpriteRenderer spriteRenderer;
-     private ParticleSystem.VelocityOverLifetimeModule velocityModule;
-     private ParticleSystem.MainModule mainModule;
-     
-     public GravityDirection inactiveGravityDirection;
-     public GravityDirection activeGravityDirection;
+    private const float particleDensity = 2f;
+    private const float edgeGap = 1f;
+    private float lowerYBound;
 
-     protected override void Start()
-     {
-         
-         boxCollider2D = GetComponent<BoxCollider2D>();
-         spriteRenderer = GetComponent<SpriteRenderer>();
-         gravParticleSystem = GetComponent<ParticleSystem>();
+    // Start is called before the first frame update
+    private BoxCollider2D boxCollider2D;
+    private ParticleSystem gravParticleSystem;
+    private ParticleSystem.ShapeModule shapeModule;
+    private SpriteRenderer spriteRenderer;
+    private ParticleSystem.VelocityOverLifetimeModule velocityModule;
+    private ParticleSystem.MainModule mainModule;
 
-         lowerYBound = -boxCollider2D.size.y / 2;
-         shapeModule = gravParticleSystem.shape;
-         shapeModule.radius = boxCollider2D.size.x / 2 - edgeGap;
-         shapeModule.position = new Vector3(0, lowerYBound, 0);
+    public GravityDirection inactiveGravityDirection;
+    public GravityDirection activeGravityDirection;
 
-         var emission = gravParticleSystem.emission;
+    protected override void Start()
+    {
+        boxCollider2D = GetComponent<BoxCollider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        gravParticleSystem = GetComponent<ParticleSystem>();
 
-         var burst = emission.GetBurst(0);
-         burst.count = new ParticleSystem.MinMaxCurve(shapeModule.radius * particleDensity);
-         emission.SetBurst(0, burst);
+        lowerYBound = -boxCollider2D.size.y / 2;
+        shapeModule = gravParticleSystem.shape;
+        shapeModule.radius = boxCollider2D.size.x / 2 - edgeGap;
+        shapeModule.position = new Vector3(0, lowerYBound, 0);
 
-         velocityModule = gravParticleSystem.velocityOverLifetime;
-         mainModule = gravParticleSystem.main;
+        var emission = gravParticleSystem.emission;
 
-         // Vector2 bottomLeft = bottomMiddle + halfWidth * Vector2.left;
-         // Vector2 bottomRight = bottomMiddle + halfWidth * Vector2.right;
-         base.Start();
-     }
+        var burst = emission.GetBurst(0);
+        burst.count = new ParticleSystem.MinMaxCurve(shapeModule.radius * particleDensity);
+        emission.SetBurst(0, burst);
 
-     // protected void Update()
-     // {
-     // }
+        velocityModule = gravParticleSystem.velocityOverLifetime;
+        mainModule = gravParticleSystem.main;
 
-     private void OnTriggerStay2D(Collider2D other) {
-         if (other.gameObject.CompareTag("Player")) {
-             // TODO: change this to work with activeGravityDirection and inactiveGravityDirection
-             
-             if (IsActive)
-             {
-                 other.GetComponent<CharController>().Invert();
-             }
-             else
-             {
-                 other.GetComponent<CharController>().DeInvert();
-             }
-         }
-     }
-     
-     private void OnTriggerExit2D(Collider2D other) {
-         if (other.gameObject.CompareTag("Player")) {
-             other.GetComponent<CharController>().DeInvert();
-         }
-     }
+        // Vector2 bottomLeft = bottomMiddle + halfWidth * Vector2.left;
+        // Vector2 bottomRight = bottomMiddle + halfWidth * Vector2.right;
+        base.Start();
+    }
 
-     protected override void Activate() {
-         base.Activate();
-         //var velocityModule = gravParticleSystem.velocityOverLifetime;
-         gravParticleSystem.Play();
-         velocityModule.speedModifier = 1;
-         mainModule.startRotation = new ParticleSystem.MinMaxCurve(Mathf.Deg2Rad * 0);
-         shapeModule.position = new Vector3(0, lowerYBound, 0);
-         
-     }
+    // protected void Update()
+    // {
+    // }
 
-     protected override void Deactivate() {
-         base.Deactivate();
-         //var velocityModule = gravParticleSystem.velocityOverLifetime;
-         gravParticleSystem.Stop();
-         gravParticleSystem.Clear();
-         // velocityModule.speedModifier = -1;
-         // mainModule.startRotation = new ParticleSystem.MinMaxCurve(Mathf.Deg2Rad * 180);
-         // shapeModule.position = new Vector3(0, -lowerYBound, 0);
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            // TODO: change this to work with activeGravityDirection and inactiveGravityDirection
 
-     }
- }
+            if (IsActive)
+            {
+                other.GetComponent<CharController>().Invert();
+            }
+            else
+            {
+                other.GetComponent<CharController>().DeInvert();
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            other.GetComponent<CharController>().DeInvert();
+        }
+    }
+
+    protected override void Activate()
+    {
+        base.Activate();
+        //var velocityModule = gravParticleSystem.velocityOverLifetime;
+        gravParticleSystem.Play();
+        velocityModule.speedModifier = 1;
+        mainModule.startRotation = new ParticleSystem.MinMaxCurve(Mathf.Deg2Rad * 0);
+        shapeModule.position = new Vector3(0, lowerYBound, 0);
+    }
+
+    protected override void Deactivate()
+    {
+        base.Deactivate();
+        //var velocityModule = gravParticleSystem.velocityOverLifetime;
+        gravParticleSystem.Stop();
+        gravParticleSystem.Clear();
+        // velocityModule.speedModifier = -1;
+        // mainModule.startRotation = new ParticleSystem.MinMaxCurve(Mathf.Deg2Rad * 180);
+        // shapeModule.position = new Vector3(0, -lowerYBound, 0);
+    }
+}

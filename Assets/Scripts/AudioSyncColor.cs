@@ -5,8 +5,8 @@
 //
 // //[RequireComponent(typeof(Image))]
 // public class AudioSyncColor : AudioSyncer {
-//     
-//     
+//
+//
 //     public Color[] beatColors;
 //     public Color restColor;
 //
@@ -18,7 +18,7 @@
 //         Color _curr = spriteRenderer.color;
 //         Color _initial = _curr;
 //         float _timer = 0;
-// 		
+//
 //         while (_curr != _target)
 //         {
 //             _curr = Color.Lerp(_initial, _target, _timer / timeToBeat);

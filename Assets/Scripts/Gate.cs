@@ -10,13 +10,16 @@ public class Gate : MonoBehaviour
 
     private enum GateState
     {
-        Closed, Opening, Open
+        Closed,
+        Opening,
+        Open
     }
 
     private GateState state = GateState.Closed;
     private float openingStartTime;
 
-    private Vector3 closedPos, openPos;
+    private Vector3 closedPos,
+        openPos;
 
     private void Start()
     {
@@ -41,7 +44,7 @@ public class Gate : MonoBehaviour
                     openingStartTime = Time.time;
                 }
                 break;
-            
+
             case GateState.Opening:
                 float elapsedTime = Time.time - openingStartTime;
                 float t = elapsedTime / timeToOpen;
@@ -51,7 +54,7 @@ public class Gate : MonoBehaviour
                     state = GateState.Open;
                 }
                 break;
-            
+
             case GateState.Open:
                 break;
             default:
@@ -64,7 +67,6 @@ public class Gate : MonoBehaviour
         transform.position = closedPos;
         state = GateState.Closed;
     }
-
 
     // public IEnumerator Open()
     // {
@@ -79,7 +81,7 @@ public class Gate : MonoBehaviour
     //         transform.position = Vector3.Lerp(transform.position, moveTo, (elapsedTime / waitTime));
     //         elapsedTime += Time.fixedDeltaTime;
     //         yield return null;
-    //     }  
+    //     }
     //     // Make sure we got there
     //     transform.position = moveTo;
     //     yield return null;

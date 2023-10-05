@@ -7411,6 +7411,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1344082175}
   m_CullTransparentMesh: 1
+--- !u!1 &1385162650
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1385162651}
+  m_Layer: 31
+  m_Name: NodePrefab
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1385162651
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1385162650}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 9189487986223701447}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1463663975
 GameObject:
   m_ObjectHideFlags: 0
@@ -13460,7 +13490,7 @@ Tilemap:
       m_AnimatedSprites:
       - {fileID: 21300000, guid: 4c4102e7edc0dcb4c9745a33f91d6322, type: 3}
       - {fileID: 21300000, guid: 0dadf2d817d593342ac90de0f2a98828, type: 3}
-      m_AnimationSpeed: 7.0000005
+      m_AnimationSpeed: 7
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -539, y: 412, z: 0}
@@ -13468,7 +13498,7 @@ Tilemap:
       m_AnimatedSprites:
       - {fileID: 21300000, guid: 0dadf2d817d593342ac90de0f2a98828, type: 3}
       - {fileID: 21300000, guid: 4c4102e7edc0dcb4c9745a33f91d6322, type: 3}
-      m_AnimationSpeed: 7.0000005
+      m_AnimationSpeed: 7
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -542, y: 414, z: 0}
@@ -13524,7 +13554,7 @@ Tilemap:
       m_AnimatedSprites:
       - {fileID: 21300000, guid: 0dadf2d817d593342ac90de0f2a98828, type: 3}
       - {fileID: 21300000, guid: 4c4102e7edc0dcb4c9745a33f91d6322, type: 3}
-      m_AnimationSpeed: 7
+      m_AnimationSpeed: 7.0000005
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -539, y: 416, z: 0}
@@ -50333,6 +50363,7 @@ Transform:
   - {fileID: 9189487985620696609}
   - {fileID: 9189487986045124612}
   - {fileID: 1789039020}
+  - {fileID: 1385162651}
   m_Father: {fileID: 9189487986111885870}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

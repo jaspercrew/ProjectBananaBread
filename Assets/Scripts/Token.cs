@@ -6,18 +6,21 @@ using UnityEngine.Serialization;
 
 public enum TokenType
 {
-    Key, TempoUp, TempoDown
+    Key,
+    TempoUp,
+    TempoDown
 }
+
 public class Token : MonoBehaviour
 {
     public TokenType type;
     public bool isActivated = false;
     protected SpriteRenderer background;
+
     // Start is called before the first frame update
     protected void Start()
     {
         background = transform.Find("Background").GetComponent<SpriteRenderer>();
-
     }
 
     protected void OnTriggerEnter2D(Collider2D other)

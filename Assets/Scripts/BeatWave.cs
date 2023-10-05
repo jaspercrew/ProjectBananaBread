@@ -8,8 +8,6 @@ public class BeatWave : MonoBehaviour
     private Rigidbody2D rigidbody2D;
     private Vector2 playerVelocityMultiplier;
 
-
-
     public void Initialize(Vector2 vel, Vector2 scalar)
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
@@ -36,11 +34,8 @@ public class BeatWave : MonoBehaviour
 
             playerRB.velocity += toAdd;
             CharController.Instance.forcedMoveTime = .3f;
-            CharController.Instance.forcedMoveVector = 0 ;
+            CharController.Instance.forcedMoveVector = 0;
             Destroy(gameObject);
         }
     }
-    
-    
-
 }

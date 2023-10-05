@@ -4,13 +4,11 @@ public class LastExitInfo
 {
     public bool HasBeenSet = false;
     public string exitName;
+
     // public Object DestinationScene;
     public SpawnPickDirection SpawnPickDirection;
 
-    public LastExitInfo()
-    {
-        
-    }
+    public LastExitInfo() { }
 
     public LastExitInfo(ExitToNextSpawn e)
     {

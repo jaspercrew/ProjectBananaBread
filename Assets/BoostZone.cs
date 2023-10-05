@@ -21,13 +21,12 @@ public class BoostZone : MonoBehaviour
     {
         consumed = false;
     }
-        
 
     void OnTriggerStay2D(Collider2D other)
     {
         CharController.Instance.currentBoostZone = this;
     }
-    
+
     void OnTriggerExit2D(Collider2D other)
     {
         CharController.Instance.currentBoostZone = null;

@@ -7,7 +7,7 @@
 //     private CinemachineVirtualCamera cam;
 //     private PolygonCollider2D camCollider;
 //     public int cameraOverridePriority = 0;
-//     
+//
 //
 //     private void Start()
 //     {
@@ -24,8 +24,8 @@
 //             cam.Priority = 15 + cameraOverridePriority;
 //         }
 //     }
-//     
-//     
+//
+//
 //
 //
 //     // private void OnTriggerStay2D(Collider2D other) {

@@ -5,7 +5,6 @@ public class FadeSprite : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     public float lifetime = .5f;
     private float timeLeft;
-    
 
     // Start is called before the first frame update
     void Awake()
@@ -18,7 +17,7 @@ public class FadeSprite : MonoBehaviour
     {
         timeLeft = lifetime;
     }
-    
+
     void FixedUpdate()
     {
         if (timeLeft > 0)
@@ -28,7 +27,8 @@ public class FadeSprite : MonoBehaviour
             spriteRenderer.color = c;
             timeLeft -= Time.deltaTime;
         }
-        else {
+        else
+        {
             Destroy(gameObject);
         }
     }

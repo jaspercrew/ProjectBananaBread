@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
-//using TreeEditor;
 using UnityEngine;
-using UnityEngine.Assertions;
+
+//using TreeEditor;
 
 public partial class CharController
 {
@@ -14,7 +14,7 @@ public partial class CharController
     //         return;
     //     }
     //     Interrupt();
-    //     
+    //
     //     // float xScale = transform.localScale.x;
     //     //float dashDir = moveVector == 0 ? -xScale : moveVector;
     //     float dashDir = inputVector;
@@ -26,7 +26,7 @@ public partial class CharController
     //     dashCoroutine = DashCoroutine(dashTime /*, dashSpeed*/);
     //     toInterrupt.Add(dashCoroutine);
     //     StartCoroutine(dashCoroutine);
-    //     
+    //
     //     Rigidbody.velocity = new Vector2(Rigidbody.velocity.x + dashSpeed, Rigidbody.velocity.y);
     //     dust.Play();
     //     //Animator.SetTrigger(Dash);
@@ -53,7 +53,7 @@ public partial class CharController
     //     {
     //         Crouch();
     //     }
-    //     
+    //
     // }
 
     private void Boost()
@@ -64,10 +64,10 @@ public partial class CharController
     private IEnumerator BoostCoroutine()
     {
         //float boostFreezeDelay = .0f;
-        bool isGoldenBoost = false;
+        var isGoldenBoost = false;
         isDashing = true;
-        float delayGravTime = .25f;
-        float boostForceMultiplier = 4.5f;
+        var delayGravTime = .25f;
+        var boostForceMultiplier = 4.5f;
         //forcedMoveTime = .3f;
         //recentImpulseTime = .40f;
         if (currentBoostZone != null)
@@ -79,30 +79,20 @@ public partial class CharController
         forcedMoveVector = 0;
         recentlyBoosted = true;
         groundedAfterBoost = false;
-        
-        Vector2 boostDirection = Vector2.zero;
+
+        var boostDirection = Vector2.zero;
         if (Input.GetKey(KeyCode.A))
-        {
             boostDirection = Vector2.left;
-        }
         if (Input.GetKey(KeyCode.W))
-        {
             boostDirection = Vector2.up;
-        }
         if (Input.GetKey(KeyCode.S))
-        {
             boostDirection = Vector2.down;
-        }
         if (Input.GetKey(KeyCode.D))
-        {
             boostDirection = Vector2.right;
-        }
 
         if (boostDirection == Vector2.zero)
-        {
-            boostDirection = (IsFacingLeft() ? Vector2.left : Vector2.right);
-        }
-        
+            boostDirection = IsFacingLeft() ? Vector2.left : Vector2.right;
+
         ScreenShakeController.Instance.LightShake();
         boostDirection = boostDirection.normalized;
         StartCoroutine(BoostUseVisualEffect());
@@ -112,20 +102,21 @@ public partial class CharController
         //Animator.SetTrigger(Dash);
         gravityValue = 0;
         boostDirection.Scale(new Vector2(1.4f, 1.4f));
-        Vector2 boost = boostDirection * boostForceMultiplier;
+        var boost = boostDirection * boostForceMultiplier;
         dashTrail.emitting = true;
-        
+
         if (Math.Sign(Rigidbody.velocity.x) != Math.Sign(boost.x))
         {
             Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
             boost *= 1.5f;
         }
+
         if (Math.Sign(Rigidbody.velocity.y) != Math.Sign(boost.y))
         {
             Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, 0);
             boost *= 1.5f;
         }
-        
+
         // if (Math.Sign(Rigidbody.velocity.x) != Math.Sign(boost.x) && boost.x != 0)
         // {
         //     Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
@@ -135,53 +126,53 @@ public partial class CharController
         //     Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, 0);
         // }
 
-        Rigidbody.velocity += (boost * 1f);
-
-        
-        
+        Rigidbody.velocity += boost * 1f;
 
         yield return new WaitForSeconds(delayGravTime);
 
-        bool doVelSubtraction = true;
-        if (Math.Sign(Rigidbody.velocity.x) == Math.Sign(Rigidbody.velocity.x - boost.x) && boostDirection.x != 0 && doVelSubtraction)
-        { 
+        var doVelSubtraction = true;
+        if (
+            Math.Sign(Rigidbody.velocity.x) == Math.Sign(Rigidbody.velocity.x - boost.x)
+            && boostDirection.x != 0
+            && doVelSubtraction
+        )
+        {
             //float xToSet = Rigidbody.velocity.x - (boost.x * .8f);
             if (isGrounded)
             {
                 if (Rigidbody.velocity.x > 0)
-                {
-                    Rigidbody.velocity = new Vector2(Math.Min(Rigidbody.velocity.x, groundDragThreshholdA), Rigidbody.velocity.y);
-                }
+                    Rigidbody.velocity = new Vector2(
+                        Math.Min(Rigidbody.velocity.x, groundDragThreshholdA),
+                        Rigidbody.velocity.y
+                    );
                 else
-                {
-                    Rigidbody.velocity = new Vector2(Math.Max(Rigidbody.velocity.x, -groundDragThreshholdA), Rigidbody.velocity.y);
-                }
+                    Rigidbody.velocity = new Vector2(
+                        Math.Max(Rigidbody.velocity.x, -groundDragThreshholdA),
+                        Rigidbody.velocity.y
+                    );
             }
             else
             {
                 if (Rigidbody.velocity.x > 0)
-                {
-                    Rigidbody.velocity = new Vector2(Math.Min(Rigidbody.velocity.x, airDragThreshholdB), Rigidbody.velocity.y);
-                }
+                    Rigidbody.velocity = new Vector2(
+                        Math.Min(Rigidbody.velocity.x, airDragThreshholdB),
+                        Rigidbody.velocity.y
+                    );
                 else
-                {
-                    Rigidbody.velocity = new Vector2(Math.Max(Rigidbody.velocity.x, -airDragThreshholdB), Rigidbody.velocity.y);
-                }
+                    Rigidbody.velocity = new Vector2(
+                        Math.Max(Rigidbody.velocity.x, -airDragThreshholdB),
+                        Rigidbody.velocity.y
+                    );
             }
-
-            
         }
 
         dashTrail.emitting = false;
         //disabledMovement = false;
         gravityValue = BaseGravity;
         if (isGoldenBoost)
-        {
             recentlyBoosted = false;
-        }
 
         isDashing = false;
-        
     }
 
     public void BoostRefresh()
@@ -193,10 +184,10 @@ public partial class CharController
     {
         groundedAfterBoost = true;
         //print("boost visual effect: refresh");
-        Color original = boostUseIndicator.color;
-        Color destination = originalBoostVisualColor;
-        float elapsedTime = 0f;
-        float fadeTime = .3f;
+        var original = boostUseIndicator.color;
+        var destination = originalBoostVisualColor;
+        var elapsedTime = 0f;
+        var fadeTime = .3f;
 
         while (elapsedTime < fadeTime)
         {
@@ -204,16 +195,16 @@ public partial class CharController
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        
+
         boostUseIndicator.color = destination;
     }
-    
+
     private IEnumerator BoostUseVisualEffect()
     {
-        Color original = boostUseIndicator.color;
-        Color destination = Color.gray;
-        float elapsedTime = 0f;
-        float fadeTime = .3f;
+        var original = boostUseIndicator.color;
+        var destination = Color.gray;
+        var elapsedTime = 0f;
+        var fadeTime = .3f;
 
         while (elapsedTime < fadeTime)
         {
@@ -221,29 +212,27 @@ public partial class CharController
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        
+
         boostUseIndicator.color = destination;
     }
 
     private bool CheckSpace()
     {
-        Vector2 relativeUp = isInverted ? Vector2.down : Vector2.up;
-        Vector3 bounds = charCollider.bounds.extents;
-        float halfWidth = Mathf.Abs(bounds.x);
-        float halfHeight = Mathf.Abs(bounds.y);
-        Vector2 center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
-        Vector2 topMiddle = center + halfHeight * relativeUp;
-        Vector2 topLeft = topMiddle + halfWidth * Vector2.left;
-        Vector2 topRight = topMiddle + halfWidth * Vector2.right;
-        Vector2 aLittleUp = relativeUp;
-        
+        var relativeUp = isInverted ? Vector2.down : Vector2.up;
+        var bounds = charCollider.bounds.extents;
+        var halfWidth = Mathf.Abs(bounds.x);
+        var halfHeight = Mathf.Abs(bounds.y);
+        var center = (Vector2) transform.position + charCollider.offset.y * Vector2.up;
+        var topMiddle = center + halfHeight * relativeUp;
+        var topLeft = topMiddle + halfWidth * Vector2.left;
+        var topRight = topMiddle + halfWidth * Vector2.right;
+        var aLittleUp = relativeUp;
+
         Debug.DrawLine(topLeft, topLeft + aLittleUp, Color.magenta);
         Debug.DrawLine(topRight, topRight + aLittleUp, Color.magenta);
 
-        RaycastHit2D hit1 = 
-            Physics2D.Linecast(topLeft, topLeft + aLittleUp, obstaclePlusLayerMask);
-        RaycastHit2D hit2 = 
-            Physics2D.Linecast(topRight, topRight + aLittleUp, obstaclePlusLayerMask);
+        var hit1 = Physics2D.Linecast(topLeft, topLeft + aLittleUp, obstaclePlusLayerMask);
+        var hit2 = Physics2D.Linecast(topRight, topRight + aLittleUp, obstaclePlusLayerMask);
 
         return !hit1 && !hit2;
     }
@@ -256,6 +245,7 @@ public partial class CharController
             TileStateManager.Instance.DeactivatePlatforms();
             return;
         }
+
         lastJumpTime = Time.time;
         //print("jumpcall");
         justJumped = true;
@@ -263,75 +253,70 @@ public partial class CharController
         const float wallJumpModX = .55f;
         const float wallJumpModY = 1.2f;
 
-        Vector2 overallJumpImpulse = new Vector2(0, jumpForce);
-        Vector2 momentumVector = Vector2.zero;
+        var overallJumpImpulse = new Vector2(0, jumpForce);
+        var momentumVector = Vector2.zero;
         //bool doWallJump = (isWallSliding || wallJumpAvailable) && !isGrounded;
-        bool doWallJump = isNearWallOnLeft || isNearWallOnRight;
-        float momentumBreakpoint = 10f;
-        if (mostRecentlyTouchedPlatform != null && mostRecentlyTouchedPlatform.type == PlatformType.Moving) //jump from moving platform
+        var doWallJump = isNearWallOnLeft || isNearWallOnRight;
+        var momentumBreakpoint = 10f;
+        if (
+            mostRecentlyTouchedPlatform != null
+            && mostRecentlyTouchedPlatform.type == PlatformType.Moving
+        ) //jump from moving platform
         {
-            float momentumPercentage = .5f;
-            
+            var momentumPercentage = .5f;
+
             momentumVector = mostRecentlyTouchedPlatform.movingVelocity;
-            momentumVector = new Vector2(momentumVector.x * momentumPercentage, momentumVector.y < 0 ? 0 : (momentumVector.y * momentumPercentage));
+            momentumVector = new Vector2(
+                momentumVector.x * momentumPercentage,
+                momentumVector.y < 0 ? 0 : momentumVector.y * momentumPercentage
+            );
             if (Mathf.Sign(moveVector) != Mathf.Sign(momentumVector.x))
-            {
                 //print("wrong sign, set momentum to 0");
                 momentumVector.x = 0;
-            }
 
             if (momentumVector.magnitude > momentumBreakpoint)
             {
                 recentImpulseTime = .1f;
                 emitFadesTime = .4f;
             }
+
             print("momentum vector: " + momentumVector);
         }
-        
-        if (doWallJump) //walljump 
+
+        if (doWallJump) //walljump
         {
             //Debug.Log("WALLJUMP");
-            
             forcedMoveTime = .30f;
             forcedMoveVector = wallJumpDir;
-            overallJumpImpulse =
-                new Vector2(jumpForce * wallJumpModX * wallJumpDir, Math.Max(Math.Max(overallJumpImpulse.y * wallJumpModY, 0), Rigidbody.velocity.y));
-            //Rigidbody.velocity = new Vector2(0, Math.Max(0, Rigidbody.velocity.y));
+            overallJumpImpulse = new Vector2(
+                jumpForce * wallJumpModX * wallJumpDir + wallJumpDir * Rigidbody.velocity.x,
+                Math.Max(Math.Max(overallJumpImpulse.y * wallJumpModY, 0), Rigidbody.velocity.y)
+            );
             Rigidbody.velocity = Vector2.zero;
         }
-        
         else if (!isGrounded)
         {
             if (lastJumpTime + JumpCooldown < Time.time)
-            {
                 return;
-            }
-
-            Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, Math.Max(Rigidbody.velocity.y, 0));
+            Rigidbody.velocity = new Vector2(
+                Rigidbody.velocity.x,
+                Math.Max(Rigidbody.velocity.y, 0)
+            );
             doubleJumpAvailable = false;
         }
-
         else
         {
             //regular jump
             if (lastJumpTime + JumpCooldown < Time.time)
-            {
                 return;
-            }
 
             if (isInverted)
-            {
                 overallJumpImpulse = new Vector2(overallJumpImpulse.x, -overallJumpImpulse.y);
-            }
 
             if (momentumVector.magnitude > momentumBreakpoint)
-            {
                 overallJumpImpulse += momentumVector;
-            }
             else
-            {
-                overallJumpImpulse += (momentumVector / 2);
-            }
+                overallJumpImpulse += momentumVector / 2;
         }
 
         //print("impulse: " + overallJumpImpulse);
@@ -351,12 +336,12 @@ public partial class CharController
         }
         else
         {
-            savedRotationalVelocity = .5f * (IsFacingLeft() ? 1 : -1) * (Math.Abs(Rigidbody.velocity.x));
+            savedRotationalVelocity =
+                .5f * (IsFacingLeft() ? 1 : -1) * Math.Abs(Rigidbody.velocity.x);
             //savedRotationalVelocity = Mathf.Clamp(savedRotationalVelocity, -maxRotationSpeed, maxRotationSpeed);
             yield return new WaitForSeconds(.05f);
             SmoothRotationEnd();
         }
-        
     }
 
     // private IEnumerator TemporarilyDisablePlatformCollision(Transform parent)
@@ -377,13 +362,13 @@ public partial class CharController
     //     box.enabled = true;
     // }
 
-    
+
     // private void DoDoubleJump()
     // {
     //     dust.Play();
     //     float doubleJumpForce = JumpForce * .9f;
     //     //canDoubleJump = false;
-    //     
+    //
     //     Rigidbody.AddForce(new Vector2(0, isInverted ? -doubleJumpForce : doubleJumpForce), ForceMode2D.Impulse);
     //     Animator.SetBool(Grounded, false);
     //     Animator.SetTrigger(Jump);
@@ -391,8 +376,11 @@ public partial class CharController
 
     private void ReduceSize()
     {
-        charCollider.size = new Vector2(originalColliderSize.x / heightReducer, originalColliderSize.y / heightReducer);
-        // charCollider.offset = new Vector2(originalColliderOffset.x, originalColliderOffset.y -  
+        charCollider.size = new Vector2(
+            originalColliderSize.x / heightReducer,
+            originalColliderSize.y / heightReducer
+        );
+        // charCollider.offset = new Vector2(originalColliderOffset.x, originalColliderOffset.y -
         //                                                             ((originalColliderSize.y - (originalColliderSize.y / heightReducer)) / 2));
         // if (isInverted)
         // {
@@ -401,10 +389,9 @@ public partial class CharController
         // }
         // else
         // {
-        //     charCollider.offset = new Vector2(originalColliderOffset.x, originalColliderOffset.y -  
+        //     charCollider.offset = new Vector2(originalColliderOffset.x, originalColliderOffset.y -
         //                                                                 (shiftMiddle ? 0 : 1) * ((originalColliderSize.y - (originalColliderSize.y / heightReducer)) / 2));
         // }
-
     }
 
     private void ReturnSize()
@@ -412,7 +399,6 @@ public partial class CharController
         charCollider.size = originalColliderSize;
         //charCollider.offset = new Vector2(originalColliderOffset.x, (isInverted ? -1 : 1) * originalColliderOffset.y);
     }
-    
 
     private void Crouch()
     {
@@ -437,27 +423,27 @@ public partial class CharController
             //print("before clamp: " + savedRotationalVelocity);
             //savedRotationalVelocity /= 3f;
             //savedRotationalVelocity = savedRotationalVelocity > 0 ? Math.Max(savedRotationalVelocity, maxRotationSpeed) : Math.Min(savedRotationalVelocity, -maxRotationSpeed);
-            savedRotationalVelocity = Mathf.Clamp(savedRotationalVelocity, -maxRotationSpeed, maxRotationSpeed);
+            savedRotationalVelocity = Mathf.Clamp(
+                savedRotationalVelocity,
+                -maxRotationSpeed,
+                maxRotationSpeed
+            );
             if (savedRotationalVelocity != 0)
-            {
-                savedRotationalVelocity = savedRotationalVelocity > 0
-                    ? Math.Max(savedRotationalVelocity, minRotationSpeed)
-                    : Math.Min(savedRotationalVelocity, -minRotationSpeed);
-            }
-            
+                savedRotationalVelocity =
+                    savedRotationalVelocity > 0
+                        ? Math.Max(savedRotationalVelocity, minRotationSpeed)
+                        : Math.Min(savedRotationalVelocity, -minRotationSpeed);
+
             //print("after clamp: " + savedRotationalVelocity);
             spriteHandler.Rotate(Vector3.forward, savedRotationalVelocity);
             if (isGrounded || isNearWallOnLeft || isNearWallOnRight)
             {
-                
                 ForceRotationEnd();
                 break;
             }
 
             yield return new WaitForFixedUpdate();
-
         }
-        
     }
 
     private void ForceRotationEnd()
@@ -465,11 +451,8 @@ public partial class CharController
         //GameManager.Instance.TextPop("forced rotation end");
 
         if (smoothRotationCoroutineInstance != null)
-        {
             StopCoroutine(smoothRotationCoroutineInstance);
-        }
-        
-        
+
         spriteHandler.rotation = Quaternion.Euler(Vector3.zero);
     }
 
@@ -480,22 +463,19 @@ public partial class CharController
         ReturnSize();
         runSpeed = maxMoveSpeedGround;
         isCrouching = false;
-
     }
-    
-    private void OnGroundLanding() {
+
+    private void OnGroundLanding()
+    {
         //canDoubleJump = false;
         if (isGrappling)
-        {
             EndGrapple();
-        }
 
         //TryRefreshBoost();
         doubleJumpAvailable = true;
         justJumped = false;
         dust.Play();
         ForceRotationEnd();
-        
     }
 
     private void OnWallLanding()
@@ -505,14 +485,12 @@ public partial class CharController
         //     EndGrapple();
         // }
         if (Rigidbody.velocity.y < 0)
-        {
             Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, Rigidbody.velocity.y / 2);
-        }
 
         doubleJumpAvailable = true;
         StartCoroutine(BoostRefreshCoroutine());
         //TryRefreshBoost();
-        
+
         ForceRotationEnd();
     }
 
@@ -578,5 +556,4 @@ public partial class CharController
     //     isLineGrappling = false;
     //     Rigidbody.velocity = Vector2.ClampMagnitude(Rigidbody.velocity, runSpeed * 2);
     // }
-    
 }

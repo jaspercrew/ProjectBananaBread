@@ -8,12 +8,13 @@ public class LockSpriteController : MonoBehaviour
     private SpriteRenderer spriteRenderer;
 
     public int prevSceneIndex;
+
     // Start is called before the first frame update
     void Start()
     {
         StartCoroutine(LateStart());
     }
-    
+
     private IEnumerator LateStart()
     {
         yield return new WaitForEndOfFrame();
@@ -23,8 +24,11 @@ public class LockSpriteController : MonoBehaviour
         //     SaveData.LoadFromFile(1);
         // }
         //print(GameManager.Instance.levelProgress.Length);
-        if (prevSceneIndex < GameManager.Instance.levelProgress.Length && 
-            GameManager.Instance.levelProgress[prevSceneIndex] == SaveData.levelLengths[prevSceneIndex] - 1)
+        if (
+            prevSceneIndex < GameManager.Instance.levelProgress.Length
+            && GameManager.Instance.levelProgress[prevSceneIndex]
+                == SaveData.levelLengths[prevSceneIndex] - 1
+        )
         {
             Color temp = spriteRenderer.color;
             temp.a = 0f;
@@ -33,8 +37,5 @@ public class LockSpriteController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    void Update() { }
 }

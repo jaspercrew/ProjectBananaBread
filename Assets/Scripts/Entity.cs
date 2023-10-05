@@ -1,5 +1,3 @@
 using UnityEngine;
 
-public class Entity : MonoBehaviour
-{
-}
+public class Entity : MonoBehaviour { }

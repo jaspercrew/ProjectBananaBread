@@ -12,7 +12,7 @@
 //     private GameObject createdFury;
 //     private Sprite back;
 //     private Sprite backFull;
-//     
+//
 //     public GameObject healthObject;
 //     public GameObject furyObject;
 //     public GameObject healthEnd;
@@ -31,7 +31,7 @@
 //     {
 //         Instance = this;
 //     }
-//     
+//
 //     // Start is called before the first frame update
 //     private void Start()
 //     {
@@ -48,7 +48,7 @@
 //     {
 //         StartCoroutine(PopulateHealthBar());
 //     }
-//     
+//
 //     private IEnumerator PopulateHealthBar()
 //     {
 //         yield return new WaitForEndOfFrame();
@@ -57,9 +57,9 @@
 //         if (hasPopulated)
 //             yield break;
 //         hasPopulated = true;
-//         
+//
 //         healthList.Clear();
-//         
+//
 //         createdFury = Instantiate(furyObject, mainParent);
 //         ball = createdFury.transform.Find("Ball").GetComponent<UnityEngine.UI.Image>();
 //         createdFury.transform.position = new Vector3(HealthXOffset + FuryXOffset, HealthYOffset + FuryYOffset, 5);
@@ -115,6 +115,6 @@
 //     // Update is called once per frame
 //     // void Update()
 //     // {
-//     //     
+//     //
 //     // }
 // }

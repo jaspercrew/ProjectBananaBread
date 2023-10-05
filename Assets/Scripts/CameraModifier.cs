@@ -8,7 +8,7 @@ public class CameraModifier : MonoBehaviour
 
     public Vector3 offset;
     public float size;
-    
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.GetComponent<CharController>() == null)
@@ -20,16 +20,20 @@ public class CameraModifier : MonoBehaviour
 
         if (offsetEnabled)
         {
-            CameraManager.Instance.transform.Find("CharacterCam").GetComponent<CinemachineVirtualCamera>()
-                .GetCinemachineComponent<CinemachineFramingTransposer>().m_TrackedObjectOffset = offset;
+            CameraManager.Instance.transform
+                .Find("CharacterCam")
+                .GetComponent<CinemachineVirtualCamera>()
+                .GetCinemachineComponent<CinemachineFramingTransposer>()
+                .m_TrackedObjectOffset = offset;
         }
 
         if (sizeEnabled)
         {
-            CameraManager.Instance.transform.Find("CharacterCam").GetComponent<CinemachineVirtualCamera>().m_Lens
-                .OrthographicSize *= size;
+            CameraManager.Instance.transform
+                .Find("CharacterCam")
+                .GetComponent<CinemachineVirtualCamera>()
+                .m_Lens.OrthographicSize *= size;
         }
-
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -41,13 +45,18 @@ public class CameraModifier : MonoBehaviour
 
         if (offsetEnabled)
         {
-            CameraManager.Instance.transform.Find("CharacterCam").GetComponent<CinemachineVirtualCamera>()
-                .GetCinemachineComponent<CinemachineFramingTransposer>().m_TrackedObjectOffset = Vector3.zero;
+            CameraManager.Instance.transform
+                .Find("CharacterCam")
+                .GetComponent<CinemachineVirtualCamera>()
+                .GetCinemachineComponent<CinemachineFramingTransposer>()
+                .m_TrackedObjectOffset = Vector3.zero;
         }
         if (sizeEnabled)
         {
-            CameraManager.Instance.transform.Find("CharacterCam").GetComponent<CinemachineVirtualCamera>().m_Lens
-                .OrthographicSize /= size;
+            CameraManager.Instance.transform
+                .Find("CharacterCam")
+                .GetComponent<CinemachineVirtualCamera>()
+                .m_Lens.OrthographicSize /= size;
         }
     }
 }

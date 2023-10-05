@@ -1,4 +1,1 @@
-public class StaticPlatform : Platform
-{
-
-}
+public class StaticPlatform : Platform { }

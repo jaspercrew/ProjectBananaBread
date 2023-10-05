@@ -5,9 +5,9 @@ using UnityEngine.Serialization;
 
 [Serializable]
 // public class WindInfo
-// { 
-//     public float forceStrength; 
-//     public float speedOnPlayer; 
+// {
+//     public float forceStrength;
+//     public float speedOnPlayer;
 //     public bool isHorizontal;
 // }
 public enum SpawnPickDirection
@@ -42,7 +42,8 @@ public class SceneInformation : MonoBehaviour
 
     public const float SceneTransitionTime = 0.55f;
 
-    [HideInInspector] public Animator sceneFadeAnim;
+    [HideInInspector]
+    public Animator sceneFadeAnim;
 
     // public bool isGravityScene;
     // public bool isWindScene;
@@ -64,7 +65,8 @@ public class SceneInformation : MonoBehaviour
     [Header("This configures any overrides for entrances to this scene")]
     public List<SpawnOverride> spawnOverrides;
 
-    private readonly Dictionary<string, Transform> exitToSpawnOverride = new Dictionary<string, Transform>();
+    private readonly Dictionary<string, Transform> exitToSpawnOverride =
+        new Dictionary<string, Transform>();
 
     private Vector3 leftmostSpawn = new Vector3(float.PositiveInfinity, 0, 0);
     private Vector3 rightmostSpawn = new Vector3(float.NegativeInfinity, 0, 0);
@@ -141,9 +143,7 @@ public class SceneInformation : MonoBehaviour
         // }
     }
 
-    private void Update()
-    {
-    }
+    private void Update() { }
 
     public Vector3 GetInitialSpawnPosition()
     {
@@ -155,17 +155,21 @@ public class SceneInformation : MonoBehaviour
         if (spawns != null)
         {
             int checkpoint = SceneTransitionManager.Instance.checkPointToUse;
-            
+
             if (checkpoint >= 0)
             {
-                return spawns.Find("SpawnArea" + checkpoint).GetComponent<SpawnAreaController>().spawnLocation
-                    .localPosition;
+                return spawns
+                    .Find("SpawnArea" + checkpoint)
+                    .GetComponent<SpawnAreaController>()
+                    .spawnLocation.localPosition;
             }
         }
-        
-        Debug.LogWarning("no last exit info or spawn area info, assuming first spawn, using default spawn");
+
+        Debug.LogWarning(
+            "no last exit info or spawn area info, assuming first spawn, using default spawn"
+        );
         return defaultSpawn.position;
-        
+
         //
         // string exitName = SceneTransitionManager.Instance.LastExitInfo.exitName;
         //

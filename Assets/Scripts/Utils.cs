@@ -12,13 +12,13 @@ public static class Utils
     {
         Vector2 a = objectA.GetComponent<Collider2D>().bounds.center;
         Vector2 b = objectB.GetComponent<Collider2D>().bounds.center;
-        
-        RaycastHit2D hit = Physics2D.Raycast(a, (b-a).normalized,
-            Vector2.Distance(a, b), LayerMask.GetMask("Obstacle"));
+
+        RaycastHit2D hit = Physics2D.Raycast(
+            a,
+            (b - a).normalized,
+            Vector2.Distance(a, b),
+            LayerMask.GetMask("Obstacle")
+        );
         return hit.collider == null;
     }
-    
-
-
 }
-

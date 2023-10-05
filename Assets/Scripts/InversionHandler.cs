@@ -11,10 +11,7 @@ public class InversionHandler : BeatEntity
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    void Update() { }
 
     protected override void MicroBeatAction()
     {
@@ -28,7 +25,7 @@ public class InversionHandler : BeatEntity
         {
             CharController.Instance.Invert();
         }
-        
+
         base.MicroBeatAction();
     }
 }

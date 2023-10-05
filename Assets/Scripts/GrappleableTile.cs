@@ -6,12 +6,12 @@
 // public class GrappleableTile : TileBase, IGrappleable
 // {
 //     public bool isGrappleable;
-//     
+//
 //     public bool IsGrappleable()
 //     {
 //         return isGrappleable;
 //     }
-//     
+//
 //     // [MenuItem("GameObject/Create Tile Pallete")]
 //     private static void CreateTilePallete()
 //     {
@@ -25,7 +25,7 @@
 //         //     fileData = File.ReadAllBytes(FilePath);
 //         //     texture2D = new Texture2D(2, 2);
 //         //     texture2D.LoadImage(fileData);
-//         // }  
+//         // }
 //         //
 //         // Sprite newSprite = Sprite.Create();
 //         //

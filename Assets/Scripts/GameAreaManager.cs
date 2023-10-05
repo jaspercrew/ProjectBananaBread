@@ -12,19 +12,23 @@ public class GameAreaManager : MonoBehaviour
     public List<float> xVals = new List<float>();
     public List<int> songLayers = new List<int>();
     public int totalLayers;
-    
+
     // Start is called before the first frame update
     void Start()
     {
         // if (xVals.Count != songLayers.Count + 1)
         // {
-        //     
+        //
         // }
         int numAreas = xVals.Count;
         for (int i = 0; i < numAreas; i++)
         {
-            instantiatedGameArea =
-                Instantiate(gameAreaPrefab, Vector3.zero, Quaternion.Euler(Vector3.zero), transform);
+            instantiatedGameArea = Instantiate(
+                gameAreaPrefab,
+                Vector3.zero,
+                Quaternion.Euler(Vector3.zero),
+                transform
+            );
             GameArea gameArea = instantiatedGameArea.GetComponent<GameArea>();
             float xToUseA = i == 0 ? initialX : xVals[i - 1];
             float xToUseB = xVals[i];
@@ -41,21 +45,21 @@ public class GameAreaManager : MonoBehaviour
             {
                 gameArea.audioLayers[j] = j < songLayers[i];
             }
-            
         }
     }
 
     void OnDrawGizmos()
     {
-        Gizmos.DrawLine(new Vector3(initialX, generalY - maxHeight, 0), new Vector3(initialX, generalY + maxHeight, 0));
+        Gizmos.DrawLine(
+            new Vector3(initialX, generalY - maxHeight, 0),
+            new Vector3(initialX, generalY + maxHeight, 0)
+        );
         foreach (float x in xVals)
         {
-            Gizmos.DrawLine(new Vector3(x, generalY - maxHeight, 0), new Vector3(x, generalY + maxHeight, 0));
+            Gizmos.DrawLine(
+                new Vector3(x, generalY - maxHeight, 0),
+                new Vector3(x, generalY + maxHeight, 0)
+            );
         }
     }
-    
-    
-    
-    
-    
 }

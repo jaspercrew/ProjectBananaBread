@@ -36,7 +36,6 @@ public class BeatPlatform : ActivatedEntity
 
     private Rigidbody2D platformRigidbody;
 
-
     private const float deathCheckFactor = .6f;
     private const float deactivatedAlpha = .3f;
 
@@ -73,11 +72,11 @@ public class BeatPlatform : ActivatedEntity
         {
             if (initialIsActive)
             {
-                Gizmos.DrawWireSphere(transform.localPosition + (Vector3) moveVector, 1f);
+                Gizmos.DrawWireSphere(transform.localPosition + (Vector3)moveVector, 1f);
             }
             else
             {
-                Gizmos.DrawWireSphere(transform.localPosition - (Vector3) moveVector, 1f);
+                Gizmos.DrawWireSphere(transform.localPosition - (Vector3)moveVector, 1f);
             }
         }
     }
@@ -101,13 +100,13 @@ public class BeatPlatform : ActivatedEntity
                 platformCollider.enabled = true;
                 StartCoroutine(BinaryPlatformCoroutine(true));
 
-
                 BoxCollider2D charCollider = CharController.Instance.GetComponent<BoxCollider2D>();
                 Vector3 bounds = charCollider.bounds.extents;
                 float halfWidth = Mathf.Abs(bounds.x);
                 float halfHeight = Mathf.Abs(bounds.y);
-                Vector2 center = (Vector2) CharController.Instance.transform.position +
-                                 charCollider.offset.y * Vector2.up;
+                Vector2 center =
+                    (Vector2)CharController.Instance.transform.position
+                    + charCollider.offset.y * Vector2.up;
 
                 Vector2 bottomMiddle = center + halfHeight * Vector2.down;
                 Vector2 bottomLeft = bottomMiddle + halfWidth * deathCheckFactor * Vector2.left;
@@ -117,9 +116,13 @@ public class BeatPlatform : ActivatedEntity
                 Vector2 topLeft = topMiddle + halfWidth * deathCheckFactor * Vector2.left;
                 Vector2 topRight = topMiddle + halfWidth * deathCheckFactor * Vector2.right;
                 Bounds platformBounds = platformCollider.bounds;
-                if (platformBounds.Contains(bottomLeft) || platformBounds.Contains(bottomRight) ||
-                    platformBounds.Contains(topLeft) || platformBounds.Contains(topRight) ||
-                    platformBounds.Contains(center))
+                if (
+                    platformBounds.Contains(bottomLeft)
+                    || platformBounds.Contains(bottomRight)
+                    || platformBounds.Contains(topLeft)
+                    || platformBounds.Contains(topRight)
+                    || platformBounds.Contains(center)
+                )
                 {
                     //CharController.Instance.Die(); //FIND NEW SOLUTION
                 }
@@ -195,7 +198,7 @@ public class BeatPlatform : ActivatedEntity
     private IEnumerator MoveToCoroutine(bool isMovingBack)
     {
         Vector2 destination = isMovingBack ? originalPosition : (originalPosition - moveVector);
-        Vector2 movementDirection = (destination - (Vector2) transform.position).normalized;
+        Vector2 movementDirection = (destination - (Vector2)transform.position).normalized;
         float velocityMultiplier = 1.5f;
         float proximityDetection = .4f;
         float elapsedTime = 0f;
@@ -207,13 +210,13 @@ public class BeatPlatform : ActivatedEntity
 
             // print((lerpPosition - transform.position) / Time.deltaTime);
             // transform.position = lerpPosition;
-            platformRigidbody.velocity += (movementDirection * (velocityMultiplier * (elapsedTime / moveTime)));
+            platformRigidbody.velocity += (
+                movementDirection * (velocityMultiplier * (elapsedTime / moveTime))
+            );
             movingVelocity = platformRigidbody.velocity;
             elapsedTime += Time.fixedDeltaTime;
 
-
-            if (Vector2.Distance(transform.position, destination) < proximityDetection
-            ) 
+            if (Vector2.Distance(transform.position, destination) < proximityDetection)
             {
                 lastVelocity = platformRigidbody.velocity;
                 movingVelocity = lastVelocity;
@@ -222,7 +225,6 @@ public class BeatPlatform : ActivatedEntity
                 transform.position = destination;
                 break;
             }
-
 
             // Yield here
             yield return new WaitForFixedUpdate();
@@ -236,14 +238,22 @@ public class BeatPlatform : ActivatedEntity
 
     private void Update()
     {
-        if (playerContact && platformRigidbody.velocity.magnitude > 0 &&
-            (CharController.Instance.transform.position.y > transform.position.y || isWallSlideable))
+        if (
+            playerContact
+            && platformRigidbody.velocity.magnitude > 0
+            && (
+                CharController.Instance.transform.position.y > transform.position.y
+                || isWallSlideable
+            )
+        )
         {
             //print("sticking player vel");
             //CharController.Instance.Rigidbody.velocity += platformRigidbody.velocity;
-            CharController.Instance.transform.position += (transform.position - (Vector3) lastPosition);
+            CharController.Instance.transform.position += (
+                transform.position - (Vector3)lastPosition
+            );
         }
-        
+
         lastPosition = transform.position;
     }
 
@@ -280,8 +290,13 @@ public class BeatPlatform : ActivatedEntity
             {
                 CharController.Instance.Die();
             }
-
-            else if (type == PlatformType.Fading && (CharController.Instance.transform.position.y > transform.position.y || isWallSlideable))
+            else if (
+                type == PlatformType.Fading
+                && (
+                    CharController.Instance.transform.position.y > transform.position.y
+                    || isWallSlideable
+                )
+            )
             {
                 StartCoroutine(FadeCoroutine());
             }
@@ -353,7 +368,6 @@ public class BeatPlatform : ActivatedEntity
         Color fadeTo = toFull ? full : faded;
         Color initialBurst = toFull ? Color.white : Color.black;
 
-
         float elapsedTime = 0f;
         float fadeTime = .25f;
         spriteRenderer.color = initialBurst;
@@ -367,7 +381,6 @@ public class BeatPlatform : ActivatedEntity
 
         spriteRenderer.color = fadeTo;
     }
-
 
     private IEnumerator FadeCoroutine()
     {

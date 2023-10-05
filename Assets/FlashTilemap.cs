@@ -19,7 +19,6 @@ public class FlashTilemap : ActivatedEntity
         tilemap.color = temp;
         tilemapCollider2D.enabled = false;
         SimpleVolumeManager.instance.volume.enabled = false;
-
     }
 
     protected override void MicroBeatAction()
@@ -32,7 +31,6 @@ public class FlashTilemap : ActivatedEntity
         {
             StartCoroutine(FlashCoroutine());
         }
-        
 
         actionCount++;
         base.MicroBeatAction();
@@ -51,29 +49,26 @@ public class FlashTilemap : ActivatedEntity
 
         Color start = fadeIn ? empty : tilemap.color;
         Color destination;
-        
-        
-        
+
         if (fadeIn)
         {
             destination = hazard ? full : faded;
         }
-
-        else 
+        else
         {
             destination = empty;
         }
-        
+
         while (timeElapsed < fadeTime)
         {
             tilemap.color = Color.Lerp(start, destination, timeElapsed / fadeTime);
             timeElapsed += Time.deltaTime;
             yield return null;
         }
-        
+
         tilemap.color = destination;
     }
-    
+
     private IEnumerator HazardCoroutine()
     {
         SimpleVolumeManager.instance.volume.enabled = true;
@@ -93,6 +88,4 @@ public class FlashTilemap : ActivatedEntity
         yield return new WaitForSeconds(flashDuration);
         StartCoroutine(ColorFade(false, false));
     }
-
-
 }

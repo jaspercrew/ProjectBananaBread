@@ -16,7 +16,11 @@ public class Rotator : BeatEntity
         float rotateTime = .5f;
         while (elapsedTime < rotateTime)
         {
-            transform.RotateAround(CharController.Instance.transform.position, Vector3.forward, Time.deltaTime * (90f / (rotateTime) ));
+            transform.RotateAround(
+                CharController.Instance.transform.position,
+                Vector3.forward,
+                Time.deltaTime * (90f / (rotateTime))
+            );
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -24,5 +28,4 @@ public class Rotator : BeatEntity
         yield return null;
         transform.eulerAngles = originalAngle + new Vector3(0, 0, 90);
     }
-    
 }

@@ -5,6 +5,7 @@ public class TeleportBox : MonoBehaviour
     // private BoxCollider2D boxCollider;
 
     private Vector3 point;
+
     // Start is called before the first frame update
     private void Start()
     {

@@ -8,14 +8,11 @@ using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
-    
     public static AudioManager Instance;
-    
 
     // private const float SongVolume = 5f;
     private AudioSource[] SongsA;
     private AudioSource[] SongsB;
-
 
     private AudioSource effectSource;
     private AudioSource songSourceA;
@@ -29,16 +26,17 @@ public class AudioManager : MonoBehaviour
     private AudioSource songSourceCf;
     private AudioSource songSourceDf;
 
-    public readonly Dictionary<SoundName, AudioClip> soundToClip = new Dictionary<SoundName, AudioClip>();
+    public readonly Dictionary<SoundName, AudioClip> soundToClip =
+        new Dictionary<SoundName, AudioClip>();
 
     public float normalizedVolume;
 
     private AudioMixer audioMixer;
+
     //private readonly Dictionary<SoundName, AudioClip> soundToClipf = new Dictionary<SoundName, AudioClip>();
     public AudioSource[] mainSources;
 
     private SoundName savedSong;
-
 
     // public AudioMixerGroup mixerGroup;
 
@@ -59,14 +57,14 @@ public class AudioManager : MonoBehaviour
             AudioClip clip = Resources.Load<AudioClip>("Sounds/" + sound.ToString().ToLower());
             soundToClip[sound] = clip;
         }
-        
+
         // foreach (SoundName sound in Enum.GetValues(typeof(SoundName)))
         // {
         //     // TODO: set a naming scheme for files
         //     AudioClip clip = Resources.Load<AudioClip>("Sounds/" + sound.ToString().ToLower());
         //     soundToClipf[sound] = clip;
         // }
-        
+
         SongsA = transform.Find("SongSourcesA").GetComponents<AudioSource>();
         SongsB = transform.Find("SongSourcesB").GetComponents<AudioSource>();
 
@@ -80,38 +78,32 @@ public class AudioManager : MonoBehaviour
         songSourceBf = SongsB[1];
         songSourceCf = SongsB[2];
         songSourceDf = SongsB[3];
-        
+
         mainSources = new AudioSource[9];
         mainSources[0] = songSourceA;
         mainSources[1] = songSourceB;
         mainSources[2] = songSourceC;
         mainSources[3] = songSourceD;
-        
+
         mainSources[4] = effectSource;
-        
+
         mainSources[5] = songSourceAf;
         mainSources[6] = songSourceBf;
         mainSources[7] = songSourceCf;
         mainSources[8] = songSourceDf;
 
-
-        audioMixer = (AudioMixer) Resources.Load("MainMixer");
-
+        audioMixer = (AudioMixer)Resources.Load("MainMixer");
     }
-    
 
     public void Start()
     {
-       // print(songSourceA.volume);
+        // print(songSourceA.volume);
         // if (songSourceA.volume == 0)
         // {
         //     print("check for 0 volume");
         //     UpdateVolume(.5f);
         // }
-
     }
-    
-    
 
     public void PauseAudio()
     {
@@ -120,7 +112,7 @@ public class AudioManager : MonoBehaviour
             source.Pause();
         }
     }
-    
+
     public void UnpauseAudio()
     {
         foreach (AudioSource source in mainSources)
@@ -128,20 +120,19 @@ public class AudioManager : MonoBehaviour
             source.UnPause();
         }
     }
-    
+
     public void UpdateVolume(float sliderValue)
     {
         // const float volumeMultiplier = 1f;
         // foreach (AudioSource source in mainSources)
         // {
-        //     
+        //
         //     //print("volume updated for a source");
         //     source.volume = sliderValue * volumeMultiplier;
         // }
         normalizedVolume = sliderValue;
 
         audioMixer.SetFloat("MainVolume", Mathf.Log10(sliderValue + .001f) * 20);
-
     }
 
     public void Play(SoundName sound, float volume)
@@ -149,18 +140,18 @@ public class AudioManager : MonoBehaviour
         AudioClip clip = soundToClip[sound];
         effectSource.PlayOneShot(clip, volume);
     }
-    
+
     public void IsolatedPlay(SoundName sound, float volume)
     {
         AudioClip clip = soundToClip[sound];
         isolatedSource.PlayOneShot(clip, volume);
     }
 
-//    public void PlaySong(SoundName songA)
-//    {
-//        AudioClip clip = soundToClip[songA];
-//        effectSource.PlayOneShot(clip, songVolume);
-//    }
+    //    public void PlaySong(SoundName songA)
+    //    {
+    //        AudioClip clip = soundToClip[songA];
+    //        effectSource.PlayOneShot(clip, songVolume);
+    //    }
 
     public void PlaySong(SoundName song, int source = 0)
     {
@@ -178,7 +169,7 @@ public class AudioManager : MonoBehaviour
         {
             sourceToUse = songSourceC;
         }
-        if (song == SoundName.None) 
+        if (song == SoundName.None)
         {
             sourceToUse.Stop();
         }
@@ -188,9 +179,8 @@ public class AudioManager : MonoBehaviour
             sourceToUse.Play();
             //sourceToUse.PlayOneShot();
         }
-
     }
-    
+
     public void PlaySongScheduled(SoundName song, int source, double time, bool flipped)
     {
         //print("scheduled play");
@@ -210,12 +200,12 @@ public class AudioManager : MonoBehaviour
             sourceToUse = flipped ? songSourceCf : songSourceC;
             //print(flipped ? "Cf" : "C");
         }
-        else 
+        else
         {
             sourceToUse = flipped ? songSourceDf : songSourceD;
             //print(flipped ? "Cf" : "C");
         }
-        if (song == SoundName.None) 
+        if (song == SoundName.None)
         {
             sourceToUse.Stop();
         }
@@ -224,10 +214,7 @@ public class AudioManager : MonoBehaviour
             sourceToUse.clip = soundToClip[song];
             sourceToUse.PlayScheduled(time);
         }
-
     }
-
-
 
     // TODO: remove and make this an ActivatedEntity?
     // private int beatCounter = 0;
@@ -245,19 +232,19 @@ public class AudioManager : MonoBehaviour
     //     }
     //
     //     isAlt = !isAlt;
-    //     
+    //
     //     const float lifetime = .25f;
     //     if (isAlt)
     //     {
-    //         StartCoroutine(FadeOut(songSourceA, lifetime));   
+    //         StartCoroutine(FadeOut(songSourceA, lifetime));
     //         StartCoroutine(FadeIn(songSourceB, lifetime));
     //     }
     //     else
     //     {
-    //         StartCoroutine(FadeOut(songSourceB, lifetime)); 
+    //         StartCoroutine(FadeOut(songSourceB, lifetime));
     //         StartCoroutine(FadeIn(songSourceA, lifetime));
     //     }
-    //     
+    //
     // }
 
     public void AllFadeOut()
@@ -275,7 +262,6 @@ public class AudioManager : MonoBehaviour
         {
             currentSongStates[i] = SongsA[i].volume > Double.Epsilon;
         }
- 
 
         for (int i = 0; i < songsToPlay.Length; i++)
         {
@@ -290,14 +276,14 @@ public class AudioManager : MonoBehaviour
                 {
                     SongsA[i].volume = SongsB[i].volume = songsToPlay[i] ? .3f : 0f;
                 }
-
             }
         }
     }
+
     private IEnumerator SongFade(int source, bool fadeOut)
     {
         //print("SongFade()" + source + "  " + fadeOut);
-        AudioSource[] song = {SongsA[source], SongsB[source]};
+        AudioSource[] song = { SongsA[source], SongsB[source] };
         float fadeTime = .25f;
         float startingVol = SongsA[source].volume;
         float fullVol = .3f;
@@ -309,7 +295,7 @@ public class AudioManager : MonoBehaviour
         {
             while (currentVolume > destinationVolume)
             {
-                currentVolume -=  startingVol * Time.deltaTime / fadeTime;
+                currentVolume -= startingVol * Time.deltaTime / fadeTime;
                 song[0].volume = song[1].volume = currentVolume;
                 yield return null;
             }
@@ -326,18 +312,18 @@ public class AudioManager : MonoBehaviour
 
         song[0].volume = song[1].volume = destinationVolume;
     }
-    
+
     private IEnumerator FadeOut(AudioSource audioSource, float fadeTime)
     {
         float startingVol = audioSource.volume;
- 
+
         while (audioSource.volume > 0)
         {
             audioSource.volume -= startingVol * Time.deltaTime / fadeTime;
- 
+
             yield return null;
         }
- 
+
         audioSource.Stop();
         audioSource.volume = 0f;
     }
@@ -349,11 +335,10 @@ public class AudioManager : MonoBehaviour
         while (audioSource.volume < 1.0f)
         {
             audioSource.volume += 1f * Time.deltaTime / fadeTime;
- 
+
             yield return null;
         }
- 
+
         audioSource.volume = 1f;
     }
-
 }

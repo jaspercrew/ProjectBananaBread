@@ -5,7 +5,6 @@ using UnityEngine.Rendering;
 
 public class VolumeManager : MonoBehaviour
 {
-
     public static VolumeManager instance;
     private Volume volume;
 
@@ -18,6 +17,7 @@ public class VolumeManager : MonoBehaviour
     {
         instance = this;
     }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,8 +25,5 @@ public class VolumeManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    void Update() { }
 }

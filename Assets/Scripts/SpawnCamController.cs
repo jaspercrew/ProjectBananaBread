@@ -28,7 +28,7 @@
 //
 //     private void ResetTransition()
 //     {
-//         
+//
 //         //mainCamera.rect = new Rect(0, 0, 1, 1);
 //         if (CharController.Instance.currentArea == null || CharController.Instance.currentArea.spawnLocation == null)
 //         {
@@ -57,10 +57,10 @@
 //             //mainCamera.rect = new Rect(toSet, Vector2.one);
 //             spawnCamera.rect = new Rect(toSet - Vector2.right, Vector2.one);
 //             elapsedTime += Time.deltaTime;
-//             
+//
 //             // Yield here
 //             yield return null;
-//         }  
+//         }
 //         // Make sure we got there
 //         //mainCamera.rect = new Rect(Vector2.right, Vector2.one);
 //         spawnCamera.rect = new Rect(Vector2.zero, Vector2.one);
@@ -86,7 +86,7 @@
 //     //
 //     // private IEnumerator TestTransition()
 //     // {
-//     //     
+//     //
 //     //     yield return new WaitForSeconds(5f);
 //     //     doBeats = true;
 //     //
@@ -95,7 +95,7 @@
 //     // Update is called once per frame
 //     void Update()
 //     {
-//         
+//
 //     }
-//     
+//
 // }

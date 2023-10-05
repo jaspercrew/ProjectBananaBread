@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BeatOrb : MonoBehaviour {
-
+public class BeatOrb : MonoBehaviour
+{
     public Vector3 beatScale;
     public Vector3 restScale;
     public float timeToBeat;
     public float restSmoothTime;
+
     private IEnumerator MoveToScale(Vector3 _target)
     {
         Vector3 _curr = transform.localScale;
@@ -27,7 +28,11 @@ public class BeatOrb : MonoBehaviour {
 
     private void Update()
     {
-        transform.localScale = Vector3.Lerp(transform.localScale, restScale, restSmoothTime * Time.deltaTime);
+        transform.localScale = Vector3.Lerp(
+            transform.localScale,
+            restScale,
+            restSmoothTime * Time.deltaTime
+        );
     }
 
     public void Trigger()
@@ -35,6 +40,4 @@ public class BeatOrb : MonoBehaviour {
         StopCoroutine("MoveToScale");
         StartCoroutine("MoveToScale", beatScale);
     }
-
-
 }

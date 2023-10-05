@@ -10,6 +10,7 @@ public class WindBurst : BeatEntity
     private bool playerInRange;
 
     private SpriteRenderer spriteRenderer;
+
     // Start is called before the first frame update
     protected override void Start()
     {
@@ -22,23 +23,23 @@ public class WindBurst : BeatEntity
         if (playerInRange)
         {
             //Vector2 vel = CharController.Instance.GetComponent<Rigidbody2D>().velocity;
-            CharController.Instance.GetComponent<Rigidbody2D>().velocity = windVelocity * direction.normalized;
+            CharController.Instance.GetComponent<Rigidbody2D>().velocity =
+                windVelocity * direction.normalized;
         }
 
         StartCoroutine(FlashCoroutine());
-
     }
 
     private IEnumerator FlashCoroutine()
     {
         Color initialColor = spriteRenderer.color;
-        
+
         Color fullAlpha = initialColor;
         fullAlpha.a = 1;
         spriteRenderer.color = fullAlpha;
-        
+
         float elapsedTime = 0f;
-        float flashTime = 1.5f; 
+        float flashTime = 1.5f;
         while (elapsedTime < flashTime)
         {
             spriteRenderer.color = Color.Lerp(fullAlpha, initialColor, elapsedTime / flashTime);

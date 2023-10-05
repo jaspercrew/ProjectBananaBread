@@ -4,7 +4,7 @@ using UnityEngine;
 public class BeatBoxSubParent : MonoBehaviour
 {
     private BeatBox[] children;
-    
+
     private void Start()
     {
         children = GetComponentsInChildren<BeatBox>();
@@ -15,7 +15,8 @@ public class BeatBoxSubParent : MonoBehaviour
     private void SetDoChanging(bool doChanging)
     {
         // Debug.Log("setting all children to " + doChanging);
-        if (children == null) return;
+        if (children == null)
+            return;
         foreach (BeatBox b in children)
         {
             if (b != null)
@@ -24,7 +25,7 @@ public class BeatBoxSubParent : MonoBehaviour
             }
         }
     }
-    
+
     private void OnTriggerExit2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("MainCamera"))
@@ -32,7 +33,7 @@ public class BeatBoxSubParent : MonoBehaviour
             SetDoChanging(false);
         }
     }
-    
+
     private void OnTriggerStay2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("MainCamera"))
@@ -40,7 +41,7 @@ public class BeatBoxSubParent : MonoBehaviour
             SetDoChanging(true);
         }
     }
-    
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         // string s;

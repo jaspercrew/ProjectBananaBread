@@ -8,7 +8,7 @@ public class TileStateManager : MonoBehaviour
 {
     public static TileStateManager Instance;
     public GameObject lineRendererPrefab;
-    
+
     // private Transform realGround;
     // private Transform altGround;
     // private Grid realGrid;
@@ -28,19 +28,24 @@ public class TileStateManager : MonoBehaviour
         if (Instance == null)
             Instance = this;
     }
-    
+
     // Start is called before the first frame update
     private void Start()
     {
         // Grid both = transform.Find("GridMain").GetComponent<Grid>();
         // realGrid = transform.Find("GridA").GetComponent<Grid>();
         // altGrid = transform.Find("GridB").GetComponent<Grid>();
-       // print(transform.Find("GridMain").transform.Find("Main-Platforms").GetComponent<PlatformEffector2D>());
+        // print(transform.Find("GridMain").transform.Find("Main-Platforms").GetComponent<PlatformEffector2D>());
         platforms = new HashSet<PlatformEffector2D>();
-        platforms.Add(transform.Find("GridMain").transform.Find("Main-Platforms").GetComponent<PlatformEffector2D>());
+        platforms.Add(
+            transform
+                .Find("GridMain")
+                .transform.Find("Main-Platforms")
+                .GetComponent<PlatformEffector2D>()
+        );
         // platforms.Add(transform.Find("GridA").transform.Find("A-Platforms").GetComponent<PlatformEffector2D>());
         // platforms.Add(transform.Find("GridB").transform.Find("B-Platforms").GetComponent<PlatformEffector2D>());
-        
+
         // both.enabled = true;
         //
         // realGround = realGrid.transform.Find("A-Ground");
@@ -50,7 +55,7 @@ public class TileStateManager : MonoBehaviour
         //
         // CalculateAndSpawnOutlines("A", out realLrParent, realCc, realGround);
         // CalculateAndSpawnOutlines("B", out altLrParent, altCc, altGround);
-        
+
         //ShiftTilesTo(GameManager.Instance.isGameShifted);
     }
 
@@ -81,7 +86,6 @@ public class TileStateManager : MonoBehaviour
         {
             platform.colliderMask = Physics.AllLayers;
         }
-        
     }
 
     // public void ShiftTilesTo(bool isAlt)
@@ -92,7 +96,7 @@ public class TileStateManager : MonoBehaviour
     //     altLrParent.SetActive(!isAlt);
     // }
     //
-    // private void CalculateAndSpawnOutlines(string prefix, out GameObject lrParent, 
+    // private void CalculateAndSpawnOutlines(string prefix, out GameObject lrParent,
     //     CompositeCollider2D cc, Transform groundParent)
     // {
     //     lrParent = new GameObject(prefix + "-Ground-Outline")
@@ -108,11 +112,11 @@ public class TileStateManager : MonoBehaviour
     //         GameObject outline = Instantiate(lineRendererPrefab, lrParent.transform);
     //         outline.name = prefix + "-Ground-Outline-" + path;
     //         LineRenderer lr = outline.GetComponent<LineRenderer>();
-    //         
+    //
     //         Vector2[] pathPoints2 = new Vector2[cc.GetPathPointCount(path) + 1];
     //         cc.GetPath(path, pathPoints2);
     //         pathPoints2[pathPoints2.Length - 1] = pathPoints2[0];
-    //         
+    //
     //         Vector3[] pathPoints3 = new Vector3[pathPoints2.Length];
     //         for (int i = 0; i < pathPoints2.Length; i++)
     //         {
